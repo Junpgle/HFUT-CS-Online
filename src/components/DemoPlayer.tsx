@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type ComponentType, type KeyboardEvent } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { registry } from './demos/registry';
 import { decodeEntities } from '../lib/text';
-import { IconNext, IconPause, IconPlay, IconPrev, IconReset } from './icons';
+import { IconExpand, IconNext, IconPause, IconPlay, IconPrev, IconReset } from './icons';
 
 const PLAY_INTERVAL = 950;
 
@@ -18,12 +18,35 @@ interface Props {
  */
 export default function DemoPlayer({ name, title: rawTitle }: Props) {
   const title = decodeEntities(rawTitle);
+  const reduced = useReducedMotion();
   const def = registry[name];
   const frames = useMemo(() => (def ? (def.build() as never[]) : []), [def]);
   const total = frames.length;
   const [step, setStep] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
+
+  // 全屏状态跟随（含 Esc 退出）
+  useEffect(() => {
+    const onChange = () => setFullscreen(document.fullscreenElement === boxRef.current);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement === boxRef.current) void document.exitFullscreen();
+    else void boxRef.current?.requestFullscreen().catch(() => {});
+  };
+
+  // 步进因果反馈：换步瞬间给画面一个短暂高亮脉冲（reduced-motion 下关闭）
+  const [tick, setTick] = useState(false);
+  useEffect(() => {
+    if (reduced) return;
+    setTick(true);
+    const id = window.setTimeout(() => setTick(false), 200);
+    return () => window.clearTimeout(id);
+  }, [step, reduced]);
 
   // 自动播放：定时推进；到达末帧自动停
   useEffect(() => {
@@ -85,10 +108,19 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
     <div className="demo" ref={boxRef} tabIndex={0} onKeyDown={onKeyDown} role="group" aria-label={title}>
       <div className="demo-bar">
         <span className="demo-title">{title}</span>
+        <span className="demo-hint" aria-hidden="true">
+          左右滑动查看
+        </span>
         <span className="demo-ctl">
-          <span className="demo-step-chip">
+          <motion.span
+            key={step}
+            className="demo-step-chip"
+            initial={reduced ? false : { scale: 1.16 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 600, damping: 26 }}
+          >
             第 {step + 1} / {total} 步
-          </span>
+          </motion.span>
           <button className="ctl-btn" aria-label="重置" title="重置 (Home)" disabled={step === 0 && !playing} onClick={() => go(0)}>
             <IconReset size={16} />
           </button>
@@ -112,11 +144,29 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
           >
             <IconNext size={16} />
           </button>
+          <button
+            className={`ctl-btn${fullscreen ? ' is-on' : ''}`}
+            aria-label={fullscreen ? '退出全屏' : '全屏查看'}
+            title={fullscreen ? '退出全屏 (Esc)' : '全屏查看'}
+            onClick={toggleFullscreen}
+          >
+            <IconExpand size={15} />
+          </button>
         </span>
       </div>
 
-      <div className="demo-stage">
-        <svg viewBox={`0 0 ${w} ${h}`} role="img" aria-label={title} preserveAspectRatio="xMidYMid meet" style={{ maxWidth: w }}>
+      <div className={`demo-stage${tick ? ' tick' : ''}`}>
+        <svg
+          viewBox={`0 0 ${w} ${h}`}
+          role="img"
+          aria-label={title}
+          preserveAspectRatio="xMidYMid meet"
+          style={
+            fullscreen
+              ? { height: 'calc(100vh - 150px)', width: 'auto' } // 全屏：按高度放大（内联样式优先级高于 :fullscreen 规则）
+              : { maxWidth: w, minWidth: w } // 常规：保持原始尺寸，窄屏横向滚动
+          }
+        >
           <View frame={frame} />
         </svg>
       </div>
@@ -129,6 +179,7 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
           value={step}
           onChange={(e) => go(Number(e.target.value))}
           aria-label="拖动查看任意步骤"
+          aria-valuetext={`第 ${step + 1} 步，共 ${total} 步`}
           style={{ accentColor: 'var(--accent)' }}
         />
       </div>

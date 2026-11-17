@@ -41,28 +41,28 @@ export default function QuizCard({ quiz, onResult }: Props) {
   const cls = submitted === 'right' ? ' answered-right' : submitted === 'wrong' ? ' answered-wrong' : '';
 
   const pick = (letter: string) => {
-    if (submitted === 'right') return;
+    if (submitted !== null || revealed) return; // 已判定 / 已看答案后需先「重做」
     if (quiz.kind === 'multi') {
       setPicked((p) => (p.includes(letter) ? p.filter((l) => l !== letter) : [...p, letter]));
       return;
     }
-    // single / judge：点击即判
-    if (letter === correctLetters[0]) {
-      setPicked([letter]);
-      setWrongPicks([]);
-      setSubmitted('right');
-      onResult?.(true);
-    } else {
-      setPicked([]);
-      setWrongPicks((w) => (w.includes(letter) ? w : [...w, letter]));
-      setSubmitted('wrong');
-      onResult?.(false);
-    }
+    // single / judge：第一步只选中，不判分（给误触一个反悔窗口）
+    setPicked([letter]);
+    setWrongPicks([]);
   };
 
-  const submitMulti = () => {
-    const ok =
-      picked.length === correctLetters.length && correctLetters.every((l) => picked.includes(l));
+  const submitAnswer = () => {
+    if (submitted !== null || picked.length === 0) return;
+    if (quiz.kind === 'multi') {
+      const ok =
+        picked.length === correctLetters.length && correctLetters.every((l) => picked.includes(l));
+      setSubmitted(ok ? 'right' : 'wrong');
+      if (!ok) setWrongPicks(picked.filter((l) => !correctLetters.includes(l)));
+      onResult?.(ok);
+      return;
+    }
+    // single / judge：第二步确认后才判分
+    const ok = picked[0] === correctLetters[0];
     setSubmitted(ok ? 'right' : 'wrong');
     if (!ok) setWrongPicks(picked.filter((l) => !correctLetters.includes(l)));
     onResult?.(ok);
@@ -103,8 +103,6 @@ export default function QuizCard({ quiz, onResult }: Props) {
     return '';
   };
 
-  const interactive = submitted !== 'right' && quiz.kind !== 'fill';
-
   return (
     <div className={`quiz${cls}`}>
       <p className="quiz-q">
@@ -122,7 +120,7 @@ export default function QuizCard({ quiz, onResult }: Props) {
                 <button
                   type="button"
                   className={`opt-btn${st ? ' ' + st : ''}`}
-                  disabled={!interactive && submitted === 'right'}
+                  disabled={submitted !== null || revealed}
                   onClick={() => pick(letter)}
                 >
                   <span className="opt-key">{letter}</span>
@@ -136,16 +134,18 @@ export default function QuizCard({ quiz, onResult }: Props) {
         </ul>
       )}
 
-      {quiz.kind === 'multi' && submitted === null && (
-        <div className="quiz-actions">
-          <button className="btn primary" disabled={picked.length === 0} onClick={submitMulti}>
-            提交答案（{picked.length} 项）
-          </button>
-          <button className="btn" onClick={() => setRevealed(true)}>
-            直接看答案
-          </button>
-        </div>
-      )}
+      {(quiz.kind === 'single' || quiz.kind === 'multi' || quiz.kind === 'judge') &&
+        submitted === null &&
+        !revealed && (
+          <div className="quiz-actions">
+            <button className="btn primary" disabled={picked.length === 0} onClick={submitAnswer}>
+              {quiz.kind === 'multi' ? `提交答案（${picked.length} 项）` : '提交答案'}
+            </button>
+            <button className="btn" onClick={() => setRevealed(true)}>
+              直接看答案
+            </button>
+          </div>
+        )}
 
       {quiz.kind === 'fill' && submitted === null && !revealed && (
         <>

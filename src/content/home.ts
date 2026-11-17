@@ -57,7 +57,7 @@ const deck: DeckData = {
         { type: 'html', html: `
           <p>八份 PPT 按「为什么学 → 是什么 → 怎么分析 → 怎么突破下界 → 四大设计策略」递进，复习时建议按此顺序推进。</p>
           
-                <div class="card-grid">
+                <div class="card-grid deck-map">
                   <a class="card" href="deck1.html">
                     <h3 id="sec-map-h1">第 1 讲 · 绪论与算法设计思维</h3>
                     <p>

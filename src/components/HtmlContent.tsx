@@ -1,5 +1,6 @@
 import { useEffect, useRef, type MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { decks } from '../content';
 import { parseLegacyHref, scrollToId } from '../lib/scroll';
 
 /* ------------------------------------------------------- 轻量语法着色 */
@@ -61,6 +62,50 @@ function enhance(root: HTMLElement) {
     scroll.className = 'tbl-scroll';
     tbl.replaceWith(scroll);
     scroll.appendChild(tbl);
+  }
+
+  // 代码对：窄屏下提供「伪代码 / C++」切换（宽屏仍是并排双栏，由 CSS 控制）
+  for (const pair of Array.from(root.querySelectorAll<HTMLDivElement>('.code-pair'))) {
+    if (pair.dataset.enhanced) continue;
+    const cols = pair.querySelectorAll(':scope > .code-col');
+    if (cols.length !== 2) continue;
+    pair.dataset.enhanced = '1';
+    const bar = document.createElement('div');
+    bar.className = 'code-tabs';
+    bar.setAttribute('role', 'tablist');
+    bar.setAttribute('aria-label', '切换代码列');
+    const names = ['伪代码', 'C++'];
+    cols.forEach((_, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'code-tab';
+      b.setAttribute('role', 'tab');
+      b.textContent = names[i] ?? `列 ${i + 1}`;
+      b.addEventListener('click', () => {
+        pair.classList.add('tabbed');
+        cols.forEach((c, j) => c.classList.toggle('active', i === j));
+        bar.querySelectorAll('.code-tab').forEach((t, j) => t.classList.toggle('active', i === j));
+      });
+      bar.appendChild(b);
+    });
+    pair.prepend(bar);
+  }
+
+  // 首页讲次卡片：补充「N 个动画 · M 道自测」元信息，便于扫读比较
+  for (const a of Array.from(root.querySelectorAll<HTMLAnchorElement>('.deck-map a.card'))) {
+    if (a.dataset.enhanced) continue;
+    a.dataset.enhanced = '1';
+    const href = a.getAttribute('href') ?? '';
+    const m = href.match(/deck(\d)\.html/) ?? href.match(/deck\/deck(\d)/);
+    if (!m) continue;
+    const deck = decks.find((d) => d.id === `deck${m[1]}`);
+    if (!deck) continue;
+    const demos = deck.sections.reduce((n, s) => n + s.blocks.filter((b) => b.type === 'demo').length, 0);
+    const quiz = deck.sections.reduce((n, s) => n + s.blocks.filter((b) => b.type === 'quiz').length, 0);
+    const meta = document.createElement('p');
+    meta.className = 'card-meta';
+    meta.textContent = `${demos} 个动画 · ${quiz} 道自测`;
+    a.appendChild(meta);
   }
 }
 

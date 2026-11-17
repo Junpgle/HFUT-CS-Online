@@ -3,8 +3,8 @@ import type { DeckData } from './types';
 
 const deck: DeckData = {
   id: 'deck1',
-  no: "",
-  title: "L1 · 绪论与算法设计思维",
+  no: "第1讲",
+  title: "绪论与算法设计思维",
   subtitle: "第 1 讲 · 绪论与算法设计思维",
   lede: `
   这一讲回答「为什么学算法」。核心不是记住代码，而是建立<strong>先设计、后实现</strong>的习惯：

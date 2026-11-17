@@ -121,3 +121,21 @@ export const IconQuiz = (p: P) => (
     <circle cx="12" cy="16.5" r="0.5" fill="currentColor" stroke="none" />
   </svg>
 );
+
+export const IconExpand = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5" />
+  </svg>
+);
+
+export const IconChevronUp = (p: P) => (
+  <svg {...base(p)}>
+    <path d="m5 14 7-7 7 7" />
+  </svg>
+);
+
+export const IconChevronDown = (p: P) => (
+  <svg {...base(p)}>
+    <path d="m5 10 7 7 7-7" />
+  </svg>
+);

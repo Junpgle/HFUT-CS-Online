@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { decks, homeData } from '../content';
 import { decodeEntities } from '../lib/text';
@@ -9,6 +9,9 @@ interface Props {
   open: boolean;
   onClose: () => void;
 }
+
+/** 空搜索结果时给出的示例关键词 */
+const SUGGESTIONS = ['Θ 记号', 'LCS', '主方法', '哈夫曼', '循环不变式', 'BFPRT'];
 
 interface IndexItem {
   kind: '章节' | '动画' | '题目';
@@ -61,6 +64,7 @@ function buildIndex(): IndexItem[] {
 
 export default function SearchPalette({ open, onClose }: Props) {
   const navigate = useNavigate();
+  const reduced = useReducedMotion();
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -126,11 +130,11 @@ export default function SearchPalette({ open, onClose }: Props) {
         className="palette"
         role="dialog"
         aria-label="搜索手册"
-        initial={{ opacity: 0, scale: 0.96, y: -8 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.97, y: -6 }}
+        initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -10 }}
+        animate={reduced ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+        exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -10 }}
         transition={{ type: 'spring', stiffness: 480, damping: 34 }}
-        style={{ transformOrigin: 'top center' }}
+        style={{ transformOrigin: 'top right' }}
         onKeyDown={onKeyDown}
       >
         <div className="palette-input">
@@ -147,7 +151,25 @@ export default function SearchPalette({ open, onClose }: Props) {
           </span>
         </div>
         <ul className="palette-list">
-          {results.length === 0 && <li className="palette-empty">{query ? '没有匹配的内容' : '输入关键词，跳转到任意章节 / 动画 / 题目'}</li>}
+          {results.length === 0 && (
+            <li className="palette-empty">
+              {query ? (
+                <>
+                  没有匹配的内容
+                  <span className="palette-suggest">
+                    试试：
+                    {SUGGESTIONS.map((s) => (
+                      <button key={s} type="button" className="palette-chip" onClick={() => setQuery(s)}>
+                        {s}
+                      </button>
+                    ))}
+                  </span>
+                </>
+              ) : (
+                '输入关键词，跳转到任意章节 / 动画 / 题目'
+              )}
+            </li>
+          )}
           {results.map((item, i) => (
             <li
               key={`${item.deck}-${item.sectionId}-${i}`}

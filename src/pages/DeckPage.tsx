@@ -6,6 +6,7 @@ import { useToc } from '../lib/toc';
 import { decodeEntities } from '../lib/text';
 import HtmlContent from '../components/HtmlContent';
 import Sections from '../components/Sections';
+import SectionCapsule from '../components/SectionCapsule';
 import { scrollToId } from '../lib/scroll';
 
 export default function DeckPage() {
@@ -75,6 +76,7 @@ function DeckInner({ deck }: { deck: DeckData }) {
         onQuizResult={(key, right) => setScores((s) => ({ ...s, [key]: right }))}
       />
       <footer className="pagefoot">内容依据课程 PPT 整理 · 仅供复习</footer>
+      <SectionCapsule />
     </div>
   );
 }
