@@ -1,4 +1,5 @@
 import type { Section } from '../content/types';
+import { decodeEntities } from '../lib/text';
 import HtmlContent from './HtmlContent';
 import DemoPlayer from './DemoPlayer';
 import QuizCard from './QuizCard';
@@ -21,7 +22,7 @@ export default function Sections({ sections, scores, onQuizResult }: Props) {
         const right = quizIdx.filter((i) => scores?.[`${sec.id}:${i}`] === true).length;
         return (
           <section key={sec.id} id={sec.id}>
-            <h2>{sec.heading}</h2>
+            <h2>{decodeEntities(sec.heading)}</h2>
             {quizIdx.length > 0 && (
               <p className="quiz-section-score">
                 已作答 {answered} / {quizIdx.length} · 答对 {right} 题

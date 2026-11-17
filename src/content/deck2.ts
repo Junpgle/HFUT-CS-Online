@@ -34,10 +34,10 @@ const deck: DeckData = {
     { id: 'sec-tools-h1', text: "插入排序逐行计数", level: 3 },
     { id: 'sec-tools-h2', text: "选择排序逐行计数", level: 3 },
     { id: 'sec-tools-h3', text: "两条曲线为什么长得差不多", level: 3 },
-    { id: 'sec-asymptotic', text: "十、渐近分析：&Theta; / O / &Omega;", level: 2 },
-    { id: 'sec-asymptotic-h1', text: "&Theta; 记号：渐近紧确界", level: 3 },
+    { id: 'sec-asymptotic', text: "十、渐近分析：Θ / O / Ω", level: 2 },
+    { id: 'sec-asymptotic-h1', text: "Θ 记号：渐近紧确界", level: 3 },
     { id: 'sec-asymptotic-h2', text: "O 记号：渐近上界", level: 3 },
-    { id: 'sec-asymptotic-h3', text: "&Omega; 记号：渐近下界", level: 3 },
+    { id: 'sec-asymptotic-h3', text: "Ω 记号：渐近下界", level: 3 },
     { id: 'sec-summary', text: "十一、本节小结", level: 2 },
     { id: 'sec-summary-h1', text: "算法分析的原则与工具", level: 3 },
     { id: 'sec-summary-h2', text: "三条原则", level: 3 },
@@ -633,7 +633,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-asymptotic',
-      heading: "十、渐近分析：&Theta; / O / &Omega;",
+      heading: "十、渐近分析：Θ / O / Ω",
       blocks: [
         { type: 'html', html: `
           <p><strong>渐近分析</strong>：分析 <span class="m">n</span> 充分大时函数的大小关系，并用渐近记号表示。三个记号分别刻画“紧确界、上界、下界”：</p>

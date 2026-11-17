@@ -3,8 +3,16 @@
  * （各讲 section 数 / 目录项 / quiz 数量与题型分布 / 动画引用均有效）
  */
 import { describe, expect, it } from 'vitest';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { MemoryRouter } from 'react-router-dom';
 import { decks, homeData } from '../content';
 import { registry } from '../components/demos/registry';
+import Sections from '../components/Sections';
+import { decodeEntities } from '../lib/text';
+
+/** 纯文本渲染字段里不允许出现的 HTML 实体（出现即会原样显示成乱码） */
+const ENTITY_RE = /&(#x?[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/;
 
 const EXPECT_SECTIONS: Record<string, number> = {
   deck1: 7,
@@ -88,5 +96,56 @@ describe('content integrity', () => {
     expect(homeData.sections.length).toBeGreaterThanOrEqual(9);
     const html = homeData.sections.map((s) => s.blocks.map((b) => (b.type === 'html' ? b.html : '')).join(''));
     expect(html.join('').match(/class="card"/g)?.length).toBe(8);
+  });
+
+  it('纯文本渲染字段（标题 / 目录 / heading / 动画标题 / 题干标签 / 答案）不残留 HTML 实体', () => {
+    const plain: { where: string; value: string }[] = [];
+    const push = (where: string, value: string | undefined) => {
+      if (value) plain.push({ where, value });
+    };
+
+    for (const d of [homeData, ...decks]) {
+      push(`${d.id}.title`, d.title);
+      push(`${d.id}.subtitle`, d.subtitle);
+      for (const t of d.toc) push(`${d.id}.toc:${t.id}`, t.text);
+      for (const s of d.sections) {
+        push(`${d.id}.${s.id}.heading`, s.heading);
+        for (const b of s.blocks) {
+          if (b.type === 'demo') push(`${d.id}.${s.id}.demo:${b.name}`, b.title);
+          // 题干与选项按 HTML 渲染，实体由浏览器解码；tag / answer 按纯文本渲染
+          if (b.type === 'quiz') {
+            push(`${d.id}.${s.id}.quiz.tag`, b.quiz.tag);
+            push(`${d.id}.${s.id}.quiz.answer`, b.quiz.answer);
+          }
+        }
+      }
+    }
+
+    const bad = plain.filter((p) => ENTITY_RE.test(p.value));
+    expect(bad.map((p) => `${p.where} → ${p.value}`)).toEqual([]);
+  });
+
+  it('decodeEntities 能解码内容里用到的实体与数字引用', () => {
+    expect(decodeEntities('&Theta; / &Omega;')).toBe('Θ / Ω');
+    expect(decodeEntities('小 &omega; 记号')).toBe('小 ω 记号');
+    expect(decodeEntities('&lang;9, 4, 6&rang;')).toBe('⟨9, 4, 6⟩');
+    expect(decodeEntities('T(n) = 2n &minus; 1')).toBe('T(n) = 2n − 1');
+    expect(decodeEntities('a &gt; 0 且 b &le; c')).toBe('a > 0 且 b ≤ c');
+    expect(decodeEntities('&#8320;&#8321;&#8322;')).toBe('₀₁₂');
+    expect(decodeEntities('&#x2208;')).toBe('∈');
+    expect(decodeEntities('普通文本 & 符号')).toBe('普通文本 & 符号'); // 非实体不动
+    expect(decodeEntities('&unknownentity;')).toBe('&unknownentity;'); // 未知实体原样保留
+  });
+
+  it('整页渲染后的可见文本不出现字面实体（端到端）', () => {
+    for (const d of [homeData, ...decks]) {
+      const html = renderToStaticMarkup(
+        createElement(MemoryRouter, null, createElement(Sections, { sections: d.sections })),
+      );
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      const text = div.textContent ?? '';
+      expect(ENTITY_RE.test(text), `${d.id} 渲染文本残留实体`).toBe(false);
+    }
   });
 });

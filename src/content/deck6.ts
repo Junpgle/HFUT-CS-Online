@@ -28,7 +28,7 @@ const deck: DeckData = {
     { id: 'sec-power-h3', text: "4.3 以 n = 20 为例：19 次 vs 5 次", level: 3 },
     { id: 'sec-power-h4', text: "4.4 逐帧动画：x20 的分解与回代", level: 3 },
     { id: 'sec-power-h5', text: "4.5 伪代码 + C++", level: 3 },
-    { id: 'sec-hanoi', text: "5. Hanoi 塔：T(n) = 2n &minus; 1", level: 2 },
+    { id: 'sec-hanoi', text: "5. Hanoi 塔：T(n) = 2n − 1", level: 2 },
     { id: 'sec-hanoi-h1', text: "5.1 问题描述", level: 3 },
     { id: 'sec-hanoi-h2', text: "5.2 基本思想与递推", level: 3 },
     { id: 'sec-hanoi-h3', text: "5.3 逐帧动画：7 次移动一步不落", level: 3 },
@@ -39,15 +39,15 @@ const deck: DeckData = {
     { id: 'sec-merge-h2', text: "6.2 递归式与复杂度", level: 3 },
     { id: 'sec-merge-h3', text: "6.3 伪代码 + C++", level: 3 },
     { id: 'sec-merge-h4', text: "6.4 例：解 T(n) = 2T(n/2) + 5n2", level: 3 },
-    { id: 'sec-bsearch', text: "7. 二分查找：T(n) = T(n/2) + &Theta;(1) &rArr; &Theta;(lg n)", level: 2 },
+    { id: 'sec-bsearch', text: "7. 二分查找：T(n) = T(n/2) + Θ(1) ⇒ Θ(lg n)", level: 2 },
     { id: 'sec-bsearch-h1', text: "7.1 三个步骤与一个例子", level: 3 },
     { id: 'sec-bsearch-h2', text: "7.2 逐帧动画：low / mid / high 怎么收窄", level: 3 },
-    { id: 'sec-bsearch-h3', text: "7.3 递归式与 &Theta;(lg n) 的推导", level: 3 },
+    { id: 'sec-bsearch-h3', text: "7.3 递归式与 Θ(lg n) 的推导", level: 3 },
     { id: 'sec-bsearch-h4', text: "7.4 伪代码 + C++", level: 3 },
     { id: 'sec-coins', text: "8. 硬币问题：天平有 3 种结果，所以三分最优", level: 2 },
     { id: 'sec-coins-h1', text: "8.1 问题描述", level: 3 },
     { id: 'sec-coins-h2', text: "8.2 三种解法", level: 3 },
-    { id: 'sec-coins-h3', text: "8.3 为什么 &lceil;log3 n&rceil; 是最优的", level: 3 },
+    { id: 'sec-coins-h3', text: "8.3 为什么 ⌈log3 n⌉ 是最优的", level: 3 },
     { id: 'sec-coins-h4', text: "8.4 伪代码 + C++", level: 3 },
     { id: 'sec-partition', text: "9. 整数划分：p(6) = 11 与 q(n, m)", level: 2 },
     { id: 'sec-partition-h1', text: "9.1 定义", level: 3 },
@@ -55,17 +55,17 @@ const deck: DeckData = {
     { id: 'sec-partition-h3', text: "9.3 增加一个自变量：q(n, m)", level: 3 },
     { id: 'sec-partition-h4', text: "9.4 用 n = 6 验证", level: 3 },
     { id: 'sec-partition-h5', text: "9.5 伪代码 + C++", level: 3 },
-    { id: 'sec-matrix', text: "10. 矩阵相乘：从 &Theta;(n3) 到 Strassen 的 &Theta;(n2.81)", level: 2 },
+    { id: 'sec-matrix', text: "10. 矩阵相乘：从 Θ(n3) 到 Strassen 的 Θ(n2.81)", level: 2 },
     { id: 'sec-matrix-h1', text: "10.1 问题与标准算法", level: 3 },
-    { id: 'sec-matrix-h2', text: "10.2 分治：8 次子矩阵乘法，还是 &Theta;(n3)", level: 3 },
+    { id: 'sec-matrix-h2', text: "10.2 分治：8 次子矩阵乘法，还是 Θ(n3)", level: 3 },
     { id: 'sec-matrix-h3', text: "10.3 Strassen：用 7 个递归乘换掉 1 次乘法", level: 3 },
-    { id: 'sec-matrix-h4', text: "10.4 验证 r = P5 + P4 &minus; P2 + P6 = ae + bg", level: 3 },
-    { id: 'sec-matrix-h5', text: "10.5 复杂度：&Theta;(nlg 7) &asymp; &Theta;(n2.81)", level: 3 },
-    { id: 'sec-matrix-h6', text: "10.6 Strassen 的 2&times;2 核心：伪代码 + C++", level: 3 },
-    { id: 'sec-vlsi', text: "11. VLSI 布局：从 &Theta;(n lg n) 到 &Theta;(n)", level: 2 },
+    { id: 'sec-matrix-h4', text: "10.4 验证 r = P5 + P4 − P2 + P6 = ae + bg", level: 3 },
+    { id: 'sec-matrix-h5', text: "10.5 复杂度：Θ(nlg 7) ≈ Θ(n2.81)", level: 3 },
+    { id: 'sec-matrix-h6', text: "10.6 Strassen 的 2×2 核心：伪代码 + C++", level: 3 },
+    { id: 'sec-vlsi', text: "11. VLSI 布局：从 Θ(n lg n) 到 Θ(n)", level: 2 },
     { id: 'sec-vlsi-h1', text: "11.1 问题描述", level: 3 },
-    { id: 'sec-vlsi-h2', text: "11.2 朴素布局：宽 &Theta;(n)、高 &Theta;(lg n)", level: 3 },
-    { id: 'sec-vlsi-h3', text: "11.3 H-树布局：边长 &Theta;(&radic;n)、面积 &Theta;(n)", level: 3 },
+    { id: 'sec-vlsi-h2', text: "11.2 朴素布局：宽 Θ(n)、高 Θ(lg n)", level: 3 },
+    { id: 'sec-vlsi-h3', text: "11.3 H-树布局：边长 Θ(√n)、面积 Θ(n)", level: 3 },
     { id: 'sec-think', text: "12. 课堂思考与结论", level: 2 },
     { id: 'sec-think-h1', text: "12.1 求解四个递归式", level: 3 },
     { id: 'sec-think-h2', text: "12.2 Hanoi 塔问题（问答）", level: 3 },
@@ -433,7 +433,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-hanoi',
-      heading: "5. Hanoi 塔：T(n) = 2n &minus; 1",
+      heading: "5. Hanoi 塔：T(n) = 2n − 1",
       blocks: [
         { type: 'html', html: `
           <h3 id="sec-hanoi-h1">5.1 问题描述</h3>
@@ -713,7 +713,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-bsearch',
-      heading: "7. 二分查找：T(n) = T(n/2) + &Theta;(1) &rArr; &Theta;(lg n)",
+      heading: "7. 二分查找：T(n) = T(n/2) + Θ(1) ⇒ Θ(lg n)",
       blocks: [
         { type: 'html', html: `
           <h3 id="sec-bsearch-h1">7.1 三个步骤与一个例子</h3>
@@ -976,7 +976,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-matrix',
-      heading: "10. 矩阵相乘：从 &Theta;(n3) 到 Strassen 的 &Theta;(n2.81)",
+      heading: "10. 矩阵相乘：从 Θ(n3) 到 Strassen 的 Θ(n2.81)",
       blocks: [
         { type: 'html', html: `
           <h3 id="sec-matrix-h1">10.1 问题与标准算法</h3>
@@ -1157,7 +1157,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-vlsi',
-      heading: "11. VLSI 布局：从 &Theta;(n lg n) 到 &Theta;(n)",
+      heading: "11. VLSI 布局：从 Θ(n lg n) 到 Θ(n)",
       blocks: [
         { type: 'html', html: `
           <h3 id="sec-vlsi-h1">11.1 问题描述</h3>

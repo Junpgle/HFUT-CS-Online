@@ -12,21 +12,21 @@ const deck: DeckData = {
   toc: [
     { id: 'sec-intro', text: "0. 算法与计算思维（课件导引）", level: 2 },
     { id: 'sec-asymptotic', text: "1. 渐进复杂性：只看增长量级", level: 2 },
-    { id: 'sec-theta', text: "2. &Theta; 记号：渐进确界（紧致界）", level: 2 },
+    { id: 'sec-theta', text: "2. Θ 记号：渐进确界（紧致界）", level: 2 },
     { id: 'sec-theta-h1', text: "2.1 用定义验证两个小例子", level: 3 },
-    { id: 'sec-theta-h2', text: "2.2 一般二次多项式：T(n) = an2 + bn + c（a &gt; 0）", level: 3 },
+    { id: 'sec-theta-h2', text: "2.2 一般二次多项式：T(n) = an2 + bn + c（a > 0）", level: 3 },
     { id: 'sec-big-o', text: "3. O 记号：渐进上界", level: 2 },
     { id: 'sec-big-o-h1', text: "3.1 两个证明示例（关键是把 c 和 n0 构造出来）", level: 3 },
-    { id: 'sec-big-o-h2', text: "3.2 &Theta; 强于 O，以及 O 与 &Theta; 的关键区别（常考）", level: 3 },
-    { id: 'sec-big-omega', text: "4. &Omega; 记号：渐进下界", level: 2 },
+    { id: 'sec-big-o-h2', text: "3.2 Θ 强于 O，以及 O 与 Θ 的关键区别（常考）", level: 3 },
+    { id: 'sec-big-omega', text: "4. Ω 记号：渐进下界", level: 2 },
     { id: 'sec-little-o', text: "5. 小 o 记号：渐近非紧上界", level: 2 },
-    { id: 'sec-little-omega', text: "6. 小 &omega; 记号：渐近非紧下界", level: 2 },
+    { id: 'sec-little-omega', text: "6. 小 ω 记号：渐近非紧下界", level: 2 },
     { id: 'sec-compare', text: "7. 极限比较法与渐近记号的性质", level: 2 },
     { id: 'sec-compare-h1', text: "7.1 利用极限比较函数间的增长速度", level: 3 },
     { id: 'sec-compare-h2', text: "7.2 四条基本性质", level: 3 },
     { id: 'sec-compare-h3', text: "7.3 并非所有函数都渐近可比较", level: 3 },
     { id: 'sec-notation', text: "8. 渐进表示法：等式约定与运算规则", level: 2 },
-    { id: 'sec-notation-h1', text: "8.1 f(n) = O(g(n)) 的本质是 f(n) &isin; O(g(n))", level: 3 },
+    { id: 'sec-notation-h1', text: "8.1 f(n) = O(g(n)) 的本质是 f(n) ∈ O(g(n))", level: 3 },
     { id: 'sec-notation-h2', text: "8.2 运算规则", level: 3 },
     { id: 'sec-substitution', text: "9. 求解递归式：代换法", level: 2 },
     { id: 'sec-substitution-h1', text: "9.1 猜一个更接近的上界 O(n2)：证明失败", level: 3 },
@@ -99,7 +99,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-theta',
-      heading: "2. &Theta; 记号：渐进确界（紧致界）",
+      heading: "2. Θ 记号：渐进确界（紧致界）",
       blocks: [
         { type: 'html', html: `
           <p>渐近记号用来表示算法的渐近运行时间，定义域为自然数集合 <b>N</b>（n 表示 Size），有时也扩展到实数或限制到自然数的某子集上。</p>
@@ -221,7 +221,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-big-omega',
-      heading: "4. &Omega; 记号：渐进下界",
+      heading: "4. Ω 记号：渐进下界",
       blocks: [
         { type: 'html', html: `
           <div class="callout key">
@@ -311,7 +311,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-little-omega',
-      heading: "6. 小 &omega; 记号：渐近非紧下界",
+      heading: "6. 小 ω 记号：渐近非紧下界",
       blocks: [
         { type: 'html', html: `
           <div class="callout key">

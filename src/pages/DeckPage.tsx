@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-
 import { decks } from '../content';
 import type { DeckData } from '../content/types';
 import { useToc } from '../lib/toc';
+import { decodeEntities } from '../lib/text';
 import HtmlContent from '../components/HtmlContent';
 import Sections from '../components/Sections';
 import { scrollToId } from '../lib/scroll';
@@ -64,7 +65,7 @@ function DeckInner({ deck }: { deck: DeckData }) {
 
   return (
     <div className="page" ref={pageRef} data-deck={deck.id}>
-      <h1>{deck.title}</h1>
+      <h1>{decodeEntities(deck.title)}</h1>
       <div className="lede">
         <HtmlContent html={deck.lede} />
       </div>

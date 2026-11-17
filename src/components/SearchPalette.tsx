@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboa
 import { AnimatePresence, motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { decks, homeData } from '../content';
+import { decodeEntities } from '../lib/text';
 import { IconSearch } from './icons';
 
 interface Props {
@@ -31,12 +32,12 @@ function buildIndex(): IndexItem[] {
       }
     }
     for (const t of deck.toc) {
-      items.push({ kind: '章节', deck: deck.id, deckTitle: deck.title, sectionId: t.id, text: `${t.text}` });
+      items.push({ kind: '章节', deck: deck.id, deckTitle: decodeEntities(deck.title), sectionId: t.id, text: decodeEntities(t.text) });
     }
     for (const [name, secId] of demoSection) {
       const block = deck.sections.flatMap((s) => s.blocks).find((b) => b.type === 'demo' && b.name === name);
-      const title = block && block.type === 'demo' ? block.title : name;
-      items.push({ kind: '动画', deck: deck.id, deckTitle: deck.title, sectionId: secId, text: title });
+      const title = block && block.type === 'demo' ? decodeEntities(block.title) : name;
+      items.push({ kind: '动画', deck: deck.id, deckTitle: decodeEntities(deck.title), sectionId: secId, text: title });
     }
     for (const sec of deck.sections) {
       if (!quizSectionIds.has(sec.id)) continue;
@@ -45,15 +46,15 @@ function buildIndex(): IndexItem[] {
         items.push({
           kind: '题目',
           deck: deck.id,
-          deckTitle: deck.title,
+          deckTitle: decodeEntities(deck.title),
           sectionId: sec.id,
-          text: stripTags(b.quiz.question).slice(0, 64),
+          text: decodeEntities(stripTags(b.quiz.question)).slice(0, 64),
         });
       }
     }
   }
   for (const t of homeData.toc) {
-    items.push({ kind: '章节', deck: null, deckTitle: '总目录', sectionId: t.id, text: t.text });
+    items.push({ kind: '章节', deck: null, deckTitle: '总目录', sectionId: t.id, text: decodeEntities(t.text) });
   }
   return items;
 }

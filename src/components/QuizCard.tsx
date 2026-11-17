@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import type { QuizData } from '../content/types';
+import { decodeEntities } from '../lib/text';
 import { IconCheck, IconReset, IconX } from './icons';
 
 interface Props {
@@ -11,12 +12,6 @@ interface Props {
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 const OPTION_PREFIX = /^[A-F][.．、]\s*/;
-
-function decodeEntities(s: string): string {
-  const el = document.createElement('textarea');
-  el.innerHTML = s;
-  return el.value;
-}
 
 const normalize = (s: string) => s.replace(/\s+/g, '').replace(/　/g, '');
 
@@ -113,8 +108,8 @@ export default function QuizCard({ quiz, onResult }: Props) {
   return (
     <div className={`quiz${cls}`}>
       <p className="quiz-q">
-        {quiz.question}
-        {quiz.tag && <span className="quiz-tag">{quiz.tag}</span>}
+        <span dangerouslySetInnerHTML={{ __html: quiz.question }} />
+        {quiz.tag && <span className="quiz-tag">{decodeEntities(quiz.tag)}</span>}
       </p>
 
       {(quiz.kind === 'single' || quiz.kind === 'multi' || quiz.kind === 'judge') && (
@@ -192,7 +187,7 @@ export default function QuizCard({ quiz, onResult }: Props) {
             style={{ overflow: 'hidden' }}
           >
             <p className="quiz-a">
-              <b>答案：{quiz.answer}</b>　<span dangerouslySetInnerHTML={{ __html: quiz.explanation }} />
+              <b>答案：{decodeEntities(quiz.answer)}</b>　<span dangerouslySetInnerHTML={{ __html: quiz.explanation }} />
             </p>
             {quiz.note && <p className="quiz-note" dangerouslySetInnerHTML={{ __html: quiz.note }} />}
           </motion.div>

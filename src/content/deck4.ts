@@ -13,9 +13,9 @@ const deck: DeckData = {
     { id: 'sec-overview', text: "1. 本讲内容与问题引入", level: 2 },
     { id: 'sec-decision-tree', text: "2. 决策树模型：以 3 元素插入排序为例", level: 2 },
     { id: 'sec-decision-tree-h1', text: "2.1 决策树的定义", level: 3 },
-    { id: 'sec-decision-tree-h2', text: "2.2 沿决策树走一遍：排序 &lang;9, 4, 6&rang;", level: 3 },
+    { id: 'sec-decision-tree-h2', text: "2.2 沿决策树走一遍：排序 ⟨9, 4, 6⟩", level: 3 },
     { id: 'sec-decision-tree-h3', text: "2.3 归纳的结论：决策树模型", level: 3 },
-    { id: 'sec-lower-bound', text: "3. 比较排序的下界：任何决策树的高度是 &Omega;(n lg n)", level: 2 },
+    { id: 'sec-lower-bound', text: "3. 比较排序的下界：任何决策树的高度是 Ω(n lg n)", level: 2 },
     { id: 'sec-lower-bound-h1', text: "3.1 推论与\"证明思路回顾\"", level: 3 },
     { id: 'sec-lower-bound-h2', text: "3.2 下界验证：伪代码 + C++（逐行注释）", level: 3 },
     { id: 'sec-lower-bound-h3', text: "3.3 引申（课后思考）：螺丝螺母问题", level: 3 },
@@ -23,7 +23,7 @@ const deck: DeckData = {
     { id: 'sec-inversion-h1', text: "4.1 各排序算法一句话回顾", level: 3 },
     { id: 'sec-counting-sort', text: "5. 计数排序（Counting Sort）", level: 2 },
     { id: 'sec-counting-sort-h1', text: "5.1 基本思想与四个步骤", level: 3 },
-    { id: 'sec-counting-sort-h2', text: "5.2 逐帧动画：A = &lang;4, 1, 3, 4, 3&rang;，k = 4", level: 3 },
+    { id: 'sec-counting-sort-h2', text: "5.2 逐帧动画：A = ⟨4, 1, 3, 4, 3⟩，k = 4", level: 3 },
     { id: 'sec-counting-sort-h3', text: "5.3 伪代码 + C++（逐行注释）", level: 3 },
     { id: 'sec-counting-sort-h4', text: "5.4 运行时间分析", level: 3 },
     { id: 'sec-counting-sort-h5', text: "5.5 稳定性", level: 3 },
@@ -169,7 +169,7 @@ const deck: DeckData = {
                 </ol>
                 <p>这条路径一共做了 <b>3 次比较</b>，另外一些路径（如叶子 123）只需 2 次比较 —— 可见同一个算法在不同输入上的比较次数可以不同。</p>
         ` },
-        { type: 'demo', name: 'decision-tree', title: "决策树：&lang;9, 4, 6&rang; 的搜索路径逐帧走出（9 步）" },
+        { type: 'demo', name: 'decision-tree', title: "决策树：⟨9, 4, 6⟩ 的搜索路径逐帧走出（9 步）" },
         { type: 'html', html: `
           <h3 id="sec-decision-tree-h3">2.3 归纳的结论：决策树模型</h3>
           
@@ -190,7 +190,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-lower-bound',
-      heading: "3. 比较排序的下界：任何决策树的高度是 &Omega;(n lg n)",
+      heading: "3. 比较排序的下界：任何决策树的高度是 Ω(n lg n)",
       blocks: [
         { type: 'html', html: `
           <div class="callout key">
@@ -601,7 +601,7 @@ const deck: DeckData = {
           
                 <p>下面这个动画完整走一遍 PPT 的算例，共 20 步，四个循环（初始化 C、逐元素计数、前缀累加、反向填充）一步不落；每一步都显示 <span class="m">A[j]</span>、<span class="m">C[A[j]]</span>、写入 B 的哪一位以及 C 的减 1。</p>
         ` },
-        { type: 'demo', name: 'counting-sort', title: "计数排序执行过程：A = &lang;4, 1, 3, 4, 3&rang;（20 步，覆盖四个循环）" },
+        { type: 'demo', name: 'counting-sort', title: "计数排序执行过程：A = ⟨4, 1, 3, 4, 3⟩（20 步，覆盖四个循环）" },
         { type: 'html', html: `
           <p>把动画逐帧抄成表格，就是 PPT 第 30～44 页的全部中间状态：</p>
           

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { homeData } from '../content';
 import { useToc } from '../lib/toc';
+import { decodeEntities } from '../lib/text';
 import HtmlContent from '../components/HtmlContent';
 import Sections from '../components/Sections';
 import { scrollToId } from '../lib/scroll';
@@ -31,7 +32,7 @@ export default function HomePage() {
 
   return (
     <div className="page">
-      <h1>{homeData.title}</h1>
+      <h1>{decodeEntities(homeData.title)}</h1>
       <div className="lede">
         <HtmlContent html={homeData.lede} />
       </div>

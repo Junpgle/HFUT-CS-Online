@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ComponentType, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { registry } from './demos/registry';
+import { decodeEntities } from '../lib/text';
 import { IconNext, IconPause, IconPlay, IconPrev, IconReset } from './icons';
 
 const PLAY_INTERVAL = 950;
@@ -15,7 +16,8 @@ interface Props {
  * 帧数据（build）与帧渲染器（View），提供 Apple 风格的控制条、
  * 可拖拽 scrubber、键盘控制（←/→/空格/Home/End）。
  */
-export default function DemoPlayer({ name, title }: Props) {
+export default function DemoPlayer({ name, title: rawTitle }: Props) {
+  const title = decodeEntities(rawTitle);
   const def = registry[name];
   const frames = useMemo(() => (def ? (def.build() as never[]) : []), [def]);
   const total = frames.length;

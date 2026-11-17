@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import type { TocEntry } from '../content/types';
 import { useToc } from '../lib/toc';
+import { decodeEntities } from '../lib/text';
 
 /** 各讲所属的 PPT 讲次（deck1/deck2 同属第 1 讲课件） */
 const LECTURE_NO = ['L1', 'L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7'];
@@ -28,7 +29,7 @@ function TocLink({ e, active, onJump }: { e: TocEntry; active: boolean; onJump: 
       }}
     >
       {active && <motion.span layoutId="toc-indicator" className="toc-indicator" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
-      {e.text}
+      {decodeEntities(e.text)}
     </a>
   );
 }
@@ -50,7 +51,7 @@ export function SidebarContent({ decks, currentDeck }: Props) {
           <li key={d.id}>
             <Link to={`/deck/${d.id}`} className={currentDeck === d.id ? 'active' : undefined}>
               <span className="nav-no">{LECTURE_NO[i]}</span>
-              {d.title}
+              {decodeEntities(d.title)}
             </Link>
           </li>
         ))}

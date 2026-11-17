@@ -1,5 +1,6 @@
 import { motion, useScroll, useSpring } from 'motion/react';
 import { useTheme } from '../lib/theme';
+import { decodeEntities } from '../lib/text';
 import { IconMenu, IconMoon, IconSearch, IconSun } from './icons';
 
 interface Props {
@@ -25,7 +26,7 @@ export default function TopBar({ subtitle, onOpenSidebar, onOpenSearch }: Props)
       <span className="topbar-title">
         算法设计与分析<span className="accent"> · 复习手册</span>
       </span>
-      {subtitle && <span className="topbar-sub">{subtitle}</span>}
+      {subtitle && <span className="topbar-sub">{decodeEntities(subtitle)}</span>}
       <span className="topbar-spacer" />
       <button className="topbar-btn" onClick={onOpenSearch} aria-label="搜索手册内容">
         <IconSearch size={15} />
