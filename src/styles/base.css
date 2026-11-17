@@ -702,13 +702,10 @@ button {
 .page a:hover {
   background: color-mix(in srgb, var(--deck-accent) 10%, transparent);
 }
-/* 强调：加粗 + 中性薄灰衬底（不再用主题色，避免在着色容器里叠色污染） */
+/* 强调：纯加粗，不加任何衬底（避免叠色污染） */
 .page strong {
   color: var(--ink);
   font-weight: 650;
-  padding: 0 1px;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--ink) 7%, transparent);
 }
 .page hr {
   border: 0;
