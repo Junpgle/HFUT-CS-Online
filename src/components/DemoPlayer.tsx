@@ -25,6 +25,7 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
   const [step, setStep] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  const [scrubbing, setScrubbing] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
   // 全屏状态跟随（含 Esc 退出）
@@ -128,7 +129,7 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
             <IconPrev size={16} />
           </button>
           <button
-            className={`ctl-btn${playing ? ' is-on' : ''}`}
+            className={`ctl-btn ctl-play${playing ? ' is-on' : ''}`}
             aria-label={playing ? '暂停' : '播放'}
             title={playing ? '暂停 (空格)' : '播放 (空格)'}
             onClick={() => setPlaying((p) => !p)}
@@ -192,11 +193,22 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
       </div>
 
       <div className="demo-scrub">
+        {scrubbing && total > 1 && (
+          <span
+            className="scrub-bubble"
+            style={{ left: `clamp(30px, ${(step / Math.max(1, total - 1)) * 100}%, calc(100% - 30px))` }}
+          >
+            第 {step + 1} 步
+          </span>
+        )}
         <input
           type="range"
           min={0}
           max={Math.max(0, total - 1)}
           value={step}
+          onPointerDown={() => setScrubbing(true)}
+          onPointerUp={() => setScrubbing(false)}
+          onBlur={() => setScrubbing(false)}
           onChange={(e) => go(Number(e.target.value))}
           aria-label="拖动查看任意步骤"
           aria-valuetext={`第 ${step + 1} 步，共 ${total} 步`}

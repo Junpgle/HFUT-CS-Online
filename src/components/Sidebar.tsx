@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import type { TocEntry } from '../content/types';
@@ -141,10 +141,26 @@ export function SidebarContent({ decks, currentDeck }: Props) {
 
 /** 桌面侧栏：只显示本页内容目录（全站导航由顶栏中部承接，不再首尾相连地每页重复） */
 export default function Sidebar(_props: Props) {
-  const { toc } = useToc();
+  const { toc, activeId } = useToc();
+  const navRef = useRef<HTMLElement>(null);
+
+  // active 项滚出视野时，侧栏平滑滚动让它保持可见
+  useEffect(() => {
+    if (!activeId) return;
+    const box = navRef.current;
+    const el = box?.querySelector('a.active') as HTMLElement | null;
+    if (!box || !el) return;
+    // 用视口几何计算（offsetTop 会被 sticky 组头干扰）
+    const delta = el.getBoundingClientRect().top - box.getBoundingClientRect().top;
+    if (delta < 8 || delta + el.offsetHeight > box.clientHeight - 8) {
+      const target = box.scrollTop + delta - box.clientHeight / 2;
+      box.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    }
+  }, [activeId]);
+
   if (toc.length === 0) return null;
   return (
-    <nav className="sidebar material" aria-label="本页内容目录">
+    <nav className="sidebar material" ref={navRef} aria-label="本页内容目录">
       <Toc />
     </nav>
   );

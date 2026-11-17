@@ -99,6 +99,13 @@ button {
 .shell-body.no-sidebar {
   grid-template-columns: minmax(0, 1fr);
 }
+/* 宽屏：版心放宽，侧栏加宽，减少两侧空白 */
+@media (min-width: 1600px) {
+  .shell-body {
+    max-width: 1600px;
+    grid-template-columns: 316px minmax(0, 1fr);
+  }
+}
 
 /* 材质基类：半透明 + 模糊（浅材质，不叠用） */
 .material {
@@ -168,7 +175,7 @@ button {
   text-overflow: ellipsis;
 }
 
-/* 讲次分段切换条：桌面宽屏居中显示，激活项白底胶囊弹簧滑动 */
+/* 讲次分段切换条：桌面居中显示，激活项白底胶囊弹簧滑动 */
 .deck-tabs {
   display: none;
   gap: 2px;
@@ -176,9 +183,53 @@ button {
   background: var(--panel-2);
   border-radius: 999px;
 }
-@media (min-width: 1141px) {
+@media (min-width: 1021px) {
   .deck-tabs {
     display: flex;
+  }
+}
+/* 1021~1140：紧凑档只留数字；1141 起 tabs 显示完整「第N讲」 */
+.tab-full {
+  display: none;
+}
+.tab-short {
+  display: inline;
+}
+@media (min-width: 1141px) {
+  .tab-full {
+    display: inline;
+  }
+  .tab-short {
+    display: none;
+  }
+}
+/* hover 预览：浮出讲次标题小卡（延迟 300ms，防误读） */
+.deck-tab::after {
+  content: attr(data-title);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: 5px 11px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  white-space: nowrap;
+  background: var(--panel-solid);
+  border: 1px solid var(--hairline-soft);
+  box-shadow: var(--shadow-1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease 300ms, transform 160ms ease 300ms;
+}
+.deck-tab:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .deck-tab::after {
+    transition: opacity 160ms ease;
   }
 }
 .deck-tab {
@@ -295,6 +346,16 @@ button {
 }
 .icon-btn:active {
   transform: scale(0.9);
+}
+
+/* 窄桌面：副标题退场（信息在激活 tab 与 h1 中都有），让位讲次 tabs */
+@media (max-width: 1279px) {
+  .topbar-sub {
+    display: none;
+  }
+  .deck-tab {
+    padding: 4px 10px;
+  }
 }
 
 /* 移动端：顶栏显示抽屉触发按钮 */
@@ -432,6 +493,21 @@ button {
 .toc-sub {
   padding-left: 8px;
 }
+/* 聚焦模式：有当前组时，其余组降透明度 */
+.sidebar .toc > li {
+  transition: opacity 240ms var(--press-ease);
+}
+.sidebar .toc:has(> li.has-active) > li:not(.has-active) {
+  opacity: 0.55;
+}
+/* 当前组头 sticky：长组滚动时大节标题保持可见 */
+.sidebar .toc > li.has-active > .toc-row {
+  position: sticky;
+  top: 2px;
+  z-index: 1;
+  background: color-mix(in srgb, var(--panel-solid) 94%, transparent);
+  border-radius: 8px;
+}
 
 /* 移动端抽屉 */
 @media (max-width: 1020px) {
@@ -502,6 +578,15 @@ button {
 .btn:disabled:hover {
   background: var(--panel-2);
   color: var(--ink);
+}
+/* quiz 里的次级动作（直接看答案 / 重做）：文字化，突出主操作 */
+.quiz-actions .btn:not(.primary) {
+  background: transparent;
+  color: var(--ink-2);
+}
+.quiz-actions .btn:not(.primary):hover {
+  background: color-mix(in srgb, var(--deck-accent) 8%, transparent);
+  color: var(--deck-accent);
 }
 .btn.primary {
   background: var(--deck-accent);
@@ -891,6 +976,7 @@ pre.code .cl {
 }
 pre.code .cl-code {
   flex: none;
+  min-width: 58%; /* 注释列从同一竖线起步，形成视觉引导 */
 }
 pre.code .cl-code:empty::before {
   content: '\00a0'; /* 空行保住行高 */
@@ -1015,7 +1101,7 @@ pre.code .cl-code:empty + .cl-com {
   box-shadow: var(--shadow-1);
   transform: translateY(-1px);
 }
-.fig.has-lightbox:hover::after {
+.fig.has-lightbox::after {
   content: '点击放大';
   position: absolute;
   top: 10px;
@@ -1026,6 +1112,11 @@ pre.code .cl-code:empty + .cl-com {
   border: 1px solid var(--hairline-soft);
   border-radius: 999px;
   padding: 2px 9px;
+  opacity: 0.55;
+  transition: opacity 160ms;
+}
+.fig.has-lightbox:hover::after {
+  opacity: 1;
 }
 .fig .fig-cap {
   margin: 10px 0 2px;
@@ -1052,6 +1143,24 @@ pre.code .cl-code:empty + .cl-com {
   background: rgba(0, 0, 0, 0.48);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+  animation: lb-scrim 200ms ease;
+}
+@keyframes lb-scrim {
+  from { opacity: 0; }
+}
+@keyframes lb-panel {
+  from { opacity: 0; transform: scale(0.94); }
+}
+.fig-lightbox-panel,
+.code-lightbox-panel {
+  animation: lb-panel 220ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fig-lightbox,
+  .fig-lightbox-panel,
+  .code-lightbox-panel {
+    animation: none;
+  }
 }
 .fig-lightbox-panel {
   background: var(--panel-solid);
@@ -1275,6 +1384,36 @@ pre.code .cl-code:empty + .cl-com {
 .ctl-btn.is-on {
   background: var(--deck-accent);
   color: #fff;
+}
+/* 播放/暂停：控制条的主操作，讲次色实心 */
+.ctl-btn.ctl-play {
+  width: 38px;
+  border-radius: 999px;
+  background: var(--deck-accent);
+  color: #fff;
+}
+.ctl-btn.ctl-play:hover:not(:disabled) {
+  background: var(--deck-accent);
+  color: #fff;
+  filter: brightness(1.1);
+}
+.demo-scrub {
+  position: relative;
+}
+/* 拖动 scrubber 时浮出的步骤气泡 */
+.scrub-bubble {
+  position: absolute;
+  bottom: 16px;
+  transform: translateX(-50%);
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--panel-solid);
+  background: var(--ink);
+  pointer-events: none;
+  white-space: nowrap;
 }
 .ctl-btn.is-on:hover {
   color: #fff;
@@ -1877,4 +2016,38 @@ pre.code .cl-code:empty + .cl-com {
     color: inherit;
     text-decoration: none;
   }
+}
+
+/* 滚动跨节时右上角短暂浮现当前大节名（wayfinding） */
+.sec-flash {
+  position: fixed;
+  top: calc(var(--topbar-h) + 14px);
+  right: 24px;
+  z-index: 45;
+  max-width: 46ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--deck-accent);
+  background: var(--panel-solid);
+  border: 1px solid color-mix(in srgb, var(--deck-accent) 30%, transparent);
+  box-shadow: var(--shadow-1);
+  pointer-events: none;
+  opacity: 0;
+}
+.sec-flash.show {
+  animation: sec-flash 2s var(--press-ease) forwards;
+}
+@keyframes sec-flash {
+  0% { opacity: 0; transform: translateY(-6px); }
+  12% { opacity: 1; transform: none; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sec-flash { display: none; }
 }

@@ -125,6 +125,11 @@ function enhance(root: HTMLElement) {
       const rows = code.querySelectorAll('.cl').length || (code.textContent ?? '').split('\n').length;
       if (rows > CODE_COLLAPSE_LINES) {
         wrap.classList.add('clamped');
+        // 折叠高度取整行：max-height 对齐行边界，避免把一行拦腰截断
+        const cs = getComputedStyle(pre);
+        const lh = parseFloat(cs.lineHeight) || 20;
+        const pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+        pre.style.maxHeight = `${Math.max(4, Math.floor(172 / lh)) * lh + pad}px`;
         const expand = document.createElement('button');
         expand.type = 'button';
         expand.className = 'code-expand';

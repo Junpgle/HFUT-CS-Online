@@ -136,6 +136,17 @@ export default function QuizCard({ quiz, onResult }: Props) {
                       <IconCheck size={16} />
                     </motion.span>
                   )}
+                  {st === 'selected' && (
+                    <motion.span
+                      className="opt-mark"
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 520, damping: 24 }}
+                      style={{ marginLeft: 'auto', color: 'var(--deck-accent)', display: 'inline-flex' }}
+                    >
+                      <IconCheck size={15} />
+                    </motion.span>
+                  )}
                   {st === 'wrong' && (
                     <motion.span
                       className="opt-mark"

@@ -17,12 +17,13 @@ interface Props {
 /** 顶栏中部的全站导航：总目录 + 第1~8讲，一项对应一页，线性排列无回环 */
 function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
   const reduced = useReducedMotion();
-  const item = (to: string, label: string, active: boolean, deck?: string) => (
+  const item = (to: string, full: string, short: string, active: boolean, deck: string | null, tip: string) => (
     <Link
       key={to}
       to={to}
       className={`deck-tab${active ? ' active' : ''}`}
-      data-deck={deck}
+      data-deck={deck ?? undefined}
+      data-title={tip}
       aria-current={active ? 'page' : undefined}
     >
       {active && (
@@ -32,14 +33,17 @@ function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
           transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 480, damping: 34 }}
         />
       )}
-      <span className="deck-tab-no">{label}</span>
+      <span className="deck-tab-no">
+        <span className="tab-full">{full}</span>
+        <span className="tab-short">{short}</span>
+      </span>
     </Link>
   );
   return (
     <nav className="deck-tabs" aria-label="全站导航">
-      {item('/', '总目录', currentDeck === null)}
+      {item('/', '总目录', '目录', currentDeck === null, null, '首页 · 考点速查表')}
       {decks.map((d: DeckData) =>
-        item(`/deck/${d.id}`, d.no, d.id === currentDeck, d.id),
+        item(`/deck/${d.id}`, d.no, d.no.replace('第', '').replace('讲', ''), d.id === currentDeck, d.id, decodeEntities(d.title)),
       )}
     </nav>
   );
