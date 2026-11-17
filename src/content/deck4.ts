@@ -62,13 +62,13 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>算法名称</th><th>最佳时间复杂度</th><th>平均时间复杂度</th><th>最差时间复杂度</th></tr></thead>
                   <tbody>
-                    <tr><td>冒泡排序</td><td class="num">O(n)</td><td class="num">O(n<sup>2</sup>)</td><td class="num">O(n<sup>2</sup>)</td></tr>
-                    <tr><td>选择排序</td><td class="num">O(n<sup>2</sup>)</td><td class="num">O(n<sup>2</sup>)</td><td class="num">O(n<sup>2</sup>)</td></tr>
-                    <tr><td>插入排序</td><td class="num">O(n)</td><td class="num">O(n<sup>2</sup>)</td><td class="num">O(n<sup>2</sup>)</td></tr>
-                    <tr><td>归并排序</td><td class="num">O(n log n)</td><td class="num">O(n log n)</td><td class="num">O(n log n)</td></tr>
-                    <tr><td>快速排序</td><td class="num">O(n log n)</td><td class="num">O(n log n)</td><td class="num">O(n<sup>2</sup>)</td></tr>
-                    <tr><td>堆排序</td><td class="num">O(n log n)</td><td class="num">O(n log n)</td><td class="num">O(n log n)</td></tr>
-                    <tr><td>希尔排序</td><td class="num">O(n log n)</td><td class="num">O(n log<sup>2</sup> n)</td><td class="num">O(n<sup>2</sup>)</td></tr>
+                    <tr><td>冒泡排序</td><td class="fnum">O(n)</td><td class="fnum">O(n<sup>2</sup>)</td><td class="fnum">O(n<sup>2</sup>)</td></tr>
+                    <tr><td>选择排序</td><td class="fnum">O(n<sup>2</sup>)</td><td class="fnum">O(n<sup>2</sup>)</td><td class="fnum">O(n<sup>2</sup>)</td></tr>
+                    <tr><td>插入排序</td><td class="fnum">O(n)</td><td class="fnum">O(n<sup>2</sup>)</td><td class="fnum">O(n<sup>2</sup>)</td></tr>
+                    <tr><td>归并排序</td><td class="fnum">O(n log n)</td><td class="fnum">O(n log n)</td><td class="fnum">O(n log n)</td></tr>
+                    <tr><td>快速排序</td><td class="fnum">O(n log n)</td><td class="fnum">O(n log n)</td><td class="fnum">O(n<sup>2</sup>)</td></tr>
+                    <tr><td>堆排序</td><td class="fnum">O(n log n)</td><td class="fnum">O(n log n)</td><td class="fnum">O(n log n)</td></tr>
+                    <tr><td>希尔排序</td><td class="fnum">O(n log n)</td><td class="fnum">O(n log<sup>2</sup> n)</td><td class="fnum">O(n<sup>2</sup>)</td></tr>
                   </tbody>
                 </table>
           
@@ -608,20 +608,20 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>阶段</th><th>C 的状态</th><th>B 的状态</th><th>说明</th></tr></thead>
                   <tbody>
-                    <tr><td>初始</td><td class="num">— — — —</td><td class="num">_ _ _ _ _</td><td>A = ⟨4, 1, 3, 4, 3⟩，C 尚未初始化</td></tr>
-                    <tr><td>循环1 之后</td><td class="num">0 0 0 0</td><td class="num">_ _ _ _ _</td><td>k = 4 个计数器清零</td></tr>
-                    <tr><td>循环2：j = 1</td><td class="num">0 0 0 1</td><td class="num">_ _ _ _ _</td><td>A[1] = 4 &rArr; C[4] = 1</td></tr>
-                    <tr><td>循环2：j = 2</td><td class="num">1 0 0 1</td><td class="num">_ _ _ _ _</td><td>A[2] = 1 &rArr; C[1] = 1</td></tr>
-                    <tr><td>循环2：j = 3</td><td class="num">1 0 1 1</td><td class="num">_ _ _ _ _</td><td>A[3] = 3 &rArr; C[3] = 1</td></tr>
-                    <tr><td>循环2：j = 4</td><td class="num">1 0 1 2</td><td class="num">_ _ _ _ _</td><td>A[4] = 4 &rArr; C[4] = 2</td></tr>
-                    <tr><td>循环2 之后</td><td class="num">1 0 2 2</td><td class="num">_ _ _ _ _</td><td>A[5] = 3 &rArr; C[3] = 2；此时 C[i] = |{key = i}|</td></tr>
-                    <tr><td>循环3：i = 2</td><td class="num">1 1 2 2</td><td class="num">_ _ _ _ _</td><td>C[2] ← C[2] + C[1] = 0 + 1 = 1</td></tr>
-                    <tr><td>循环3：i = 3</td><td class="num">1 1 3 2</td><td class="num">_ _ _ _ _</td><td>C[3] ← C[3] + C[2] = 2 + 1 = 3</td></tr>
-                    <tr><td>循环3 之后</td><td class="num">1 1 3 5</td><td class="num">_ _ _ _ _</td><td>C[4] ← C[4] + C[3] = 2 + 3 = 5；此时 C[i] = |{key ≤ i}|</td></tr>
-                    <tr><td>循环4：j = 5</td><td class="num">1 1 2 5</td><td class="num">_ _ 3 _ _</td><td>A[5] = 3，C[3] = 3 &rArr; B[3] ← 3，C[3] ← 2</td></tr>
-                    <tr><td>循环4：j = 4</td><td class="num">1 1 2 4</td><td class="num">_ _ 3 _ 4</td><td>A[4] = 4，C[4] = 5 &rArr; B[5] ← 4，C[4] ← 4</td></tr>
-                    <tr><td>循环4：j = 3</td><td class="num">1 1 1 4</td><td class="num">_ 3 3 _ 4</td><td>A[3] = 3，C[3] = 2 &rArr; B[2] ← 3，C[3] ← 1</td></tr>
-                    <tr><td>循环4：j = 2</td><td class="num">0 1 1 4</td><td class="num">1 3 3 _ 4</td><td>A[2] = 1，C[1] = 1 &rArr; B[1] ← 1，C[1] ← 0</td></tr>
+                    <tr><td>初始</td><td class="num">— — — —</td><td class="fnum">_ _ _ _ _</td><td>A = ⟨4, 1, 3, 4, 3⟩，C 尚未初始化</td></tr>
+                    <tr><td>循环1 之后</td><td class="num">0 0 0 0</td><td class="fnum">_ _ _ _ _</td><td>k = 4 个计数器清零</td></tr>
+                    <tr><td>循环2：j = 1</td><td class="num">0 0 0 1</td><td class="fnum">_ _ _ _ _</td><td>A[1] = 4 &rArr; C[4] = 1</td></tr>
+                    <tr><td>循环2：j = 2</td><td class="num">1 0 0 1</td><td class="fnum">_ _ _ _ _</td><td>A[2] = 1 &rArr; C[1] = 1</td></tr>
+                    <tr><td>循环2：j = 3</td><td class="num">1 0 1 1</td><td class="fnum">_ _ _ _ _</td><td>A[3] = 3 &rArr; C[3] = 1</td></tr>
+                    <tr><td>循环2：j = 4</td><td class="num">1 0 1 2</td><td class="fnum">_ _ _ _ _</td><td>A[4] = 4 &rArr; C[4] = 2</td></tr>
+                    <tr><td>循环2 之后</td><td class="num">1 0 2 2</td><td class="fnum">_ _ _ _ _</td><td>A[5] = 3 &rArr; C[3] = 2；此时 C[i] = |{key = i}|</td></tr>
+                    <tr><td>循环3：i = 2</td><td class="num">1 1 2 2</td><td class="fnum">_ _ _ _ _</td><td>C[2] ← C[2] + C[1] = 0 + 1 = 1</td></tr>
+                    <tr><td>循环3：i = 3</td><td class="num">1 1 3 2</td><td class="fnum">_ _ _ _ _</td><td>C[3] ← C[3] + C[2] = 2 + 1 = 3</td></tr>
+                    <tr><td>循环3 之后</td><td class="num">1 1 3 5</td><td class="fnum">_ _ _ _ _</td><td>C[4] ← C[4] + C[3] = 2 + 3 = 5；此时 C[i] = |{key ≤ i}|</td></tr>
+                    <tr><td>循环4：j = 5</td><td class="num">1 1 2 5</td><td class="fnum">_ _ 3 _ _</td><td>A[5] = 3，C[3] = 3 &rArr; B[3] ← 3，C[3] ← 2</td></tr>
+                    <tr><td>循环4：j = 4</td><td class="num">1 1 2 4</td><td class="fnum">_ _ 3 _ 4</td><td>A[4] = 4，C[4] = 5 &rArr; B[5] ← 4，C[4] ← 4</td></tr>
+                    <tr><td>循环4：j = 3</td><td class="num">1 1 1 4</td><td class="fnum">_ 3 3 _ 4</td><td>A[3] = 3，C[3] = 2 &rArr; B[2] ← 3，C[3] ← 1</td></tr>
+                    <tr><td>循环4：j = 2</td><td class="num">0 1 1 4</td><td class="fnum">1 3 3 _ 4</td><td>A[2] = 1，C[1] = 1 &rArr; B[1] ← 1，C[1] ← 0</td></tr>
                     <tr><td>循环4：j = 1</td><td class="num">0 1 1 3</td><td class="num">1 3 3 4 4</td><td>A[1] = 4，C[4] = 4 &rArr; B[4] ← 4，C[4] ← 3</td></tr>
                   </tbody>
                 </table>
@@ -681,11 +681,11 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>循环</th><th>代码</th><th>执行次数</th><th>该段代价</th></tr></thead>
                   <tbody>
-                    <tr><td>循环1</td><td class="num">for i ← 1 to k do C[i] ← 0</td><td class="num">k</td><td class="num">&Theta;(k)</td></tr>
-                    <tr><td>循环2</td><td class="num">for j ← 1 to n do C[A[j]] ← C[A[j]] + 1</td><td class="num">n</td><td class="num">&Theta;(n)</td></tr>
-                    <tr><td>循环3</td><td class="num">for i ← 2 to k do C[i] ← C[i] + C[i−1]</td><td class="num">k &minus; 1</td><td class="num">&Theta;(k)</td></tr>
-                    <tr><td>循环4</td><td class="num">for j ← n downto 1 do B[C[A[j]]] ← A[j]; C[A[j]] ← C[A[j]] − 1</td><td class="num">n</td><td class="num">&Theta;(n)</td></tr>
-                    <tr><td colspan="3"><b>总计</b></td><td class="num"><b>&Theta;(n + k)</b></td></tr>
+                    <tr><td>循环1</td><td>for i ← 1 to k do C[i] ← 0</td><td class="fnum">k</td><td class="fnum">&Theta;(k)</td></tr>
+                    <tr><td>循环2</td><td>for j ← 1 to n do C[A[j]] ← C[A[j]] + 1</td><td class="fnum">n</td><td class="fnum">&Theta;(n)</td></tr>
+                    <tr><td>循环3</td><td>for i ← 2 to k do C[i] ← C[i] + C[i−1]</td><td class="fnum">k &minus; 1</td><td class="fnum">&Theta;(k)</td></tr>
+                    <tr><td>循环4</td><td>for j ← n downto 1 do B[C[A[j]]] ← A[j]; C[A[j]] ← C[A[j]] − 1</td><td class="fnum">n</td><td class="fnum">&Theta;(n)</td></tr>
+                    <tr><td colspan="3"><b>总计</b></td><td class="fnum"><b>&Theta;(n + k)</b></td></tr>
                   </tbody>
                 </table>
           
@@ -924,9 +924,9 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>算法</th><th>是否比较元素</th><th>时间</th><th>空间</th><th>稳定</th></tr></thead>
                   <tbody>
-                    <tr><td>冒泡 / 插入 / 选择 / 归并 / 快排 / 堆排 / 希尔</td><td>是（比较排序）</td><td class="num">&Omega;(n lg n) 是下界</td><td class="num">多为 O(1)～O(n)</td><td>归并、插入、冒泡稳定</td></tr>
-                    <tr><td><b>计数排序</b></td><td><b>否</b></td><td class="num">&Theta;(n + k)</td><td class="num">O(k)</td><td><b>稳定</b></td></tr>
-                    <tr><td><b>基数排序</b></td><td><b>否</b></td><td class="num">&Theta;(d(n + r))</td><td class="num">O(n + r)</td><td><b>稳定</b>（每趟子过程必须稳定）</td></tr>
+                    <tr><td>冒泡 / 插入 / 选择 / 归并 / 快排 / 堆排 / 希尔</td><td>是（比较排序）</td><td class="fnum">&Omega;(n lg n) 是下界</td><td class="fnum">多为 O(1)～O(n)</td><td>归并、插入、冒泡稳定</td></tr>
+                    <tr><td><b>计数排序</b></td><td><b>否</b></td><td class="fnum">&Theta;(n + k)</td><td class="fnum">O(k)</td><td><b>稳定</b></td></tr>
+                    <tr><td><b>基数排序</b></td><td><b>否</b></td><td class="fnum">&Theta;(d(n + r))</td><td class="fnum">O(n + r)</td><td><b>稳定</b>（每趟子过程必须稳定）</td></tr>
                   </tbody>
                 </table>
           

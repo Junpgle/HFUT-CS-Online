@@ -394,11 +394,11 @@ const deck: DeckData = {
                     <tr><th>解法</th><th>思路</th><th>复杂度</th><th>点评</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>解法 1：暴力法</td><td>对每个元素统计比它小的个数</td><td class="num">O(n²)</td><td>不需要排序，但代价高</td></tr>
-                    <tr><td>解法 2：归并排序</td><td>完全排序后取第 k 个</td><td class="num">O(n log n)</td><td>稳定，但做了大量无用功</td></tr>
-                    <tr><td>解法 3：快速排序</td><td>完全排序后取第 k 个</td><td class="num">平均 O(n log n)</td><td>同样只有「部分排序」需求</td></tr>
-                    <tr><td>解法 4：期望线性时间选择</td><td>快速选择 QuickSelect，只递归一侧</td><td class="num">平均 O(n)</td><td>本讲重点</td></tr>
-                    <tr><td>解法 5：最坏线性时间选择</td><td>中位数的中位数（BFPRT）</td><td class="num">最坏 O(n)</td><td>保证划分均衡</td></tr>
+                    <tr><td>解法 1：暴力法</td><td>对每个元素统计比它小的个数</td><td class="fnum">O(n²)</td><td>不需要排序，但代价高</td></tr>
+                    <tr><td>解法 2：归并排序</td><td>完全排序后取第 k 个</td><td class="fnum">O(n log n)</td><td>稳定，但做了大量无用功</td></tr>
+                    <tr><td>解法 3：快速排序</td><td>完全排序后取第 k 个</td><td class="fnum">平均 O(n log n)</td><td>同样只有「部分排序」需求</td></tr>
+                    <tr><td>解法 4：期望线性时间选择</td><td>快速选择 QuickSelect，只递归一侧</td><td class="fnum">平均 O(n)</td><td>本讲重点</td></tr>
+                    <tr><td>解法 5：最坏线性时间选择</td><td>中位数的中位数（BFPRT）</td><td class="fnum">最坏 O(n)</td><td>保证划分均衡</td></tr>
                   </tbody>
                 </table>
           
@@ -627,20 +627,20 @@ const deck: DeckData = {
                     <tr>
                       <td>最坏情况</td>
                       <td>每次划分极不平衡（如已排序且总取首元素为基准），一侧为空</td>
-                      <td class="num">T(n) = T(n−1) + O(n)</td>
-                      <td class="num">Θ(n²)</td>
+                      <td class="fnum">T(n) = T(n−1) + O(n)</td>
+                      <td class="fnum">Θ(n²)</td>
                     </tr>
                     <tr>
                       <td>最好情况</td>
                       <td>每次划分恰好平分</td>
-                      <td class="num">T(n) = 2T(n/2) + O(n)</td>
-                      <td class="num">Θ(n log n)</td>
+                      <td class="fnum">T(n) = 2T(n/2) + O(n)</td>
+                      <td class="fnum">Θ(n log n)</td>
                     </tr>
                     <tr>
                       <td>平均情况</td>
                       <td>随机基准，期望划分较均衡</td>
-                      <td class="num">T(n) = O(n log n)</td>
-                      <td class="num">Θ(n log n)</td>
+                      <td class="fnum">T(n) = O(n log n)</td>
+                      <td class="fnum">Θ(n log n)</td>
                     </tr>
                   </tbody>
                 </table>

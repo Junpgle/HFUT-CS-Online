@@ -69,9 +69,9 @@ const deck: DeckData = {
                   <thead><tr><th>n</th><th>分别独立 2n &minus; 2</th><th>成对处理 3&lfloor;n/2&rfloor;</th><th>省下的比较次数</th></tr></thead>
                   <tbody>
                     <tr><td class="num">8</td><td class="num">14</td><td class="num">12</td><td class="num">2</td></tr>
-                    <tr><td class="num">9</td><td class="num">16</td><td class="num">12（+2 处理余下的 1 个 = 14）</td><td class="num">2</td></tr>
+                    <tr><td class="num">9</td><td class="num">16</td><td class="fnum">12（+2 处理余下的 1 个 = 14）</td><td class="num">2</td></tr>
                     <tr><td class="num">100</td><td class="num">198</td><td class="num">150</td><td class="num">48</td></tr>
-                    <tr><td class="num">n（偶数）</td><td class="num">2n &minus; 2</td><td class="num">3n/2</td><td class="num">n/2 &minus; 2</td></tr>
+                    <tr><td class="fnum">n（偶数）</td><td class="fnum">2n &minus; 2</td><td class="fnum">3n/2</td><td class="fnum">n/2 &minus; 2</td></tr>
                   </tbody>
                 </table>
           
@@ -93,11 +93,11 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>层次</th><th>做法</th><th>时间复杂度</th><th>瓶颈在哪里</th></tr></thead>
                   <tbody>
-                    <tr><td>解法 1</td><td>暴力法：做 k 遍"找最小值"，每遍 O(n)</td><td class="num">O(kn) &le; O(n<sup>2</sup>)</td><td>k 接近 n 时退化为 <span class="m">O(n<sup>2</sup>)</span></td></tr>
-                    <tr><td>解法 2</td><td>归并排序后取 A[k]</td><td class="num">O(n lg n)</td><td>把 n 个元素的<b>全部次序</b>都算了出来，而只要第 k 小</td></tr>
-                    <tr><td>解法 3</td><td>快速排序后取 A[k]</td><td class="num">平均 O(n lg n)，最坏 O(n<sup>2</sup>)</td><td>划分两边都递归，浪费了"只要一边"的信息</td></tr>
-                    <tr><td>解法 4</td><td><b>RANDOMIZED-SELECT</b>（期望线性时间选择）</td><td class="num">期望 &Theta;(n)，最坏 &Theta;(n<sup>2</sup>)</td><td>随机主元可能每次都极不走运</td></tr>
-                    <tr><td>解法 5</td><td><b>BFPRT</b> / 中位数之中位数（最坏线性时间选择）</td><td class="num">&Theta;(n)</td><td>常数较大，工程上不如解法 4 常用</td></tr>
+                    <tr><td>解法 1</td><td>暴力法：做 k 遍"找最小值"，每遍 O(n)</td><td class="fnum">O(kn) &le; O(n<sup>2</sup>)</td><td>k 接近 n 时退化为 <span class="m">O(n<sup>2</sup>)</span></td></tr>
+                    <tr><td>解法 2</td><td>归并排序后取 A[k]</td><td class="fnum">O(n lg n)</td><td>把 n 个元素的<b>全部次序</b>都算了出来，而只要第 k 小</td></tr>
+                    <tr><td>解法 3</td><td>快速排序后取 A[k]</td><td class="fnum">平均 O(n lg n)，最坏 O(n<sup>2</sup>)</td><td>划分两边都递归，浪费了"只要一边"的信息</td></tr>
+                    <tr><td>解法 4</td><td><b>RANDOMIZED-SELECT</b>（期望线性时间选择）</td><td class="fnum">期望 &Theta;(n)，最坏 &Theta;(n<sup>2</sup>)</td><td>随机主元可能每次都极不走运</td></tr>
+                    <tr><td>解法 5</td><td><b>BFPRT</b> / 中位数之中位数（最坏线性时间选择）</td><td class="fnum">&Theta;(n)</td><td>常数较大，工程上不如解法 4 常用</td></tr>
                   </tbody>
                 </table>
           
@@ -272,7 +272,7 @@ const deck: DeckData = {
                     <tr><td class="num">6</td><td class="num">3</td><td>是</td><td class="num">3</td><td class="num">6 5 3 10 8 13 2 11</td></tr>
                     <tr><td class="num">7</td><td class="num">2</td><td>是</td><td class="num">4</td><td class="num">6 5 3 2 8 13 10 11</td></tr>
                     <tr><td class="num">8</td><td class="num">11</td><td>否</td><td class="num">4</td><td class="num">6 5 3 2 8 13 10 11</td></tr>
-                    <tr><td>收尾</td><td>—</td><td>交换 A[1] ↔ A[4]</td><td class="num">4</td><td class="num">2 5 3 6 8 13 10 11，q = 4</td></tr>
+                    <tr><td>收尾</td><td>—</td><td>交换 A[1] ↔ A[4]</td><td class="num">4</td><td class="fnum">2 5 3 6 8 13 10 11，q = 4</td></tr>
                   </tbody>
                 </table>
           
@@ -513,9 +513,9 @@ const deck: DeckData = {
           <table class="tbl">
                   <thead><tr><th>层</th><th>区间</th><th>随机主元</th><th>划分后 q</th><th>k = q−p+1</th><th>判定</th><th>丢弃</th></tr></thead>
                   <tbody>
-                    <tr><td class="num">1</td><td class="num">p=1, r=8</td><td class="num">8（原 A[5]）</td><td class="num">5</td><td class="num">5</td><td>i=3 &lt; k=5 &rArr; 左</td><td class="num">A[5..8]</td></tr>
-                    <tr><td class="num">2</td><td class="num">p=1, r=4</td><td class="num">6（原 A[3]）</td><td class="num">4</td><td class="num">4</td><td>i=3 &lt; k=4 &rArr; 左</td><td class="num">A[4..8]</td></tr>
-                    <tr><td class="num">3</td><td class="num">p=1, r=3</td><td class="num">5（原 A[2]）</td><td class="num">3</td><td class="num">3</td><td>i=3 = k &rArr; 返回 5</td><td>—</td></tr>
+                    <tr><td class="num">1</td><td class="fnum">p=1, r=8</td><td class="fnum">8（原 A[5]）</td><td class="num">5</td><td class="num">5</td><td>i=3 &lt; k=5 &rArr; 左</td><td class="fnum">A[5..8]</td></tr>
+                    <tr><td class="num">2</td><td class="fnum">p=1, r=4</td><td class="fnum">6（原 A[3]）</td><td class="num">4</td><td class="num">4</td><td>i=3 &lt; k=4 &rArr; 左</td><td class="fnum">A[4..8]</td></tr>
+                    <tr><td class="num">3</td><td class="fnum">p=1, r=3</td><td class="fnum">5（原 A[2]）</td><td class="num">3</td><td class="num">3</td><td>i=3 = k &rArr; 返回 5</td><td>—</td></tr>
                   </tbody>
                 </table>
           
@@ -550,13 +550,13 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>主元位置 k（n = 7）</th><th>左边 k&minus;1</th><th>右边 n&minus;k</th><th>m = max(k&minus;1, n&minus;k)</th><th>对应 T(m)</th><th>配对情况</th></tr></thead>
                   <tbody>
-                    <tr><td class="num">1</td><td class="num">0</td><td class="num">6</td><td class="num">6</td><td class="num">T(6)</td><td>与 k = 7 配对</td></tr>
-                    <tr><td class="num">2</td><td class="num">1</td><td class="num">5</td><td class="num">5</td><td class="num">T(5)</td><td>与 k = 6 配对</td></tr>
-                    <tr><td class="num">3</td><td class="num">2</td><td class="num">4</td><td class="num">4</td><td class="num">T(4)</td><td>与 k = 5 配对</td></tr>
-                    <tr><td class="num">4</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">T(3)</td><td>正中间，无配对，仅出现 1 次</td></tr>
-                    <tr><td class="num">5</td><td class="num">4</td><td class="num">2</td><td class="num">4</td><td class="num">T(4)</td><td>与 k = 3 配对</td></tr>
-                    <tr><td class="num">6</td><td class="num">5</td><td class="num">1</td><td class="num">5</td><td class="num">T(5)</td><td>与 k = 2 配对</td></tr>
-                    <tr><td class="num">7</td><td class="num">6</td><td class="num">0</td><td class="num">6</td><td class="num">T(6)</td><td>与 k = 1 配对</td></tr>
+                    <tr><td class="num">1</td><td class="num">0</td><td class="num">6</td><td class="num">6</td><td class="fnum">T(6)</td><td>与 k = 7 配对</td></tr>
+                    <tr><td class="num">2</td><td class="num">1</td><td class="num">5</td><td class="num">5</td><td class="fnum">T(5)</td><td>与 k = 6 配对</td></tr>
+                    <tr><td class="num">3</td><td class="num">2</td><td class="num">4</td><td class="num">4</td><td class="fnum">T(4)</td><td>与 k = 5 配对</td></tr>
+                    <tr><td class="num">4</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="fnum">T(3)</td><td>正中间，无配对，仅出现 1 次</td></tr>
+                    <tr><td class="num">5</td><td class="num">4</td><td class="num">2</td><td class="num">4</td><td class="fnum">T(4)</td><td>与 k = 3 配对</td></tr>
+                    <tr><td class="num">6</td><td class="num">5</td><td class="num">1</td><td class="num">5</td><td class="fnum">T(5)</td><td>与 k = 2 配对</td></tr>
+                    <tr><td class="num">7</td><td class="num">6</td><td class="num">0</td><td class="num">6</td><td class="fnum">T(6)</td><td>与 k = 1 配对</td></tr>
                   </tbody>
                 </table>
           
@@ -945,11 +945,11 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>算法</th><th>最好</th><th>平均 / 期望</th><th>最坏</th><th>额外空间</th><th>一句话</th></tr></thead>
                   <tbody>
-                    <tr><td>暴力法（做 k 遍找最小）</td><td class="num">O(n)</td><td class="num">O(kn)</td><td class="num">O(n<sup>2</sup>)</td><td class="num">O(1)</td><td>k 很小时够用，k 接近 n 就退化</td></tr>
-                    <tr><td>归并排序后取 A[k]</td><td class="num">O(n lg n)</td><td class="num">O(n lg n)</td><td class="num">O(n lg n)</td><td class="num">O(n)</td><td>把全部次序都算了出来，浪费</td></tr>
-                    <tr><td>快速排序后取 A[k]</td><td class="num">O(n lg n)</td><td class="num">O(n lg n)</td><td class="num">O(n<sup>2</sup>)</td><td class="num">O(lg n)</td><td>两边都递归，没有利用"只要一边"</td></tr>
-                    <tr><td><b>RANDOMIZED-SELECT</b></td><td class="num">&Theta;(n)</td><td class="num">期望 &Theta;(n)</td><td class="num">&Theta;(n<sup>2</sup>)</td><td class="num">O(1)（尾递归）</td><td><b>只递归一边</b>，期望线性</td></tr>
-                    <tr><td><b>BFPRT（中位数之中位数）</b></td><td class="num">&Theta;(n)</td><td class="num">&Theta;(n)</td><td class="num">&Theta;(n)</td><td class="num">O(lg n)</td><td>用 <span class="m">9n/10</span> 的几何级数<b>保证</b>线性</td></tr>
+                    <tr><td>暴力法（做 k 遍找最小）</td><td class="fnum">O(n)</td><td class="fnum">O(kn)</td><td class="fnum">O(n<sup>2</sup>)</td><td class="fnum">O(1)</td><td>k 很小时够用，k 接近 n 就退化</td></tr>
+                    <tr><td>归并排序后取 A[k]</td><td class="fnum">O(n lg n)</td><td class="fnum">O(n lg n)</td><td class="fnum">O(n lg n)</td><td class="fnum">O(n)</td><td>把全部次序都算了出来，浪费</td></tr>
+                    <tr><td>快速排序后取 A[k]</td><td class="fnum">O(n lg n)</td><td class="fnum">O(n lg n)</td><td class="fnum">O(n<sup>2</sup>)</td><td class="fnum">O(lg n)</td><td>两边都递归，没有利用"只要一边"</td></tr>
+                    <tr><td><b>RANDOMIZED-SELECT</b></td><td class="fnum">&Theta;(n)</td><td class="fnum">期望 &Theta;(n)</td><td class="fnum">&Theta;(n<sup>2</sup>)</td><td class="fnum">O(1)（尾递归）</td><td><b>只递归一边</b>，期望线性</td></tr>
+                    <tr><td><b>BFPRT（中位数之中位数）</b></td><td class="fnum">&Theta;(n)</td><td class="fnum">&Theta;(n)</td><td class="fnum">&Theta;(n)</td><td class="fnum">O(lg n)</td><td>用 <span class="m">9n/10</span> 的几何级数<b>保证</b>线性</td></tr>
                   </tbody>
                 </table>
           

@@ -971,6 +971,13 @@ pre.code .cl-code:empty + .cl-com {
   font-family: var(--font-math);
   font-variant-numeric: tabular-nums;
 }
+/* 公式列（含 Θ / T(n) 等符号）：数学字体 + 居中 */
+.tbl td.fnum,
+.tbl th.fnum {
+  text-align: center;
+  font-family: var(--font-math);
+  font-variant-numeric: tabular-nums;
+}
 /* 全为数字/符号的短列：整列居中更整齐 */
 .tbl td.center,
 .tbl th.center {

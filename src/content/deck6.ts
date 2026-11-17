@@ -91,9 +91,9 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>情况</th><th>条件</th><th>解</th><th>直觉</th></tr></thead>
                   <tbody>
-                    <tr><td>1</td><td class="num">f(n) = O(n<sup>log<sub>b</sub>a &minus; &epsilon;</sup>)，&epsilon; &gt; 0</td><td class="num">T(n) = &Theta;(n<sup>log<sub>b</sub>a</sup>)</td><td>叶子层的工作量占主导</td></tr>
-                    <tr><td>2</td><td class="num">f(n) = &Theta;(n<sup>log<sub>b</sub>a</sup>)</td><td class="num">T(n) = &Theta;(n<sup>log<sub>b</sub>a</sup> &middot; lg n)</td><td>每层工作量相同，共 lg n 层</td></tr>
-                    <tr><td>3</td><td class="num">f(n) = &Omega;(n<sup>log<sub>b</sub>a + &epsilon;</sup>) 且 a&middot;f(n/b) &le; c&middot;f(n)（c &lt; 1）</td><td class="num">T(n) = &Theta;(f(n))</td><td>根节点的工作量占主导</td></tr>
+                    <tr><td>1</td><td class="fnum">f(n) = O(n<sup>log<sub>b</sub>a &minus; &epsilon;</sup>)，&epsilon; &gt; 0</td><td class="fnum">T(n) = &Theta;(n<sup>log<sub>b</sub>a</sup>)</td><td>叶子层的工作量占主导</td></tr>
+                    <tr><td>2</td><td class="fnum">f(n) = &Theta;(n<sup>log<sub>b</sub>a</sup>)</td><td class="fnum">T(n) = &Theta;(n<sup>log<sub>b</sub>a</sup> &middot; lg n)</td><td>每层工作量相同，共 lg n 层</td></tr>
+                    <tr><td>3</td><td class="fnum">f(n) = &Omega;(n<sup>log<sub>b</sub>a + &epsilon;</sup>) 且 a&middot;f(n/b) &le; c&middot;f(n)（c &lt; 1）</td><td class="fnum">T(n) = &Theta;(f(n))</td><td>根节点的工作量占主导</td></tr>
                   </tbody>
                 </table>
           
@@ -137,11 +137,11 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>名称</th><th>边界条件</th><th>递归方程</th><th>本讲出现位置</th></tr></thead>
                   <tbody>
-                    <tr><td>阶乘 <span class="m">n!</span></td><td class="num">0! = 1! = 1</td><td class="num">n! = n&middot;(n&minus;1)!</td><td>第 4 页，本节</td></tr>
-                    <tr><td>Fibonacci 数列</td><td class="num">F(0) = F(1) = 1</td><td class="num">F(n) = F(n&minus;1) + F(n&minus;2)</td><td>递归低效的经典反例</td></tr>
-                    <tr><td>Hanoi 塔</td><td class="num">T(1) = 1</td><td class="num">T(n) = 2T(n&minus;1) + 1</td><td>第 9 页</td></tr>
-                    <tr><td>整数划分</td><td class="num">q(1,m) = q(n,1) = 1</td><td class="num">q(n,m) = q(n,m&minus;1) + q(n&minus;m,m)</td><td>第 25～30 页</td></tr>
-                    <tr><td>Ackermann 函数</td><td class="num">A(1,0)=2；A(0,m)=1；A(n,0)=n+2</td><td class="num">A(n,m) = A(A(n&minus;1,m), m&minus;1)</td><td>递归深度的极端例子</td></tr>
+                    <tr><td>阶乘 <span class="m">n!</span></td><td class="fnum">0! = 1! = 1</td><td class="fnum">n! = n&middot;(n&minus;1)!</td><td>第 4 页，本节</td></tr>
+                    <tr><td>Fibonacci 数列</td><td class="fnum">F(0) = F(1) = 1</td><td class="fnum">F(n) = F(n&minus;1) + F(n&minus;2)</td><td>递归低效的经典反例</td></tr>
+                    <tr><td>Hanoi 塔</td><td class="fnum">T(1) = 1</td><td class="fnum">T(n) = 2T(n&minus;1) + 1</td><td>第 9 页</td></tr>
+                    <tr><td>整数划分</td><td class="fnum">q(1,m) = q(n,1) = 1</td><td class="fnum">q(n,m) = q(n,m&minus;1) + q(n&minus;m,m)</td><td>第 25～30 页</td></tr>
+                    <tr><td>Ackermann 函数</td><td class="fnum">A(1,0)=2；A(0,m)=1；A(n,0)=n+2</td><td class="fnum">A(n,m) = A(A(n&minus;1,m), m&minus;1)</td><td>递归深度的极端例子</td></tr>
                   </tbody>
                 </table>
           
@@ -331,7 +331,7 @@ const deck: DeckData = {
                 <p>PPT 的课后追问是"以 2 的 20 次方为例，比较简单算法与分治法的乘法次数"。分治法的调用链是 <b>20 &rarr; 10 &rarr; 5 &rarr; 2 &rarr; 1</b>，回代时逐层做乘法：</p>
           
                 <table class="tbl">
-                  <thead><tr><th>回代步骤</th><th>算式</th><th class="num">本层乘法</th><th class="num">累计</th></tr></thead>
+                  <thead><tr><th>回代步骤</th><th>算式</th><th class="fnum">本层乘法</th><th class="fnum">累计</th></tr></thead>
                   <tbody>
                     <tr><td>边界 <span class="m">x<sup>1</sup></span></td><td>直接返回 <span class="m">x</span></td><td class="num">0</td><td class="num">0</td></tr>
                     <tr><td><span class="m">x<sup>2</sup></span></td><td><span class="m">x<sup>1</sup> &middot; x<sup>1</sup></span>（1 次平方）</td><td class="num">1</td><td class="num">1</td></tr>
@@ -556,12 +556,12 @@ const deck: DeckData = {
                 <p>PPT 第 9 页的追问"1 秒移 1 个，64 个盘子要多少时间？"，答案要背下来：</p>
           
                 <table class="tbl">
-                  <thead><tr><th class="num">n</th><th class="num">T(n) = 2<sup>n</sup> &minus; 1</th><th>说明</th></tr></thead>
+                  <thead><tr><th class="fnum">n</th><th class="fnum">T(n) = 2<sup>n</sup> &minus; 1</th><th>说明</th></tr></thead>
                   <tbody>
                     <tr><td class="num">3</td><td class="num">7</td><td>本页动画的例子</td></tr>
                     <tr><td class="num">10</td><td class="num">1023</td><td>已超过一千次</td></tr>
-                    <tr><td class="num">64</td><td class="num">1.8446744&times;10<sup>19</sup></td><td>每秒 1 次 &asymp; 5849 亿年（PPT 记作"5000 亿年"）</td></tr>
-                    <tr><td class="num">64</td><td class="num">1.8446744&times;10<sup>19</sup></td><td>每秒 10<sup>15</sup> 次 &asymp; 18447 秒 &asymp; 5.1 小时</td></tr>
+                    <tr><td class="num">64</td><td class="fnum">1.8446744&times;10<sup>19</sup></td><td>每秒 1 次 &asymp; 5849 亿年（PPT 记作"5000 亿年"）</td></tr>
+                    <tr><td class="num">64</td><td class="fnum">1.8446744&times;10<sup>19</sup></td><td>每秒 10<sup>15</sup> 次 &asymp; 18447 秒 &asymp; 5.1 小时</td></tr>
                   </tbody>
                 </table>
           
@@ -802,9 +802,9 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>解法</th><th>做法</th><th>最坏次数</th><th>时间复杂度</th></tr></thead>
                   <tbody>
-                    <tr><td>① 顺序搜索</td><td>一枚一枚拿起来比，直到找到轻的那枚</td><td class="num">n &minus; 1</td><td class="num">O(n)</td></tr>
-                    <tr><td>② 二分搜索</td><td>平均分 2 堆放天平两端，留下轻的一堆，重复</td><td class="num">&lceil;log<sub>2</sub> n&rceil;</td><td class="num">O(log<sub>2</sub> n)</td></tr>
-                    <tr><td>③ 三分搜索</td><td>平均分 3 堆，拿其中 2 堆上天平：相等留第 3 堆，否则留轻的一堆</td><td class="num">&lceil;log<sub>3</sub> n&rceil;</td><td class="num">O(log<sub>3</sub> n)</td></tr>
+                    <tr><td>① 顺序搜索</td><td>一枚一枚拿起来比，直到找到轻的那枚</td><td class="fnum">n &minus; 1</td><td class="fnum">O(n)</td></tr>
+                    <tr><td>② 二分搜索</td><td>平均分 2 堆放天平两端，留下轻的一堆，重复</td><td class="fnum">&lceil;log<sub>2</sub> n&rceil;</td><td class="fnum">O(log<sub>2</sub> n)</td></tr>
+                    <tr><td>③ 三分搜索</td><td>平均分 3 堆，拿其中 2 堆上天平：相等留第 3 堆，否则留轻的一堆</td><td class="fnum">&lceil;log<sub>3</sub> n&rceil;</td><td class="fnum">O(log<sub>3</sub> n)</td></tr>
                   </tbody>
                 </table>
           
@@ -895,15 +895,15 @@ const deck: DeckData = {
                 <p>PPT 第 27 页说"没有思路？以 n = 6 为例分析"，然后按<b>最大加数</b>从大到小分组，正好排成 6 列：</p>
           
                 <table class="tbl">
-                  <thead><tr><th class="num">最大加数</th><th>该组的所有划分</th><th class="num">个数</th></tr></thead>
+                  <thead><tr><th class="fnum">最大加数</th><th>该组的所有划分</th><th class="fnum">个数</th></tr></thead>
                   <tbody>
                     <tr><td class="num">6</td><td class="num">6</td><td class="num">1</td></tr>
                     <tr><td class="num">5</td><td class="num">5+1</td><td class="num">1</td></tr>
-                    <tr><td class="num">4</td><td class="num">4+1+1，4+2</td><td class="num">2</td></tr>
-                    <tr><td class="num">3</td><td class="num">3+1+1+1，3+2+1，3+3</td><td class="num">3</td></tr>
-                    <tr><td class="num">2</td><td class="num">2+1+1+1+1，2+2+1+1，2+2+2</td><td class="num">3</td></tr>
+                    <tr><td class="num">4</td><td class="fnum">4+1+1，4+2</td><td class="num">2</td></tr>
+                    <tr><td class="num">3</td><td class="fnum">3+1+1+1，3+2+1，3+3</td><td class="num">3</td></tr>
+                    <tr><td class="num">2</td><td class="fnum">2+1+1+1+1，2+2+1+1，2+2+2</td><td class="num">3</td></tr>
                     <tr><td class="num">1</td><td class="num">1+1+1+1+1+1</td><td class="num">1</td></tr>
-                    <tr><td class="num">合计</td><td class="num">p(6) = 1+1+2+3+3+1</td><td class="num"><b>11</b></td></tr>
+                    <tr><td class="fnum">合计</td><td class="fnum">p(6) = 1+1+2+3+3+1</td><td class="num"><b>11</b></td></tr>
                   </tbody>
                 </table>
           
@@ -1243,8 +1243,8 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>布局</th><th>主要递归式</th><th>宽 / 边长</th><th>高</th><th>面积</th></tr></thead>
                   <tbody>
-                    <tr><td>朴素布局</td><td class="num">W(n)=2W(n/2)+&Theta;(1)</td><td class="num">&Theta;(n)</td><td class="num">&Theta;(lg n)</td><td class="num">&Theta;(n lg n)</td></tr>
-                    <tr><td>H-树嵌入</td><td class="num">L(n)=2L(n/4)+&Theta;(1)</td><td class="num">&Theta;(&radic;n)</td><td class="num">&Theta;(&radic;n)</td><td class="num">&Theta;(n)</td></tr>
+                    <tr><td>朴素布局</td><td class="fnum">W(n)=2W(n/2)+&Theta;(1)</td><td class="fnum">&Theta;(n)</td><td class="fnum">&Theta;(lg n)</td><td class="fnum">&Theta;(n lg n)</td></tr>
+                    <tr><td>H-树嵌入</td><td class="fnum">L(n)=2L(n/4)+&Theta;(1)</td><td class="fnum">&Theta;(&radic;n)</td><td class="fnum">&Theta;(&radic;n)</td><td class="fnum">&Theta;(n)</td></tr>
                   </tbody>
                 </table>
           
@@ -1265,12 +1265,12 @@ const deck: DeckData = {
                 <p>PPT 第 42 页的第 1 题给了四个递归式，都用主方法解。先把每个的 <span class="m">a</span>、<span class="m">b</span>、<span class="m">n<sup>log<sub>b</sub>a</sup></span> 与 <span class="m">f(n)</span> 列出来，再判断落在哪种情况：</p>
           
                 <table class="tbl">
-                  <thead><tr><th>递归式</th><th class="num">a</th><th class="num">b</th><th class="num">n<sup>log<sub>b</sub>a</sup></th><th>f(n) 与分水岭比较</th><th>结论</th></tr></thead>
+                  <thead><tr><th>递归式</th><th class="fnum">a</th><th class="fnum">b</th><th class="fnum">n<sup>log<sub>b</sub>a</sup></th><th>f(n) 与分水岭比较</th><th>结论</th></tr></thead>
                   <tbody>
-                    <tr><td>a. T(n) = 2T(n/4) + 1</td><td class="num">2</td><td class="num">4</td><td class="num">&radic;n</td><td>f(n) = 1 = O(n<sup>1/2&minus;&epsilon;</sup>) &rArr; 情况 1</td><td><b>&Theta;(&radic;n)</b></td></tr>
-                    <tr><td>b. T(n) = 2T(n/4) + n</td><td class="num">2</td><td class="num">4</td><td class="num">&radic;n</td><td>f(n) = n = &Omega;(n<sup>1/2+&epsilon;</sup>)，且 2&middot;(n/4) = n/2 &le; (1/2)n &rArr; 情况 3</td><td><b>&Theta;(n)</b></td></tr>
+                    <tr><td>a. T(n) = 2T(n/4) + 1</td><td class="num">2</td><td class="num">4</td><td class="fnum">&radic;n</td><td>f(n) = 1 = O(n<sup>1/2&minus;&epsilon;</sup>) &rArr; 情况 1</td><td><b>&Theta;(&radic;n)</b></td></tr>
+                    <tr><td>b. T(n) = 2T(n/4) + n</td><td class="num">2</td><td class="num">4</td><td class="fnum">&radic;n</td><td>f(n) = n = &Omega;(n<sup>1/2+&epsilon;</sup>)，且 2&middot;(n/4) = n/2 &le; (1/2)n &rArr; 情况 3</td><td><b>&Theta;(n)</b></td></tr>
                     <tr><td>c. T(n) = T(n/2) + &Theta;(1)</td><td class="num">1</td><td class="num">2</td><td class="num">1</td><td>f(n) = &Theta;(1) 与 1 同阶 &rArr; 情况 2</td><td><b>&Theta;(lg n)</b></td></tr>
-                    <tr><td>d. T(n) = 2T(n/4) + n<sup>2</sup></td><td class="num">2</td><td class="num">4</td><td class="num">&radic;n</td><td>f(n) = n<sup>2</sup> = &Omega;(n<sup>1/2+&epsilon;</sup>)，且 2&middot;(n/4)<sup>2</sup> = n<sup>2</sup>/8 &le; (1/8)n<sup>2</sup> &rArr; 情况 3</td><td><b>&Theta;(n<sup>2</sup>)</b></td></tr>
+                    <tr><td>d. T(n) = 2T(n/4) + n<sup>2</sup></td><td class="num">2</td><td class="num">4</td><td class="fnum">&radic;n</td><td>f(n) = n<sup>2</sup> = &Omega;(n<sup>1/2+&epsilon;</sup>)，且 2&middot;(n/4)<sup>2</sup> = n<sup>2</sup>/8 &le; (1/8)n<sup>2</sup> &rArr; 情况 3</td><td><b>&Theta;(n<sup>2</sup>)</b></td></tr>
                   </tbody>
                 </table>
           
@@ -1310,17 +1310,17 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>例子</th><th>递归式</th><th>解</th><th>关键点</th></tr></thead>
                   <tbody>
-                    <tr><td>求幂 <span class="m">x<sup>n</sup></span></td><td class="num">T(n) = T(n/2) + &Theta;(1)</td><td class="num">&Theta;(lg n)</td><td>n=20 时 19 次 &rarr; 5 次；中间结果只算一次</td></tr>
-                    <tr><td>Hanoi 塔</td><td class="num">T(n) = 2T(n&minus;1) + 1</td><td class="num">2<sup>n</sup> &minus; 1</td><td>n=3 是 7 次；n=64 约 1.84&times;10<sup>19</sup> 次</td></tr>
-                    <tr><td>归并排序</td><td class="num">T(n) = 2T(n/2) + &Theta;(n)</td><td class="num">&Theta;(n lg n)</td><td>分解显而易见、合并线性</td></tr>
-                    <tr><td>二分查找</td><td class="num">T(n) = T(n/2) + &Theta;(1)</td><td class="num">&Theta;(lg n)</td><td>只递归一边；7 个元素查 3 次</td></tr>
-                    <tr><td>硬币问题</td><td class="num">T(n) = T(n/3) + &Theta;(1)</td><td class="num">&lceil;log<sub>3</sub> n&rceil; 次</td><td>天平 3 种结果 &rArr; 三分最优</td></tr>
-                    <tr><td>整数划分</td><td class="num">q(n,m)=q(n,m&minus;1)+q(n&minus;m,m)</td><td class="num">p(6) = 11</td><td>两个参数；朴素递归指数，可加备忘录</td></tr>
+                    <tr><td>求幂 <span class="m">x<sup>n</sup></span></td><td class="fnum">T(n) = T(n/2) + &Theta;(1)</td><td class="fnum">&Theta;(lg n)</td><td>n=20 时 19 次 &rarr; 5 次；中间结果只算一次</td></tr>
+                    <tr><td>Hanoi 塔</td><td class="fnum">T(n) = 2T(n&minus;1) + 1</td><td class="fnum">2<sup>n</sup> &minus; 1</td><td>n=3 是 7 次；n=64 约 1.84&times;10<sup>19</sup> 次</td></tr>
+                    <tr><td>归并排序</td><td class="fnum">T(n) = 2T(n/2) + &Theta;(n)</td><td class="fnum">&Theta;(n lg n)</td><td>分解显而易见、合并线性</td></tr>
+                    <tr><td>二分查找</td><td class="fnum">T(n) = T(n/2) + &Theta;(1)</td><td class="fnum">&Theta;(lg n)</td><td>只递归一边；7 个元素查 3 次</td></tr>
+                    <tr><td>硬币问题</td><td class="fnum">T(n) = T(n/3) + &Theta;(1)</td><td class="fnum">&lceil;log<sub>3</sub> n&rceil; 次</td><td>天平 3 种结果 &rArr; 三分最优</td></tr>
+                    <tr><td>整数划分</td><td class="fnum">q(n,m)=q(n,m&minus;1)+q(n&minus;m,m)</td><td class="fnum">p(6) = 11</td><td>两个参数；朴素递归指数，可加备忘录</td></tr>
                     <tr><td>矩阵相乘（标准）</td><td>三重循环</td><td>&Theta;(n<sup>3</sup>)</td><td><span class="m">c<sub>ij</sub> = &sum; a<sub>ik</sub>b<sub>kj</sub></span></td></tr>
-                    <tr><td>矩阵相乘（分治）</td><td class="num">T(n) = 8T(n/2) + &Theta;(n<sup>2</sup>)</td><td class="num">&Theta;(n<sup>3</sup>)</td><td>没有改进</td></tr>
-                    <tr><td>矩阵相乘（Strassen）</td><td class="num">T(n) = 7T(n/2) + &Theta;(n<sup>2</sup>)</td><td class="num">&Theta;(n<sup>lg7</sup>)&asymp;&Theta;(n<sup>2.81</sup>)</td><td>7 乘 18 加减；n &ge; 32 超过普通算法</td></tr>
-                    <tr><td>VLSI（朴素）</td><td class="num">W=2W(n/2)+&Theta;(1)，H=H(n/2)+&Theta;(1)</td><td class="num">面积 &Theta;(n lg n)</td><td>宽 n、高 lg n</td></tr>
-                    <tr><td>VLSI（H-树）</td><td class="num">L(n) = 2L(n/4) + &Theta;(1)</td><td class="num">面积 &Theta;(n)</td><td>边长 &radic;n，分成 4 组</td></tr>
+                    <tr><td>矩阵相乘（分治）</td><td class="fnum">T(n) = 8T(n/2) + &Theta;(n<sup>2</sup>)</td><td class="fnum">&Theta;(n<sup>3</sup>)</td><td>没有改进</td></tr>
+                    <tr><td>矩阵相乘（Strassen）</td><td class="fnum">T(n) = 7T(n/2) + &Theta;(n<sup>2</sup>)</td><td class="fnum">&Theta;(n<sup>lg7</sup>)&asymp;&Theta;(n<sup>2.81</sup>)</td><td>7 乘 18 加减；n &ge; 32 超过普通算法</td></tr>
+                    <tr><td>VLSI（朴素）</td><td class="fnum">W=2W(n/2)+&Theta;(1)，H=H(n/2)+&Theta;(1)</td><td class="fnum">面积 &Theta;(n lg n)</td><td>宽 n、高 lg n</td></tr>
+                    <tr><td>VLSI（H-树）</td><td class="fnum">L(n) = 2L(n/4) + &Theta;(1)</td><td class="fnum">面积 &Theta;(n)</td><td>边长 &radic;n，分成 4 组</td></tr>
                   </tbody>
                 </table>
           

@@ -358,8 +358,8 @@ const deck: DeckData = {
                   <thead><tr><th>极限 L 的值</th><th>大小关系</th><th>渐近记号结论</th><th>含义</th></tr></thead>
                   <tbody>
                     <tr><td class="num">0</td><td>f(n) &lt; g(n)</td><td><b>f(n) = o(g(n))</b></td><td>f 增长得慢，数量级更小</td></tr>
-                    <tr><td class="num">有限正常数 C</td><td>f(n) = g(n)（同阶）</td><td><b>f(n) = &Theta;(g(n))</b></td><td>只差一个常数因子</td></tr>
-                    <tr><td class="num">&infin;</td><td>f(n) &gt; g(n)</td><td><b>f(n) = &omega;(g(n))</b></td><td>f 增长得快，数量级更大</td></tr>
+                    <tr><td class="fnum">有限正常数 C</td><td>f(n) = g(n)（同阶）</td><td><b>f(n) = &Theta;(g(n))</b></td><td>只差一个常数因子</td></tr>
+                    <tr><td class="fnum">&infin;</td><td>f(n) &gt; g(n)</td><td><b>f(n) = &omega;(g(n))</b></td><td>f 增长得快，数量级更大</td></tr>
                   </tbody>
                 </table>
           
@@ -491,12 +491,12 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>规则</th><th>说明</th></tr></thead>
                   <tbody>
-                    <tr><td class="num">O(f) + O(g) = O(max(f, g))</td><td>两项相加取量级大的那项</td></tr>
-                    <tr><td class="num">O(f) + O(g) = O(f + g)</td><td>也可以直接写成和的记号</td></tr>
-                    <tr><td class="num">O(f) &middot; O(g) = O(f&middot;g)</td><td>相乘时量级相乘</td></tr>
-                    <tr><td class="num">若 g(N) = O(f(N))，则 O(f) + O(g) = O(f)</td><td>被吸收：小的那一项直接丢掉</td></tr>
-                    <tr><td class="num">O(c&middot;f(N)) = O(f(N))，其中 c 是正常数</td><td>常数系数可以丢掉</td></tr>
-                    <tr><td class="num">f = O(f)</td><td>自反性</td></tr>
+                    <tr><td class="fnum">O(f) + O(g) = O(max(f, g))</td><td>两项相加取量级大的那项</td></tr>
+                    <tr><td class="fnum">O(f) + O(g) = O(f + g)</td><td>也可以直接写成和的记号</td></tr>
+                    <tr><td class="fnum">O(f) &middot; O(g) = O(f&middot;g)</td><td>相乘时量级相乘</td></tr>
+                    <tr><td class="fnum">若 g(N) = O(f(N))，则 O(f) + O(g) = O(f)</td><td>被吸收：小的那一项直接丢掉</td></tr>
+                    <tr><td class="fnum">O(c&middot;f(N)) = O(f(N))，其中 c 是正常数</td><td>常数系数可以丢掉</td></tr>
+                    <tr><td class="fnum">f = O(f)</td><td>自反性</td></tr>
                   </tbody>
                 </table>
         ` },
@@ -659,11 +659,11 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>层次</th><th>节点数</th><th>该层总代价</th><th>化简</th></tr></thead>
                   <tbody>
-                    <tr><td>第 0 层</td><td class="num">1</td><td class="num">cn<sup>2</sup></td><td class="num">cn<sup>2</sup></td></tr>
-                    <tr><td>第 1 层</td><td class="num">3</td><td class="num">3 &middot; c(n/4)<sup>2</sup></td><td class="num">(3/16)cn<sup>2</sup></td></tr>
-                    <tr><td>第 2 层</td><td class="num">3<sup>2</sup></td><td class="num">3<sup>2</sup> &middot; c(n/4<sup>2</sup>)<sup>2</sup></td><td class="num">(3/16)<sup>2</sup>cn<sup>2</sup></td></tr>
-                    <tr><td>第 i 层</td><td class="num">3<sup>i</sup></td><td class="num">3<sup>i</sup> &middot; c(n/4<sup>i</sup>)<sup>2</sup></td><td class="num">(3/16)<sup>i</sup>cn<sup>2</sup></td></tr>
-                    <tr><td>叶子层</td><td class="num">3<sup>log<sub>4</sub>n</sup> = n<sup>log<sub>4</sub>3</sup></td><td class="num">&Theta;(n<sup>log<sub>4</sub>3</sup>)</td><td class="num">&Theta;(n<sup>0.793</sup>)</td></tr>
+                    <tr><td>第 0 层</td><td class="num">1</td><td class="fnum">cn<sup>2</sup></td><td class="fnum">cn<sup>2</sup></td></tr>
+                    <tr><td>第 1 层</td><td class="num">3</td><td class="fnum">3 &middot; c(n/4)<sup>2</sup></td><td class="fnum">(3/16)cn<sup>2</sup></td></tr>
+                    <tr><td>第 2 层</td><td class="num">3<sup>2</sup></td><td class="fnum">3<sup>2</sup> &middot; c(n/4<sup>2</sup>)<sup>2</sup></td><td class="fnum">(3/16)<sup>2</sup>cn<sup>2</sup></td></tr>
+                    <tr><td>第 i 层</td><td class="fnum">3<sup>i</sup></td><td class="fnum">3<sup>i</sup> &middot; c(n/4<sup>i</sup>)<sup>2</sup></td><td class="fnum">(3/16)<sup>i</sup>cn<sup>2</sup></td></tr>
+                    <tr><td>叶子层</td><td class="fnum">3<sup>log<sub>4</sub>n</sup> = n<sup>log<sub>4</sub>3</sup></td><td class="fnum">&Theta;(n<sup>log<sub>4</sub>3</sup>)</td><td class="fnum">&Theta;(n<sup>0.793</sup>)</td></tr>
                   </tbody>
                 </table>
                 <p>共 <b>log<sub>4</sub>n</b> 层，于是</p>
@@ -739,14 +739,14 @@ const deck: DeckData = {
                       <td><b>情况 1</b></td>
                       <td>f(n) = O(n<sup>log<sub>b</sub>a &minus; &epsilon;</sup>)，常量 &epsilon; &gt; 0<br>
                           <span class="m">f(n) 比多项式 n<sup>log<sub>b</sub>a</sup> 增长得慢（慢 n<sup>&epsilon;</sup> 倍）</span></td>
-                      <td class="num"><b>T(n) = &Theta;(n<sup>log<sub>b</sub>a</sup>)</b></td>
+                      <td class="fnum"><b>T(n) = &Theta;(n<sup>log<sub>b</sub>a</sup>)</b></td>
                       <td>加权从根到叶子<b>几何级数增长</b>，叶子在总权重中仅占常量部分</td>
                     </tr>
                     <tr>
                       <td><b>情况 2</b></td>
                       <td>f(n) = &Theta;(n<sup>log<sub>b</sub>a</sup>)<br>
                           <span class="m">即每层加权基本相同（f(n) = &Theta;(n<sup>log<sub>b</sub>a</sup> lg<sup>k</sup>n)，k = 0）</span></td>
-                      <td class="num"><b>T(n) = &Theta;(n<sup>log<sub>b</sub>a</sup> lg n)<br>= &Theta;(f(n) lg n)</b></td>
+                      <td class="fnum"><b>T(n) = &Theta;(n<sup>log<sub>b</sub>a</sup> lg n)<br>= &Theta;(f(n) lg n)</b></td>
                       <td><b>每层的加权基本相同</b>，共 log<sub>b</sub>n 层</td>
                     </tr>
                     <tr>
@@ -754,7 +754,7 @@ const deck: DeckData = {
                       <td>f(n) = &Omega;(n<sup>log<sub>b</sub>a + &epsilon;</sup>)，常量 &epsilon; &gt; 0<br>
                           <span class="m">f(n) 比 n<sup>log<sub>b</sub>a</sup> 增长得快（快 n<sup>&epsilon;</sup> 倍）</span><br>
                           <b>并且 f(n) 满足规定条件 a&middot;f(n/b) &le; c&middot;f(n)，常量 c &lt; 1</b></td>
-                      <td class="num"><b>T(n) = &Theta;(f(n))</b></td>
+                      <td class="fnum"><b>T(n) = &Theta;(f(n))</b></td>
                       <td>权重从根到叶子<b>几何级数递减</b>，根在整个权重中仅仅是常量部分</td>
                     </tr>
                   </tbody>
@@ -826,28 +826,28 @@ const deck: DeckData = {
                   <thead><tr><th>递归式</th><th>n<sup>log<sub>b</sub>a</sup> 与 f(n)</th><th>判定</th><th>结论</th></tr></thead>
                   <tbody>
                     <tr>
-                      <td class="num">T(n) = 4T(n/2) + n</td>
-                      <td class="num">a = 4、b = 2 &rArr; n<sup>log<sub>b</sub>a</sup> = n<sup>2</sup>；f(n) = n</td>
+                      <td class="fnum">T(n) = 4T(n/2) + n</td>
+                      <td class="fnum">a = 4、b = 2 &rArr; n<sup>log<sub>b</sub>a</sup> = n<sup>2</sup>；f(n) = n</td>
                       <td>情况 1：f(n) = O(n<sup>2&minus;&epsilon;</sup>)，取 &epsilon; = 1</td>
-                      <td class="num"><b>T(n) = &Theta;(n<sup>2</sup>)</b></td>
+                      <td class="fnum"><b>T(n) = &Theta;(n<sup>2</sup>)</b></td>
                     </tr>
                     <tr>
-                      <td class="num">T(n) = 4T(n/2) + n<sup>2</sup></td>
-                      <td class="num">n<sup>log<sub>b</sub>a</sup> = n<sup>2</sup>；f(n) = n<sup>2</sup></td>
+                      <td class="fnum">T(n) = 4T(n/2) + n<sup>2</sup></td>
+                      <td class="fnum">n<sup>log<sub>b</sub>a</sup> = n<sup>2</sup>；f(n) = n<sup>2</sup></td>
                       <td>情况 2：f(n) = &Theta;(n<sup>2</sup>lg<sup>0</sup>n)，即 k = 0</td>
-                      <td class="num"><b>T(n) = &Theta;(n<sup>2</sup> lg n)</b></td>
+                      <td class="fnum"><b>T(n) = &Theta;(n<sup>2</sup> lg n)</b></td>
                     </tr>
                     <tr>
-                      <td class="num">T(n) = 4T(n/2) + n<sup>3</sup></td>
-                      <td class="num">n<sup>log<sub>b</sub>a</sup> = n<sup>2</sup>；f(n) = n<sup>3</sup></td>
+                      <td class="fnum">T(n) = 4T(n/2) + n<sup>3</sup></td>
+                      <td class="fnum">n<sup>log<sub>b</sub>a</sup> = n<sup>2</sup>；f(n) = n<sup>3</sup></td>
                       <td>情况 3：f(n) = &Omega;(n<sup>2+&epsilon;</sup>)，取 &epsilon; = 1；正则条件 4(cn/2)<sup>3</sup> &le; cn<sup>3</sup> 取 c = 1/2 成立</td>
-                      <td class="num"><b>T(n) = &Theta;(n<sup>3</sup>)</b></td>
+                      <td class="fnum"><b>T(n) = &Theta;(n<sup>3</sup>)</b></td>
                     </tr>
                     <tr>
-                      <td class="num">T(n) = 4T(n/2) + n<sup>2</sup>/lg n</td>
-                      <td class="num">n<sup>log<sub>b</sub>a</sup> = n<sup>2</sup>；f(n) = n<sup>2</sup>/lg n</td>
+                      <td class="fnum">T(n) = 4T(n/2) + n<sup>2</sup>/lg n</td>
+                      <td class="fnum">n<sup>log<sub>b</sub>a</sup> = n<sup>2</sup>；f(n) = n<sup>2</sup>/lg n</td>
                       <td>三种情况都不满足</td>
-                      <td class="num"><b>这时主方法不适用</b></td>
+                      <td class="fnum"><b>这时主方法不适用</b></td>
                     </tr>
                   </tbody>
                 </table>

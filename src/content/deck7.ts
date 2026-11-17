@@ -341,7 +341,7 @@ const deck: DeckData = {
                 <p>长度为 <span class="m">n</span> 英寸的钢条共有 <b><span class="m">2<sup>n−1</sup></span></b> 种不同的切割方案 —— 因为在距离钢条左端 <span class="m">i</span>（<span class="m">i = 1, 2, … n−1</span>）英寸处，总是可以选择<b>切割</b>或<b>不切割</b>。所以 <span class="m">n = 4</span> 时有 <span class="m">2<sup>3</sup> = 8</span> 种方案（PPT 第 6 页的图，已核对 <code>image6.png</code>）：</p>
           
                 <table class="tbl">
-                  <thead><tr><th>方案</th><th>切割</th><th>收益计算</th><th class="num">总收益</th></tr></thead>
+                  <thead><tr><th>方案</th><th>切割</th><th>收益计算</th><th class="fnum">总收益</th></tr></thead>
                   <tbody>
                     <tr><td>(a)</td><td>4（不切）</td><td><span class="m">p<sub>4</sub></span></td><td class="num">9</td></tr>
                     <tr><td>(b)</td><td>1 + 3</td><td><span class="m">p<sub>1</sub> + p<sub>3</sub> = 1 + 8</span></td><td class="num">9</td></tr>
@@ -710,9 +710,9 @@ const deck: DeckData = {
                 <p>若用<b>直接的递归方法</b>枚举所有完全括号化方案（PPT 第 22 页），方案数是指数级的：<span class="m">n−1</span> 个断点的括号化方案数就是 Catalan 数 <span class="m">C(n−1)</span>，其量级为 <span class="m">&Omega;(4<sup>n</sup>/n<sup>3/2</sup>)</span>（此量级为补充说明，PPT 只说"直接的递归方法"）。因此必须用 DP。</p>
           
                 <table class="tbl">
-                  <thead><tr><th>矩阵</th><th class="num">A<sub>1</sub></th><th class="num">A<sub>2</sub></th><th class="num">A<sub>3</sub></th><th class="num">A<sub>4</sub></th><th class="num">A<sub>5</sub></th><th class="num">A<sub>6</sub></th></tr></thead>
+                  <thead><tr><th>矩阵</th><th class="fnum">A<sub>1</sub></th><th class="fnum">A<sub>2</sub></th><th class="fnum">A<sub>3</sub></th><th class="fnum">A<sub>4</sub></th><th class="fnum">A<sub>5</sub></th><th class="fnum">A<sub>6</sub></th></tr></thead>
                   <tbody>
-                    <tr><td>规模</td><td class="num">30×35</td><td class="num">35×15</td><td class="num">15×5</td><td class="num">5×10</td><td class="num">10×20</td><td class="num">20×25</td></tr>
+                    <tr><td>规模</td><td class="fnum">30×35</td><td class="fnum">35×15</td><td class="fnum">15×5</td><td class="fnum">5×10</td><td class="fnum">10×20</td><td class="fnum">20×25</td></tr>
                   </tbody>
                 </table>
           
@@ -929,7 +929,7 @@ const deck: DeckData = {
                 <p>PPT 第 29 页专门把 <span class="m">m(2,5)</span> 抽出来做了演示（<span class="m">i = 2, j = 5</span>，链长 <span class="m">L = 4</span>），依据计算式有：</p>
           
                 <table class="tbl">
-                  <thead><tr><th>断点 <span class="m">k</span></th><th>计算式</th><th>代入数值</th><th class="num">候选值</th></tr></thead>
+                  <thead><tr><th>断点 <span class="m">k</span></th><th>计算式</th><th>代入数值</th><th class="fnum">候选值</th></tr></thead>
                   <tbody>
                     <tr><td><span class="m">k = 2</span></td><td><span class="m">m(2,2) + m(3,5) + p<sub>1</sub>p<sub>2</sub>p<sub>5</sub></span></td><td><span class="m">0 + 2500 + 35·15·20</span></td><td class="num">13000</td></tr>
                     <tr><td><span class="m">k = 3</span></td><td><span class="m">m(2,3) + m(4,5) + p<sub>1</sub>p<sub>3</sub>p<sub>5</sub></span></td><td><span class="m">2625 + 1000 + 35·5·20</span></td><td class="num"><b>7125</b></td></tr>
@@ -1234,7 +1234,7 @@ const deck: DeckData = {
           
                 <table class="tbl">
                   <thead>
-                    <tr><th><span class="m">i</span> \\ <span class="m">j</span></th><th class="num">0</th><th class="num">1<br>B</th><th class="num">2<br>D</th><th class="num">3<br>C</th><th class="num">4<br>A</th><th class="num">5<br>B</th><th class="num">6<br>A</th></tr>
+                    <tr><th><span class="m">i</span> \\ <span class="m">j</span></th><th class="num">0</th><th class="fnum">1<br>B</th><th class="fnum">2<br>D</th><th class="fnum">3<br>C</th><th class="fnum">4<br>A</th><th class="fnum">5<br>B</th><th class="fnum">6<br>A</th></tr>
                   </thead>
                   <tbody>
                     <tr><td><b>0</b> —</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
@@ -1789,18 +1789,18 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th></th><th>左树：键深度</th><th>左树贡献</th><th>右树：键深度</th><th>右树贡献</th></tr></thead>
                   <tbody>
-                    <tr><td><span class="m">k<sub>1</sub></span>（0.15）</td><td>1</td><td class="num">0.15 × 2 = 0.30</td><td>1</td><td class="num">0.15 × 2 = 0.30</td></tr>
-                    <tr><td><span class="m">k<sub>2</sub></span>（0.10）</td><td>0</td><td class="num">0.10 × 1 = 0.10</td><td>0</td><td class="num">0.10 × 1 = 0.10</td></tr>
-                    <tr><td><span class="m">k<sub>3</sub></span>（0.05）</td><td>3</td><td class="num">0.05 × 4 = 0.20</td><td>2</td><td class="num">0.05 × 3 = 0.15</td></tr>
-                    <tr><td><span class="m">k<sub>4</sub></span>（0.10）</td><td>2</td><td class="num">0.10 × 3 = 0.30</td><td>1</td><td class="num">0.10 × 2 = 0.20</td></tr>
-                    <tr><td><span class="m">k<sub>5</sub></span>（0.20）</td><td>1</td><td class="num">0.20 × 2 = 0.40</td><td>2</td><td class="num">0.20 × 3 = 0.60</td></tr>
+                    <tr><td><span class="m">k<sub>1</sub></span>（0.15）</td><td>1</td><td class="fnum">0.15 × 2 = 0.30</td><td>1</td><td class="fnum">0.15 × 2 = 0.30</td></tr>
+                    <tr><td><span class="m">k<sub>2</sub></span>（0.10）</td><td>0</td><td class="fnum">0.10 × 1 = 0.10</td><td>0</td><td class="fnum">0.10 × 1 = 0.10</td></tr>
+                    <tr><td><span class="m">k<sub>3</sub></span>（0.05）</td><td>3</td><td class="fnum">0.05 × 4 = 0.20</td><td>2</td><td class="fnum">0.05 × 3 = 0.15</td></tr>
+                    <tr><td><span class="m">k<sub>4</sub></span>（0.10）</td><td>2</td><td class="fnum">0.10 × 3 = 0.30</td><td>1</td><td class="fnum">0.10 × 2 = 0.20</td></tr>
+                    <tr><td><span class="m">k<sub>5</sub></span>（0.20）</td><td>1</td><td class="fnum">0.20 × 2 = 0.40</td><td>2</td><td class="fnum">0.20 × 3 = 0.60</td></tr>
                     <tr><td><b>真实键小计</b></td><td>—</td><td class="num"><b>1.30</b></td><td>—</td><td class="num"><b>1.35</b></td></tr>
-                    <tr><td><span class="m">d<sub>0</sub></span>（0.05）</td><td>2</td><td class="num">0.05 × 3 = 0.15</td><td>2</td><td class="num">0.05 × 3 = 0.15</td></tr>
-                    <tr><td><span class="m">d<sub>1</sub></span>（0.10）</td><td>2</td><td class="num">0.10 × 3 = 0.30</td><td>2</td><td class="num">0.10 × 3 = 0.30</td></tr>
-                    <tr><td><span class="m">d<sub>2</sub></span>（0.05）</td><td>4</td><td class="num">0.05 × 5 = 0.25</td><td>3</td><td class="num">0.05 × 4 = 0.20</td></tr>
-                    <tr><td><span class="m">d<sub>3</sub></span>（0.05）</td><td>4</td><td class="num">0.05 × 5 = 0.25</td><td>3</td><td class="num">0.05 × 4 = 0.20</td></tr>
-                    <tr><td><span class="m">d<sub>4</sub></span>（0.05）</td><td>3</td><td class="num">0.05 × 4 = 0.20</td><td>3</td><td class="num">0.05 × 4 = 0.20</td></tr>
-                    <tr><td><span class="m">d<sub>5</sub></span>（0.10）</td><td>2</td><td class="num">0.10 × 3 = 0.30</td><td>3</td><td class="num">0.10 × 4 = 0.40</td></tr>
+                    <tr><td><span class="m">d<sub>0</sub></span>（0.05）</td><td>2</td><td class="fnum">0.05 × 3 = 0.15</td><td>2</td><td class="fnum">0.05 × 3 = 0.15</td></tr>
+                    <tr><td><span class="m">d<sub>1</sub></span>（0.10）</td><td>2</td><td class="fnum">0.10 × 3 = 0.30</td><td>2</td><td class="fnum">0.10 × 3 = 0.30</td></tr>
+                    <tr><td><span class="m">d<sub>2</sub></span>（0.05）</td><td>4</td><td class="fnum">0.05 × 5 = 0.25</td><td>3</td><td class="fnum">0.05 × 4 = 0.20</td></tr>
+                    <tr><td><span class="m">d<sub>3</sub></span>（0.05）</td><td>4</td><td class="fnum">0.05 × 5 = 0.25</td><td>3</td><td class="fnum">0.05 × 4 = 0.20</td></tr>
+                    <tr><td><span class="m">d<sub>4</sub></span>（0.05）</td><td>3</td><td class="fnum">0.05 × 4 = 0.20</td><td>3</td><td class="fnum">0.05 × 4 = 0.20</td></tr>
+                    <tr><td><span class="m">d<sub>5</sub></span>（0.10）</td><td>2</td><td class="fnum">0.10 × 3 = 0.30</td><td>3</td><td class="fnum">0.10 × 4 = 0.40</td></tr>
                     <tr><td><b>哑键小计</b></td><td>—</td><td class="num"><b>1.45</b></td><td>—</td><td class="num"><b>1.45</b></td></tr>
                     <tr><td><b>合计 E[T]</b></td><td>—</td><td class="num"><b>2.75</b></td><td>—</td><td class="num"><b>2.80</b></td></tr>
                   </tbody>

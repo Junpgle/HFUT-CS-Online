@@ -402,9 +402,9 @@ const deck: DeckData = {
                 <table class="tbl">
                   <thead><tr><th>实现</th><th>取最小 key</th><th>总时间</th><th>适用场景</th></tr></thead>
                   <tbody>
-                    <tr><td>邻接矩阵 + 线性扫描 <span class="m">key[]</span></td><td class="num">O(V)</td><td class="num">O(V<sup>2</sup>)</td><td>稠密图（<span class="m">E &asymp; V<sup>2</sup></span>）更优</td></tr>
-                    <tr><td>邻接表 + 二叉堆（本页代码）</td><td class="num">O(lg V)</td><td class="num">O(E lg V)</td><td>稀疏图</td></tr>
-                    <tr><td>邻接表 + 斐波那契堆（补充）</td><td class="num">O(1) 摊还</td><td class="num">O(E + V lg V)</td><td>理论上界更好</td></tr>
+                    <tr><td>邻接矩阵 + 线性扫描 <span class="m">key[]</span></td><td class="fnum">O(V)</td><td class="fnum">O(V<sup>2</sup>)</td><td>稠密图（<span class="m">E &asymp; V<sup>2</sup></span>）更优</td></tr>
+                    <tr><td>邻接表 + 二叉堆（本页代码）</td><td class="fnum">O(lg V)</td><td class="fnum">O(E lg V)</td><td>稀疏图</td></tr>
+                    <tr><td>邻接表 + 斐波那契堆（补充）</td><td class="fnum">O(1) 摊还</td><td class="fnum">O(E + V lg V)</td><td>理论上界更好</td></tr>
                   </tbody>
                 </table>
                 <p>二叉堆版的时间构成：建堆 <span class="m">O(V)</span>；<span class="m">V</span> 次 EXTRACT-MIN 共 <span class="m">O(V lg V)</span>；每条边最多触发一次 DECREASE-KEY（本页代码用「新 key 直接入堆 + 惰性删除」，等价于 <span class="m">O(E)</span> 次入堆），共 <span class="m">O(E lg V)</span>。合计 <b>O(E lg V)</b>。</p>

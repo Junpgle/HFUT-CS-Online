@@ -170,27 +170,27 @@ const deck: DeckData = {
                   </thead>
                   <tbody>
                     <tr>
-                      <td class="num">Θ(g(n))</td><td>渐近紧确界</td>
+                      <td class="fnum">Θ(g(n))</td><td>渐近紧确界</td>
                       <td>&exist; c<sub>1</sub>, c<sub>2</sub>, n<sub>0</sub> &gt; 0，&forall; n &ge; n<sub>0</sub>：0 &le; c<sub>1</sub>g(n) &le; f(n) &le; c<sub>2</sub>g(n)</td>
                       <td>f = Θ(g) &asymp; a = b</td>
                     </tr>
                     <tr>
-                      <td class="num">O(g(n))</td><td>渐近上界</td>
+                      <td class="fnum">O(g(n))</td><td>渐近上界</td>
                       <td>&exist; c, n<sub>0</sub> &gt; 0，&forall; n &ge; n<sub>0</sub>：0 &le; f(n) &le; cg(n)</td>
                       <td>f = O(g) &asymp; a &le; b</td>
                     </tr>
                     <tr>
-                      <td class="num">Ω(g(n))</td><td>渐近下界</td>
+                      <td class="fnum">Ω(g(n))</td><td>渐近下界</td>
                       <td>&exist; c, n<sub>0</sub> &gt; 0，&forall; n &ge; n<sub>0</sub>：0 &le; cg(n) &le; f(n)</td>
                       <td>f = Ω(g) &asymp; a &ge; b</td>
                     </tr>
                     <tr>
-                      <td class="num">o(g(n))</td><td>渐近非紧上界</td>
+                      <td class="fnum">o(g(n))</td><td>渐近非紧上界</td>
                       <td>&forall; c &gt; 0，&exist; n<sub>0</sub>，&forall; n &ge; n<sub>0</sub>：0 &le; f(n) &lt; cg(n)</td>
                       <td>f = o(g) &asymp; a &lt; b</td>
                     </tr>
                     <tr>
-                      <td class="num">ω(g(n))</td><td>渐近非紧下界</td>
+                      <td class="fnum">ω(g(n))</td><td>渐近非紧下界</td>
                       <td>&forall; c &gt; 0，&exist; n<sub>0</sub>，&forall; n &ge; n<sub>0</sub>：0 &le; cg(n) &lt; f(n)</td>
                       <td>f = ω(g) &asymp; a &gt; b</td>
                     </tr>
@@ -266,15 +266,15 @@ const deck: DeckData = {
                       <td>插入排序</td>
                       <td>数组已升序：比较 1+1+…+1 = n − 1 次</td>
                       <td>数组已降序：比较 1+2+…+(n−1) = n(n−1)/2 次</td>
-                      <td class="num">T(n) = 3n²/2 + 7n/2 − 4</td>
-                      <td class="num">Θ(n²)</td>
+                      <td class="fnum">T(n) = 3n²/2 + 7n/2 − 4</td>
+                      <td class="fnum">Θ(n²)</td>
                     </tr>
                     <tr>
                       <td>选择排序</td>
                       <td>—</td>
                       <td>比较次数固定为 n(n−1)/2 次（与输入实例无关）</td>
-                      <td class="num">T(n) = 2n² + 3n − 4</td>
-                      <td class="num">Θ(n²)</td>
+                      <td class="fnum">T(n) = 2n² + 3n − 4</td>
+                      <td class="fnum">Θ(n²)</td>
                     </tr>
                   </tbody>
                 </table>
@@ -311,10 +311,10 @@ const deck: DeckData = {
                     <tr><th>步骤</th><th>不等式</th><th>依据</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>①</td><td class="num">L &ge; n!</td><td>n 个元素有 n! 种可能的排列，每种排列至少对应一个可达叶子</td></tr>
-                    <tr><td>②</td><td class="num">L &le; 2<sup>h</sup></td><td>高度 h 的二叉树最多有 2<sup>h</sup> 个叶子</td></tr>
-                    <tr><td>③</td><td class="num">n! &le; 2<sup>h</sup> &rArr; h &ge; lg(n!)</td><td>由 ①② 联立，两边取 lg（lg 单调递增）</td></tr>
-                    <tr><td>④</td><td class="num">h &ge; lg(n!) &ge; lg((n/e)<sup>n</sup>) = n lg n − n lg e = &Omega;(n lg n)</td><td>Stirling 公式 <span class="m">n! &asymp; &radic;(2&pi;n)&middot;(n/e)<sup>n</sup></span> 放缩</td></tr>
+                    <tr><td>①</td><td class="fnum">L &ge; n!</td><td>n 个元素有 n! 种可能的排列，每种排列至少对应一个可达叶子</td></tr>
+                    <tr><td>②</td><td class="fnum">L &le; 2<sup>h</sup></td><td>高度 h 的二叉树最多有 2<sup>h</sup> 个叶子</td></tr>
+                    <tr><td>③</td><td class="fnum">n! &le; 2<sup>h</sup> &rArr; h &ge; lg(n!)</td><td>由 ①② 联立，两边取 lg（lg 单调递增）</td></tr>
+                    <tr><td>④</td><td class="fnum">h &ge; lg(n!) &ge; lg((n/e)<sup>n</sup>) = n lg n − n lg e = &Omega;(n lg n)</td><td>Stirling 公式 <span class="m">n! &asymp; &radic;(2&pi;n)&middot;(n/e)<sup>n</sup></span> 放缩</td></tr>
                   </tbody>
                 </table>
                 <div class="callout key">
@@ -340,9 +340,9 @@ const deck: DeckData = {
                     <tr><th>算法</th><th>是否比较排序</th><th>时间复杂度</th><th>空间</th><th>稳定性</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>堆排序 / 归并排序</td><td>是</td><td class="num">Θ(n lg n)</td><td class="num">归并 O(n)</td><td>归并稳定、堆排不稳定</td></tr>
-                    <tr><td>计数排序</td><td><strong>否</strong>（各项之间根本不比较）</td><td class="num">Θ(n + k)</td><td class="num">O(k)</td><td><strong>稳定</strong></td></tr>
-                    <tr><td>基数排序</td><td><strong>否</strong>（逐位用稳定排序）</td><td class="num">Θ(d(n + k))</td><td class="num">O(n + k)</td><td><strong>稳定</strong></td></tr>
+                    <tr><td>堆排序 / 归并排序</td><td>是</td><td class="fnum">Θ(n lg n)</td><td class="fnum">归并 O(n)</td><td>归并稳定、堆排不稳定</td></tr>
+                    <tr><td>计数排序</td><td><strong>否</strong>（各项之间根本不比较）</td><td class="fnum">Θ(n + k)</td><td class="fnum">O(k)</td><td><strong>稳定</strong></td></tr>
+                    <tr><td>基数排序</td><td><strong>否</strong>（逐位用稳定排序）</td><td class="fnum">Θ(d(n + k))</td><td class="fnum">O(n + k)</td><td><strong>稳定</strong></td></tr>
                   </tbody>
                 </table>
           
@@ -417,9 +417,9 @@ const deck: DeckData = {
                     <tr><th>情形</th><th>方法</th><th>代价</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>k = 1 或 k = n</td><td>一次线性扫描，记录当前最小/最大</td><td class="num">n − 1 次比较</td></tr>
-                    <tr><td>同时找最小与最大（分别独立）</td><td>两次扫描</td><td class="num">2n − 2 次比较</td></tr>
-                    <tr><td>同时找最小与最大（成对处理）</td><td>先对每对元素互比（1 次），较小者比当前最小、较大者比当前最大（2 次）</td><td class="num">3⌊n/2⌋ 次比较</td></tr>
+                    <tr><td>k = 1 或 k = n</td><td>一次线性扫描，记录当前最小/最大</td><td class="fnum">n − 1 次比较</td></tr>
+                    <tr><td>同时找最小与最大（分别独立）</td><td>两次扫描</td><td class="fnum">2n − 2 次比较</td></tr>
+                    <tr><td>同时找最小与最大（成对处理）</td><td>先对每对元素互比（1 次），较小者比当前最小、较大者比当前最大（2 次）</td><td class="fnum">3⌊n/2⌋ 次比较</td></tr>
                   </tbody>
                 </table>
                 <p class="formula">3&lfloor;n/2&rfloor; &lt; 2n − 2　（n &ge; 2）</p>
@@ -430,11 +430,11 @@ const deck: DeckData = {
                     <tr><th>解法</th><th>思路</th><th>复杂度</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>暴力</td><td>对每个元素统计比它小的个数</td><td class="num">O(n²)</td></tr>
-                    <tr><td>归并排序</td><td>完全排序后取第 k 个</td><td class="num">O(n lg n)</td></tr>
-                    <tr><td>快速排序</td><td>完全排序后取第 k 个</td><td class="num">平均 O(n lg n)</td></tr>
-                    <tr><td><strong>RANDOMIZED-SELECT</strong></td><td>随机主元划分，<strong>只递归一边</strong></td><td class="num"><strong>期望 Θ(n)</strong>；最坏 Θ(n²)</td></tr>
-                    <tr><td><strong>BFPRT（中位数的中位数）</strong></td><td>确定性选枢轴，保证划分均衡</td><td class="num"><strong>最坏 O(n)</strong></td></tr>
+                    <tr><td>暴力</td><td>对每个元素统计比它小的个数</td><td class="fnum">O(n²)</td></tr>
+                    <tr><td>归并排序</td><td>完全排序后取第 k 个</td><td class="fnum">O(n lg n)</td></tr>
+                    <tr><td>快速排序</td><td>完全排序后取第 k 个</td><td class="fnum">平均 O(n lg n)</td></tr>
+                    <tr><td><strong>RANDOMIZED-SELECT</strong></td><td>随机主元划分，<strong>只递归一边</strong></td><td class="fnum"><strong>期望 Θ(n)</strong>；最坏 Θ(n²)</td></tr>
+                    <tr><td><strong>BFPRT（中位数的中位数）</strong></td><td>确定性选枢轴，保证划分均衡</td><td class="fnum"><strong>最坏 O(n)</strong></td></tr>
                   </tbody>
                 </table>
           
@@ -472,12 +472,12 @@ const deck: DeckData = {
                     <tr><th>问题</th><th>递归式</th><th>结论</th><th>关键点</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>求幂 x<sup>n</sup></td><td class="num">T(n) = T(n/2) + O(1)</td><td class="num">O(lg n) 次乘法</td><td>偶数 x<sup>n</sup>=(x<sup>n/2</sup>)²，奇数再乘一个 x</td></tr>
-                    <tr><td>Hanoi 塔</td><td class="num">T(n) = 2T(n−1) + 1</td><td class="num">2<sup>n</sup> − 1</td><td>先把 n−1 个移到辅助柱，移最大盘，再移 n−1 个</td></tr>
-                    <tr><td>归并排序</td><td class="num">T(n) = 2T(n/2) + Θ(n)</td><td class="num">Θ(n lg n)</td><td>合并是线性时间</td></tr>
-                    <tr><td>二分查找</td><td class="num">T(n) = T(n/2) + Θ(1)</td><td class="num">Θ(lg n)</td><td>n<sup>log<sub>2</sub>1</sup> = n<sup>0</sup> = 1，属主方法情况 2</td></tr>
-                    <tr><td>矩阵相乘（分治）</td><td class="num">T(n) = 8T(n/2) + Θ(n²)</td><td class="num">Θ(n³)</td><td>8 次子矩阵乘，没有改进</td></tr>
-                    <tr><td><strong>Strassen</strong></td><td class="num">T(n) = 7T(n/2) + Θ(n²)</td><td class="num">Θ(n<sup>lg7</sup>) ≈ Θ(n<sup>2.81</sup>)</td><td>7 乘 18 加/减；n ≥ 32 时超过普通算法</td></tr>
+                    <tr><td>求幂 x<sup>n</sup></td><td class="fnum">T(n) = T(n/2) + O(1)</td><td class="fnum">O(lg n) 次乘法</td><td>偶数 x<sup>n</sup>=(x<sup>n/2</sup>)²，奇数再乘一个 x</td></tr>
+                    <tr><td>Hanoi 塔</td><td class="fnum">T(n) = 2T(n−1) + 1</td><td class="fnum">2<sup>n</sup> − 1</td><td>先把 n−1 个移到辅助柱，移最大盘，再移 n−1 个</td></tr>
+                    <tr><td>归并排序</td><td class="fnum">T(n) = 2T(n/2) + Θ(n)</td><td class="fnum">Θ(n lg n)</td><td>合并是线性时间</td></tr>
+                    <tr><td>二分查找</td><td class="fnum">T(n) = T(n/2) + Θ(1)</td><td class="fnum">Θ(lg n)</td><td>n<sup>log<sub>2</sub>1</sup> = n<sup>0</sup> = 1，属主方法情况 2</td></tr>
+                    <tr><td>矩阵相乘（分治）</td><td class="fnum">T(n) = 8T(n/2) + Θ(n²)</td><td class="fnum">Θ(n³)</td><td>8 次子矩阵乘，没有改进</td></tr>
+                    <tr><td><strong>Strassen</strong></td><td class="fnum">T(n) = 7T(n/2) + Θ(n²)</td><td class="fnum">Θ(n<sup>lg7</sup>) ≈ Θ(n<sup>2.81</sup>)</td><td>7 乘 18 加/减；n ≥ 32 时超过普通算法</td></tr>
                   </tbody>
                 </table>
                 <p>
@@ -524,33 +524,33 @@ const deck: DeckData = {
                   <tbody>
                     <tr>
                       <td>钢条切割</td>
-                      <td class="num">r<sub>n</sub> = max<sub>1&le;i&le;n</sub>(p<sub>i</sub> + r<sub>n−i</sub>)，r<sub>0</sub>=0</td>
-                      <td class="num">朴素 O(2<sup>n</sup>) → DP Θ(n²)</td>
-                      <td class="num">Θ(n)</td>
+                      <td class="fnum">r<sub>n</sub> = max<sub>1&le;i&le;n</sub>(p<sub>i</sub> + r<sub>n−i</sub>)，r<sub>0</sub>=0</td>
+                      <td class="fnum">朴素 O(2<sup>n</sup>) → DP Θ(n²)</td>
+                      <td class="fnum">Θ(n)</td>
                     </tr>
                     <tr>
                       <td>矩阵链乘法</td>
-                      <td class="num">m(i,j)=min<sub>i&le;k&lt;j</sub>{m(i,k)+m(k+1,j)+p<sub>i−1</sub>p<sub>k</sub>p<sub>j</sub>}</td>
-                      <td class="num">Θ(n³)</td>
-                      <td class="num">Θ(n²)</td>
+                      <td class="fnum">m(i,j)=min<sub>i&le;k&lt;j</sub>{m(i,k)+m(k+1,j)+p<sub>i−1</sub>p<sub>k</sub>p<sub>j</sub>}</td>
+                      <td class="fnum">Θ(n³)</td>
+                      <td class="fnum">Θ(n²)</td>
                     </tr>
                     <tr>
                       <td>最长公共子序列</td>
-                      <td class="num">x<sub>i</sub>=y<sub>j</sub>: c[i−1,j−1]+1；否则 max(c[i−1,j], c[i,j−1])</td>
-                      <td class="num">Θ(mn)</td>
-                      <td class="num">Θ(mn)</td>
+                      <td class="fnum">x<sub>i</sub>=y<sub>j</sub>: c[i−1,j−1]+1；否则 max(c[i−1,j], c[i,j−1])</td>
+                      <td class="fnum">Θ(mn)</td>
+                      <td class="fnum">Θ(mn)</td>
                     </tr>
                     <tr>
                       <td>装配线调度</td>
-                      <td class="num">f<sub>1</sub>[j]=min(f<sub>1</sub>[j−1]+a<sub>1j</sub>, f<sub>2</sub>[j−1]+t<sub>2,j−1</sub>+a<sub>1j</sub>)</td>
-                      <td class="num">Θ(n)</td>
-                      <td class="num">Θ(n)</td>
+                      <td class="fnum">f<sub>1</sub>[j]=min(f<sub>1</sub>[j−1]+a<sub>1j</sub>, f<sub>2</sub>[j−1]+t<sub>2,j−1</sub>+a<sub>1j</sub>)</td>
+                      <td class="fnum">Θ(n)</td>
+                      <td class="fnum">Θ(n)</td>
                     </tr>
                     <tr>
                       <td>最优二叉搜索树</td>
-                      <td class="num">e[i,j]=min<sub>i&le;r&le;j</sub>{e[i,r−1]+e[r+1,j]+w(i,j)}，w(i,j)=w(i,j−1)+p<sub>j</sub>+q<sub>j</sub></td>
-                      <td class="num">Θ(n³)</td>
-                      <td class="num">Θ(n²)</td>
+                      <td class="fnum">e[i,j]=min<sub>i&le;r&le;j</sub>{e[i,r−1]+e[r+1,j]+w(i,j)}，w(i,j)=w(i,j−1)+p<sub>j</sub>+q<sub>j</sub></td>
+                      <td class="fnum">Θ(n³)</td>
+                      <td class="fnum">Θ(n²)</td>
                     </tr>
                   </tbody>
                 </table>

@@ -518,7 +518,7 @@ const deck: DeckData = {
                     <tr><td class="num">5</td><td><code>A[i + 1] = A[i]</code></td><td>&sum;<sub>j = 2..n</sub> (j &minus; 1)</td><td><span class="m">n</span>(<span class="m">n</span> &minus; 1)/2</td></tr>
                     <tr><td class="num">6</td><td><code>i = i - 1</code></td><td>&sum;<sub>j = 2..n</sub> (j &minus; 1)</td><td><span class="m">n</span>(<span class="m">n</span> &minus; 1)/2</td></tr>
                     <tr><td class="num">7</td><td><code>A[i + 1] = key</code></td><td><span class="m">n</span> &minus; 1</td><td><span class="m">n</span> &minus; 1</td></tr>
-                    <tr><td class="num">&mdash;</td><td><strong>合计 T(<span class="m">n</span>)</strong></td><td colspan="2"><strong>3<span class="m">n</span><sup>2</sup>/2 + 7<span class="m">n</span>/2 &minus; 4</strong></td></tr>
+                    <tr><td class="fnum">&mdash;</td><td><strong>合计 T(<span class="m">n</span>)</strong></td><td colspan="2"><strong>3<span class="m">n</span><sup>2</sup>/2 + 7<span class="m">n</span>/2 &minus; 4</strong></td></tr>
                   </tbody>
                 </table>
                 <p>求和过程：<span class="m">n</span> + 3(<span class="m">n</span> &minus; 1) + [<span class="m">n</span>(<span class="m">n</span> + 1)/2 &minus; 1] + 2 &times; <span class="m">n</span>(<span class="m">n</span> &minus; 1)/2 = <span class="m">n</span> + 3<span class="m">n</span> &minus; 3 + 3<span class="m">n</span><sup>2</sup>/2 &minus; <span class="m">n</span>/2 &minus; 1 = 3<span class="m">n</span><sup>2</sup>/2 + 7<span class="m">n</span>/2 &minus; 4。当 <span class="m">n</span> = 16 时 T(16) = 384 + 56 &minus; 4 = <strong>436</strong> 次基本操作，其中元素比较最坏 <span class="m">n</span>(<span class="m">n</span> &minus; 1)/2 = 120 次。</p>
@@ -537,7 +537,7 @@ const deck: DeckData = {
                     <tr><td class="num">6</td><td><code>cur_min = A[j]</code></td><td>&sum;<sub>k = 1..n&minus;1</sub> (n &minus; k)</td><td><span class="m">n</span>(<span class="m">n</span> &minus; 1)/2</td></tr>
                     <tr><td class="num">7</td><td><code>cur_min_pos = j</code></td><td>&sum;<sub>k = 1..n&minus;1</sub> (n &minus; k)</td><td><span class="m">n</span>(<span class="m">n</span> &minus; 1)/2</td></tr>
                     <tr><td class="num">8</td><td><code>swap A[i], A[cur_min_pos]</code></td><td><span class="m">n</span> &minus; 1</td><td><span class="m">n</span> &minus; 1</td></tr>
-                    <tr><td class="num">&mdash;</td><td><strong>合计 T(<span class="m">n</span>)</strong></td><td colspan="2"><strong>2<span class="m">n</span><sup>2</sup> + 3<span class="m">n</span> &minus; 4</strong></td></tr>
+                    <tr><td class="fnum">&mdash;</td><td><strong>合计 T(<span class="m">n</span>)</strong></td><td colspan="2"><strong>2<span class="m">n</span><sup>2</sup> + 3<span class="m">n</span> &minus; 4</strong></td></tr>
                   </tbody>
                 </table>
                 <p>求和过程：<span class="m">n</span> + 3(<span class="m">n</span> &minus; 1) + [<span class="m">n</span>(<span class="m">n</span> + 1)/2 &minus; 1] + 3 &times; <span class="m">n</span>(<span class="m">n</span> &minus; 1)/2 = 2<span class="m">n</span><sup>2</sup> + 3<span class="m">n</span> &minus; 4。它与插入排序的系数不同，但最高阶项都是 <span class="m">n</span><sup>2</sup>。</p>
