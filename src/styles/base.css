@@ -1088,7 +1088,7 @@ pre.code .cl-code:empty + .cl-com {
     background 160ms;
 }
 .card:hover {
-  border-color: var(--card-accent, var(--deck-accent));
+  border-color: color-mix(in srgb, var(--deck-accent) 40%, transparent);
   transform: translateY(-2px);
   box-shadow: var(--shadow-1);
 }
@@ -1105,32 +1105,7 @@ pre.code .cl-code:empty + .cl-com {
   font-size: 0.8438rem;
   color: var(--ink-2);
 }
-/* 首页讲次卡：讲次专属色标（循环取语义色板）+ 元信息行 */
-.deck-map .card {
-  position: relative;
-}
-.deck-map .card::before {
-  content: '';
-  position: absolute;
-  top: 20px;
-  right: 18px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--card-accent, var(--deck-accent));
-  opacity: 0.85;
-}
-.deck-map .card:nth-child(8n + 1) { --card-accent: var(--deck1); }
-.deck-map .card:nth-child(8n + 2) { --card-accent: var(--deck2); }
-.deck-map .card:nth-child(8n + 3) { --card-accent: var(--deck3); }
-.deck-map .card:nth-child(8n + 4) { --card-accent: var(--deck4); }
-.deck-map .card:nth-child(8n + 5) { --card-accent: var(--deck5); }
-.deck-map .card:nth-child(8n + 6) { --card-accent: var(--deck6); }
-.deck-map .card:nth-child(8n + 7) { --card-accent: var(--deck7); }
-.deck-map .card:nth-child(8n + 8) { --card-accent: var(--deck8); }
-.deck-map .card:hover h3 {
-  color: var(--card-accent);
-}
+/* 首页讲次卡：中性版面 + 元信息行（色标圆点与标题重叠且杂色，已移除） */
 .card-meta {
   margin: 10px 0 0 !important;
   padding-top: 8px;
