@@ -8,6 +8,7 @@ import HtmlContent from '../components/HtmlContent';
 import Sections from '../components/Sections';
 import SectionCapsule from '../components/SectionCapsule';
 import { scrollToId } from '../lib/scroll';
+import { useScrollSpy } from '../lib/scrollspy';
 
 export default function DeckPage() {
   const { deckId } = useParams();
@@ -27,6 +28,7 @@ function DeckInner({ deck }: { deck: DeckData }) {
 
   const jump = (id: string) => {
     scrollToId(id);
+    toc.setActive(id); // 立即高亮，不等滚动事件
     navigate(`/deck/${deck.id}?s=${id}`, { replace: true });
   };
 
@@ -45,24 +47,8 @@ function DeckInner({ deck }: { deck: DeckData }) {
     return () => window.clearTimeout(t);
   }, [section]);
 
-  // scroll-spy：观察正文里的 h2 / h3，同步到侧栏目录
-  useEffect(() => {
-    const root = pageRef.current;
-    if (!root || !('IntersectionObserver' in window)) return;
-    const visible = new Map<string, boolean>();
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) visible.set(e.target.id, e.isIntersecting);
-        const heads = Array.from(root.querySelectorAll('h2[id], h3[id]'));
-        const best = heads.find((h) => visible.get(h.id));
-        if (best) toc.setActive(best.id);
-      },
-      { rootMargin: '-72px 0px -68% 0px', threshold: 0 },
-    );
-    for (const h of Array.from(root.querySelectorAll('h2[id], h3[id]'))) io.observe(h);
-    return () => io.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deck.id]);
+  // 精准 scroll-spy：与侧栏目录一一对应（含无二级目录的一级标题）
+  useScrollSpy(pageRef, [deck.id]);
 
   const level2 = deck.toc.filter((e) => e.level === 2);
 

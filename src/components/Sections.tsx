@@ -28,8 +28,9 @@ export default function Sections({ sections, scores, onQuizResult }: Props) {
         const heading = decodeEntities(sec.heading);
         const m = H2_NO_RE.exec(heading);
         return (
-          <section key={sec.id} id={sec.id}>
-            <h2>
+          // 滚动目标与目录 id 一致：落在 h2 上（scroll-spy 也以它为准）
+          <section key={sec.id}>
+            <h2 id={sec.id}>
               {m ? (
                 <>
                   <span className="h2-no" aria-hidden="true">

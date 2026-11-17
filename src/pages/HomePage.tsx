@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { homeData } from '../content';
 import { useToc } from '../lib/toc';
@@ -7,15 +7,18 @@ import HtmlContent from '../components/HtmlContent';
 import Sections from '../components/Sections';
 import SectionCapsule from '../components/SectionCapsule';
 import { scrollToId } from '../lib/scroll';
+import { useScrollSpy } from '../lib/scrollspy';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const toc = useToc();
   const [params] = useSearchParams();
   const section = params.get('s');
+  const pageRef = useRef<HTMLDivElement>(null);
 
   const jump = (id: string) => {
     scrollToId(id);
+    toc.setActive(id);
     navigate(`/?s=${id}`, { replace: true });
   };
 
@@ -29,6 +32,9 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 精准 scroll-spy：与侧栏目录一一对应
+  useScrollSpy(pageRef, []);
+
   useEffect(() => {
     if (!section) return;
     const t = window.setTimeout(() => scrollToId(section), 80);
@@ -36,7 +42,7 @@ export default function HomePage() {
   }, [section]);
 
   return (
-    <div className="page">
+    <div className="page" ref={pageRef}>
       <h1>{decodeEntities(homeData.title)}</h1>
       <div className="lede">
         <HtmlContent html={homeData.lede} />
