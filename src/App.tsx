@@ -5,7 +5,6 @@ import { decks } from './content';
 import TopBar from './components/TopBar';
 import Sidebar, { SidebarContent } from './components/Sidebar';
 import MobileDrawer from './components/MobileDrawer';
-import SearchPalette from './components/SearchPalette';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import DeckPage from './pages/DeckPage';
@@ -17,7 +16,6 @@ export default function App() {
   const location = useLocation();
   const navType = useNavigationType();
   const reduced = useReducedMotion();
-  const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const currentDeck = useMemo(() => {
@@ -81,7 +79,6 @@ export default function App() {
         subtitle={subtitle}
         currentDeck={currentDeck}
         onOpenSidebar={() => setDrawerOpen(true)}
-        onOpenSearch={() => setSearchOpen(true)}
       />
 
       <div className="shell-body">
@@ -118,8 +115,6 @@ export default function App() {
           <SidebarContent decks={decks} currentDeck={currentDeck} />
         </MobileDrawer>
       </div>
-
-      <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
   );
 }

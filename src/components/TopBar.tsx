@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { decks, type DeckData } from '../content';
 import { useTheme } from '../lib/theme';
 import { decodeEntities } from '../lib/text';
-import { IconGitHub, IconMenu, IconMoon, IconSearch, IconSun } from './icons';
+import { IconGitHub, IconMenu, IconMoon, IconSun } from './icons';
+import SearchBox from './SearchBox';
 
 const ISSUES_URL = 'https://github.com/SaltGardenia/HFUT-algorithm-design/issues';
 
@@ -11,7 +12,6 @@ interface Props {
   subtitle?: string;
   currentDeck: string | null;
   onOpenSidebar: () => void;
-  onOpenSearch: () => void;
 }
 
 /** 顶栏中部的全站导航：总目录 + 第1~8讲，一项对应一页，线性排列无回环 */
@@ -45,7 +45,7 @@ function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
   );
 }
 
-export default function TopBar({ subtitle, currentDeck, onOpenSidebar, onOpenSearch }: Props) {
+export default function TopBar({ subtitle, currentDeck, onOpenSidebar }: Props) {
   const { theme, toggle } = useTheme();
 
   return (
@@ -65,10 +65,7 @@ export default function TopBar({ subtitle, currentDeck, onOpenSidebar, onOpenSea
       </div>
       <SiteTabs currentDeck={currentDeck} />
       <div className="topbar-right">
-        <button className="topbar-btn" onClick={onOpenSearch} aria-label="搜索手册内容">
-          <IconSearch size={15} />
-          <span>搜索</span>
-        </button>
+        <SearchBox />
         <button
           className="icon-btn"
           onClick={toggle}

@@ -5,11 +5,6 @@ import { decks, homeData } from '../content';
 import { decodeEntities } from '../lib/text';
 import { IconSearch } from './icons';
 
-interface Props {
-  open: boolean;
-  onClose: () => void;
-}
-
 /** 空搜索结果时给出的示例关键词 */
 const SUGGESTIONS = ['Θ 记号', 'LCS', '主方法', '哈夫曼', '循环不变式', 'BFPRT'];
 
@@ -62,12 +57,18 @@ function buildIndex(): IndexItem[] {
   return items;
 }
 
-export default function SearchPalette({ open, onClose }: Props) {
+/**
+ * 顶栏内联搜索框：点击在原位展开输入框，下拉菜单展示结果 / 概览，
+ * 不再弹出居中的覆盖层。
+ */
+export default function SearchBox() {
   const navigate = useNavigate();
   const reduced = useReducedMotion();
+  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const [phIdx, setPhIdx] = useState(0);
+  const boxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const index = useMemo(buildIndex, []);
 
@@ -88,31 +89,30 @@ export default function SearchPalette({ open, onClose }: Props) {
       hits.push({ item, score: idx === 0 ? 0 : idx < 6 ? 1 : 2 });
       if (hits.length > 400) break;
     }
-    return hits.sort((a, b) => a.score - b.score).slice(0, 24).map((h) => h.item);
+    return hits.sort((a, b) => a.score - b.score).slice(0, 12).map((h) => h.item);
   }, [query, index]);
 
-  // 轮播占位提示：让搜索能力（能搜到什么）在打开的第一眼就可见
+  // 占位词轮播：让「能搜到什么」一眼可见
   useEffect(() => {
     if (!open || reduced || query) return;
     const id = window.setInterval(() => setPhIdx((i) => (i + 1) % SUGGESTIONS.length), 2800);
     return () => window.clearInterval(id);
   }, [open, reduced, query]);
 
+  // 点击容器外部关闭
   useEffect(() => {
-    if (open) {
-      setQuery('');
-      setActive(0);
-      setPhIdx(0);
-      window.setTimeout(() => inputRef.current?.focus(), 30);
-    }
+    if (!open) return;
+    const onDown = (e: globalThis.MouseEvent) => {
+      if (!boxRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
   }, [open]);
 
   useEffect(() => setActive(0), [query]);
 
-  if (!open) return null;
-
   const select = (item: IndexItem) => {
-    onClose();
+    setOpen(false);
     if (item.deck) navigate(`/deck/${item.deck}?s=${item.sectionId}`);
     else navigate(`/?s=${item.sectionId}`);
   };
@@ -127,87 +127,96 @@ export default function SearchPalette({ open, onClose }: Props) {
     } else if (e.key === 'Enter') {
       if (results[active]) select(results[active]);
     } else if (e.key === 'Escape') {
-      onClose();
+      setOpen(false);
     }
   };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        className="palette-scrim"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.18 }}
-        onClick={onClose}
-      />
-      <motion.div
-        className="palette"
-        role="dialog"
-        aria-label="搜索手册"
-        initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -10 }}
-        animate={reduced ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
-        exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -10 }}
-        transition={{ type: 'spring', stiffness: 480, damping: 34 }}
-        style={{ transformOrigin: 'top right' }}
-        onKeyDown={onKeyDown}
-      >
-        <div className="palette-input">
-          <IconSearch size={17} />
-          <input
-            ref={inputRef}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={query ? '' : `搜索：${SUGGESTIONS[phIdx]}…`}
-            aria-label="搜索关键词"
-          />
-        </div>
-        <ul className="palette-list">
-          {results.length === 0 && (
-            <li className="palette-empty">
-              {query ? (
-                <>
-                  没有匹配的内容
-                  <span className="palette-suggest">
-                    试试：
-                    {SUGGESTIONS.map((s) => (
-                      <button key={s} type="button" className="palette-chip" onClick={() => setQuery(s)}>
-                        {s}
-                      </button>
-                    ))}
-                  </span>
-                </>
-              ) : (
-                <span className="palette-overview">
-                  <span className="palette-stats">
-                    {counts['章节']} 个章节 · {counts['动画']} 个动画 · {counts['题目']} 道自测题
-                  </span>
-                  <span className="palette-suggest">
-                    热门：
-                    {SUGGESTIONS.map((s) => (
-                      <button key={s} type="button" className="palette-chip" onClick={() => setQuery(s)}>
-                        {s}
-                      </button>
-                    ))}
-                  </span>
-                </span>
+    <div className="search-box" ref={boxRef}>
+      {open ? (
+        <input
+          ref={inputRef}
+          className="search-input"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder={query ? '' : `搜索：${SUGGESTIONS[phIdx]}…`}
+          aria-label="搜索关键词"
+          autoFocus
+        />
+      ) : (
+        <button
+          type="button"
+          className="search-btn"
+          onClick={() => setOpen(true)}
+          aria-label="搜索手册内容"
+          aria-haspopup="listbox"
+          aria-expanded={false}
+        >
+          <IconSearch size={15} />
+          <span>搜索</span>
+        </button>
+      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="search-drop"
+            initial={reduced ? { opacity: 0 } : { opacity: 0, y: -6, scaleY: 0.96 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={reduced ? { opacity: 0 } : { opacity: 0, y: -6, scaleY: 0.96 }}
+            transition={{ duration: 0.16, ease: [0.25, 0.1, 0.25, 1] }}
+            style={{ transformOrigin: 'top right' }}
+            role="listbox"
+            aria-label="搜索结果"
+          >
+            <ul className="search-list">
+              {results.length === 0 && (
+                <li className="palette-empty">
+                  {query ? (
+                    <>
+                      没有匹配的内容
+                      <span className="palette-suggest">
+                        试试：
+                        {SUGGESTIONS.map((s) => (
+                          <button key={s} type="button" className="palette-chip" onClick={() => setQuery(s)}>
+                            {s}
+                          </button>
+                        ))}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="palette-overview">
+                      <span className="palette-stats">
+                        {counts['章节']} 个章节 · {counts['动画']} 个动画 · {counts['题目']} 道自测题
+                      </span>
+                      <span className="palette-suggest">
+                        热门：
+                        {SUGGESTIONS.map((s) => (
+                          <button key={s} type="button" className="palette-chip" onClick={() => setQuery(s)}>
+                            {s}
+                          </button>
+                        ))}
+                      </span>
+                    </span>
+                  )}
+                </li>
               )}
-            </li>
-          )}
-          {results.map((item, i) => (
-            <li
-              key={`${item.deck}-${item.sectionId}-${i}`}
-              className={`palette-item${i === active ? ' active' : ''}`}
-              onMouseEnter={() => setActive(i)}
-              onClick={() => select(item)}
-            >
-              <span className="pi-kind">{item.kind}</span>
-              <span className="pi-text">{item.text}</span>
-              <span className="pi-path">{item.deck ? item.deckTitle : '首页'}</span>
-            </li>
-          ))}
-        </ul>
-      </motion.div>
-    </AnimatePresence>
+              {results.map((item, i) => (
+                <li
+                  key={`${item.deck}-${item.sectionId}-${i}`}
+                  className={`palette-item${i === active ? ' active' : ''}`}
+                  onMouseEnter={() => setActive(i)}
+                  onClick={() => select(item)}
+                >
+                  <span className="pi-kind">{item.kind}</span>
+                  <span className="pi-text">{item.text}</span>
+                  <span className="pi-path">{item.deck ? item.deckTitle : '首页'}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
