@@ -119,6 +119,23 @@ function enhance(root: HTMLElement) {
         .catch(() => (btn.textContent = '复制失败'));
     });
     wrap.appendChild(btn);
+
+    // 长代码默认折叠（页面不再被拉得极长），点击在覆盖层里看完整代码
+    if (code) {
+      const rows = code.querySelectorAll('.cl').length || (code.textContent ?? '').split('\n').length;
+      if (rows > CODE_COLLAPSE_LINES) {
+        wrap.classList.add('clamped');
+        const expand = document.createElement('button');
+        expand.type = 'button';
+        expand.className = 'code-expand';
+        expand.textContent = `查看完整代码（共 ${rows} 行）`;
+        expand.addEventListener('click', () => {
+          const pair = wrap.closest('.code-pair');
+          openCodeLightbox((pair ?? wrap) as HTMLElement);
+        });
+        wrap.appendChild(expand);
+      }
+    }
   }
 
   // 宽表格：包一层横向滚动容器
@@ -129,33 +146,6 @@ function enhance(root: HTMLElement) {
     scroll.className = 'tbl-scroll';
     tbl.replaceWith(scroll);
     scroll.appendChild(tbl);
-  }
-
-  // 代码对：窄屏下提供「伪代码 / C++」切换（宽屏仍是并排双栏，由 CSS 控制）
-  for (const pair of Array.from(root.querySelectorAll<HTMLDivElement>('.code-pair'))) {
-    if (pair.dataset.enhanced) continue;
-    const cols = pair.querySelectorAll(':scope > .code-col');
-    if (cols.length !== 2) continue;
-    pair.dataset.enhanced = '1';
-    const bar = document.createElement('div');
-    bar.className = 'code-tabs';
-    bar.setAttribute('role', 'tablist');
-    bar.setAttribute('aria-label', '切换代码列');
-    const names = ['伪代码', 'C++'];
-    cols.forEach((_, i) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'code-tab';
-      b.setAttribute('role', 'tab');
-      b.textContent = names[i] ?? `列 ${i + 1}`;
-      b.addEventListener('click', () => {
-        pair.classList.add('tabbed');
-        cols.forEach((c, j) => c.classList.toggle('active', i === j));
-        bar.querySelectorAll('.code-tab').forEach((t, j) => t.classList.toggle('active', i === j));
-      });
-      bar.appendChild(b);
-    });
-    pair.prepend(bar);
   }
 
   // 首页讲次卡片：补充「N 个动画 · M 道自测」元信息，便于扫读比较
@@ -189,6 +179,75 @@ function enhance(root: HTMLElement) {
     if (cap && cap.classList.contains('fig-cap')) plate.appendChild(cap);
     plate.addEventListener('click', () => openLightbox(plate, svg));
   }
+}
+
+/** 代码行数超过该值的块折叠，展开走全屏覆盖层 */
+const CODE_COLLAPSE_LINES = 8;
+
+/** 代码覆盖层：像看照片一样，在页面上方铺一层展示完整代码（保留语法高亮） */
+function openCodeLightbox(scope: HTMLElement) {
+  if (document.querySelector('.code-lightbox')) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'code-lightbox';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-label', '完整代码查看');
+
+  const panel = document.createElement('div');
+  panel.className = 'code-lightbox-panel';
+
+  // 克隆目标区域的代码块（伪代码 + C++ 纵向排列），去掉折叠态与页内按钮
+  const source = scope.cloneNode(true) as HTMLElement;
+  source.querySelectorAll('.copy-btn, .code-expand, .code-tabs').forEach((el) => el.remove());
+  source.querySelectorAll('.clamped').forEach((el) => el.classList.remove('clamped'));
+  source.querySelectorAll('pre.code').forEach((el) => {
+    (el as HTMLElement).style.maxHeight = '';
+  });
+  panel.appendChild(source);
+
+  // 克隆体里的复制按钮不能用了，给每个块重挂一个（复制源文本）
+  const pres = Array.from(scope.querySelectorAll<HTMLPreElement>('pre.code'));
+  const clonePres = Array.from(panel.querySelectorAll<HTMLPreElement>('pre.code'));
+  clonePres.forEach((pre, i) => {
+    const orig = pres[i];
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.style.opacity = '1';
+    btn.textContent = '复制';
+    btn.addEventListener('click', () => {
+      navigator.clipboard
+        ?.writeText(orig ? codePlainText(orig) : '')
+        .then(() => {
+          btn.textContent = '已复制';
+          window.setTimeout(() => (btn.textContent = '复制'), 1400);
+        })
+        .catch(() => (btn.textContent = '复制失败'));
+    });
+    pre.appendChild(btn);
+  });
+
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'fig-lightbox-close';
+  closeBtn.setAttribute('aria-label', '关闭代码查看');
+  closeBtn.textContent = '×';
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener('keydown', onKey);
+    document.body.style.overflow = '';
+  };
+  const onKey = (e: globalThis.KeyboardEvent) => {
+    if (e.key === 'Escape') close();
+  };
+  overlay.appendChild(panel);
+  overlay.appendChild(closeBtn);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close();
+  });
+  closeBtn.addEventListener('click', close);
+  document.addEventListener('keydown', onKey);
+  document.body.style.overflow = 'hidden';
+  document.body.appendChild(overlay);
 }
 
 /** 插图 lightbox：克隆 SVG 到全屏浮层，点击遮罩 / Esc / 关闭按钮退出 */

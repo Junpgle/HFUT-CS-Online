@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import type { TocEntry } from '../content/types';
@@ -39,52 +39,32 @@ function buildGroups(toc: TocEntry[]): TocGroup[] {
 function TocGroupItem({
   group,
   activeId,
-  expanded,
-  onToggle,
   onJump,
 }: {
   group: TocGroup;
   activeId: string | null;
-  expanded: boolean;
-  onToggle: () => void;
   onJump: (id: string) => void;
 }) {
   const childActive = group.children.some((c) => c.id === activeId);
   const headActive = group.head?.id === activeId;
-  const showChildren = expanded || childActive;
   return (
     <li className={childActive || headActive ? 'toc-group has-active' : 'toc-group'}>
       {group.head ? (
         <div className="toc-row">
           <TocLink e={group.head} active={headActive} onJump={onJump} />
-          {group.children.length > 0 && (
-            <button
-              type="button"
-              className="toc-fold"
-              aria-expanded={showChildren}
-              aria-label={showChildren ? '折叠小节' : '展开小节'}
-              onClick={onToggle}
-            >
-              <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
-                <path d="M2.5 4.5 L6 8 L9.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-              </svg>
-            </button>
-          )}
         </div>
       ) : (
         <TocLink e={group.children[0]} active={activeId === group.children[0].id} onJump={onJump} />
       )}
       {group.children.length > 0 && (
-        /* 高度折叠动画：grid-template-rows 0fr → 1fr（展开的组内容始终挂载） */
-        <div className={`toc-sub-wrap${showChildren ? ' open' : ''}`}>
-          <ul className="toc toc-sub">
-            {group.children.map((c) => (
-              <li key={c.id}>
-                <TocLink e={c} active={activeId === c.id} onJump={onJump} />
-              </li>
-            ))}
-          </ul>
-        </div>
+        /* 全部展开显示，不提供折叠交互 */
+        <ul className="toc toc-sub">
+          {group.children.map((c) => (
+            <li key={c.id}>
+              <TocLink e={c} active={activeId === c.id} onJump={onJump} />
+            </li>
+          ))}
+        </ul>
       )}
     </li>
   );
@@ -106,21 +86,10 @@ function TocLink({ e, active, onJump }: { e: TocEntry; active: boolean; onJump: 
   );
 }
 
-/** 侧栏目录：level 2 分组、组内 level 3 可折叠；当前小节所在组自动展开 */
+/** 侧栏目录：level 2 分组、level 3 全部展开显示，无折叠交互 */
 function Toc() {
   const { toc, activeId, jump } = useToc();
   const groups = useMemo(() => buildGroups(toc), [toc]);
-
-  const containsActive = (g: TocGroup) => g.head?.id === activeId || g.children.some((c) => c.id === activeId);
-  const [openIds, setOpenIds] = useState<Set<string>>(new Set());
-
-  // activeId 变化时自动展开所在组（保留用户手动折叠的其他组）
-  useEffect(() => {
-    if (!activeId) return;
-    const g = groups.find(containsActive);
-    if (g) setOpenIds((prev) => new Set(prev).add(g.id));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeId, groups]);
 
   if (toc.length === 0) return null;
 
@@ -133,15 +102,6 @@ function Toc() {
             key={g.id}
             group={g}
             activeId={activeId}
-            expanded={openIds.has(g.id)}
-            onToggle={() =>
-              setOpenIds((prev) => {
-                const next = new Set(prev);
-                if (next.has(g.id)) next.delete(g.id);
-                else next.add(g.id);
-                return next;
-              })
-            }
             onJump={(id) => jump?.(id)}
           />
         ))}

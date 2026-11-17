@@ -1,4 +1,4 @@
-import { motion, useReducedMotion, useScroll, useSpring } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { decks, type DeckData } from '../content';
 import { useTheme } from '../lib/theme';
@@ -47,8 +47,6 @@ function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
 
 export default function TopBar({ subtitle, currentDeck, onOpenSidebar, onOpenSearch }: Props) {
   const { theme, toggle } = useTheme();
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 });
 
   return (
     <header className="topbar">
@@ -70,7 +68,6 @@ export default function TopBar({ subtitle, currentDeck, onOpenSidebar, onOpenSea
         <button className="topbar-btn" onClick={onOpenSearch} aria-label="搜索手册内容">
           <IconSearch size={15} />
           <span>搜索</span>
-          <span className="kbd">⌘K</span>
         </button>
         <button
           className="icon-btn"
@@ -90,7 +87,6 @@ export default function TopBar({ subtitle, currentDeck, onOpenSidebar, onOpenSea
           <IconGitHub size={18} />
         </a>
       </div>
-      <motion.div className="reading-progress" style={{ scaleX }} />
     </header>
   );
 }

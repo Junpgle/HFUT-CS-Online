@@ -161,9 +161,6 @@ export default function SearchPalette({ open, onClose }: Props) {
             placeholder={query ? '' : `搜索：${SUGGESTIONS[phIdx]}…`}
             aria-label="搜索关键词"
           />
-          <span className="kbd" style={{ fontSize: 11, color: 'var(--ink-3)' }}>
-            ESC
-          </span>
         </div>
         <ul className="palette-list">
           {results.length === 0 && (
@@ -210,21 +207,6 @@ export default function SearchPalette({ open, onClose }: Props) {
             </li>
           ))}
         </ul>
-        <div className="palette-foot">
-          <span>
-            <span className="kbd">↑</span>
-            <span className="kbd">↓</span>
-            切换
-          </span>
-          <span>
-            <span className="kbd">↵</span>
-            跳转
-          </span>
-          <span>
-            <span className="kbd">ESC</span>
-            关闭
-          </span>
-        </div>
       </motion.div>
     </AnimatePresence>
   );

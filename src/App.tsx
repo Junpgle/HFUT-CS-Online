@@ -44,13 +44,10 @@ export default function App() {
     prevNoRef.current = deckNo;
   }, [deckNo]);
 
-  // ⌘K / Ctrl+K 打开搜索；Esc 关闭抽屉
+  // Esc 关闭抽屉（搜索不设快捷键，点击顶栏按钮打开）
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setSearchOpen((v) => !v);
-      } else if (e.key === 'Escape') {
+      if (e.key === 'Escape') {
         setDrawerOpen(false);
       }
     };
