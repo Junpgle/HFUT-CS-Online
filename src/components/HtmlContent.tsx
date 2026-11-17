@@ -138,7 +138,7 @@ function enhance(root: HTMLElement) {
     }
   }
 
-  // 宽表格：包一层横向滚动容器
+  // 宽表格：包一层横向滚动容器 + 按列内容自适应对齐
   for (const tbl of Array.from(root.querySelectorAll<HTMLTableElement>('table.tbl'))) {
     if (tbl.dataset.enhanced) continue;
     tbl.dataset.enhanced = '1';
@@ -146,6 +146,7 @@ function enhance(root: HTMLElement) {
     scroll.className = 'tbl-scroll';
     tbl.replaceWith(scroll);
     scroll.appendChild(tbl);
+    fitTableAlignment(tbl);
   }
 
   // 首页讲次卡片：补充「N 个动画 · M 道自测」元信息，便于扫读比较
@@ -178,6 +179,38 @@ function enhance(root: HTMLElement) {
     const cap = plate.nextElementSibling;
     if (cap && cap.classList.contains('fig-cap')) plate.appendChild(cap);
     plate.addEventListener('click', () => openLightbox(plate, svg));
+  }
+}
+
+/**
+ * 表格自适应对齐：逐列检查 tbody 单元格，若整列都是短内容（无长句、无块级元素），
+ * 则该列（含表头）居中；长文本列保持左对齐。每张表各自得到合适的显示方式。
+ */
+function fitTableAlignment(tbl: HTMLTableElement) {
+  const bodyRows = Array.from(tbl.querySelectorAll('tbody tr'));
+  if (bodyRows.length === 0) return;
+  const colCount = bodyRows[0].children.length;
+  for (let c = 0; c < colCount; c++) {
+    let compact = true;
+    for (const tr of bodyRows) {
+      const cell = tr.children[c] as HTMLElement | undefined;
+      if (!cell) {
+        compact = false;
+        break;
+      }
+      const text = (cell.textContent ?? '').trim();
+      // 长句、句读、内嵌块级元素 → 判定为长文本列
+      if (text.length > 12 || /[。；！？]/.test(text) || cell.querySelector('p, ul, ol, pre, blockquote, br')) {
+        compact = false;
+        break;
+      }
+    }
+    if (!compact) continue;
+    for (const el of tbl.querySelectorAll(
+      `tbody tr > :nth-child(${c + 1}), thead tr > :nth-child(${c + 1})`,
+    )) {
+      el.classList.add('center');
+    }
   }
 }
 
