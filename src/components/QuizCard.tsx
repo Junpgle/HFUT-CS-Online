@@ -125,8 +125,28 @@ export default function QuizCard({ quiz, onResult }: Props) {
                 >
                   <span className="opt-key">{letter}</span>
                   <span dangerouslySetInnerHTML={{ __html: o }} />
-                  {st === 'correct' && <IconCheck size={16} style={{ marginLeft: 'auto', color: 'var(--ok)' }} />}
-                  {st === 'wrong' && <IconX size={16} style={{ marginLeft: 'auto', color: 'var(--hot)' }} />}
+                  {st === 'correct' && (
+                    <motion.span
+                      className="opt-mark"
+                      initial={{ scale: 0, rotate: -30 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: 'spring', stiffness: 560, damping: 22 }}
+                      style={{ marginLeft: 'auto', color: 'var(--ok)', display: 'inline-flex' }}
+                    >
+                      <IconCheck size={16} />
+                    </motion.span>
+                  )}
+                  {st === 'wrong' && (
+                    <motion.span
+                      className="opt-mark"
+                      initial={{ scale: 0.6, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 560, damping: 22 }}
+                      style={{ marginLeft: 'auto', color: 'var(--hot)', display: 'inline-flex' }}
+                    >
+                      <IconX size={16} />
+                    </motion.span>
+                  )}
                 </button>
               </li>
             );

@@ -67,8 +67,15 @@ export default function SearchPalette({ open, onClose }: Props) {
   const reduced = useReducedMotion();
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
+  const [phIdx, setPhIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const index = useMemo(buildIndex, []);
+
+  const counts = useMemo(() => {
+    const c = { 章节: 0, 动画: 0, 题目: 0 };
+    for (const it of index) c[it.kind] += 1;
+    return c;
+  }, [index]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -84,10 +91,18 @@ export default function SearchPalette({ open, onClose }: Props) {
     return hits.sort((a, b) => a.score - b.score).slice(0, 24).map((h) => h.item);
   }, [query, index]);
 
+  // 轮播占位提示：让搜索能力（能搜到什么）在打开的第一眼就可见
+  useEffect(() => {
+    if (!open || reduced || query) return;
+    const id = window.setInterval(() => setPhIdx((i) => (i + 1) % SUGGESTIONS.length), 2800);
+    return () => window.clearInterval(id);
+  }, [open, reduced, query]);
+
   useEffect(() => {
     if (open) {
       setQuery('');
       setActive(0);
+      setPhIdx(0);
       window.setTimeout(() => inputRef.current?.focus(), 30);
     }
   }, [open]);
@@ -143,7 +158,7 @@ export default function SearchPalette({ open, onClose }: Props) {
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="搜索章节、动画与自测题…"
+            placeholder={query ? '' : `搜索：${SUGGESTIONS[phIdx]}…`}
             aria-label="搜索关键词"
           />
           <span className="kbd" style={{ fontSize: 11, color: 'var(--ink-3)' }}>
@@ -166,7 +181,19 @@ export default function SearchPalette({ open, onClose }: Props) {
                   </span>
                 </>
               ) : (
-                '输入关键词，跳转到任意章节 / 动画 / 题目'
+                <span className="palette-overview">
+                  <span className="palette-stats">
+                    {counts['章节']} 个章节 · {counts['动画']} 个动画 · {counts['题目']} 道自测题
+                  </span>
+                  <span className="palette-suggest">
+                    热门：
+                    {SUGGESTIONS.map((s) => (
+                      <button key={s} type="button" className="palette-chip" onClick={() => setQuery(s)}>
+                        {s}
+                      </button>
+                    ))}
+                  </span>
+                </span>
               )}
             </li>
           )}

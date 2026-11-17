@@ -155,7 +155,27 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
         </span>
       </div>
 
-      <div className={`demo-stage${tick ? ' tick' : ''}`}>
+      <div className={`demo-stage${tick ? ' tick' : ''}${step >= total - 1 ? ' ended' : ''}`}>
+        {/* 播完出现的「重播」浮层：给一次明确的收尾仪式 */}
+        <AnimatePresence>
+          {step >= total - 1 && !playing && total > 1 && (
+            <motion.button
+              type="button"
+              className="demo-replay"
+              initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.8, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 26 }}
+              onClick={() => {
+                go(0);
+                setPlaying(true);
+              }}
+            >
+              <IconReset size={14} />
+              重播
+            </motion.button>
+          )}
+        </AnimatePresence>
         <svg
           viewBox={`0 0 ${w} ${h}`}
           role="img"
@@ -180,7 +200,7 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
           onChange={(e) => go(Number(e.target.value))}
           aria-label="拖动查看任意步骤"
           aria-valuetext={`第 ${step + 1} 步，共 ${total} 步`}
-          style={{ accentColor: 'var(--accent)' }}
+          style={{ accentColor: 'var(--deck-accent)' }}
         />
       </div>
 

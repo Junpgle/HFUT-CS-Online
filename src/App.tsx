@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
 import { decks } from './content';
@@ -26,6 +26,23 @@ export default function App() {
   }, [location.pathname]);
 
   const subtitle = decks.find((d) => d.id === currentDeck)?.subtitle;
+
+  // 当前讲次 → html[data-deck]：顶栏 tabs / 进度条 / 侧栏 / h2 编号统一切换讲次主题色
+  useEffect(() => {
+    if (currentDeck) document.documentElement.dataset.deck = currentDeck;
+    else delete document.documentElement.dataset.deck;
+    return () => {
+      delete document.documentElement.dataset.deck;
+    };
+  }, [currentDeck]);
+
+  // 讲次方向性转场：记录上一次的讲次序号，前/后翻页用不同方向
+  const deckNo = currentDeck ? Number(currentDeck.slice(4)) : 0;
+  const prevNoRef = useRef(0);
+  const dir = deckNo && prevNoRef.current && deckNo !== prevNoRef.current ? Math.sign(deckNo - prevNoRef.current) : 0;
+  useEffect(() => {
+    prevNoRef.current = deckNo;
+  }, [deckNo]);
 
   // ⌘K / Ctrl+K 打开搜索；Esc 关闭抽屉
   useEffect(() => {
@@ -63,16 +80,29 @@ export default function App() {
 
   return (
     <div className="shell">
-      <TopBar subtitle={subtitle} onOpenSidebar={() => setDrawerOpen(true)} onOpenSearch={() => setSearchOpen(true)} />
+      <TopBar
+        subtitle={subtitle}
+        currentDeck={currentDeck}
+        onOpenSidebar={() => setDrawerOpen(true)}
+        onOpenSearch={() => setSearchOpen(true)}
+      />
 
       <div className="shell-body">
         <Sidebar decks={decks} currentDeck={currentDeck} />
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence mode="wait" initial={false} custom={dir}>
           <motion.div
             key={location.pathname}
-            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 12 }}
-            animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+            custom={dir}
+            variants={{
+              enter: (d: number) =>
+                reduced ? { opacity: 0 } : d === 0 ? { opacity: 0, y: 12 } : { opacity: 0, x: 28 * d },
+              center: { opacity: 1, x: 0, y: 0 },
+              leave: (d: number) =>
+                reduced ? { opacity: 0 } : d === 0 ? { opacity: 0, y: -8 } : { opacity: 0, x: -22 * d },
+            }}
+            initial="enter"
+            animate="center"
+            exit="leave"
             transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
           >
             <Routes location={location}>

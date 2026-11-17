@@ -64,12 +64,25 @@ function DeckInner({ deck }: { deck: DeckData }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deck.id]);
 
+  const level2 = deck.toc.filter((e) => e.level === 2);
+
   return (
     <div className="page" ref={pageRef} data-deck={deck.id}>
       <h1>{decodeEntities(deck.title)}</h1>
       <div className="lede">
         <HtmlContent html={deck.lede} />
       </div>
+      {/* 本讲知识点导航卡：由目录数据生成的可点标签，先给全讲一张「地图」 */}
+      {level2.length > 1 && (
+        <nav className="topic-map" aria-label="本讲知识点导航">
+          <span className="topic-map-label">本讲脉络</span>
+          {level2.map((e) => (
+            <button key={e.id} type="button" className="topic-chip" onClick={() => jump(e.id)}>
+              {decodeEntities(e.text)}
+            </button>
+          ))}
+        </nav>
+      )}
       <Sections
         sections={deck.sections}
         scores={scores}

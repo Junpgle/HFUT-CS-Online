@@ -74,14 +74,17 @@ function TocGroupItem({
       ) : (
         <TocLink e={group.children[0]} active={activeId === group.children[0].id} onJump={onJump} />
       )}
-      {group.children.length > 0 && showChildren && (
-        <ul className="toc toc-sub">
-          {group.children.map((c) => (
-            <li key={c.id}>
-              <TocLink e={c} active={activeId === c.id} onJump={onJump} />
-            </li>
-          ))}
-        </ul>
+      {group.children.length > 0 && (
+        /* 高度折叠动画：grid-template-rows 0fr → 1fr（展开的组内容始终挂载） */
+        <div className={`toc-sub-wrap${showChildren ? ' open' : ''}`}>
+          <ul className="toc toc-sub">
+            {group.children.map((c) => (
+              <li key={c.id}>
+                <TocLink e={c} active={activeId === c.id} onJump={onJump} />
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </li>
   );
@@ -162,9 +165,9 @@ export function SidebarContent({ decks, currentDeck }: Props) {
           </Link>
         </li>
         {decks.map((d) => (
-          <li key={d.id}>
+          <li key={d.id} data-deck={d.id}>
             <Link to={`/deck/${d.id}`} className={currentDeck === d.id ? 'active' : undefined}>
-              <span className="nav-no">{d.no}</span>
+              <span className="nav-no">{d.no.replace('第', '').replace('讲', '')}</span>
               {decodeEntities(d.title)}
             </Link>
           </li>

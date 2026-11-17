@@ -1,5 +1,6 @@
 /* 由 scripts/migrate.mjs 自动生成 */
 import type { DeckData } from './types';
+export type { DeckData } from './types';
 import home from './home';
 import deck1 from './deck1';
 import deck2 from './deck2';

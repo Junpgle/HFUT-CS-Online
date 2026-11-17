@@ -7,22 +7,89 @@ import { parseLegacyHref, scrollToId } from '../lib/scroll';
 const TOKEN_RE =
   /(\/\/[^\n]*)|(\/\*[\s\S]*?\*\/)|("(?:[^"\\\n]|\\.)*")|('(?:[^'\\\n]|\\.)*')|(\b\d+(?:\.\d+)?\b)|(\b(?:for|while|if|else|return|do|then|to|downto|and|or|not|swap|int|void|char|bool|float|double|const|auto|include|iostream|algorithm|std|struct|new|delete|true|false|using|namespace|main|cout|cin|endl)\b)/g;
 
-function highlightCode(code: HTMLElement) {
-  const text = code.textContent ?? '';
-  const frag = document.createDocumentFragment();
+type Tok = { text: string; com: boolean };
+
+/** 把整段代码切成 token 流（沿用原正则），供按行重排 */
+function tokenize(text: string): Tok[] {
+  const toks: Tok[] = [];
   let last = 0;
   let m: RegExpExecArray | null;
   TOKEN_RE.lastIndex = 0;
   while ((m = TOKEN_RE.exec(text))) {
-    if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
-    const span = document.createElement('span');
-    span.textContent = m[0];
-    span.className = m[1] || m[2] ? 'tok-com' : m[5] ? 'tok-num' : m[6] ? 'tok-kw' : 'tok-kw';
-    frag.appendChild(span);
+    if (m.index > last) toks.push({ text: text.slice(last, m.index), com: false });
+    toks.push({ text: m[0], com: !!(m[1] || m[2]) });
     last = m.index + m[0].length;
   }
-  if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+  if (last < text.length) toks.push({ text: text.slice(last), com: false });
+  return toks;
+}
+
+function makeTokSpan(t: Tok, extra?: string) {
+  const s = document.createElement('span');
+  s.textContent = t.text;
+  s.className = extra ? `tok-${t.com ? 'com' : extra}` : t.com ? 'tok-com' : '';
+  return s;
+}
+
+/**
+ * 语法着色 + 两段式行布局：每行拆成「语句 + 右对齐注释」两列（.cl），
+ * 长行溢出时滚动的是注释而不是把注释拦腰截断在语句后面。
+ */
+function highlightCode(code: HTMLElement) {
+  const toks = tokenize(code.textContent ?? '');
+  const frag = document.createDocumentFragment();
+  // 遇到注释 token 后，本行剩余内容都归入注释列（注释只会出现在行尾）
+  const lines: { code: Tok[]; com: Tok[] }[] = [{ code: [], com: [] }];
+  let inCom = false;
+  for (const t of toks) {
+    const parts = t.text.split('\n');
+    parts.forEach((p, i) => {
+      if (i > 0) {
+        lines.push({ code: [], com: [] });
+        inCom = false;
+      }
+      if (!p) return;
+      const cur = lines[lines.length - 1];
+      if (t.com || inCom) {
+        inCom = true;
+        cur.com.push({ text: p, com: true });
+      } else {
+        cur.code.push(t);
+      }
+    });
+  }
+  const KW_RE =
+    /^(for|while|if|else|return|do|then|to|downto|and|or|not|swap|int|void|char|bool|float|double|const|auto|include|iostream|algorithm|std|struct|new|delete|true|false|using|namespace|main|cout|cin|endl)$/;
+  for (const line of lines) {
+    // 语句尾部的对齐空格交给注释列的 16px 间距，不再占宽
+    while (line.code.length && /^\s+$/.test(line.code[line.code.length - 1].text)) line.code.pop();
+    const row = document.createElement('span');
+    row.className = 'cl';
+    const codeEl = document.createElement('span');
+    codeEl.className = 'cl-code';
+    for (const t of line.code) {
+      const kind = /^["']/.test(t.text) ? 'str' : /^\d/.test(t.text) ? 'num' : KW_RE.test(t.text) ? 'kw' : '';
+      codeEl.appendChild(makeTokSpan(t, kind || undefined));
+    }
+    row.appendChild(codeEl);
+    if (line.com.length) {
+      const comEl = document.createElement('span');
+      comEl.className = 'cl-com';
+      for (const t of line.com) comEl.appendChild(makeTokSpan(t));
+      row.appendChild(comEl);
+    }
+    frag.appendChild(row);
+  }
   code.replaceChildren(frag);
+}
+
+/** 代码复制文本：两段式行布局（.cl 块级行）按行重组换行 */
+function codePlainText(code: HTMLElement): string {
+  const rows = code.querySelectorAll('.cl');
+  if (rows.length === 0) return code.textContent ?? '';
+  return Array.from(rows)
+    .map((r) => (r.textContent ?? '').replace(/\u00a0/g, ''))
+    .join('\n');
 }
 
 function enhance(root: HTMLElement) {
@@ -44,7 +111,7 @@ function enhance(root: HTMLElement) {
     btn.textContent = '复制';
     btn.addEventListener('click', () => {
       navigator.clipboard
-        ?.writeText(code?.textContent ?? '')
+        ?.writeText(code ? codePlainText(code) : '')
         .then(() => {
           btn.textContent = '已复制';
           window.setTimeout(() => (btn.textContent = '复制'), 1400);
@@ -107,6 +174,66 @@ function enhance(root: HTMLElement) {
     meta.textContent = `${demos} 个动画 · ${quiz} 道自测`;
     a.appendChild(meta);
   }
+
+  // 插图图版：内容里的 <svg class="fig"> 包一层 <figure>，挂上点击放大（lightbox）
+  for (const svg of Array.from(root.querySelectorAll<SVGElement>('svg.fig'))) {
+    if (svg.dataset.figEnhanced) continue;
+    svg.dataset.figEnhanced = '1';
+    const plate = document.createElement('figure');
+    plate.className = 'fig has-lightbox';
+    svg.classList.remove('fig');
+    svg.replaceWith(plate);
+    plate.appendChild(svg);
+    // 相邻的题注收进图版，缩放时一起看
+    const cap = plate.nextElementSibling;
+    if (cap && cap.classList.contains('fig-cap')) plate.appendChild(cap);
+    plate.addEventListener('click', () => openLightbox(plate, svg));
+  }
+}
+
+/** 插图 lightbox：克隆 SVG 到全屏浮层，点击遮罩 / Esc / 关闭按钮退出 */
+function openLightbox(fig: HTMLElement, svg: SVGElement) {
+  if (document.querySelector('.fig-lightbox')) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'fig-lightbox';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-label', '插图放大视图');
+  const panel = document.createElement('div');
+  panel.className = 'fig-lightbox-panel';
+  const clone = svg.cloneNode(true) as SVGElement;
+  clone.removeAttribute('style');
+  clone.setAttribute('width', '100%');
+  clone.setAttribute('height', 'auto');
+  panel.appendChild(clone);
+  const cap = fig.querySelector('.fig-cap, figcaption');
+  if (cap) {
+    const capEl = document.createElement('p');
+    capEl.className = 'fig-lightbox-cap';
+    capEl.textContent = cap.textContent ?? '';
+    panel.appendChild(capEl);
+  }
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'fig-lightbox-close';
+  closeBtn.setAttribute('aria-label', '关闭放大视图');
+  closeBtn.textContent = '×';
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener('keydown', onKey);
+    document.body.style.overflow = '';
+  };
+  const onKey = (e: globalThis.KeyboardEvent) => {
+    if (e.key === 'Escape') close();
+  };
+  overlay.appendChild(panel);
+  overlay.appendChild(closeBtn);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close();
+  });
+  closeBtn.addEventListener('click', close);
+  document.addEventListener('keydown', onKey);
+  document.body.style.overflow = 'hidden';
+  document.body.appendChild(overlay);
 }
 
 /* ------------------------------------------------------- 组件 */

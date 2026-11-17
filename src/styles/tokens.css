@@ -32,6 +32,17 @@
   --warn: #ad5700;               /* 比较 / 警示 */
   --purple: #8d34c9;
 
+  /* 每讲一色：讲次 tabs / 侧栏徽章 / h2 编号 / 进度条 / demo 控件统一取色 */
+  --deck1: #0071e3;              /* 绪论 · 蓝 */
+  --deck2: #5e5ce6;              /* 算法基础 · 靛 */
+  --deck3: #248a3d;              /* 算法分析 · 绿 */
+  --deck4: #ad5700;              /* 线性时间排序 · 橙 */
+  --deck5: #d70015;              /* 线性时间选择 · 红 */
+  --deck6: #0071a4;              /* 递归与分治 · 青 */
+  --deck7: #8d34c9;              /* 动态规划 · 紫 */
+  --deck8: #c0397a;              /* 贪心法 · 玫红 */
+  --deck-accent: var(--accent);  /* 当前讲次色（无讲次时回落全局色） */
+
   /* 提示块底色 */
   --key-bg: rgba(0, 113, 227, 0.08);
   --warn-bg: rgba(255, 149, 0, 0.12);
@@ -100,6 +111,15 @@
   --warn: #ff9f0a;
   --purple: #bf5af2;
 
+  --deck1: #0a84ff;
+  --deck2: #7d7aff;
+  --deck3: #30d158;
+  --deck4: #ff9f0a;
+  --deck5: #ff453a;
+  --deck6: #4db8e8;
+  --deck7: #bf5af2;
+  --deck8: #ff6aa2;
+
   --key-bg: rgba(10, 132, 255, 0.14);
   --warn-bg: rgba(255, 159, 10, 0.14);
   --tip-bg: rgba(48, 209, 88, 0.14);
@@ -133,6 +153,16 @@
   --c-tip-bg: var(--tip-bg);
   --c-warn-bg: var(--warn-bg);
 }
+
+/* --------------------------------------- 当前讲次 → 主题色（html[data-deck]） */
+:root[data-deck='deck1'] { --deck-accent: var(--deck1); }
+:root[data-deck='deck2'] { --deck-accent: var(--deck2); }
+:root[data-deck='deck3'] { --deck-accent: var(--deck3); }
+:root[data-deck='deck4'] { --deck-accent: var(--deck4); }
+:root[data-deck='deck5'] { --deck-accent: var(--deck5); }
+:root[data-deck='deck6'] { --deck-accent: var(--deck6); }
+:root[data-deck='deck7'] { --deck-accent: var(--deck7); }
+:root[data-deck='deck8'] { --deck-accent: var(--deck8); }
 
 /* ------------------------------------------------------- 无障碍偏好适配 */
 @media (prefers-reduced-transparency: reduce) {
