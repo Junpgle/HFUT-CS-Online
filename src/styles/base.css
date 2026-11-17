@@ -216,43 +216,33 @@ button {
   font-weight: 700;
 }
 
-/* 顶栏内联搜索框：点击原位展开输入框，下拉菜单显示结果 */
+/* 顶栏内联搜索框：常驻显示、尺寸不变，聚焦弹出下拉菜单 */
 .search-box {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 6px;
 }
-.search-btn {
+.search-icon {
+  position: absolute;
+  left: 12px;
   display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 34px;
-  padding: 0 12px;
-  border-radius: 999px;
-  font-size: 0.8438rem;
-  color: var(--ink-2);
-  border: 1px solid var(--hairline);
-  background: transparent;
-  white-space: nowrap;
-  transition: background 140ms var(--press-ease), color 140ms, border-color 140ms,
-    transform 100ms var(--press-ease);
-}
-.search-btn:hover {
-  color: var(--ink);
-  background: color-mix(in srgb, var(--deck-accent) 10%, transparent);
-  border-color: transparent;
+  color: var(--ink-3);
+  pointer-events: none;
 }
 .search-input {
-  height: 34px;
-  width: 240px;
-  padding: 0 14px;
+  height: 36px;
+  width: 260px;
+  padding: 0 14px 0 36px;
   border-radius: 999px;
   font-size: 0.8438rem;
   color: var(--ink);
-  border: 1px solid color-mix(in srgb, var(--deck-accent) 35%, transparent);
+  border: 1px solid var(--hairline);
   background: var(--panel-solid);
   outline: none;
+  transition: border-color 140ms var(--press-ease);
+}
+.search-input:focus {
+  border-color: color-mix(in srgb, var(--deck-accent) 45%, transparent);
 }
 .search-input::placeholder {
   color: var(--ink-3);

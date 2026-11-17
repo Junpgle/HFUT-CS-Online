@@ -133,30 +133,22 @@ export default function SearchBox() {
 
   return (
     <div className="search-box" ref={boxRef}>
-      {open ? (
-        <input
-          ref={inputRef}
-          className="search-input"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder={query ? '' : `搜索：${SUGGESTIONS[phIdx]}…`}
-          aria-label="搜索关键词"
-          autoFocus
-        />
-      ) : (
-        <button
-          type="button"
-          className="search-btn"
-          onClick={() => setOpen(true)}
-          aria-label="搜索手册内容"
-          aria-haspopup="listbox"
-          aria-expanded={false}
-        >
-          <IconSearch size={15} />
-          <span>搜索</span>
-        </button>
-      )}
+      <input
+        ref={inputRef}
+        className="search-input"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={onKeyDown}
+        onFocus={() => setOpen(true)}
+        onClick={() => setOpen(true)}
+        placeholder={query ? '' : `搜索：${SUGGESTIONS[phIdx]}…`}
+        aria-label="搜索关键词"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      />
+      <span className="search-icon" aria-hidden="true">
+        <IconSearch size={15} />
+      </span>
       <AnimatePresence>
         {open && (
           <motion.div
