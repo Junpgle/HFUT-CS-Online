@@ -625,12 +625,6 @@ button {
   border-radius: 2px;
   background: color-mix(in srgb, var(--ink) 7%, transparent);
 }
-/* 着色容器内（callout / 解析块 / 公式卡）：衬底改白色，白色药丸浮在色底上 */
-.callout strong,
-.quiz-a strong,
-.formula strong {
-  background: var(--panel-solid);
-}
 .page hr {
   border: 0;
   border-top: 1px dashed var(--hairline);
@@ -696,7 +690,8 @@ button {
 .callout.warn,
 .callout.tip,
 .callout {
-  background: color-mix(in srgb, var(--deck-accent) 7%, transparent);
+  background: transparent;
+  border: 1px solid var(--hairline-soft);
 }
 .callout.key {
   border-left: 4px solid var(--deck-accent);
@@ -705,15 +700,15 @@ button {
   color: var(--deck-accent);
 }
 
-/* 公式卡：主题色浅底 + 细边框，从灰盒变成可识别的「公式版面」 */
+/* 公式卡：无填充 + 细边框，靠边框与居中排版识别 */
 .formula {
   font-family: var(--font-math);
   font-size: 1.1875rem;
   text-align: center;
   margin: 20px auto;
   padding: 14px 18px;
-  background: color-mix(in srgb, var(--deck-accent) 6%, transparent);
-  border: 1px solid color-mix(in srgb, var(--deck-accent) 16%, transparent);
+  background: transparent;
+  border: 1px solid var(--hairline-soft);
   border-radius: var(--r-m);
   overflow-x: auto;
   line-height: 1.6;
@@ -1644,7 +1639,7 @@ pre.code .cl-code:empty + .cl-com {
   padding: 10px 14px;
   font-size: 0.8438rem;
   line-height: 1.75;
-  background: color-mix(in srgb, var(--deck-accent) 7%, transparent);
+  background: transparent;
   border-left: 3px solid var(--deck-accent);
   border-radius: 8px;
   overflow: hidden;
