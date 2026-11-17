@@ -151,7 +151,7 @@ function Toc() {
 }
 
 /* -------------------------------------------------------------- 侧栏主体 */
-/** 侧栏内容（桌面侧栏与移动端抽屉共用） */
+/** 移动端抽屉内容：全站导航（已迁顶栏中部，窄屏保留在抽屉）+ 本页内容 */
 export function SidebarContent({ decks, currentDeck }: Props) {
   const { toc } = useToc();
   return (
@@ -179,10 +179,13 @@ export function SidebarContent({ decks, currentDeck }: Props) {
   );
 }
 
-export default function Sidebar(props: Props) {
+/** 桌面侧栏：只显示本页内容目录（全站导航由顶栏中部承接，不再首尾相连地每页重复） */
+export default function Sidebar(_props: Props) {
+  const { toc } = useToc();
+  if (toc.length === 0) return null;
   return (
-    <nav className="sidebar material" aria-label="全站目录">
-      <SidebarContent {...props} />
+    <nav className="sidebar material" aria-label="本页内容目录">
+      <Toc />
     </nav>
   );
 }

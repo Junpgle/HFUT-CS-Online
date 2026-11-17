@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { decks, type DeckData } from '../content';
 import { useTheme } from '../lib/theme';
 import { decodeEntities } from '../lib/text';
-import { IconMenu, IconMoon, IconSearch, IconSun } from './icons';
+import { IconGitHub, IconMenu, IconMoon, IconSearch, IconSun } from './icons';
+
+const ISSUES_URL = 'https://github.com/SaltGardenia/HFUT-algorithm-design/issues';
 
 interface Props {
   subtitle?: string;
@@ -12,29 +14,33 @@ interface Props {
   onOpenSearch: () => void;
 }
 
-/** 顶栏中央的讲次分段切换条（宽屏显示，窄屏收进抽屉） */
-function DeckTabs({ currentDeck }: { currentDeck: string | null }) {
+/** 顶栏中部的全站导航：总目录 + 第1~8讲，一项对应一页，线性排列无回环 */
+function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
   const reduced = useReducedMotion();
+  const item = (to: string, label: string, active: boolean, deck?: string) => (
+    <Link
+      key={to}
+      to={to}
+      className={`deck-tab${active ? ' active' : ''}`}
+      data-deck={deck}
+      aria-current={active ? 'page' : undefined}
+    >
+      {active && (
+        <motion.span
+          className="deck-tab-pill"
+          layoutId="deck-tab-pill"
+          transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 480, damping: 34 }}
+        />
+      )}
+      <span className="deck-tab-no">{label}</span>
+    </Link>
+  );
   return (
-    <nav className="deck-tabs" aria-label="讲次快速切换">
-      {decks.map((d: DeckData) => (
-        <Link
-          key={d.id}
-          to={`/deck/${d.id}`}
-          className={`deck-tab${d.id === currentDeck ? ' active' : ''}`}
-          data-deck={d.id}
-          aria-current={d.id === currentDeck ? 'page' : undefined}
-        >
-          {d.id === currentDeck && (
-            <motion.span
-              className="deck-tab-pill"
-              layoutId="deck-tab-pill"
-              transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 480, damping: 34 }}
-            />
-          )}
-          <span className="deck-tab-no">第{d.no.replace(/^第|讲$/g, '')}</span>
-        </Link>
-      ))}
+    <nav className="deck-tabs" aria-label="全站导航">
+      {item('/', '总目录', currentDeck === null)}
+      {decks.map((d: DeckData) =>
+        item(`/deck/${d.id}`, d.no, d.id === currentDeck, d.id),
+      )}
     </nav>
   );
 }
@@ -59,7 +65,7 @@ export default function TopBar({ subtitle, currentDeck, onOpenSidebar, onOpenSea
         </Link>
         {subtitle && <span className="topbar-sub">{decodeEntities(subtitle)}</span>}
       </div>
-      <DeckTabs currentDeck={currentDeck} />
+      <SiteTabs currentDeck={currentDeck} />
       <div className="topbar-right">
         <button className="topbar-btn" onClick={onOpenSearch} aria-label="搜索手册内容">
           <IconSearch size={15} />
@@ -73,6 +79,16 @@ export default function TopBar({ subtitle, currentDeck, onOpenSidebar, onOpenSea
         >
           {theme === 'dark' ? <IconSun /> : <IconMoon />}
         </button>
+        <a
+          className="icon-btn"
+          href={ISSUES_URL}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="到 GitHub 仓库提交 Issue"
+          title="提交 Issue"
+        >
+          <IconGitHub size={18} />
+        </a>
       </div>
       <motion.div className="reading-progress" style={{ scaleX }} />
     </header>
