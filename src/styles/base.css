@@ -914,10 +914,6 @@ pre.code .cl-code:empty + .cl-com {
   .tbl {
     font-size: 0.8125rem;
   }
-  .tbl th,
-  .tbl td {
-    padding: 8px 9px;
-  }
 }
 
 /* 表格：表头行用主题色薄底锁定「列语义」，首列加重，数字列对齐 */
@@ -926,14 +922,24 @@ pre.code .cl-code:empty + .cl-com {
   border-collapse: collapse;
   margin: 22px 0;
   font-size: 0.875rem;
-  line-height: 1.65;
+  line-height: 1.7;
 }
 .tbl th,
 .tbl td {
   border-bottom: 1px solid var(--hairline-soft);
-  padding: 9px 12px;
+  padding: 10px 16px;
   text-align: left;
-  vertical-align: top;
+  vertical-align: middle;
+}
+/* 单元格内的段落 / 列表收紧，避免撑出大空隙 */
+.tbl td p {
+  margin: 4px 0;
+}
+.tbl td > :first-child {
+  margin-top: 0;
+}
+.tbl td > :last-child {
+  margin-bottom: 0;
 }
 .tbl thead th {
   font-weight: 700;
@@ -942,8 +948,12 @@ pre.code .cl-code:empty + .cl-com {
   border-bottom: 1px solid color-mix(in srgb, var(--deck-accent) 30%, transparent);
   white-space: nowrap;
 }
+/* 正文列左对齐（阅读动线一致）；短枚举列居中由内容侧的 class 控制 */
 .tbl tbody tr:nth-child(even) {
   background: color-mix(in srgb, var(--panel-2) 55%, transparent);
+}
+.tbl tbody tr:hover {
+  background: color-mix(in srgb, var(--deck-accent) 5%, transparent);
 }
 .tbl tbody td:first-child {
   font-weight: 600;
@@ -955,10 +965,21 @@ pre.code .cl-code:empty + .cl-com {
   font-family: var(--font-math);
   font-variant-numeric: tabular-nums;
 }
+/* 全为数字/符号的短列：整列居中更整齐 */
+.tbl td.center,
+.tbl th.center {
+  text-align: center;
+}
 .tbl-scroll {
   overflow-x: auto;
   border: 1px solid var(--hairline-soft);
   border-radius: var(--r-m);
+}
+@media (max-width: 700px) {
+  .tbl th,
+  .tbl td {
+    padding: 8px 10px;
+  }
 }
 
 /* 矢量图：白瓷图版（enhance 时 svg 包进 figure.fig）+ 可点击放大，题注左对齐与图版同宽 */
