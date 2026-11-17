@@ -47,7 +47,6 @@ const deck: DeckData = {
     { id: 'sec-greedy-h1', text: "MST 的两个定理（必考证明）", level: 3 },
     { id: 'sec-greedy-h2', text: "四个贪心案例与贪心准则", level: 3 },
     { id: 'sec-quiz-index', text: "十二、各章自测题（课件配套测验）", level: 2 },
-    { id: 'sec-howto', text: "使用说明", level: 2 },
   ],
   sections: [
     {
@@ -680,29 +679,6 @@ const deck: DeckData = {
                     每题标题后的标签都带 <strong>「原卷 N」</strong> 编号，可与测验卷逐题对照。先<b>遮住「答案」</b>自测一遍，再对照解析回正文对应小节复看。多选题尤其注意<b>漏选</b>：
                     例如 Prim 那道「最小跨割边可用于贪心选择」很容易漏掉；填空题注意<b>术语写全</b>，
                     如 OBST 的 <code>root[i][j]</code> 应写「根节点<b>索引 r</b>」而不只是「根节点」。
-                  </p>
-                </div>
-        ` },
-      ],
-    },
-    {
-      id: 'sec-howto',
-      heading: "使用说明",
-      blocks: [
-        { type: 'html', html: `
-          <ul>
-                  <li><strong>离线可用</strong>：全部为静态文件，无外部依赖、无网络请求。直接双击 <code>index.html</code> 即可。</li>
-                  <li><strong>动画</strong>：每个演示条上有「重置 / 上一步 / 下一步 / 播放」四个按钮，逐帧看算法状态变化。</li>
-                  <li><strong>导航</strong>：左侧栏上半部分是九页互链，下半部分自动生成本页目录，并随滚动高亮。窄屏点左上角「☰ 目录」折叠。</li>
-                  <li><strong>打印</strong>：浏览器打印时自动隐藏侧边栏与动画控制按钮，保留全部正文、代码与图，可直接导出 PDF。</li>
-                  <li><strong>术语</strong>：中文术语后括注英文，便于对照英文教材（主要参考《算法导论》Introduction to Algorithms）。</li>
-                </ul>
-          
-                <div class="callout warn">
-                  <p class="callout-h">复习提示</p>
-                  <p>
-                    本手册以 PPT 的<strong>核心考点</strong>为主线，历史典故（算经十书、图灵奖得主等）只作简略提及。
-                    代码采用「PPT 伪代码 + C++」双栏对照：左侧用于对照老师讲义的书写风格应付笔试，右侧用于上机验证。
                   </p>
                 </div>
         ` },

@@ -93,7 +93,7 @@ describe('content integrity', () => {
   });
 
   it('首页 12 个区块完整，卡片链接指向各讲', () => {
-    expect(homeData.sections.length).toBeGreaterThanOrEqual(9);
+    expect(homeData.sections.length).toBeGreaterThanOrEqual(8);
     const html = homeData.sections.map((s) => s.blocks.map((b) => (b.type === 'html' ? b.html : '')).join(''));
     expect(html.join('').match(/class="card"/g)?.length).toBe(8);
   });
