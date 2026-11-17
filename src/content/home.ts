@@ -21,32 +21,32 @@ const deck: DeckData = {
     { id: 'sec-map-h7', text: "第 7 讲 · 动态规划", level: 3 },
     { id: 'sec-map-h8', text: "第 8 讲 · 贪心法", level: 3 },
     { id: 'sec-cheatsheet', text: "考点速查表", level: 2 },
-    { id: 'sec-cheatsheet-h1', text: "一、算法的三大性质", level: 3 },
-    { id: 'sec-cheatsheet-h2', text: "二、算法分析的三条原则", level: 3 },
-    { id: 'sec-cheatsheet-h3', text: "三、五种渐近记号", level: 3 },
-    { id: 'sec-cheatsheet-h4', text: "四、求解递归式三法", level: 3 },
-    { id: 'sec-cheatsheet-h5', text: "五、主方法三种情况", level: 3 },
-    { id: 'sec-cheatsheet-h6', text: "六、两个排序算法的复杂度（PPT 逐行计数结论）", level: 3 },
-    { id: 'sec-linear', text: "七、比较排序的下界与线性时间排序", level: 2 },
+    { id: 'sec-cheatsheet-h1', text: "1. 算法的三大性质", level: 3 },
+    { id: 'sec-cheatsheet-h2', text: "2. 算法分析的三条原则", level: 3 },
+    { id: 'sec-cheatsheet-h3', text: "3. 五种渐近记号", level: 3 },
+    { id: 'sec-cheatsheet-h4', text: "4. 求解递归式三法", level: 3 },
+    { id: 'sec-cheatsheet-h5', text: "5. 主方法三种情况", level: 3 },
+    { id: 'sec-cheatsheet-h6', text: "6. 两个排序算法的复杂度（PPT 逐行计数结论）", level: 3 },
+    { id: 'sec-linear', text: "7. 比较排序的下界与线性时间排序", level: 2 },
     { id: 'sec-linear-h1', text: "决策树模型", level: 3 },
     { id: 'sec-linear-h2', text: "比较排序的下界（必考证明）", level: 3 },
     { id: 'sec-linear-h3', text: "相邻交换的下界与希尔排序为何能突破", level: 3 },
     { id: 'sec-linear-h4', text: "三种排序的复杂度对照", level: 3 },
     { id: 'sec-linear-h5', text: "计数排序的四段循环", level: 3 },
     { id: 'sec-linear-h6', text: "基数排序（LSD）", level: 3 },
-    { id: 'sec-select', text: "八、线性时间选择（第 5 讲）速查", level: 2 },
+    { id: 'sec-select', text: "8. 线性时间选择（第 5 讲）速查", level: 2 },
     { id: 'sec-select-h1', text: "五种解法层次", level: 3 },
-    { id: 'sec-dc', text: "九、递归与分治（第 6 讲）速查", level: 2 },
+    { id: 'sec-dc', text: "9. 递归与分治（第 6 讲）速查", level: 2 },
     { id: 'sec-dc-h1', text: "递归与分治要点", level: 3 },
     { id: 'sec-dc-h2', text: "本讲六个例子的递归式与结论", level: 3 },
-    { id: 'sec-dp', text: "十、动态规划（第 7 讲）速查", level: 2 },
+    { id: 'sec-dp', text: "10. 动态规划（第 7 讲）速查", level: 2 },
     { id: 'sec-dp-h1', text: "四步设计法（必背）", level: 3 },
     { id: 'sec-dp-h2', text: "五个经典问题对照", level: 3 },
     { id: 'sec-dp-h3', text: "PPT 关键算例（数字要记）", level: 3 },
-    { id: 'sec-greedy', text: "十一、贪心法（第 8 讲）速查", level: 2 },
+    { id: 'sec-greedy', text: "11. 贪心法（第 8 讲）速查", level: 2 },
     { id: 'sec-greedy-h1', text: "MST 的两个定理（必考证明）", level: 3 },
     { id: 'sec-greedy-h2', text: "四个贪心案例与贪心准则", level: 3 },
-    { id: 'sec-quiz-index', text: "十二、各章自测题（课件配套测验）", level: 2 },
+    { id: 'sec-quiz-index', text: "12. 各章自测题（课件配套测验）", level: 2 },
   ],
   sections: [
     {
@@ -128,7 +128,7 @@ const deck: DeckData = {
         { type: 'html', html: `
           <p>把最容易考、最容易记混的结论集中在这里，串讲前一天过一遍即可。</p>
           
-                <h3 id="sec-cheatsheet-h1">一、算法的三大性质</h3>
+                <h3 id="sec-cheatsheet-h1">1. 算法的三大性质</h3>
                 <table class="tbl">
                   <thead>
                     <tr><th>性质</th><th>含义</th><th>PPT 反例</th><th>正例（选择排序）</th></tr>
@@ -155,7 +155,7 @@ const deck: DeckData = {
                   </tbody>
                 </table>
           
-                <h3 id="sec-cheatsheet-h2">二、算法分析的三条原则</h3>
+                <h3 id="sec-cheatsheet-h2">2. 算法分析的三条原则</h3>
                 <ol>
                   <li><strong>独立于机器</strong>：机器运算速度影响运行时间，跨机器比较不公平（PPT 例：天河三号百亿亿次/秒跑插入排序 vs 个人电脑十亿次/秒跑选择排序 → 无法公平比较）。</li>
                   <li><strong>归纳基本操作、代价统一为 1</strong>：算术运算 <code>+ − × ÷</code> 与赋值比较 <code>≔ &gt; &lt; =</code>，假设基本操作代价均为 1。</li>
@@ -163,7 +163,7 @@ const deck: DeckData = {
                 </ol>
                 <p class="formula">算法运行时间仅依赖于问题输入规模 n，表示为 T(n)</p>
           
-                <h3 id="sec-cheatsheet-h3">三、五种渐近记号</h3>
+                <h3 id="sec-cheatsheet-h3">3. 五种渐近记号</h3>
                 <table class="tbl">
                   <thead>
                     <tr><th>记号</th><th>名称</th><th>严格定义</th><th>与实数比较类比</th></tr>
@@ -204,7 +204,7 @@ const deck: DeckData = {
                   <p>算法运行时间称为<strong>时间复杂度</strong>，通常用渐近记号 <strong>O</strong> 表示。</p>
                 </div>
           
-                <h3 id="sec-cheatsheet-h4">四、求解递归式三法</h3>
+                <h3 id="sec-cheatsheet-h4">4. 求解递归式三法</h3>
                 <table class="tbl">
                   <thead>
                     <tr><th>方法</th><th>核心思路</th><th>适用与提醒</th></tr>
@@ -228,7 +228,7 @@ const deck: DeckData = {
                   </tbody>
                 </table>
           
-                <h3 id="sec-cheatsheet-h5">五、主方法三种情况</h3>
+                <h3 id="sec-cheatsheet-h5">5. 主方法三种情况</h3>
                 <p>适用于 <span class="m">T(n) = aT(n/b) + f(n)</span>，其中 <span class="m">a &ge; 1</span>、<span class="m">b &gt; 1</span> 为常数，<span class="m">f(n)</span> 是渐近正函数。比较基准是 <span class="m">n<sup>log<sub>b</sub>a</sup></span>。</p>
                 <table class="tbl">
                   <thead>
@@ -256,7 +256,7 @@ const deck: DeckData = {
                   </tbody>
                 </table>
           
-                <h3 id="sec-cheatsheet-h6">六、两个排序算法的复杂度（PPT 逐行计数结论）</h3>
+                <h3 id="sec-cheatsheet-h6">6. 两个排序算法的复杂度（PPT 逐行计数结论）</h3>
                 <table class="tbl">
                   <thead>
                     <tr><th>算法</th><th>最好情况</th><th>最坏情况</th><th>逐行计数结果</th><th>渐近</th></tr>
@@ -291,7 +291,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-linear',
-      heading: "七、比较排序的下界与线性时间排序",
+      heading: "7. 比较排序的下界与线性时间排序",
       blocks: [
         { type: 'html', html: `
           <p>这一组结论回答「O(n log n) 是不是极限」，以及「怎么突破它」。</p>
@@ -408,7 +408,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-select',
-      heading: "八、线性时间选择（第 5 讲）速查",
+      heading: "8. 线性时间选择（第 5 讲）速查",
       blocks: [
         { type: 'html', html: `
           <p>核心命题：<strong>找第 k 小元素不必排序</strong>——每次划分后只递归「目标所在的那一侧」，就能做到线性时间。</p>
@@ -455,7 +455,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-dc',
-      heading: "九、递归与分治（第 6 讲）速查",
+      heading: "9. 递归与分治（第 6 讲）速查",
       blocks: [
         { type: 'html', html: `
           <h3 id="sec-dc-h1">递归与分治要点</h3>
@@ -499,7 +499,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-dp',
-      heading: "十、动态规划（第 7 讲）速查",
+      heading: "10. 动态规划（第 7 讲）速查",
       blocks: [
         { type: 'html', html: `
           <p>
@@ -578,7 +578,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-greedy',
-      heading: "十一、贪心法（第 8 讲）速查",
+      heading: "11. 贪心法（第 8 讲）速查",
       blocks: [
         { type: 'html', html: `
           <p class="formula">贪心可行的两个要素：最优子结构（optimal substructure）+ 贪心选择特性（greedy-choice property）</p>
@@ -628,7 +628,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-quiz-index',
-      heading: "十二、各章自测题（课件配套测验）",
+      heading: "12. 各章自测题（课件配套测验）",
       blocks: [
         { type: 'html', html: `
           <p>

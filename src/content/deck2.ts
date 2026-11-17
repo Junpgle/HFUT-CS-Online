@@ -10,46 +10,46 @@ const deck: DeckData = {
   从“算法是什么”到“算法好不好”：算法的定义、三条性质、三种表示，插入排序与选择排序的完整推导，以及算法分析的三条原则与渐近记号 &Theta; / <span class="m">O</span> / &Omega;。所有数字与结论均取自课程 PPT《算法设计与分析》绪论（L1）。
 `,
   toc: [
-    { id: 'sec-origin', text: "一、算法的由来（速览）", level: 2 },
-    { id: 'sec-problem', text: "二、算法与计算问题", level: 2 },
-    { id: 'sec-definition', text: "三、算法的定义", level: 2 },
-    { id: 'sec-properties', text: "四、算法的性质（重点）", level: 2 },
-    { id: 'sec-repr', text: "五、算法的表示", level: 2 },
+    { id: 'sec-origin', text: "1. 算法的由来（速览）", level: 2 },
+    { id: 'sec-problem', text: "2. 算法与计算问题", level: 2 },
+    { id: 'sec-definition', text: "3. 算法的定义", level: 2 },
+    { id: 'sec-properties', text: "4. 算法的性质（重点）", level: 2 },
+    { id: 'sec-repr', text: "5. 算法的表示", level: 2 },
     { id: 'sec-repr-h1', text: "伪代码书写约定", level: 3 },
     { id: 'sec-repr-h2', text: "伪代码示例解读：快速排序的划分", level: 3 },
-    { id: 'sec-insertion', text: "六、插入排序 Insertion Sort", level: 2 },
+    { id: 'sec-insertion', text: "6. 插入排序 Insertion Sort", level: 2 },
     { id: 'sec-insertion-h1', text: "算法思想", level: 3 },
     { id: 'sec-insertion-h2', text: "执行过程动画", level: 3 },
     { id: 'sec-insertion-h3', text: "复杂度分析（最坏情况逐行计数）", level: 3 },
-    { id: 'sec-selection', text: "七、选择排序 Selection Sort", level: 2 },
+    { id: 'sec-selection', text: "7. 选择排序 Selection Sort", level: 2 },
     { id: 'sec-selection-h1', text: "算法思想", level: 3 },
     { id: 'sec-selection-h2', text: "cur_min 与 cur_min_pos 的示例解读", level: 3 },
     { id: 'sec-selection-h3', text: "执行过程动画", level: 3 },
     { id: 'sec-selection-h4', text: "复杂度分析（最坏情况逐行计数）", level: 3 },
-    { id: 'sec-principles', text: "八、算法分析的原则", level: 2 },
+    { id: 'sec-principles', text: "8. 算法分析的原则", level: 2 },
     { id: 'sec-principles-h1', text: "原则一：分析必须独立于机器", level: 3 },
     { id: 'sec-principles-h2', text: "原则二：归纳基本操作并统一机器性能", level: 3 },
     { id: 'sec-principles-h3', text: "原则三：分析最坏情况", level: 3 },
-    { id: 'sec-tools', text: "九、算法分析的工具：逐行计数与求和", level: 2 },
+    { id: 'sec-tools', text: "9. 算法分析的工具：逐行计数与求和", level: 2 },
     { id: 'sec-tools-h1', text: "插入排序逐行计数", level: 3 },
     { id: 'sec-tools-h2', text: "选择排序逐行计数", level: 3 },
     { id: 'sec-tools-h3', text: "两条曲线为什么长得差不多", level: 3 },
-    { id: 'sec-asymptotic', text: "十、渐近分析：Θ / O / Ω", level: 2 },
+    { id: 'sec-asymptotic', text: "10. 渐近分析：Θ / O / Ω", level: 2 },
     { id: 'sec-asymptotic-h1', text: "Θ 记号：渐近紧确界", level: 3 },
     { id: 'sec-asymptotic-h2', text: "O 记号：渐近上界", level: 3 },
     { id: 'sec-asymptotic-h3', text: "Ω 记号：渐近下界", level: 3 },
-    { id: 'sec-summary', text: "十一、本节小结", level: 2 },
+    { id: 'sec-summary', text: "11. 本节小结", level: 2 },
     { id: 'sec-summary-h1', text: "算法分析的原则与工具", level: 3 },
     { id: 'sec-summary-h2', text: "三条原则", level: 3 },
     { id: 'sec-summary-h3', text: "三件工具", level: 3 },
     { id: 'sec-summary-h4', text: "两个排序算法的最终判定", level: 3 },
-    { id: 'sec-quiz', text: "本节自测（课件配套测验）", level: 2 },
-    { id: 'sec-quiz-h1', text: "一、判断题", level: 3 },
+    { id: 'sec-quiz', text: "12. 本节自测（课件配套测验）", level: 2 },
+    { id: 'sec-quiz-h1', text: "1. 判断题", level: 3 },
   ],
   sections: [
     {
       id: 'sec-origin',
-      heading: "一、算法的由来（速览）",
+      heading: "1. 算法的由来（速览）",
       blocks: [
         { type: 'html', html: `
           <p><strong>算法就在生活里</strong>：衣食住行的背后全是算法——衣（购物推荐、排产）、食（外卖派单、菜谱步骤）、住（智能家居调度、建筑结构计算）、行（导航最短路径、红绿灯配时）。课程从两个问题出发：</p>
@@ -91,7 +91,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-problem',
-      heading: "二、算法与计算问题",
+      heading: "2. 算法与计算问题",
       blocks: [
         { type: 'html', html: `
           <p><strong>计算问题 (Computational Problem)</strong>：给定数据输入，计算满足某种性质输出的问题。描述一个计算问题，必须说清楚“输入长什么样、输出要满足什么性质”。</p>
@@ -113,7 +113,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-definition',
-      heading: "三、算法的定义",
+      heading: "3. 算法的定义",
       blocks: [
         { type: 'html', html: `
           <div class="callout key">
@@ -132,7 +132,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-properties',
-      heading: "四、算法的性质（重点）",
+      heading: "4. 算法的性质（重点）",
       blocks: [
         { type: 'html', html: `
           <p>一个计算步骤序列要称得上算法，必须同时满足三条性质：<strong>有穷性 (Finiteness)</strong>、<strong>确定性 (Definiteness)</strong>、<strong>可行性 (Effectiveness)</strong>。PPT 对每一条都配了“反例 + 正例（选择排序）”，考试常以“判断某描述是否构成算法”的形式出现。</p>
@@ -172,7 +172,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-repr',
-      heading: "五、算法的表示",
+      heading: "5. 算法的表示",
       blocks: [
         { type: 'html', html: `
           <p>算法一边要给人看（设计者），一边要给机器执行（执行者）：给人看要贴近人类思维，给机器执行要精确无歧义。这就产生了三类表示方式。</p>
@@ -261,7 +261,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-insertion',
-      heading: "六、插入排序 Insertion Sort",
+      heading: "6. 插入排序 Insertion Sort",
       blocks: [
         { type: 'html', html: `
           <h3 id="sec-insertion-h1">算法思想</h3>
@@ -362,7 +362,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-selection',
-      heading: "七、选择排序 Selection Sort",
+      heading: "7. 选择排序 Selection Sort",
       blocks: [
         { type: 'html', html: `
           <h3 id="sec-selection-h1">算法思想</h3>
@@ -454,7 +454,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-principles',
-      heading: "八、算法分析的原则",
+      heading: "8. 算法分析的原则",
       blocks: [
         { type: 'html', html: `
           <p>要比较“哪个算法更快”，先得解决三个问题：机器不同怎么办？操作粒度不同怎么办？同一规模下输入不同怎么办？</p>
@@ -500,7 +500,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-tools',
-      heading: "九、算法分析的工具：逐行计数与求和",
+      heading: "9. 算法分析的工具：逐行计数与求和",
       blocks: [
         { type: 'html', html: `
           <p>工具很朴素：<strong>数出每行伪代码执行了多少次，再用求和公式合并</strong>。下表把两个排序算法最坏情况的每一行都数了一遍（每个基本操作代价 = 1，下标从 1 起，<span class="m">n</span> = A.length）。</p>
@@ -633,7 +633,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-asymptotic',
-      heading: "十、渐近分析：Θ / O / Ω",
+      heading: "10. 渐近分析：Θ / O / Ω",
       blocks: [
         { type: 'html', html: `
           <p><strong>渐近分析</strong>：分析 <span class="m">n</span> 充分大时函数的大小关系，并用渐近记号表示。三个记号分别刻画“紧确界、上界、下界”：</p>
@@ -751,7 +751,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-summary',
-      heading: "十一、本节小结",
+      heading: "11. 本节小结",
       blocks: [
         { type: 'html', html: `
           <h3 id="sec-summary-h1">算法分析的原则与工具</h3>
@@ -799,7 +799,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-quiz',
-      heading: "本节自测（课件配套测验）",
+      heading: "12. 本节自测（课件配套测验）",
       blocks: [
         { type: 'html', html: `
           <p>下列 2 题取自课程配套测验（绪论部分），按知识点归入本节。每题给出<b>答案与解析</b>：建议先遮住答案自测，错题回到上文「算法的定义」「算法的表示」两节复看。</p>

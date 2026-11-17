@@ -75,7 +75,7 @@ const deck: DeckData = {
     { id: 'sec-summary-h1', text: "9.1 五个问题的递归式、复杂度与表格规模", level: 3 },
     { id: 'sec-summary-h2', text: "9.2 一页速记", level: 3 },
     { id: 'sec-summary-h3', text: "9.3 常见错误清单", level: 3 },
-    { id: 'sec-quiz', text: "本节自测（课件配套测验）", level: 2 },
+    { id: 'sec-quiz', text: "10. 本节自测（课件配套测验）", level: 2 },
     { id: 'sec-quiz-h1', text: "一、多项选择题", level: 3 },
     { id: 'sec-quiz-h2', text: "二、填空题", level: 3 },
   ],
@@ -2155,7 +2155,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-quiz',
-      heading: "本节自测（课件配套测验）",
+      heading: "10. 本节自测（课件配套测验）",
       blocks: [
         { type: 'html', html: `
           <p>下列 6 题取自课程配套测验（动态规划部分），覆盖：钢条切割的方案数与实现方式、LCS 的备忘录与回溯、最优二叉搜索树的状态定义、装配线调度的递推计算。每题给出<b>答案与解析</b>。</p>

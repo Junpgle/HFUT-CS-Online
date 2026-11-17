@@ -41,7 +41,7 @@ const deck: DeckData = {
     { id: 'sec-bfprt-h7', text: "5.7 延伸：每 7 个一组还是 O(n) 吗？（PPT 第 59 页）", level: 3 },
     { id: 'sec-practice', text: "6. 实践中的快速排序", level: 2 },
     { id: 'sec-summary', text: "7. 小结：5 种选择算法的对比与速记", level: 2 },
-    { id: 'sec-quiz', text: "本节自测（课件配套测验）", level: 2 },
+    { id: 'sec-quiz', text: "8. 本节自测（课件配套测验）", level: 2 },
     { id: 'sec-quiz-h1', text: "一、单项选择题", level: 3 },
   ],
   sections: [
@@ -977,7 +977,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-quiz',
-      heading: "本节自测（课件配套测验）",
+      heading: "8. 本节自测（课件配套测验）",
       blocks: [
         { type: 'html', html: `
           <p>下列 7 题取自课程配套测验（线性时间选择部分），覆盖：选择问题的目标、成对求最大最小、快速排序的划分与最坏情况、随机快速选择与快排的关键区别。</p>

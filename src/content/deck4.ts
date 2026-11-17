@@ -33,7 +33,7 @@ const deck: DeckData = {
     { id: 'sec-radix-sort-h3', text: "6.3 正确性证明", level: 3 },
     { id: 'sec-radix-sort-h4', text: "6.4 适用性与缺点", level: 3 },
     { id: 'sec-summary', text: "7. 内容小结与速记清单", level: 2 },
-    { id: 'sec-quiz', text: "本节自测（课件配套测验）", level: 2 },
+    { id: 'sec-quiz', text: "8. 本节自测（课件配套测验）", level: 2 },
     { id: 'sec-quiz-h1', text: "一、单项选择题", level: 3 },
     { id: 'sec-quiz-h2', text: "二、判断题", level: 3 },
   ],
@@ -950,7 +950,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-quiz',
-      heading: "本节自测（课件配套测验）",
+      heading: "8. 本节自测（课件配套测验）",
       blocks: [
         { type: 'html', html: `
           <p>下列 7 题取自课程配套测验（线性时间排序部分），按知识点归入本节：决策树模型、计数排序的稳定性、基数排序的稳定子过程。每题给出<b>答案与解析</b>。</p>

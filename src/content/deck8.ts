@@ -53,7 +53,7 @@ const deck: DeckData = {
     { id: 'sec-summary-h1', text: "9.1 一张表看全本讲", level: 3 },
     { id: 'sec-summary-h2', text: "9.2 设计一个贪心算法的三步法", level: 3 },
     { id: 'sec-summary-h3', text: "9.3 高频考点清单", level: 3 },
-    { id: 'sec-quiz', text: "本节自测（课件配套测验）", level: 2 },
+    { id: 'sec-quiz', text: "10. 本节自测（课件配套测验）", level: 2 },
     { id: 'sec-quiz-h1', text: "一、单项选择题", level: 3 },
     { id: 'sec-quiz-h2', text: "二、多项选择题", level: 3 },
     { id: 'sec-quiz-h3', text: "三、填空题 / 计算题", level: 3 },
@@ -1264,7 +1264,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-quiz',
-      heading: "本节自测（课件配套测验）",
+      heading: "10. 本节自测（课件配套测验）",
       blocks: [
         { type: 'html', html: `
           <p>下列 13 题取自课程配套测验（贪心法部分），是本次题量最大的一组：单项选择 5 题、多项选择 5 题、填空/计算 3 题。每题给出<b>答案与解析</b>，建议先遮住答案自测一遍，错题回到上文「MST / 活动选择 / 哈夫曼 / 背包」对应小节复看。</p>

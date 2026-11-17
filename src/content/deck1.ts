@@ -11,35 +11,35 @@ const deck: DeckData = {
         用伪代码理清思路，用抽象把现实问题映射到已知计算模型，用复杂度分析判断方案好坏，用正确性证明给自己的设计背书。
 `,
   toc: [
-    { id: 'sec-toolbox', text: "四大思维陷阱与四大核心武器", level: 2 },
+    { id: 'sec-toolbox', text: "1. 四大思维陷阱与四大核心武器", level: 2 },
     { id: 'sec-toolbox-h1', text: "四大思维陷阱", level: 3 },
     { id: 'sec-toolbox-h2', text: "四大核心武器", level: 3 },
-    { id: 'sec-ct', text: "计算思维", level: 2 },
-    { id: 'sec-euclid', text: "算法的历史起点：辗转相除法", level: 2 },
+    { id: 'sec-ct', text: "2. 计算思维", level: 2 },
+    { id: 'sec-euclid', text: "3. 算法的历史起点：辗转相除法", level: 2 },
     { id: 'sec-euclid-h1', text: "算法思想", level: 3 },
     { id: 'sec-euclid-h2', text: "伪代码与 C++ 实现", level: 3 },
     { id: 'sec-euclid-h3', text: "动画演示：gcd(48, 18) 的逐步执行", level: 3 },
     { id: 'sec-euclid-h4', text: "复杂度分析", level: 3 },
-    { id: 'sec-selection', text: "线性时间选择：找第 k 小的元素", level: 2 },
+    { id: 'sec-selection', text: "4. 线性时间选择：找第 k 小的元素", level: 2 },
     { id: 'sec-selection-h1', text: "特殊情况：k = 1 或 k = n", level: 3 },
     { id: 'sec-selection-h2', text: "特殊情况：同时找最小值和最大值", level: 3 },
     { id: 'sec-selection-h2b', text: "特殊情况：输入数据全是整数", level: 3 },
     { id: 'sec-selection-h3', text: "期望线性时间选择：快速选择 QuickSelect", level: 3 },
-    { id: 'sec-quicksort', text: "分而治之：快速排序", level: 2 },
+    { id: 'sec-quicksort', text: "5. 分而治之：快速排序", level: 2 },
     { id: 'sec-quicksort-h1', text: "伪代码与 C++ 实现", level: 3 },
     { id: 'sec-quicksort-h2', text: "划分过程演示", level: 3 },
     { id: 'sec-quicksort-h3', text: "复杂度分析", level: 3 },
-    { id: 'sec-abstraction', text: "抽象与建模：三个经典例子", level: 2 },
+    { id: 'sec-abstraction', text: "6. 抽象与建模：三个经典例子", level: 2 },
     { id: 'sec-abstraction-h1', text: "例 1：澳大利亚地图染色问题", level: 3 },
     { id: 'sec-abstraction-h2', text: "例 2：素数环问题", level: 3 },
     { id: 'sec-abstraction-h3', text: "例 3：传教士和野人问题", level: 3 },
     { id: 'sec-abstraction-h4', text: "例 4：一般的传教士和野人问题", level: 3 },
-    { id: 'sec-takeaway', text: "本讲小结", level: 2 },
+    { id: 'sec-takeaway', text: "7. 本讲小结", level: 2 },
   ],
   sections: [
     {
       id: 'sec-toolbox',
-      heading: "四大思维陷阱与四大核心武器",
+      heading: "1. 四大思维陷阱与四大核心武器",
       blocks: [
         { type: 'html', html: `
           <p>
@@ -159,7 +159,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-ct',
-      heading: "计算思维",
+      heading: "2. 计算思维",
       blocks: [
         { type: 'html', html: `
           <p>
@@ -249,7 +249,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-euclid',
-      heading: "算法的历史起点：辗转相除法",
+      heading: "3. 算法的历史起点：辗转相除法",
       blocks: [
         { type: 'html', html: `
           <p>
@@ -380,7 +380,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-selection',
-      heading: "线性时间选择：找第 k 小的元素",
+      heading: "4. 线性时间选择：找第 k 小的元素",
       blocks: [
         { type: 'html', html: `
           <p>
@@ -487,7 +487,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-quicksort',
-      heading: "分而治之：快速排序",
+      heading: "5. 分而治之：快速排序",
       blocks: [
         { type: 'html', html: `
           <p>
@@ -673,7 +673,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-abstraction',
-      heading: "抽象与建模：三个经典例子",
+      heading: "6. 抽象与建模：三个经典例子",
       blocks: [
         { type: 'html', html: `
           <p>
@@ -950,7 +950,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-takeaway',
-      heading: "本讲小结",
+      heading: "7. 本讲小结",
       blocks: [
         { type: 'html', html: `
           <p>课程最后把学习目标归纳成五条，本质是这门课的「能力清单」：</p>

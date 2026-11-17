@@ -10,49 +10,49 @@ const deck: DeckData = {
   本讲围绕四件事：① 渐进复杂性的直观含义；② &Theta; / O / &Omega; / 小 o / 小 &omega; 五个渐近记号的严格定义与相互性质；③ 求解递归式的三种技术 —— 代换法、递归树、主方法；④ 用循环不变式证明插入排序的正确性。所有定义、取值与例题均按课程 PPT 的公式原图逐条核对。
 `,
   toc: [
-    { id: 'sec-intro', text: "0. 算法与计算思维（课件导引）", level: 2 },
-    { id: 'sec-asymptotic', text: "1. 渐进复杂性：只看增长量级", level: 2 },
-    { id: 'sec-theta', text: "2. Θ 记号：渐进确界（紧致界）", level: 2 },
-    { id: 'sec-theta-h1', text: "2.1 用定义验证两个小例子", level: 3 },
-    { id: 'sec-theta-h2', text: "2.2 一般二次多项式：T(n) = an2 + bn + c（a > 0）", level: 3 },
-    { id: 'sec-big-o', text: "3. O 记号：渐进上界", level: 2 },
-    { id: 'sec-big-o-h1', text: "3.1 两个证明示例（关键是把 c 和 n0 构造出来）", level: 3 },
-    { id: 'sec-big-o-h2', text: "3.2 Θ 强于 O，以及 O 与 Θ 的关键区别（常考）", level: 3 },
-    { id: 'sec-big-omega', text: "4. Ω 记号：渐进下界", level: 2 },
-    { id: 'sec-little-o', text: "5. 小 o 记号：渐近非紧上界", level: 2 },
-    { id: 'sec-little-omega', text: "6. 小 ω 记号：渐近非紧下界", level: 2 },
-    { id: 'sec-compare', text: "7. 极限比较法与渐近记号的性质", level: 2 },
-    { id: 'sec-compare-h1', text: "7.1 利用极限比较函数间的增长速度", level: 3 },
-    { id: 'sec-compare-h2', text: "7.2 四条基本性质", level: 3 },
-    { id: 'sec-compare-h3', text: "7.3 并非所有函数都渐近可比较", level: 3 },
-    { id: 'sec-notation', text: "8. 渐进表示法：等式约定与运算规则", level: 2 },
-    { id: 'sec-notation-h1', text: "8.1 f(n) = O(g(n)) 的本质是 f(n) ∈ O(g(n))", level: 3 },
-    { id: 'sec-notation-h2', text: "8.2 运算规则", level: 3 },
-    { id: 'sec-substitution', text: "9. 求解递归式：代换法", level: 2 },
-    { id: 'sec-substitution-h1', text: "9.1 猜一个更接近的上界 O(n2)：证明失败", level: 3 },
-    { id: 'sec-substitution-h2', text: "9.2 补救思想：加强推导的假设（减一个低阶项）", level: 3 },
-    { id: 'sec-substitution-h3', text: "9.3 代换法的实现骨架（伪代码 + C++）", level: 3 },
-    { id: 'sec-recursion-tree', text: "10. 递归树法", level: 2 },
-    { id: 'sec-recursion-tree-h1', text: "10.1 例一：T(n) = T(n/4) + T(n/2) + n2", level: 3 },
-    { id: 'sec-recursion-tree-h2', text: "10.2 例二：T(n) = 3T(n/4) + cn2", level: 3 },
-    { id: 'sec-recursion-tree-h3', text: "10.3 例三：T(n) = T(n/3) + T(2n/3) + cn（主方法不适用）", level: 3 },
-    { id: 'sec-recursion-tree-h4', text: "10.4 递归树求和的实现骨架（伪代码 + C++）", level: 3 },
-    { id: 'sec-master', text: "11. 主方法（Master Method）", level: 2 },
-    { id: 'sec-master-h1', text: "11.1 三种情况（条件与结论）", level: 3 },
-    { id: 'sec-master-h2', text: "11.2 主方法的思路：三种情况对应三种权重分布", level: 3 },
-    { id: 'sec-master-h3', text: "11.3 四个必会例题", level: 3 },
-    { id: 'sec-master-h4', text: "11.4 主方法的判定骨架（伪代码 + C++）", level: 3 },
-    { id: 'sec-loop-invariant', text: "12. 循环不变式与算法正确性证明", level: 2 },
-    { id: 'sec-loop-invariant-h1', text: "12.1 插入排序：伪代码 + C++（逐行注释）", level: 3 },
-    { id: 'sec-loop-invariant-h2', text: "12.2 插入排序的正确性证明（完整三步）", level: 3 },
-    { id: 'sec-summary', text: "13. 收尾：好的算法与本章框架", level: 2 },
-    { id: 'sec-quiz', text: "本节自测（课件配套测验）", level: 2 },
+    { id: 'sec-intro', text: "2. 算法与计算思维（课件导引）", level: 2 },
+    { id: 'sec-asymptotic', text: "3. 渐进复杂性：只看增长量级", level: 2 },
+    { id: 'sec-theta', text: "4. Θ 记号：渐进确界（紧致界）", level: 2 },
+    { id: 'sec-theta-h1', text: "3.1 用定义验证两个小例子", level: 3 },
+    { id: 'sec-theta-h2', text: "3.2 一般二次多项式：T(n) = an2 + bn + c（a > 0）", level: 3 },
+    { id: 'sec-big-o', text: "5. O 记号：渐进上界", level: 2 },
+    { id: 'sec-big-o-h1', text: "4.1 两个证明示例（关键是把 c 和 n0 构造出来）", level: 3 },
+    { id: 'sec-big-o-h2', text: "4.2 Θ 强于 O，以及 O 与 Θ 的关键区别（常考）", level: 3 },
+    { id: 'sec-big-omega', text: "6. Ω 记号：渐进下界", level: 2 },
+    { id: 'sec-little-o', text: "7. 小 o 记号：渐近非紧上界", level: 2 },
+    { id: 'sec-little-omega', text: "8. 小 ω 记号：渐近非紧下界", level: 2 },
+    { id: 'sec-compare', text: "9. 极限比较法与渐近记号的性质", level: 2 },
+    { id: 'sec-compare-h1', text: "8.1 利用极限比较函数间的增长速度", level: 3 },
+    { id: 'sec-compare-h2', text: "8.2 四条基本性质", level: 3 },
+    { id: 'sec-compare-h3', text: "8.3 并非所有函数都渐近可比较", level: 3 },
+    { id: 'sec-notation', text: "10. 渐进表示法：等式约定与运算规则", level: 2 },
+    { id: 'sec-notation-h1', text: "9.1 f(n) = O(g(n)) 的本质是 f(n) ∈ O(g(n))", level: 3 },
+    { id: 'sec-notation-h2', text: "9.2 运算规则", level: 3 },
+    { id: 'sec-substitution', text: "11. 求解递归式：代换法", level: 2 },
+    { id: 'sec-substitution-h1', text: "10.1 猜一个更接近的上界 O(n2)：证明失败", level: 3 },
+    { id: 'sec-substitution-h2', text: "10.2 补救思想：加强推导的假设（减一个低阶项）", level: 3 },
+    { id: 'sec-substitution-h3', text: "10.3 代换法的实现骨架（伪代码 + C++）", level: 3 },
+    { id: 'sec-recursion-tree', text: "12. 递归树法", level: 2 },
+    { id: 'sec-recursion-tree-h1', text: "11.1 例一：T(n) = T(n/4) + T(n/2) + n2", level: 3 },
+    { id: 'sec-recursion-tree-h2', text: "11.2 例二：T(n) = 3T(n/4) + cn2", level: 3 },
+    { id: 'sec-recursion-tree-h3', text: "11.3 例三：T(n) = T(n/3) + T(2n/3) + cn（主方法不适用）", level: 3 },
+    { id: 'sec-recursion-tree-h4', text: "11.4 递归树求和的实现骨架（伪代码 + C++）", level: 3 },
+    { id: 'sec-master', text: "13. 主方法（Master Method）", level: 2 },
+    { id: 'sec-master-h1', text: "12.1 三种情况（条件与结论）", level: 3 },
+    { id: 'sec-master-h2', text: "12.2 主方法的思路：三种情况对应三种权重分布", level: 3 },
+    { id: 'sec-master-h3', text: "12.3 四个必会例题", level: 3 },
+    { id: 'sec-master-h4', text: "12.4 主方法的判定骨架（伪代码 + C++）", level: 3 },
+    { id: 'sec-loop-invariant', text: "14. 循环不变式与算法正确性证明", level: 2 },
+    { id: 'sec-loop-invariant-h1', text: "13.1 插入排序：伪代码 + C++（逐行注释）", level: 3 },
+    { id: 'sec-loop-invariant-h2', text: "13.2 插入排序的正确性证明（完整三步）", level: 3 },
+    { id: 'sec-summary', text: "15. 收尾：好的算法与本章框架", level: 2 },
+    { id: 'sec-quiz', text: "15. 本节自测（课件配套测验）", level: 2 },
     { id: 'sec-quiz-h1', text: "一、单项选择题", level: 3 },
   ],
   sections: [
     {
       id: 'sec-intro',
-      heading: "0. 算法与计算思维（课件导引）",
+      heading: "1. 算法与计算思维（课件导引）",
       blocks: [
         { type: 'html', html: `
           <div class="callout key">
@@ -71,7 +71,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-asymptotic',
-      heading: "1. 渐进复杂性：只看增长量级",
+      heading: "2. 渐进复杂性：只看增长量级",
       blocks: [
         { type: 'html', html: `
           <p>当输入规模大到"只与运行时间的<b>增长量级</b>有关"时，就需要研究算法的<b>渐进效率</b> (asymptotic efficiency)。从极限角度看，我们只关心算法运行时间如何随着输入规模的无限增长而增长；通常对不是很小的输入规模而言，<b>渐进意义上更有效的算法才是最佳选择</b>。</p>
@@ -99,7 +99,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-theta',
-      heading: "2. Θ 记号：渐进确界（紧致界）",
+      heading: "3. Θ 记号：渐进确界（紧致界）",
       blocks: [
         { type: 'html', html: `
           <p>渐近记号用来表示算法的渐近运行时间，定义域为自然数集合 <b>N</b>（n 表示 Size），有时也扩展到实数或限制到自然数的某子集上。</p>
@@ -138,7 +138,7 @@ const deck: DeckData = {
                 </svg>
                 <p class="fig-cap">图 1 &nbsp;&Theta; 记号：g(n) 在一个常数因子范围内等于 f(n)，既是渐近上界又是渐近下界</p>
           
-                <h3 id="sec-theta-h1">2.1 用定义验证两个小例子</h3>
+                <h3 id="sec-theta-h1">4.1 用定义验证两个小例子</h3>
           
                 <p><b>例 1</b>：<span class="m">f(n) = &frac12; n(n &minus; 1)</span>，证明 <span class="m">f(n) = &Theta;(n<sup>2</sup>)</span>。<br>
                 证明：令 <span class="m">g(n) = n<sup>2</sup></span>，就是要找到两个正常数 C<sub>1</sub> 和 C<sub>2</sub>，满足 <span class="m">C<sub>1</sub>g(n) &le; f(n) &le; C<sub>2</sub>g(n)</span>。取 <b>C<sub>1</sub> = 1/4、C<sub>2</sub> = 1/2、n<sub>0</sub> = 2</b>：当 n &ge; 2 时 &frac12;n(n&minus;1) &ge; &frac12;n&middot;(n/2) = n<sup>2</sup>/4，且 &frac12;n(n&minus;1) &lt; &frac12;n<sup>2</sup>，两式同时成立。</p>
@@ -146,7 +146,7 @@ const deck: DeckData = {
                 <p><b>例 2</b>：<span class="m">f(n) = &frac12; n<sup>2</sup> &minus; 3n</span>，证明 <span class="m">f(n) = &Theta;(n<sup>2</sup>)</span>。<br>
                 证明：仍要证 <span class="m">C<sub>1</sub>n<sup>2</sup> &le; f(n) &le; C<sub>2</sub>n<sup>2</sup></span>。取 <b>C<sub>1</sub> = 1/4、C<sub>2</sub> = 1/2</b>：n &ge; 12 时 &frac12;n<sup>2</sup> &minus; 3n &ge; &frac12;n<sup>2</sup> &minus; n<sup>2</sup>/4 = n<sup>2</sup>/4；而 &frac12;n<sup>2</sup> &minus; 3n &le; &frac12;n<sup>2</sup> 恒成立。故 <span class="m">n<sub>0</sub> = 12</span> 即可。</p>
           
-                <h3 id="sec-theta-h2">2.2 一般二次多项式：T(n) = an<sup>2</sup> + bn + c（a &gt; 0）</h3>
+                <h3 id="sec-theta-h2">4.2 一般二次多项式：T(n) = an<sup>2</sup> + bn + c（a &gt; 0）</h3>
           
                 <p>PPT 给出结论 <span class="m">T(n) = &Theta;(n<sup>2</sup>)</span>，并直接给出了三个常数（务必记住这组取值）：</p>
                 <p class="formula">c<sub>1</sub> = a/4，&nbsp; c<sub>2</sub> = 7a/4，&nbsp; n<sub>0</sub> = 2&middot;max( |b|/a , &radic;(|c|/a) )</p>
@@ -165,7 +165,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-big-o',
-      heading: "3. O 记号：渐进上界",
+      heading: "4. O 记号：渐进上界",
       blocks: [
         { type: 'html', html: `
           <div class="callout key">
@@ -191,7 +191,7 @@ const deck: DeckData = {
                 </svg>
                 <p class="fig-cap">图 2 &nbsp;O 记号：g(n) 是 f(n) 的渐近上界，但界可以是紧的，也可以很松</p>
           
-                <h3 id="sec-big-o-h1">3.1 两个证明示例（关键是把 c 和 n<sub>0</sub> 构造出来）</h3>
+                <h3 id="sec-big-o-h1">5.1 两个证明示例（关键是把 c 和 n<sub>0</sub> 构造出来）</h3>
           
                 <p><b>例 3</b>：证明 <span class="m">f(n) = an + b = O(n)</span>，其中 a &gt; 0。<br>
                 证明：即要证存在正常数 C，使 <span class="m">f(n) = an + b &le; Cn</span>。取 <b>C = a + |b|</b>、<b>n<sub>0</sub> = 1</b>：对一切 n &ge; 1，有</p>
@@ -203,7 +203,7 @@ const deck: DeckData = {
                 <p class="formula">2n<sup>2</sup> + n &le; 2n<sup>3</sup> + n<sup>3</sup> = 3n<sup>3</sup></p>
                 <p>故 <span class="m">2n<sup>2</sup> + n = O(n<sup>3</sup>)</span>。<b>注意这个上界并不紧</b>（真正的紧界是 n<sup>2</sup> 阶），大 O 允许"松"。</p>
           
-                <h3 id="sec-big-o-h2">3.2 &Theta; 强于 O，以及 O 与 &Theta; 的关键区别（常考）</h3>
+                <h3 id="sec-big-o-h2">5.2 &Theta; 强于 O，以及 O 与 &Theta; 的关键区别（常考）</h3>
           
                 <p>因为 <span class="m">&Theta;(g(n)) &sube; O(g(n))</span>，所以 <span class="m">f(n) = &Theta;(g(n)) &rArr; f(n) = O(g(n))</span>。即 <b>&Theta; 记号强于 O 记号</b>。</p>
           
@@ -221,7 +221,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-big-omega',
-      heading: "4. Ω 记号：渐进下界",
+      heading: "5. Ω 记号：渐进下界",
       blocks: [
         { type: 'html', html: `
           <div class="callout key">
@@ -263,7 +263,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-little-o',
-      heading: "5. 小 o 记号：渐近非紧上界",
+      heading: "6. 小 o 记号：渐近非紧上界",
       blocks: [
         { type: 'html', html: `
           <div class="callout key">
@@ -311,7 +311,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-little-omega',
-      heading: "6. 小 ω 记号：渐近非紧下界",
+      heading: "7. 小 ω 记号：渐近非紧下界",
       blocks: [
         { type: 'html', html: `
           <div class="callout key">
@@ -347,10 +347,10 @@ const deck: DeckData = {
     },
     {
       id: 'sec-compare',
-      heading: "7. 极限比较法与渐近记号的性质",
+      heading: "8. 极限比较法与渐近记号的性质",
       blocks: [
         { type: 'html', html: `
-          <h3 id="sec-compare-h1">7.1 利用极限比较函数间的增长速度</h3>
+          <h3 id="sec-compare-h1">9.1 利用极限比较函数间的增长速度</h3>
           
                 <p>对于函数 f(n)、g(n)，令 <span class="m">L = lim<sub>n&rarr;&infin;</sub> f(n)/g(n)</span>，则按下表判定：</p>
           
@@ -366,7 +366,7 @@ const deck: DeckData = {
                 <p><b>例 6</b>：<span class="m">f(n) = &frac12; n(n &minus; 1)</span>，<span class="m">g(n) = n<sup>2</sup></span>。因为 lim f(n)/g(n) = 1/2（有限正常数），故 <span class="m">f(n) = &Theta;(n<sup>2</sup>)</span> —— 与例 1 的结论一致。</p>
                 <p><b>例 7</b>：<span class="m">f(n) = lg n</span>，<span class="m">g(n) = &radic;n</span>。因为 lim lg n / &radic;n = 0，故 <span class="m">lg n = o(&radic;n)</span>。</p>
           
-                <h3 id="sec-compare-h2">7.2 四条基本性质</h3>
+                <h3 id="sec-compare-h2">9.2 四条基本性质</h3>
           
                 <p>许多实数的关系性质都可以用到渐近比较上（以下假定 f(n) 和 g(n) 都是渐近正的）：</p>
           
@@ -455,7 +455,7 @@ const deck: DeckData = {
                 </svg>
                 <p class="fig-cap">图 6 &nbsp;渐近记号与实数比较的类比（O &asymp; &le;，&Omega; &asymp; &ge;，&Theta; &asymp; =，o &asymp; &lt;，&omega; &asymp; &gt;）</p>
           
-                <h3 id="sec-compare-h3">7.3 并非所有函数都渐近可比较</h3>
+                <h3 id="sec-compare-h3">9.3 并非所有函数都渐近可比较</h3>
           
                 <p>思考：是否所有函数都是渐近可比较的？<b>不是。</b>对某些 f(n) 和 g(n)，可能 <span class="m">f(n) = O(g(n))</span> 不成立，而且 <span class="m">f(n) = &Omega;(g(n))</span> 也不成立，从而由定理 1.1 得 <span class="m">f(n) &ne; &Theta;(g(n))</span>。</p>
                 <p><b>例</b>：函数 <span class="m">n</span> 和 <span class="m">n<sup>1+sin n</sup></span> 之间是无法渐进比较的。因为 <span class="m">1 + sin n &isin; [0, 2]</span>，即 <span class="m">n<sup>1+sin n</sup></span> 在 <span class="m">O(1)</span> ～ <span class="m">O(n<sup>2</sup>)</span> 之间不断波动，找不到固定的数量级。</p>
@@ -464,10 +464,10 @@ const deck: DeckData = {
     },
     {
       id: 'sec-notation',
-      heading: "8. 渐进表示法：等式约定与运算规则",
+      heading: "9. 渐进表示法：等式约定与运算规则",
       blocks: [
         { type: 'html', html: `
-          <h3 id="sec-notation-h1">8.1 f(n) = O(g(n)) 的本质是 f(n) &isin; O(g(n))</h3>
+          <h3 id="sec-notation-h1">10.1 f(n) = O(g(n)) 的本质是 f(n) &isin; O(g(n))</h3>
           
                 <p>以大 O 符号为例：<span class="m">f(n) = O(g(n))</span> 的本质含义是 <span class="m">f(n) &isin; O(g(n))</span>（集合的属于关系）。例如：</p>
                 <ul>
@@ -486,7 +486,7 @@ const deck: DeckData = {
                 <p>根据以上规则，可以得到一串关于渐进记号的等式：</p>
                 <p class="formula">2n<sup>2</sup> + 3n + 1 = 2n<sup>2</sup> + &Theta;(n) = &Theta;(n<sup>2</sup>)</p>
           
-                <h3 id="sec-notation-h2">8.2 运算规则</h3>
+                <h3 id="sec-notation-h2">10.2 运算规则</h3>
           
                 <table class="tbl">
                   <thead><tr><th>规则</th><th>说明</th></tr></thead>
@@ -504,7 +504,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-substitution',
-      heading: "9. 求解递归式：代换法",
+      heading: "10. 求解递归式：代换法",
       blocks: [
         { type: 'html', html: `
           <p>归并排序的分析需要求解一个递归式；求解递归式就像求解积分、微分方程一样，需要学会一些技巧。常用方法有三种：<b>代换法</b>、<b>递归树</b>、<b>主方法</b>。</p>
@@ -521,13 +521,13 @@ const deck: DeckData = {
           
                 <p><b>初始条件的处理</b>：必须保证推导在初始情况成立。当 n<sub>0</sub> 为适当常量时，对所有 <span class="m">n &lt; n<sub>0</sub></span> 有 <span class="m">T(n) = &Theta;(1)</span>；只要 c 选得足够大，对 <span class="m">1 &le; n &lt; n<sub>0</sub></span> 就有 <span class="m">&Theta;(1) &le; cn<sup>3</sup></span>。注意<b>这个界并不紧密</b>。</p>
           
-                <h3 id="sec-substitution-h1">9.1 猜一个更接近的上界 O(n<sup>2</sup>)：证明失败</h3>
+                <h3 id="sec-substitution-h1">11.1 猜一个更接近的上界 O(n<sup>2</sup>)：证明失败</h3>
           
                 <p>要证 <span class="m">T(n) = O(n<sup>2</sup>)</span>，假设对 k &lt; n 有 <span class="m">T(k) &le; ck<sup>2</sup></span>，代入：</p>
                 <p class="formula">T(n) = 4T(n/2) + n &le; 4c(n/2)<sup>2</sup> + n = cn<sup>2</sup> + n = cn<sup>2</sup> &minus; (&minus;n) &le; cn<sup>2</sup> ??</p>
                 <p>把它写成"期望 &minus; 余项"，余项是 <b>&minus;n</b>。要得到 <span class="m">T(n) &le; cn<sup>2</sup></span> 必须余项 &ge; 0，但 <b>没有任何 c &gt; 0 能满足</b>（&minus;n &lt; 0 对一切 n &ge; 1 成立）。所以这个证明是<b>错的</b>，不能据此得出 T(n) = O(n<sup>2</sup>)。</p>
           
-                <h3 id="sec-substitution-h2">9.2 补救思想：加强推导的假设（减一个低阶项）</h3>
+                <h3 id="sec-substitution-h2">11.2 补救思想：加强推导的假设（减一个低阶项）</h3>
           
                 <p>设对所有 k &lt; n 有 <span class="m">T(k) &le; c<sub>1</sub>k<sup>2</sup> &minus; c<sub>2</sub>k</span>，则</p>
                 <p class="formula">T(n) = 4( c<sub>1</sub>(n/2)<sup>2</sup> &minus; c<sub>2</sub>(n/2) ) + n = c<sub>1</sub>n<sup>2</sup> &minus; 2c<sub>2</sub>n + n = c<sub>1</sub>n<sup>2</sup> &minus; c<sub>2</sub>n &minus; ( c<sub>2</sub>n &minus; n )</p>
@@ -536,7 +536,7 @@ const deck: DeckData = {
         ` },
         { type: 'demo', name: 'substitution-fail', title: "代换法：T(n) = 4T(n/2) + n 猜 O(n²) 的失败与加强假设后的成功（8 步）" },
         { type: 'html', html: `
-          <h3 id="sec-substitution-h3">9.3 代换法的实现骨架（伪代码 + C++）</h3>
+          <h3 id="sec-substitution-h3">11.3 代换法的实现骨架（伪代码 + C++）</h3>
           
                 <div class="code-pair">
                   <div class="code-col">
@@ -586,7 +586,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-recursion-tree',
-      heading: "10. 递归树法",
+      heading: "11. 递归树法",
       blocks: [
         { type: 'html', html: `
           <p>递归树方法对算法<b>递归执行的花费（时间）建模</b>：把递归展开成一棵树，节点表示子问题的代价，逐层求和即得总代价。</p>
@@ -595,7 +595,7 @@ const deck: DeckData = {
                   <li>递归树方法<b>可能不是很可靠</b>（例如需要仔细处理叶子层的边界），然而它有很重要的<b>启发</b>作用。</li>
                 </ul>
           
-                <h3 id="sec-recursion-tree-h1">10.1 例一：T(n) = T(n/4) + T(n/2) + n<sup>2</sup></h3>
+                <h3 id="sec-recursion-tree-h1">12.1 例一：T(n) = T(n/4) + T(n/2) + n<sup>2</sup></h3>
           
                 <p>注意本例的两个子问题规模<b>不相等</b>（n/4 和 n/2），因此<b>不能用主方法</b>，递归树是首选工具。</p>
           
@@ -653,7 +653,7 @@ const deck: DeckData = {
         ` },
         { type: 'demo', name: 'recursion-tree', title: "递归树 T(n) = T(n/4) + T(n/2) + n² 逐层生长（7 步）" },
         { type: 'html', html: `
-          <h3 id="sec-recursion-tree-h2">10.2 例二：T(n) = 3T(n/4) + cn<sup>2</sup></h3>
+          <h3 id="sec-recursion-tree-h2">12.2 例二：T(n) = 3T(n/4) + cn<sup>2</sup></h3>
           
                 <p>这次子问题规模相同，可以用主方法（a = 3、b = 4，n<sup>log<sub>b</sub>a</sup> = n<sup>log<sub>4</sub>3</sup> &asymp; n<sup>0.793</sup>，而 f(n) = cn<sup>2</sup> 更大，属于情况 3），但用递归树看得更清楚。逐层展开的费用是：</p>
                 <table class="tbl">
@@ -671,13 +671,13 @@ const deck: DeckData = {
                 <p>因为 <b>3/16 &lt; 1</b>，几何级数收敛到常数倍 cn<sup>2</sup>（无穷和 = cn<sup>2</sup>/(1 &minus; 3/16) = 16cn<sup>2</sup>/13），而叶子层 &Theta;(n<sup>0.793</sup>) 是低阶项，故</p>
                 <p class="formula">T(n) = O(n<sup>2</sup>)&nbsp;&nbsp;（对应主方法情况 3：根层代价 f(n) = cn<sup>2</sup> 主导）</p>
           
-                <h3 id="sec-recursion-tree-h3">10.3 例三：T(n) = T(n/3) + T(2n/3) + cn（主方法不适用）</h3>
+                <h3 id="sec-recursion-tree-h3">12.3 例三：T(n) = T(n/3) + T(2n/3) + cn（主方法不适用）</h3>
           
                 <p>PPT 另外给出一个例子：<span class="m">T(n) = T(n/3) + T(2n/3) + cn</span>，并注明"<b>该问题的子问题规模不一样</b>"。此时 a = 2 但两个子问题规模不同（n/3 与 2n/3），不满足主方法"每个子问题规模都是 n/b"的前提。</p>
                 <p>用递归树分析：每一层的总代价都是 <b>cn</b>（同一层所有节点的规模之和恒为 n），而最长的递归路径沿着 2n/3 分支走，深度为 <b>log<sub>3/2</sub>n</b>，所以</p>
                 <p class="formula">T(n) = cn &middot; log<sub>3/2</sub>n + O(n) = &Theta;(n lg n)&nbsp;&nbsp;（补充结论，供参考）</p>
           
-                <h3 id="sec-recursion-tree-h4">10.4 递归树求和的实现骨架（伪代码 + C++）</h3>
+                <h3 id="sec-recursion-tree-h4">12.4 递归树求和的实现骨架（伪代码 + C++）</h3>
           
                 <div class="code-pair">
                   <div class="code-col">
@@ -718,7 +718,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-master',
-      heading: "11. 主方法（Master Method）",
+      heading: "12. 主方法（Master Method）",
       blocks: [
         { type: 'html', html: `
           <p>主方法给出求解如下形式递归式的方法：</p>
@@ -730,7 +730,7 @@ const deck: DeckData = {
                   <p>把 <b>n<sup>log<sub>b</sub>a</sup></b> 作为基准 —— 它就是递归树叶子层的总代价量级：叶子数为 a<sup>h</sup> = a<sup>log<sub>b</sub>n</sup> = n<sup>log<sub>b</sub>a</sup>，每个叶子的代价是 T(1) = &Theta;(1)。三种情况本质上就是比较 f(n) 与 n<sup>log<sub>b</sub>a</sup> 的大小关系。</p>
                 </div>
           
-                <h3 id="sec-master-h1">11.1 三种情况（条件与结论）</h3>
+                <h3 id="sec-master-h1">13.1 三种情况（条件与结论）</h3>
           
                 <table class="tbl">
                   <thead><tr><th>情况</th><th>条件</th><th>结论</th><th>递归树权重分布</th></tr></thead>
@@ -765,7 +765,7 @@ const deck: DeckData = {
                   <p>光有 f(n) = &Omega;(n<sup>log<sub>b</sub>a + &epsilon;</sup>) 还不够，还必须验证<b>正则条件</b>（regularity condition）<span class="m">a&middot;f(n/b) &le; c&middot;f(n)</span>（常量 c &lt; 1）。它的含义是"每往下一层，加权至少缩小一个固定比例"，这样才能保证根层代价在总代价中占常数比例。</p>
                 </div>
           
-                <h3 id="sec-master-h2">11.2 主方法的思路：三种情况对应三种权重分布</h3>
+                <h3 id="sec-master-h2">13.2 主方法的思路：三种情况对应三种权重分布</h3>
           
                 <svg class="fig" viewBox="0 0 980 400" role="img" aria-label="主方法三种情况的递归树权重分布对比：情况1逐层递增，情况2每层均匀，情况3逐层递减">
                   <text x="30" y="28" class="tx-b">递归树各层加权（柱高 = 该层总代价）</text>
@@ -820,7 +820,7 @@ const deck: DeckData = {
         ` },
         { type: 'demo', name: 'master-three-cases', title: "主方法三种情况的切换演示（10 步）" },
         { type: 'html', html: `
-          <h3 id="sec-master-h3">11.3 四个必会例题</h3>
+          <h3 id="sec-master-h3">13.3 四个必会例题</h3>
           
                 <table class="tbl">
                   <thead><tr><th>递归式</th><th>n<sup>log<sub>b</sub>a</sup> 与 f(n)</th><th>判定</th><th>结论</th></tr></thead>
@@ -854,7 +854,7 @@ const deck: DeckData = {
           
                 <p>最后一个例子的原因值得单独记：<span class="m">f(n) = n<sup>2</sup>/lg n</span> 虽然比 n<sup>2</sup> 小，但只小了 lg n 倍，<b>不是多项式地小</b> —— 找不到任何 &epsilon; &gt; 0 使 <span class="m">f(n) = O(n<sup>2&minus;&epsilon;</sup>)</span>，所以情况 1 不成立；f(n) &ne; &Theta;(n<sup>2</sup>)，情况 2 不成立；f(n) 也不比 n<sup>2</sup> 大，情况 3 不成立。<b>这时只能改用递归树或代换法。</b>（补充：该递归式的解为 T(n) = &Theta;(n<sup>2</sup> lg lg n)，PPT 未给出，仅供参考。）</p>
           
-                <h3 id="sec-master-h4">11.4 主方法的判定骨架（伪代码 + C++）</h3>
+                <h3 id="sec-master-h4">13.4 主方法的判定骨架（伪代码 + C++）</h3>
           
                 <div class="code-pair">
                   <div class="code-col">
@@ -898,7 +898,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-loop-invariant',
-      heading: "12. 循环不变式与算法正确性证明",
+      heading: "13. 循环不变式与算法正确性证明",
       blocks: [
         { type: 'html', html: `
           <p><b>循环不变式</b> (loop invariant) 方法：先确定算法的循环不变式，然后检查此循环不变式在算法执行期间是否满足以下三个条件：</p>
@@ -958,7 +958,7 @@ const deck: DeckData = {
                 </svg>
                 <p class="fig-cap">图 9 &nbsp;插入排序的循环不变式：子数组 A[1..j&#8722;1] 始终有序，Temp 槽存放本轮待插入的关键字</p>
           
-                <h3 id="sec-loop-invariant-h1">12.1 插入排序：伪代码 + C++（逐行注释）</h3>
+                <h3 id="sec-loop-invariant-h1">14.1 插入排序：伪代码 + C++（逐行注释）</h3>
           
                 <div class="code-pair">
                   <div class="code-col">
@@ -988,7 +988,7 @@ const deck: DeckData = {
                   </div>
                 </div>
           
-                <h3 id="sec-loop-invariant-h2">12.2 插入排序的正确性证明（完整三步）</h3>
+                <h3 id="sec-loop-invariant-h2">14.2 插入排序的正确性证明（完整三步）</h3>
           
                 <p><b>循环不变式</b>：子数组 <span class="m">A[1..j&minus;1]</span> 始终为<b>排好序的状态</b>。</p>
           
@@ -1013,7 +1013,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-summary',
-      heading: "13. 收尾：好的算法与本章框架",
+      heading: "14. 收尾：好的算法与本章框架",
       blocks: [
         { type: 'html', html: `
           <p><b>好的算法</b> = <b>提高求解问题的效率</b> + <b>节省存储空间</b>。围绕"评价"这件事，问题–算法–问题类的研究呈现四层递进：</p>
@@ -1051,7 +1051,7 @@ const deck: DeckData = {
     },
     {
       id: 'sec-quiz',
-      heading: "本节自测（课件配套测验）",
+      heading: "15. 本节自测（课件配套测验）",
       blocks: [
         { type: 'html', html: `
           <p>本题取自课程配套测验（算法分析基础部分），考的是「渐进复杂性 = 略去低阶项后的主项」这一核心概念。</p>
