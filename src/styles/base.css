@@ -617,13 +617,19 @@ button {
 .page a:hover {
   background: color-mix(in srgb, var(--deck-accent) 10%, transparent);
 }
-/* 强调：加粗 + 主题色荧光笔底衬，把「满屏黑体」变成有层次的高亮语言 */
+/* 强调：加粗 + 中性薄灰衬底（不再用主题色，避免在着色容器里叠色污染） */
 .page strong {
   color: var(--ink);
   font-weight: 650;
   padding: 0 1px;
   border-radius: 2px;
-  background: linear-gradient(180deg, transparent 66%, color-mix(in srgb, var(--deck-accent) 20%, transparent) 0);
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+}
+/* 着色容器内（callout / 解析块 / 公式卡）：衬底改白色，白色药丸浮在色底上 */
+.callout strong,
+.quiz-a strong,
+.formula strong {
+  background: var(--panel-solid);
 }
 .page hr {
   border: 0;
