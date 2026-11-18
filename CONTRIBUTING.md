@@ -99,4 +99,4 @@ scripts/                # 目录构建、内容迁移脚本
 
 ## License
 
-本项目以 GPL-3.0 发布，提交即表示同意代码与内容以相同协议分发。
+本项目以 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 发布：署名（BY）— 非商业性使用（NC）— 相同方式共享（SA）。提交即表示同意你的代码与内容以相同协议分发。
