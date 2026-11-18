@@ -2472,19 +2472,20 @@ pre.code .cl-code:empty + .cl-com {
   font-variant-numeric: tabular-nums;
 }
 
-/* 题卡层次：白底容器 + 淡灰选项 */
+/* 选项行：白底细边框融入白卡，去掉灰块；悬停浅灰；选中墨边 + 黑色序号圈 */
 .practice-q .opt-btn {
-  background: var(--panel-2);
-  border-color: transparent;
+  background: var(--panel-solid);
+  border-color: var(--hairline);
 }
 .practice-q .opt-btn:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--ink) 28%, transparent);
+  background: var(--panel-2);
+  border-color: color-mix(in srgb, var(--ink) 32%, transparent);
 }
 .practice-q .opt-btn .opt-key {
-  background: var(--panel-solid);
+  background: var(--panel-2);
 }
 .practice-q .opt-btn.selected {
-  border-color: color-mix(in srgb, var(--ink) 55%, transparent);
+  border-color: var(--ink);
   background: var(--panel-solid);
 }
 .practice-q .opt-btn.selected .opt-key {

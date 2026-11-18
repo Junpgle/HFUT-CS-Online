@@ -145,6 +145,27 @@
   border-color: var(--hairline);
 }
 
+.hub-hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+.hub-cta.sm {
+  height: 38px;
+  padding: 0 18px;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.hub-cta.sm svg {
+  color: var(--ink-2);
+}
+.hub-cta.sm:hover svg {
+  color: var(--ink);
+}
+
 .hub-hero-stats {
   display: flex;
   flex-wrap: wrap;
@@ -261,6 +282,94 @@
 .course-card:not(.ready) .course-title {
   font-weight: 500;
   color: var(--ink-2);
+}
+
+/* ---------------------------------------------------------- 联系作者卡片 */
+.hub-modal-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.4);
+}
+[data-theme='dark'] .hub-modal-scrim {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.hub-modal {
+  width: min(400px, 100%);
+  padding: 20px 20px 18px;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--hairline-soft);
+  box-shadow: var(--shadow-2);
+}
+.hub-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hub-modal-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.hub-modal-tip {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 13px 14px;
+  background: var(--panel-2);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-m);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.16s var(--press-ease), border-color 0.16s var(--press-ease);
+}
+.contact-row:hover {
+  background: var(--panel-solid);
+  border-color: var(--hairline);
+}
+.contact-row:active {
+  transform: scale(0.99);
+}
+.contact-key {
+  flex: none;
+  font-size: 12px;
+  color: var(--ink-3);
+  width: 30px;
+}
+.contact-val {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  word-break: break-all;
+}
+.contact-copy {
+  margin-left: auto;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.contact-copy.done {
+  color: var(--ok);
+  font-weight: 600;
 }
 
 /* ---------------------------------------------------------- 占位页 */

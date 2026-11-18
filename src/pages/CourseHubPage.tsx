@@ -1,9 +1,11 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import { catalog } from '../content/catalog';
 import { ALGO_BASE, courses, findCourseByName, STUB_BASE } from '../courses/registry';
 import SiteHeader from '../components/SiteHeader';
+import ContactCard from '../components/ContactCard';
+import { IconGitHub } from '../components/icons';
 import { useToc } from '../lib/toc';
 
 /** 学期分组顺序：8 个学期在前，公共课与杂项殿后 */
@@ -29,9 +31,12 @@ const REPO_LINKS = [
   ['Tuning-Luna/HFUT_XC_Study_Things', 'https://github.com/Tuning-Luna/HFUT_XC_Study_Things'],
 ] as const;
 
+const REPO_URL = 'https://github.com/SaltGardenia/HFUT-algorithm-design';
+
 export default function CourseHubPage() {
   const toc = useToc();
   const reduced = useReducedMotion();
+  const [contactOpen, setContactOpen] = useState(false);
 
   // 站点层无正文目录，清空侧栏上报
   useEffect(() => {
@@ -150,6 +155,15 @@ export default function CourseHubPage() {
             浏览全部课程
           </button>
         </motion.div>
+        <motion.div className="hub-hero-links" {...rise(0.2)}>
+          <a className="hub-cta ghost sm" href={REPO_URL} target="_blank" rel="noreferrer">
+            <IconGitHub size={16} />
+            GitHub 仓库
+          </a>
+          <button type="button" className="hub-cta ghost sm" onClick={() => setContactOpen(true)}>
+            联系作者
+          </button>
+        </motion.div>
         <motion.div className="hub-hero-stats" {...rise(0.24)}>
           <div className="hub-stat"><b>{stats.semesters}</b><span>学期</span></div>
           <div className="hub-stat"><b>{stats.courses}</b><span>门课程</span></div>
@@ -173,6 +187,7 @@ export default function CourseHubPage() {
           </section>
         ))}
       </main>
+      <ContactCard open={contactOpen} onClose={() => setContactOpen(false)} />
       <footer className="hub-foot">
         HFUT-CS-Online · 资料整理自{' '}
         {REPO_LINKS.map(([name, href], i) => (
