@@ -9,7 +9,7 @@ export default function SiteHeader() {
   return (
     <header className="hub-topbar material">
       <Link to="/" className="hub-brand">
-        HFUT 计算机<span className="accent"> · 课程资料库</span>
+        HFUT-CS-Online
       </Link>
       <div className="hub-topbar-right">
         <ThemeToggle />
