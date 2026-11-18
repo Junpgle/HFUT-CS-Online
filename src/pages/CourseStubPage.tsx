@@ -3,15 +3,14 @@ import { Link, useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { catalog, type CatalogCourse } from '../content/catalog';
 import { useToc } from '../lib/toc';
-import { useTheme } from '../lib/theme';
-import { IconArrowLeft, IconMoon, IconSun } from '../components/icons';
+import ThemeToggle from '../components/ThemeToggle';
+import { IconArrowLeft } from '../components/icons';
 
 /** 未上线课程的统一落地页：自带简易导航栏（不继承首页导航），展示资料统计与建设状态 */
 export default function CourseStubPage() {
   const { name } = useParams();
   const navigate = useNavigate();
   const toc = useToc();
-  const { theme, toggle } = useTheme();
 
   useEffect(() => {
     toc.report([], () => {});
@@ -29,13 +28,10 @@ export default function CourseStubPage() {
         </button>
         <span className="hub-brand">{course?.name ?? name}</span>
         <div className="hub-topbar-right">
-          <button
-            className="icon-btn"
-            onClick={toggle}
-            aria-label={theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'}
-          >
-            {theme === 'dark' ? <IconSun /> : <IconMoon />}
-          </button>
+          <Link to="/" className="hub-toplink">
+            课程目录
+          </Link>
+          <ThemeToggle />
         </div>
       </header>
 

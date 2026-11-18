@@ -44,6 +44,19 @@
   gap: 6px;
 }
 
+/* 占位页顶栏的回目录链接 */
+.hub-toplink {
+  font-size: 13px;
+  color: var(--ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+  margin-right: 4px;
+  transition: color 160ms ease;
+}
+.hub-toplink:hover {
+  color: var(--accent);
+}
+
 /* 主体：宽版心（卡片网格比文章版心宽） */
 .hub-main {
   flex: 1;

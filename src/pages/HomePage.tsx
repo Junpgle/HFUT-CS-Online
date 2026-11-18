@@ -9,6 +9,42 @@ import Sections from '../components/Sections';
 import SectionCapsule from '../components/SectionCapsule';
 import { scrollToId } from '../lib/scroll';
 import { useScrollSpy } from '../lib/scrollspy';
+import { IconArrowRight, IconBook, IconCode } from '../components/icons';
+
+/** 目录页顶部的站外资源卡片（原顶栏图标入口迁到这里） */
+const EXT_CARDS = [
+  {
+    href: 'https://www.hello-algo.com/chapter_hello_algo/',
+    icon: IconBook,
+    title: 'Hello 算法',
+    desc: '动画图解、一键运行的图解算法教程，适合数据结构入门与快速回顾',
+  },
+  {
+    href: 'https://books.halfrost.com/leetcode/',
+    icon: IconCode,
+    title: 'LeetCode 笔记',
+    desc: 'halfrost 的题解全书，按专题分类的刷题笔记与多语言实现',
+  },
+] as const;
+
+function ExtCards() {
+  return (
+    <nav className="ext-cards" aria-label="站外学习资源">
+      {EXT_CARDS.map(({ href, icon: Icon, title, desc }) => (
+        <a key={href} className="ext-card" href={href} target="_blank" rel="noreferrer">
+          <span className="ext-card-icon">
+            <Icon size={18} />
+          </span>
+          <span className="ext-card-body">
+            <span className="ext-card-title">{title}</span>
+            <span className="ext-card-desc">{desc}</span>
+          </span>
+          <IconArrowRight size={15} className="ext-card-arrow" />
+        </a>
+      ))}
+    </nav>
+  );
+}
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -48,6 +84,7 @@ export default function HomePage() {
       <div className="lede">
         <HtmlContent html={homeData.lede} />
       </div>
+      <ExtCards />
       <Sections sections={homeData.sections} />
       <footer className="pagefoot">内容依据课程 PPT 整理 · 仅供复习</footer>
       <SectionCapsule />

@@ -121,6 +121,12 @@ export function SidebarContent({ decks, currentDeck }: Props) {
       <p className="sidebar-h">全站导航</p>
       <ul className="site-nav">
         <li>
+          <Link to="/" className={location.pathname === '/' ? 'active' : undefined}>
+            <span className="nav-no">◎</span>
+            课程资料库 · 首页
+          </Link>
+        </li>
+        <li>
           <Link to={ALGO_BASE} className={currentDeck === null ? 'active' : undefined}>
             <span className="nav-no">◎</span>
             总目录 · 考点速查

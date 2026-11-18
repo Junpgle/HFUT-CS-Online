@@ -1,17 +1,11 @@
 import { motion, useReducedMotion } from 'motion/react';
 import { Link, useLocation } from 'react-router-dom';
 import { decks, type DeckData } from '../content';
-import { useTheme } from '../lib/theme';
 import { decodeEntities } from '../lib/text';
-import { IconBook, IconCode, IconGitHub, IconMenu, IconMoon, IconSun } from './icons';
+import { IconMenu } from './icons';
+import ThemeToggle from './ThemeToggle';
 import { ALGO_BASE } from '../courses/registry';
 import SearchBox from './SearchBox';
-
-const ISSUES_URL = 'https://github.com/SaltGardenia/HFUT-algorithm-design/issues';
-const EXT_LINKS = [
-  { href: 'https://www.hello-algo.com/chapter_hello_algo/', label: 'Hello 算法', icon: IconBook },
-  { href: 'https://books.halfrost.com/leetcode', label: 'LeetCode 笔记（halfrost）', icon: IconCode },
-] as const;
 
 interface Props {
   subtitle?: string;
@@ -58,8 +52,6 @@ function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
 }
 
 export default function TopBar({ subtitle, currentDeck, onOpenSidebar }: Props) {
-  const { theme, toggle } = useTheme();
-
   return (
     <header className="topbar">
       <div className="topbar-left">
@@ -70,6 +62,10 @@ export default function TopBar({ subtitle, currentDeck, onOpenSidebar }: Props) 
         >
           <IconMenu />
         </button>
+        {/* 面包屑：回站点首页的常驻入口（窄屏收起，移动端走抽屉） */}
+        <Link to="/" className="topbar-crumb">
+          课程资料库
+        </Link>
         <Link to={ALGO_BASE} className="topbar-title">
           算法设计与分析<span className="accent"> · 复习手册</span>
         </Link>
@@ -78,36 +74,7 @@ export default function TopBar({ subtitle, currentDeck, onOpenSidebar }: Props) 
       <SiteTabs currentDeck={currentDeck} />
       <div className="topbar-right">
         <SearchBox />
-        {EXT_LINKS.map(({ href, label, icon: Icon }) => (
-          <a
-            key={href}
-            className="icon-btn"
-            href={href}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={label}
-            title={label}
-          >
-            <Icon size={18} />
-          </a>
-        ))}
-        <button
-          className="icon-btn"
-          onClick={toggle}
-          aria-label={theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'}
-        >
-          {theme === 'dark' ? <IconSun /> : <IconMoon />}
-        </button>
-        <a
-          className="icon-btn"
-          href={ISSUES_URL}
-          target="_blank"
-          rel="noreferrer"
-          aria-label="到 GitHub 仓库提交 Issue"
-          title="提交 Issue"
-        >
-          <IconGitHub size={18} />
-        </a>
+        <ThemeToggle />
       </div>
     </header>
   );
