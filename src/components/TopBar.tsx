@@ -41,7 +41,7 @@ function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
     </Link>
   );
   return (
-    <nav className="deck-tabs" aria-label="全站导航">
+    <nav className="deck-tabs nav-pill" aria-label="全站导航">
       {item(`${ALGO_BASE}`, '总目录', '目录', currentDeck === null && !practiceActive, null, '课程首页 · 考点速查表')}
       {decks.map((d: DeckData) =>
         item(`${ALGO_BASE}/deck/${d.id}`, d.no, d.no.replace('第', ''), d.id === currentDeck, d.id, decodeEntities(d.title)),
@@ -54,7 +54,7 @@ function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
 export default function TopBar({ subtitle, currentDeck, onOpenSidebar }: Props) {
   return (
     <header className="topbar">
-      <div className="topbar-left">
+      <div className="topbar-left nav-pill">
         <button
           className="icon-btn drawer-trigger"
           aria-label="打开目录"
@@ -67,12 +67,12 @@ export default function TopBar({ subtitle, currentDeck, onOpenSidebar }: Props) 
           课程资料库
         </Link>
         <Link to={ALGO_BASE} className="topbar-title">
-          算法设计与分析<span className="accent"> · 复习手册</span>
+          算法设计与分析
         </Link>
         {subtitle && <span className="topbar-sub">{decodeEntities(subtitle)}</span>}
       </div>
       <SiteTabs currentDeck={currentDeck} />
-      <div className="topbar-right">
+      <div className="topbar-right nav-pill">
         <SearchBox />
         <ThemeToggle />
       </div>

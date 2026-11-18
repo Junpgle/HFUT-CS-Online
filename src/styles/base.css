@@ -144,11 +144,13 @@ button {
   .bg-aura { animation: none; }
 }
 
-/* 玻璃胶囊：导航栏容器基类（透明度/模糊/描边/投影完全复刻） */
-.nav-pill,
-.topbar-left,
-.topbar-right,
-.deck-tabs {
+/* 玻璃胶囊基类：导航栏容器的唯一取用处——课程页等只挂 .nav-pill 类调用，
+   不得自行修改胶囊的底色/模糊/描边/圆角/阴影 */
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
   background: var(--glass);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   backdrop-filter: blur(14px) saturate(1.2);
@@ -157,10 +159,7 @@ button {
   box-shadow: var(--shadow-soft);
 }
 @media (prefers-reduced-transparency: reduce) {
-  .nav-pill,
-  .topbar-left,
-  .topbar-right,
-  .deck-tabs {
+  .nav-pill {
     background: var(--panel-solid);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -197,6 +196,18 @@ button {
   align-items: center;
   gap: 10px;
   min-width: 0;
+  /* 胶囊贴内容，不随 1fr 列拉伸（复刻目标站）；max-width 兜底超长标题截断 */
+  justify-self: start;
+  width: fit-content;
+  max-width: 100%;
+}
+.topbar-right {
+  justify-self: end;
+}
+/* 讲次切换条作为胶囊时收窄内距（.nav-pill 的 6px 14px 会过松） */
+.deck-tabs.nav-pill {
+  padding: 4px;
+  gap: 2px;
 }
 .topbar-right {
   justify-content: flex-end;
@@ -331,21 +342,7 @@ button {
   color: var(--deck-accent);
   font-weight: 700;
 }
-/* 「在线练习」tab 与讲次数字分族：细分隔线 + 常显完整文字 */
-.deck-tab.practice-tab {
-  margin-left: 6px;
-  padding-left: 14px;
-}
-.deck-tab.practice-tab::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 1px;
-  height: 14px;
-  transform: translateY(-50%);
-  background: var(--hairline);
-}
+/* 「在线练习」tab：常显完整文字 */
 .deck-tab.practice-tab .tab-full,
 .deck-tab.practice-tab .tab-short {
   color: var(--ink-2);
@@ -364,20 +361,21 @@ button {
   color: var(--ink-3);
   pointer-events: none;
 }
+/* 搜索框已置于右胶囊内：自身透明，避免胶囊套胶囊 */
 .search-input {
-  height: 36px;
-  width: 260px;
-  padding: 0 14px 0 36px;
+  height: 34px;
+  width: 190px;
+  padding: 0 12px 0 34px;
   border-radius: 999px;
   font-size: 0.8438rem;
   color: var(--ink);
-  border: 1px solid var(--hairline);
-  background: var(--panel-solid);
+  border: none;
+  background: transparent;
   outline: none;
-  transition: border-color 140ms var(--press-ease);
+  transition: background-color 140ms var(--press-ease);
 }
-.search-input:focus {
-  border-color: color-mix(in srgb, var(--deck-accent) 45%, transparent);
+.search-box:focus-within .search-input {
+  background: var(--pressed);
 }
 /* 紧凑桌面（1021~1280）：tab 缩写「1讲」后中栏吃紧，搜索先让 60px（须在 ≤1020 折叠规则之前） */
 @media (min-width: 1021px) and (max-width: 1279px) {
@@ -461,8 +459,8 @@ button {
   transition: background 140ms var(--press-ease), color 140ms, transform 100ms var(--press-ease);
 }
 .icon-btn:hover {
-  background: color-mix(in srgb, var(--deck-accent) 10%, transparent);
   color: var(--deck-accent);
+  box-shadow: var(--shadow-1);
 }
 .icon-btn:active {
   transform: scale(0.9);
@@ -534,7 +532,6 @@ button {
 .site-nav a:hover,
 .toc a:hover {
   color: var(--deck-accent);
-  background: color-mix(in srgb, var(--deck-accent) 8%, transparent);
   transform: translateX(2px);
 }
 .site-nav li {
@@ -684,9 +681,10 @@ button {
   transition: background 140ms var(--press-ease), color 140ms, transform 100ms var(--press-ease),
     opacity 140ms;
 }
-.btn:hover {
-  background: color-mix(in srgb, var(--deck-accent) 10%, transparent);
+.btn:not(.primary):hover {
   color: var(--deck-accent);
+  border-color: color-mix(in srgb, var(--deck-accent) 35%, transparent);
+  box-shadow: var(--shadow-1);
 }
 .btn:active {
   transform: scale(0.95);
@@ -705,8 +703,9 @@ button {
   color: var(--ink-2);
 }
 .quiz-actions .btn:not(.primary):hover {
-  background: color-mix(in srgb, var(--deck-accent) 8%, transparent);
   color: var(--deck-accent);
+  border-color: color-mix(in srgb, var(--deck-accent) 35%, transparent);
+  box-shadow: var(--shadow-1);
 }
 .btn.primary {
   background: var(--deck-accent);
@@ -810,17 +809,18 @@ button {
 .page li {
   margin: 5px 0;
 }
-/* 链接：统一按压语言 —— hover 出主题色圆角药丸，替代传统下划线 */
-.page a {
+/* 链接：hover 用下划线示意可点，不铺色底（块级卡片锚点不参与药丸/下划线，走各自的抬升+阴影） */
+.page a:not(.ext-card):not(.card) {
   color: var(--deck-accent);
   text-decoration: none;
   padding: 1px 3px;
   margin: 0 -3px;
   border-radius: 5px;
-  transition: background 140ms var(--press-ease);
+  transition: color 140ms var(--press-ease);
 }
-.page a:hover {
-  background: color-mix(in srgb, var(--deck-accent) 10%, transparent);
+.page a:not(.ext-card):not(.card):hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 /* 强调：纯加粗，不加任何衬底（避免叠色污染） */
 .page strong {
@@ -1033,7 +1033,7 @@ pre.code::-webkit-scrollbar-track {
   transition: background 140ms var(--press-ease);
 }
 .code-expand:hover {
-  background: color-mix(in srgb, var(--deck-accent) 12%, transparent);
+  box-shadow: var(--shadow-1);
 }
 
 /* 代码覆盖层：像看照片一样铺在页面上方，完整展示 + 语法高亮 */
@@ -1157,7 +1157,11 @@ pre.code .cl-code:empty + .cl-com {
   background: color-mix(in srgb, var(--panel-2) 55%, transparent);
 }
 .tbl tbody tr:hover {
-  background: color-mix(in srgb, var(--deck-accent) 5%, transparent);
+  /* 悬浮不铺色：左缘细条 + 行字加深 */
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--deck-accent) 45%, transparent);
+}
+.tbl tbody tr:hover td:first-child {
+  color: var(--deck-accent);
 }
 .tbl tbody td:first-child {
   font-weight: 600;
@@ -1185,6 +1189,10 @@ pre.code .cl-code:empty + .cl-com {
   overflow-x: auto;
   border: 1px solid var(--hairline-soft);
   border-radius: var(--r-m);
+}
+/* 表格自身的上下 margin 只该用在裸表格上；包进带边框的滚动容器后会把容器内部顶出空白 */
+.tbl-scroll .tbl {
+  margin: 0;
 }
 @media (max-width: 700px) {
   .tbl th,
@@ -1360,6 +1368,17 @@ pre.code .cl-code:empty + .cl-com {
   font-size: 0.8438rem;
   color: var(--ink-2);
 }
+/* 首页八讲地图卡片：白底 + 外阴影，靠阴影而非色块与底面分层 */
+.deck-map .card {
+  background: var(--panel-solid);
+  border-color: var(--hairline-soft);
+  box-shadow: var(--shadow-1);
+}
+.deck-map .card:hover {
+  border-color: color-mix(in srgb, var(--deck-accent) 40%, transparent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+}
 /* 首页讲次卡：中性版面 + 元信息行（色标圆点与标题重叠且杂色，已移除） */
 .card-meta {
   margin: 10px 0 0 !important;
@@ -1400,7 +1419,8 @@ pre.code .cl-code:empty + .cl-com {
 }
 .topic-chip:hover {
   color: var(--deck-accent);
-  background: color-mix(in srgb, var(--deck-accent) 13%, transparent);
+  border-color: color-mix(in srgb, var(--deck-accent) 45%, transparent);
+  box-shadow: var(--shadow-1);
   transform: translateY(-1px);
 }
 .topic-chip:active {
@@ -1467,8 +1487,8 @@ pre.code .cl-code:empty + .cl-com {
     opacity 140ms;
 }
 .ctl-btn:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--deck-accent) 10%, transparent);
   color: var(--deck-accent);
+  box-shadow: var(--shadow-1);
 }
 .ctl-btn:active:not(:disabled) {
   transform: scale(0.88);
@@ -1998,8 +2018,8 @@ pre.code .cl-code:empty + .cl-com {
   transition: background 140ms var(--press-ease), color 140ms, transform 100ms var(--press-ease);
 }
 .cap-btn:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--deck-accent) 10%, transparent);
   color: var(--deck-accent);
+  box-shadow: var(--shadow-1);
 }
 .cap-btn:active:not(:disabled) {
   transform: scale(0.9);
@@ -2224,7 +2244,7 @@ pre.code .cl-code:empty + .cl-com {
 }
 .pq-danger:hover:not(:disabled) {
   border-color: color-mix(in srgb, var(--hot) 50%, transparent);
-  background: color-mix(in srgb, var(--hot) 6%, transparent);
+  box-shadow: var(--shadow-1);
 }
 .pq-danger:disabled {
   color: var(--ink-3);
@@ -2265,11 +2285,6 @@ pre.code .cl-code:empty + .cl-com {
 @media (max-width: 1199.9px) {
   .pq-rail-block { margin-bottom: 12px; }
   .pq-progress { margin-top: 12px; }
-  /* 题型页签横向滚动：右缘渐隐暗示还有更多 */
-  .pq-kindnav {
-    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 18px), transparent);
-    mask-image: linear-gradient(90deg, #000 calc(100% - 18px), transparent);
-  }
 }
 @media (max-width: 560px) {
   /* 「总进度」文案与清空按钮同行，缩小一号避免尾字孤行 */
@@ -2284,114 +2299,6 @@ pre.code .cl-code:empty + .cl-com {
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--ink-3);
-}
-.pq-kindnav {
-  display: flex;
-  flex-direction: row;
-  gap: 2px;
-  padding: 3px;
-  background: var(--panel-2);
-  border-radius: 999px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.pq-kindnav::-webkit-scrollbar {
-  display: none;
-}
-@media (min-width: 1200px) {
-  .pq-kindnav {
-    flex-direction: column;
-    background: transparent;
-    padding: 0;
-    overflow: visible;
-    gap: 4px;
-  }
-}
-.pq-kindbtn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 7px 13px;
-  border-radius: 10px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--ink-2);
-  white-space: nowrap;
-  transition: color 140ms var(--press-ease), background 140ms, transform 100ms var(--press-ease);
-}
-.pq-kindbtn:hover {
-  color: var(--ink);
-  background: var(--panel-2);
-}
-.pq-kindbtn:active {
-  transform: scale(0.97);
-}
-.pq-kindbtn.active {
-  color: var(--ink);
-  background: var(--panel-solid);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
-}
-@media (max-width: 1199.9px) {
-  .pq-kindbtn.active {
-    box-shadow: none;
-  }
-  .pq-kindbtn {
-    border-radius: 999px;
-    padding: 6px 12px;
-  }
-}
-.pq-kindbtn-label {
-  position: relative;
-  z-index: 1;
-}
-.pq-kindbtn-count {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  font-size: 0.75rem;
-  color: var(--ink-3);
-}
-.pq-kindbtn-count .pq-tab-right {
-  display: inline-block;
-  padding: 0 6px;
-  border-radius: 999px;
-  font-style: normal;
-  font-size: 0.7188rem;
-  font-weight: 600;
-  color: var(--ok);
-  background: color-mix(in srgb, var(--ok) 12%, transparent);
-}
-.pq-chiprow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.pq-chip {
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 0.7813rem;
-  font-weight: 500;
-  color: var(--ink-2);
-  background: var(--panel-solid);
-  border: 1px solid var(--hairline-soft);
-  transition: color 140ms, border-color 140ms, background 140ms, transform 100ms var(--press-ease);
-}
-.pq-chip:hover {
-  color: var(--ink);
-}
-.pq-chip:active {
-  transform: scale(0.95);
-}
-.pq-chip.active {
-  color: var(--ink);
-  border-color: color-mix(in srgb, var(--ink) 40%, transparent);
-  background: var(--panel-2);
 }
 
 /* 热力图：420 格，一格一题（GitHub 贡献墙式）；收在 details 里，窄屏默认收起 */
@@ -2440,11 +2347,30 @@ pre.code .cl-code:empty + .cl-com {
 .pq-heat-label {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
   margin: 0 0 5px;
+  padding: 0;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: var(--ink-2);
+  color: var(--ink-3);
   font-variant-numeric: tabular-nums;
+  transition: color 140ms;
+}
+.pq-heat-label:hover {
+  color: var(--ink);
+}
+.pq-heat[data-active='true'] .pq-heat-label {
+  color: var(--ink);
+  font-weight: 700;
+}
+/* 当前题型：标题下加短下划线 */
+.pq-heat-kind {
+  border-bottom: 1.5px solid transparent;
+  padding-bottom: 1px;
+}
+.pq-heat[data-active='true'] .pq-heat-kind {
+  border-bottom-color: var(--ink);
 }
 .pq-heat-grid {
   display: flex;
@@ -2495,29 +2421,6 @@ pre.code .cl-code:empty + .cl-com {
   border-color: transparent;
 }
 
-/* --------------------------------------------- 吸顶摘要条 */
-/* 实色底：半透明材质会让滚过的卡片文字叠印进来（暗色模式实测） */
-.pq-stickybar {
-  position: sticky;
-  top: var(--topbar-h);
-  z-index: 40;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-  padding: 7px 14px;
-  border-radius: 999px;
-  font-size: 0.7813rem;
-  color: var(--ink-2);
-  background: var(--panel-solid);
-  border: 1px solid var(--hairline-soft);
-  box-shadow: var(--shadow-1);
-  font-variant-numeric: tabular-nums;
-}
-.pq-stickybar b {
-  color: var(--ink);
-}
-
 /* --------------------------------------------- 题目列表与题卡 */
 .pq-list {
   display: flex;
@@ -2530,12 +2433,6 @@ pre.code .cl-code:empty + .cl-com {
 }
 @media (prefers-reduced-motion: reduce) {
   .pq-list { animation: none; }
-}
-.pq-empty {
-  padding: 40px 16px;
-  text-align: center;
-  color: var(--ink-3);
-  font-size: 0.875rem;
 }
 /* 讲次分组分隔：长列表的定位锚点，编号圆点用各讲主题色 */
 .pq-group-h {
@@ -2755,7 +2652,7 @@ pre.code .cl-code:empty + .cl-com {
 .ptag:hover,
 .ptag:focus-visible {
   border-color: var(--row-accent, var(--accent));
-  background: color-mix(in srgb, var(--row-accent, var(--accent)) 14%, transparent);
+  box-shadow: var(--shadow-1);
 }
 .ptag:active {
   transform: scale(0.95);

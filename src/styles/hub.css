@@ -54,9 +54,6 @@
 
 .hub-topbar-right {
   margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 4px;
   padding: 4px;
 }
 

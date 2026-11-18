@@ -68,7 +68,6 @@ export default function SearchBox() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
-  const [phIdx, setPhIdx] = useState(0);
   const boxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const index = useMemo(buildIndex, []);
@@ -92,13 +91,6 @@ export default function SearchBox() {
     }
     return hits.sort((a, b) => a.score - b.score).slice(0, 12).map((h) => h.item);
   }, [query, index]);
-
-  // 占位词轮播：让「能搜到什么」一眼可见
-  useEffect(() => {
-    if (!open || reduced || query) return;
-    const id = window.setInterval(() => setPhIdx((i) => (i + 1) % SUGGESTIONS.length), 2800);
-    return () => window.clearInterval(id);
-  }, [open, reduced, query]);
 
   // 点击容器外部关闭
   useEffect(() => {
@@ -142,7 +134,7 @@ export default function SearchBox() {
         onKeyDown={onKeyDown}
         onFocus={() => setOpen(true)}
         onClick={() => setOpen(true)}
-        placeholder={query ? '' : `搜索：${SUGGESTIONS[phIdx]}…`}
+        placeholder="搜索"
         aria-label="搜索关键词"
         aria-haspopup="listbox"
         aria-expanded={open}

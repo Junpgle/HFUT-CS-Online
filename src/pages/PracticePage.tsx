@@ -1,11 +1,10 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react';
 import { practiceQuestions, KIND_META, type PracticeKind } from '../content/practice';
-import { decks } from '../content';
 import PracticeCard from '../components/practice/PracticeCard';
 import { IconChevronUp } from '../components/icons';
 
-/** 题型（固定顺序，页签展示） */
+/** 题型（固定顺序，与热力图分块一一对应） */
 const KINDS: PracticeKind[] = ['single', 'multi', 'judge', 'fill', 'essay'];
 
 /** 作答结果的持久化 key */
@@ -60,10 +59,8 @@ function useScrollProbe(visibleLength: number, listResetKey: string) {
 export default function PracticePage() {
   const reduced = useReducedMotion();
   const [kind, setKind] = useState<PracticeKind>('single');
-  const [deckFilter, setDeckFilter] = useState<number | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'undone' | 'wrong'>('all');
   const [results, setResults] = useState<Record<string, Result>>(() => loadResults());
-  const firstFilterRun = useRef(true);
+  const firstKindRun = useRef(true);
   // 热力图折叠态：宽屏默认展开，窄屏默认收起（首屏让位给题目）
   const [heatOpen, setHeatOpen] = useState(() => window.matchMedia('(min-width: 1200px)').matches);
 
@@ -92,27 +89,17 @@ export default function PracticePage() {
     return { done, right };
   };
 
-  const filterKey = `${kind}|${deckFilter}|${statusFilter}`;
+  // 题型选择融在热力图分块标题上：可见列表只由题型决定
+  const visible = useMemo(() => bankOf(kind), [kind]);
 
-  const visible = useMemo(() => {
-    return bankOf(kind).filter((q) => {
-      if (deckFilter !== 'all' && !q.tags.some((t) => t.deck === deckFilter)) return false;
-      const r = results[q.id];
-      if (statusFilter === 'undone' && r) return false;
-      if (statusFilter === 'wrong' && r !== 'wrong') return false;
-      return true;
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kind, deckFilter, statusFilter, results]);
-
-  // 热力图点击 → 调整筛选后跳到具体题目（声明在锚定 effect 之前）
+  // 热力图点击 → 跨题型时先切题型再跳（声明在锚定 effect 之前）
   const pendingJump = useRef<string | null>(null);
 
-  // 筛选变更：把列表锚到吸顶条之下，避免深滚位置出现「莫名的半张卡」。
-  // 热力图跳转会先改筛选再落到具体题，此时跳过锚定，由 pendingJump 接管滚动。
+  // 题型切换：把列表锚到吸顶条之下，避免深滚位置出现「莫名的半张卡」。
+  // 热力图跳转会先切题型再落到具体题，此时跳过锚定，由 pendingJump 接管滚动。
   useEffect(() => {
-    if (firstFilterRun.current) {
-      firstFilterRun.current = false;
+    if (firstKindRun.current) {
+      firstKindRun.current = false;
       return;
     }
     if (pendingJump.current) return;
@@ -121,14 +108,13 @@ export default function PracticePage() {
     const top = main.getBoundingClientRect().top + window.scrollY - 108;
     window.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterKey]);
+  }, [kind]);
 
-  // 热力图点击 → 调整筛选后跳到具体题目
+  // 热力图点击 → 跳到具体题目
   const jumpToQuestion = (qid: string, k: PracticeKind) => {
-    const needFilter = kind !== k || deckFilter !== 'all' || statusFilter !== 'all';
     pendingJump.current = qid;
-    if (!needFilter) {
-      // 筛选不变时 visible 不重算，直接滚
+    if (kind === k) {
+      // 题型不变时 visible 不重算，直接滚
       window.setTimeout(() => {
         const el = document.querySelector(`.practice-q[data-qid="${qid}"]`);
         if (el) {
@@ -139,9 +125,7 @@ export default function PracticePage() {
       }, 30);
       return;
     }
-    if (kind !== k) setKind(k);
-    if (deckFilter !== 'all') setDeckFilter('all');
-    if (statusFilter !== 'all') setStatusFilter('all');
+    setKind(k);
   };
 
   // visible 更新后执行未完成的跳转
@@ -160,8 +144,7 @@ export default function PracticePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
-  const { idx, showTop } = useScrollProbe(visible.length, filterKey);
-  const curNo = visible[idx] ? Number(visible[idx].id.slice(1)) : 0;
+  const { idx, showTop } = useScrollProbe(visible.length, kind);
 
   const totalDone = practiceQuestions.filter((q) => results[q.id]).length;
   const totalRight = practiceQuestions.filter((q) => results[q.id] === 'right').length;
@@ -225,80 +208,28 @@ export default function PracticePage() {
       </div>
 
       <div className="pq-layout">
-        {/* 左栏：筛选与进度总览（≥1200px 竖排，窄屏回落为顶部横排） */}
-        <aside className="pq-rail" aria-label="筛选与进度">
-          <div className="pq-rail-block">
-            <p className="pq-rail-h">题型</p>
-            <div className="pq-kindnav">
-              {KINDS.map((k) => (
-                <button key={k} type="button" className={`pq-kindbtn${kind === k ? ' active' : ''}`} onClick={() => setKind(k)}>
-                  <span className="pq-kindbtn-label">{KIND_META[k].label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="pq-rail-block">
-            <p className="pq-rail-h">讲次</p>
-            <div className="pq-chiprow">
-              <button
-                type="button"
-                className={`pq-chip${deckFilter === 'all' ? ' active' : ''}`}
-                onClick={() => setDeckFilter('all')}
-              >
-                全部
-              </button>
-              {decks.map((d) => {
-                const no = Number(d.id.slice(4));
-                return (
-                  <button
-                    key={d.id}
-                    type="button"
-                    className={`pq-chip${deckFilter === no ? ' active' : ''}`}
-                    data-deck={d.id}
-                    onClick={() => setDeckFilter(no)}
-                  >
-                    第 {no} 讲
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-          <div className="pq-rail-block">
-            <p className="pq-rail-h">状态</p>
-            <div className="pq-chiprow">
-              {(
-                [
-                  ['all', '全部'],
-                  ['undone', '只看未做'],
-                  ['wrong', '只看错题'],
-                ] as const
-              ).map(([v, label]) => (
-                <button
-                  key={v}
-                  type="button"
-                  className={`pq-chip${statusFilter === v ? ' active' : ''}`}
-                  onClick={() => setStatusFilter(v)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-          {/* 热力图：420 格，一格一题——绿=答对，红=答错，深灰=已看答案，浅灰=未作答；点击跳题 */}
+        {/* 左栏：热力图即总览+导航——分块标题就是题型切换，格子里是每一题 */}
+        <aside className="pq-rail" aria-label="题型与进度热力图">
+          {/* 420 格，一格一题——绿=答对，红=答错，深灰=已看答案，浅灰=未作答；点击标题切题型、点击格子跳题 */}
           {/* 收进 details：窄屏默认收起，首屏以题目为主角 */}
           <details className="pq-heatblock" open={heatOpen} onToggle={(e) => setHeatOpen((e.target as HTMLDetailsElement).open)}>
-            <summary className="pq-heat-sum">热力图 · 点击跳题</summary>
+            <summary className="pq-heat-sum">热力图</summary>
             {KINDS.map((k) => {
               const c = countFor(k);
               const short = KIND_META[k].label.replace('题', '');
               return (
-                <div key={k} className="pq-heat">
-                  <p className="pq-heat-label">
-                    <span>{short}</span>
+                <div key={k} className="pq-heat" data-active={kind === k}>
+                  <button
+                    type="button"
+                    className="pq-heat-label"
+                    onClick={() => setKind(k)}
+                    aria-pressed={kind === k}
+                  >
+                    <span className="pq-heat-kind">{short}</span>
                     <span>
                       {c.done}/{KIND_META[k].total}
                     </span>
-                  </p>
+                  </button>
                   <div className="pq-heat-grid">
                     {bankOf(k).map((q) => {
                       const r = results[q.id];
@@ -324,49 +255,30 @@ export default function PracticePage() {
           </details>
         </aside>
 
-        {/* 主列：吸顶摘要条 + 题目列表 */}
+        {/* 主列：题目列表 */}
         <div className="pq-main">
-          {/* 滚动中唯一有用的新信息是当前题号，其余进度数字不再复读 */}
-          {curNo > 0 && (
-            <div className="pq-stickybar" aria-hidden={false}>
-              <span className="pq-stickybar-loc">
-                第 <b>{curNo}</b> 题
-              </span>
-            </div>
-          )}
-
-          <div className="pq-list" key={filterKey}>
-            {visible.length === 0 ? (
-              <p className="pq-empty">
-                {statusFilter === 'undone'
-                  ? '该筛选下没有未作的题目——先换个筛选，或者去别处刷题吧。'
-                  : statusFilter === 'wrong'
-                    ? '该筛选下没有错题——干得漂亮！'
-                    : '没有符合条件的题目。'}
-              </p>
-            ) : (
-              visible.map((q) => {
-                // 讲次分组分隔：按各题主讲次（tag 里最小的讲号）给长列表一个定位锚点
-                const d = Math.min(...q.tags.map((t) => t.deck));
-                const showHead = d !== lastDeck;
-                lastDeck = d;
-                return (
-                  <Fragment key={q.id}>
-                    {showHead && (
-                      <p className="pq-group-h" data-deck={`deck${d}`}>
-                        <b className="pq-group-no">{d}</b>第 {d} 讲 · {groups.get(d) ?? 0} 题
-                      </p>
-                    )}
-                    <PracticeCard
-                      quiz={q}
-                      label={`${KIND_META[q.kind].label.replace('题', '')} ${Number(q.id.slice(1))}`}
-                      result={results[q.id]}
-                      onResult={onResult}
-                    />
-                  </Fragment>
-                );
-              })
-            )}
+          <div className="pq-list" key={kind}>
+            {visible.map((q) => {
+              // 讲次分组分隔：按各题主讲次（tag 里最小的讲号）给长列表一个定位锚点
+              const d = Math.min(...q.tags.map((t) => t.deck));
+              const showHead = d !== lastDeck;
+              lastDeck = d;
+              return (
+                <Fragment key={q.id}>
+                  {showHead && (
+                    <p className="pq-group-h" data-deck={`deck${d}`}>
+                      <b className="pq-group-no">{d}</b>第 {d} 讲 · {groups.get(d) ?? 0} 题
+                    </p>
+                  )}
+                  <PracticeCard
+                    quiz={q}
+                    label={`${KIND_META[q.kind].label.replace('题', '')} ${Number(q.id.slice(1))}`}
+                    result={results[q.id]}
+                    onResult={onResult}
+                  />
+                </Fragment>
+              );
+            })}
           </div>
         </div>
       </div>
