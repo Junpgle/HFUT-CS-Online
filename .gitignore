@@ -16,3 +16,6 @@ data/**
 !data/文件清单.csv
 !data/分类统计.txt
 # 四个上游仓库以子模块挂在仓库根（与 data/ 处理产物解耦），不在 data/** 管辖内
+
+# 本地截图产物
+_tools/shots/

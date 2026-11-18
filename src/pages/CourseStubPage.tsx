@@ -25,17 +25,26 @@ export default function CourseStubPage() {
   return (
     <div className="hub-shell">
       <header className="hub-topbar">
-        <div className="hub-nav-left nav-pill">
-          <button className="icon-btn" onClick={() => navigate(-1)} aria-label="返回上一页" title="返回上一页">
-            <IconArrowLeft size={18} />
+        <div className="hub-nav-left">
+          <button
+            className="topbar-ctl nav-pill"
+            onClick={() => navigate(-1)}
+            aria-label="返回上一页"
+            title="返回上一页"
+          >
+            <span className="icon-btn">
+              <IconArrowLeft size={18} />
+            </span>
           </button>
           <span className="hub-brand">{course?.name ?? name}</span>
         </div>
-        <div className="hub-topbar-right nav-pill">
+        <div className="hub-topbar-right">
           <Link to="/" className="hub-toplink">
             课程目录
           </Link>
-          <ThemeToggle />
+          <div className="topbar-ctl nav-pill">
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 

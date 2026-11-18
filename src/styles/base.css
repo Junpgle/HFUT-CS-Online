@@ -166,7 +166,8 @@ button {
   }
 }
 
-/* 顶栏：透明容器 + 三段玻璃胶囊（复刻目标站）；pointer-events 穿透空白区 */
+/* 顶栏：透明容器，左右两组控件 + 中部讲次胶囊；每个控件独立成胶囊（.topbar-ctl），
+   pointer-events 穿透空白区 */
 .topbar {
     position: sticky;
     top: 0;
@@ -194,9 +195,9 @@ button {
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
-  /* 胶囊贴内容，不随 1fr 列拉伸（复刻目标站）；max-width 兜底超长标题截断 */
+  /* 控件组贴内容，不随 1fr 列拉伸；max-width 兜底超长标题截断 */
   justify-self: start;
   width: fit-content;
   max-width: 100%;
@@ -213,23 +214,13 @@ button {
   justify-content: flex-end;
 }
 
-/* 面包屑：课程页回站点首页的常驻入口（窄屏收起，移动端走抽屉「课程资料库」） */
-.topbar-crumb {
-  font-size: 0.8125rem;
-  color: var(--ink-3);
-  white-space: nowrap;
-  text-decoration: none;
-  padding-right: 12px;
-  border-right: 1px solid var(--hairline);
-  transition: color 160ms ease;
+/* 独立控件胶囊（返回箭头 / 抽屉触发 / 搜索 / 亮暗切换）：统一收窄内距，
+   内部 34px 控件 + 8px 内距 = 42px 胶囊；hover 只加深描边（不铺色底） */
+.topbar-ctl.nav-pill {
+  padding: 4px;
 }
-.topbar-crumb:hover {
-  color: var(--accent);
-}
-@media (max-width: 1279px) {
-  .topbar-crumb {
-    display: none;
-  }
+.topbar-ctl.nav-pill:hover {
+  border-color: var(--hairline);
 }
 
 .topbar-title {
@@ -386,14 +377,17 @@ button {
 .search-input::placeholder {
   color: var(--ink-3);
 }
-/* 窄屏顶栏（tabs 隐藏的 ≤1020px）：搜索折叠成图标（点按展开），外部链接隐藏，
-   保证汉堡 + 站名始终可见——必须在 .search-input 基础规则之后声明才能覆盖 260px 宽 */
+/* 窄屏顶栏（tabs 隐藏的 ≤1020px）：搜索折叠成图标（点按展开），
+   课程名占满剩余空间截断——必须在 .search-input 基础规则之后声明才能覆盖 260px 宽 */
 @media (max-width: 1020px) {
   .search-input {
     width: 34px;
     padding: 0;
     border-color: transparent;
     background: transparent;
+  }
+  .search-input::placeholder {
+    color: transparent;
   }
   .search-box:focus-within {
     position: relative;
@@ -405,13 +399,21 @@ button {
     border-color: var(--hairline);
     background: var(--panel-solid);
   }
-  .topbar-right > a.icon-btn {
-    display: none;
+  .search-box:focus-within .search-input::placeholder {
+    color: var(--ink-3);
   }
-}
-@media (max-width: 560px) {
+  /* 讲次条 display:none 不生成盒子，右栏会掉进中间 auto 列挤瘪左栏——窄屏改两列网格 */
+  .topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .topbar-left {
+    /* 占满左列，让课程名用剩余空间截断（fit-content 会把它压到只剩 1 字） */
+    width: 100%;
+    max-width: none;
+  }
   .topbar-title {
-    max-width: 32vw;
+    flex: 1 1 auto;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
   }

@@ -2,7 +2,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { Link, useLocation } from 'react-router-dom';
 import { decks, type DeckData } from '../content';
 import { decodeEntities } from '../lib/text';
-import { IconMenu } from './icons';
+import { IconArrowLeft, IconMenu } from './icons';
 import ThemeToggle from './ThemeToggle';
 import { ALGO_BASE } from '../courses/registry';
 import SearchBox from './SearchBox';
@@ -54,27 +54,35 @@ function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
 export default function TopBar({ subtitle, currentDeck, onOpenSidebar }: Props) {
   return (
     <header className="topbar">
-      <div className="topbar-left nav-pill">
+      <div className="topbar-left">
+        {/* 独立返回胶囊：左箭头回站点首页 */}
+        <Link to="/" className="topbar-ctl nav-pill" aria-label="返回课程资料库首页" title="返回课程资料库首页">
+          <span className="icon-btn">
+            <IconArrowLeft size={18} />
+          </span>
+        </Link>
         <button
-          className="icon-btn drawer-trigger"
+          className="topbar-ctl nav-pill drawer-trigger"
           aria-label="打开目录"
           onClick={onOpenSidebar}
         >
-          <IconMenu />
+          <span className="icon-btn">
+            <IconMenu />
+          </span>
         </button>
-        {/* 面包屑：回站点首页的常驻入口（窄屏收起，移动端走抽屉） */}
-        <Link to="/" className="topbar-crumb">
-          课程资料库
-        </Link>
         <Link to={ALGO_BASE} className="topbar-title">
           算法设计与分析
         </Link>
         {subtitle && <span className="topbar-sub">{decodeEntities(subtitle)}</span>}
       </div>
       <SiteTabs currentDeck={currentDeck} />
-      <div className="topbar-right nav-pill">
-        <SearchBox />
-        <ThemeToggle />
+      <div className="topbar-right">
+        <div className="topbar-ctl nav-pill">
+          <SearchBox />
+        </div>
+        <div className="topbar-ctl nav-pill">
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );

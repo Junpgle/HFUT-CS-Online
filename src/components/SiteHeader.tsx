@@ -8,8 +8,10 @@ export default function SiteHeader() {
       <Link to="/" className="hub-brand nav-pill">
         HFUT-CS-Online
       </Link>
-      <div className="hub-topbar-right nav-pill">
-        <ThemeToggle />
+      <div className="hub-topbar-right">
+        <div className="topbar-ctl nav-pill">
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );
