@@ -3,10 +3,14 @@ import { Link } from 'react-router-dom';
 import { decks, type DeckData } from '../content';
 import { useTheme } from '../lib/theme';
 import { decodeEntities } from '../lib/text';
-import { IconGitHub, IconMenu, IconMoon, IconSun } from './icons';
+import { IconBook, IconCode, IconGitHub, IconMenu, IconMoon, IconSun } from './icons';
 import SearchBox from './SearchBox';
 
 const ISSUES_URL = 'https://github.com/SaltGardenia/HFUT-algorithm-design/issues';
+const EXT_LINKS = [
+  { href: 'https://www.hello-algo.com/', label: 'Hello 算法', icon: IconBook },
+  { href: 'https://books.halfrost.com/leetcode', label: 'LeetCode 笔记（halfrost）', icon: IconCode },
+] as const;
 
 interface Props {
   subtitle?: string;
@@ -70,6 +74,19 @@ export default function TopBar({ subtitle, currentDeck, onOpenSidebar }: Props) 
       <SiteTabs currentDeck={currentDeck} />
       <div className="topbar-right">
         <SearchBox />
+        {EXT_LINKS.map(({ href, label, icon: Icon }) => (
+          <a
+            key={href}
+            className="icon-btn"
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={label}
+            title={label}
+          >
+            <Icon size={18} />
+          </a>
+        ))}
         <button
           className="icon-btn"
           onClick={toggle}
