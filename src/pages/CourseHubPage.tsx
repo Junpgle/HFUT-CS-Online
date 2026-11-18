@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import { catalog } from '../content/catalog';
-import { ALGO_BASE, courses, findCourseByName, STUB_BASE } from '../courses/registry';
+import { courses, findCourseByName, STUB_BASE } from '../courses/registry';
 import SiteHeader from '../components/SiteHeader';
 import ContactCard from '../components/ContactCard';
 import { IconGitHub } from '../components/icons';
@@ -131,10 +131,6 @@ export default function CourseHubPage() {
           transition: { duration: 0.4, delay, ease: [0.25, 0.1, 0.25, 1] as const },
         };
 
-  const scrollToCatalog = () => {
-    document.getElementById('catalog')?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
-  };
-
   return (
     <div className="hub-shell">
       <SiteHeader />
@@ -143,19 +139,7 @@ export default function CourseHubPage() {
         <motion.h1 className="hub-hero-name" {...rise(0)}>
           HFUT-CS-Online
         </motion.h1>
-        <motion.p className="hub-hero-lede" {...rise(0.08)}>
-          合工大计算机专业 {stats.semesters} 个学期 {stats.courses} 门课程的课件、期末试题与附件，
-          整理自 4 个开源资料仓库，共 {stats.files} 份文件。
-        </motion.p>
-        <motion.div className="hub-hero-actions" {...rise(0.16)}>
-          <Link className="hub-cta" to={ALGO_BASE}>
-            进入《算法设计与分析》
-          </Link>
-          <button type="button" className="hub-cta ghost" onClick={scrollToCatalog}>
-            浏览全部课程
-          </button>
-        </motion.div>
-        <motion.div className="hub-hero-links" {...rise(0.2)}>
+        <motion.div className="hub-hero-links" {...rise(0.08)}>
           <a className="hub-cta ghost sm" href={REPO_URL} target="_blank" rel="noreferrer">
             <IconGitHub size={16} />
             GitHub 仓库
@@ -164,7 +148,7 @@ export default function CourseHubPage() {
             联系作者
           </button>
         </motion.div>
-        <motion.div className="hub-hero-stats" {...rise(0.24)}>
+        <motion.div className="hub-hero-stats" {...rise(0.16)}>
           <div className="hub-stat"><b>{stats.semesters}</b><span>学期</span></div>
           <div className="hub-stat"><b>{stats.courses}</b><span>门课程</span></div>
           <div className="hub-stat"><b>{stats.files}</b><span>份文件</span></div>
