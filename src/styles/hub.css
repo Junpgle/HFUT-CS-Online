@@ -87,7 +87,8 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 56px 24px 44px;
+  /* 内容轻微上移：加大底部留白 */
+  padding: 56px 24px 120px;
 }
 
 .hub-hero-name {
@@ -130,12 +131,59 @@
   transition-duration: 0.06s;
 }
 
+.hub-hero-sub {
+  margin: 16px 0 0;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
 .hub-hero-links {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
   margin-top: 30px;
+}
+
+.hub-hero-contribs {
+  margin-top: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.contrib-avatars {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+/* 头像圆形抠图 */
+.contrib-avatar {
+  display: block;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.18s var(--press-ease), box-shadow 0.18s var(--press-ease);
+}
+.contrib-avatar:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-2);
+}
+.contrib-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.hub-hero-welcome {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-3);
 }
 
 .hub-hero-stats {

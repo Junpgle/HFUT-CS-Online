@@ -5,6 +5,7 @@ import { catalog } from '../content/catalog';
 import { courses, findCourseByName, STUB_BASE } from '../courses/registry';
 import SiteHeader from '../components/SiteHeader';
 import { getRecentCourses } from '../lib/recentCourses';
+import { contributors } from '../content/contributors';
 import ContactCard from '../components/ContactCard';
 import { IconGitHub } from '../components/icons';
 import { useToc } from '../lib/toc';
@@ -25,12 +26,12 @@ interface Card {
   total: number;
 }
 
-const REPO_URL = 'https://github.com/SaltGardenia/HFUT-algorithm-design';
-
+const REPO_URL = 'https://github.com/SaltGardenia/HFUT-CS-Online';
 export default function CourseHubPage() {
   const toc = useToc();
   const reduced = useReducedMotion();
   const [contactOpen, setContactOpen] = useState(false);
+
   // 最近查看的课程（localStorage，MRU）；无记录时整个板块隐藏
   const [recentNames] = useState(() => getRecentCourses());
 
@@ -159,6 +160,9 @@ export default function CourseHubPage() {
         <motion.h1 className="hub-hero-name" {...rise(0)}>
           HFUT-CS-Online
         </motion.h1>
+        <motion.p className="hub-hero-sub" {...rise(0.06)}>
+          汇总合肥工业大学计算机与信息学院的在线课程资料
+        </motion.p>
         <motion.div className="hub-hero-links" {...rise(0.08)}>
           <a className="hub-cta ghost sm" href={REPO_URL} target="_blank" rel="noreferrer">
             <IconGitHub size={16} />
@@ -174,6 +178,19 @@ export default function CourseHubPage() {
           <div className="hub-stat"><b>{stats.files}</b><span>份文件</span></div>
           <div className="hub-stat"><b>{stats.courseware}</b><span>份课件</span></div>
           <div className="hub-stat"><b>{stats.exams}</b><span>份试题</span></div>
+        </motion.div>
+        <motion.div className="hub-hero-contribs" {...rise(0.22)}>
+          {contributors.length > 0 && (
+            <div className="contrib-avatars">
+              {contributors.map((c) => (
+                <a key={c.login} className="contrib-avatar" href={c.html_url} target="_blank" rel="noreferrer"
+                   aria-label={c.login} title={`${c.login} · ${c.repo}`}>
+                  <img src={c.avatar_url} alt={c.login} loading="lazy" />
+                </a>
+              ))}
+            </div>
+          )}
+          <p className="hub-hero-welcome">欢迎 Issue &amp; PR</p>
         </motion.div>
       </section>
 
