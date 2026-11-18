@@ -1,0 +1,13 @@
+[submodule "data/sunmiao0301/HFUT-CS"]
+	path = data/sunmiao0301/HFUT-CS
+	url = https://github.com/sunmiao0301/HFUT-CS.git
+[submodule "data/styitches/HFUT-CS"]
+	path = data/styitches/HFUT-CS
+	url = https://github.com/styitches/HFUT-CS.git
+[submodule "data/Tuning-Luna/HFUT_XC_Study_Things"]
+	path = data/Tuning-Luna/HFUT_XC_Study_Things
+	url = https://github.com/Tuning-Luna/HFUT_XC_Study_Things.git
+[submodule "data/mox-hub/hfut-cs"]
+	path = data/mox-hub/hfut-cs
+	url = https://github.com/mox-hub/hfut-cs.git
+	branch = master

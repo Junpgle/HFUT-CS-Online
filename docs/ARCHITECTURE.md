@@ -17,7 +17,7 @@
 │  src/content/       算法课 deck 数据（scripts/migrate.mjs 生成）│
 │  src/content/catalog.ts  课程目录数据（scripts/build-catalog.mjs 生成）│
 ├─ 资料层 ──────────────────────────────────────────────┤
-│  课件与期末题整理/    8210 份源文件（8 学期 × 课程 × 课件/试题/附件）│
+│  data/    8210 份源文件（8 学期 × 课程 × 课件/试题/附件）│
 │  不进 git、不进打包；课程页通过 catalog 拿统计与路径       │
 └──────────────────────────────────────────────────────┘
 ```
@@ -25,7 +25,7 @@
 ## 2. 数据流
 
 ```
-课件与期末题整理/  ──npm run catalog──▶  src/content/catalog.ts
+data/  ──npm run catalog──▶  src/content/catalog.ts
 （目录名 + 逐文件计数）                    （学期 → 课程 → 课件/试题/附件计数）
 
 src/courses/registry.ts   已实现课程的路由注册表（人工维护，唯一事实源）
@@ -35,7 +35,7 @@ src/courses/registry.ts   已实现课程的路由注册表（人工维护，唯
 ```
 
 - `catalog.ts` 由脚本生成、随提交入库，运行时零 IO；`predev` / `prebuild` 自动重跑，
-  往 `课件与期末题整理/` 里增删课程后刷新页面即可生效。
+  往 `data/` 里增删课程后刷新页面即可生效。
 - 课程页将来需要「某门课的文件浏览」时，扩展 build-catalog 逐课程输出文件清单 JSON，
   不反向依赖文件系统。
 
@@ -67,7 +67,7 @@ src/courses/registry.ts   已实现课程的路由注册表（人工维护，唯
 
 1. 在 `src/courses/` 新建 `<courseId>.tsx`：根组件 + 该课导航栏 + 内部路由（相对路径）；
    私有样式加 `styles/<courseId>.css`。
-2. 在 `src/courses/registry.ts` 增加一条记录（name 取 `课件与期末题整理/` 里的课程目录名，
+2. 在 `src/courses/registry.ts` 增加一条记录（name 取 `data/` 里的课程目录名，
    学期填对应文件夹名）。
 3. App.tsx 的 Routes 里给该课程加一条懒加载路由（或用 registry 统一 map）。
 4. `npm run catalog`（predev/prebuild 会自动跑）让首页卡片显示最新统计。
@@ -100,7 +100,7 @@ src/
 
 ## 7. 约束与已知取舍
 
-- **资料文件不进站点构建**：8.4GB 的 `课件与期末题整理/` 只作为内容事实源被脚本扫描；
+- **资料文件不进站点构建**：8.4GB 的 `data/` 只作为内容事实源被脚本扫描；
   将来做「课程资料浏览页」时再按需引入（dev 可用 Vite 插件挂静态目录，部署另行评估体积）。
 - 算法课的物理目录（`src/content`、`src/components`、`src/pages`）暂未搬进
   `src/courses/algorithm-design/`：内容文件由 migrate.mjs 生成、组件与三个页面耦合较深，

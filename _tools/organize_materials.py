@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 把 4 个 HFUT 资料仓库的 tarball 内容流式归类到:
-  课件与期末题整理/<大一上..大四下/公共课与杂项>/<课程>/<课件|试题|附件>/
+  data/<大一上..大四下/公共课与杂项>/<课程>/<课件|试题|附件>/
 每个源文件必须命中映射表, 全部落盘, 不遗漏; 同名同内容去重, 同名不同内容加来源标记。
 学期归属依据: 官方2019培养方案开课学期 + sunmiao/mox 实际修读记录交叉验证(见整理说明.md)。
 """
 import os, re, csv, tarfile, hashlib
 
 REPO_DIR = r"C:\Users\icepa\Documents\GitHub\HFUT-algorithm-design\_repos_dl"
-OUT_ROOT = r"C:\Users\icepa\Documents\GitHub\HFUT-algorithm-design\课件与期末题整理"
+OUT_ROOT = r"C:\Users\icepa\Documents\GitHub\HFUT-algorithm-design\data"
 MANIFEST = os.path.join(OUT_ROOT, "文件清单.csv")
 
 TAARS = [

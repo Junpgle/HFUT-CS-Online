@@ -1,12 +1,12 @@
-/* 扫描 课件与期末题整理/ 生成 src/content/catalog.ts —— 课程目录数据（课程页与首页共用）。
- * 目录结构契约见 课件与期末题整理/整理说明.md：<学期>/<课程>/{课件,试题,附件}/**。
+/* 扫描 data/ 生成 src/content/catalog.ts —— 课程目录数据（课程页与首页共用）。
+ * 目录结构契约见 data/整理说明.md：<学期>/<课程>/{课件,试题,附件}/**。
  * 只读目录名与文件计数，不读取文件内容。生成物随提交入库，运行时零 IO。 */
 import { readdirSync, statSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
-const MATERIALS = join(ROOT, '..', '课件与期末题整理');
+const MATERIALS = join(ROOT, '..', 'data');
 const OUT = join(ROOT, '..', 'src', 'content', 'catalog.ts');
 
 const SEMESTER_ORDER = ['大一上', '大一下', '大二上', '大二下', '大三上', '大三下', '大四上', '大四下', '公共课与杂项'];
@@ -42,9 +42,10 @@ if (!existsSync(MATERIALS)) {
 }
 
 const found = readdirSync(MATERIALS).filter((d) => statSync(join(MATERIALS, d)).isDirectory());
+// 只扫 9 个学期组；data/ 下的四个上游仓库子模块不属于学期目录，跳过
 const semesters = SEMESTER_ORDER.filter((s) => found.includes(s));
-const extra = found.filter((s) => !SEMESTER_ORDER.includes(s)).sort();
-semesters.push(...extra);
+const skipped = found.filter((s) => !SEMESTER_ORDER.includes(s)).sort();
+if (skipped.length) console.log(`[build-catalog] 跳过非学期目录（子模块等）: ${skipped.join(', ')}`);
 
 const lines = [];
 let totalFiles = 0;
@@ -63,7 +64,7 @@ for (const sem of semesters) {
   }
 }
 
-const ts = `/* 【自动生成】由 scripts/build-catalog.mjs 扫描 课件与期末题整理/ 生成，请勿手改。
+const ts = `/* 【自动生成】由 scripts/build-catalog.mjs 扫描 data/ 生成，请勿手改。
  * 共 ${lines.length} 门课程 / ${totalFiles} 份文件；增删资料后 npm run catalog 刷新。 */
 
 export interface CatalogCourse {

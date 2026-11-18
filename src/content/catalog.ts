@@ -1,4 +1,4 @@
-/* 【自动生成】由 scripts/build-catalog.mjs 扫描 课件与期末题整理/ 生成，请勿手改。
+/* 【自动生成】由 scripts/build-catalog.mjs 扫描 data/ 生成，请勿手改。
  * 共 64 门课程 / 8210 份文件；增删资料后 npm run catalog 刷新。 */
 
 export interface CatalogCourse {
