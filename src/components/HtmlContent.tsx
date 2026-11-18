@@ -25,7 +25,7 @@ function tokenize(text: string): Tok[] {
 }
 
 function makeTokSpan(t: Tok, extra?: string) {
-  const s = document.createElement('span');
+  const  = document.createElement('span');
   s.textContent = t.text;
   s.className = extra ? `tok-${t.com ? 'com' : extra}` : t.com ? 'tok-com' : '';
   return s;
@@ -54,7 +54,7 @@ function highlightCode(code: HTMLElement) {
         inCom = true;
         cur.com.push({ text: p, com: true });
       } else {
-        cur.code.push(t);
+         cur.code.push({ text: p, com: false });
       }
     });
   }
