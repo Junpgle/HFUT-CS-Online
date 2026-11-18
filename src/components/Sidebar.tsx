@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import type { TocEntry } from '../content/types';
 import { useToc } from '../lib/toc';
+import { ALGO_BASE } from '../courses/registry';
 import { decodeEntities } from '../lib/text';
 
 export interface DeckMetaLite {
@@ -114,24 +115,31 @@ function Toc() {
 /** 移动端抽屉内容：全站导航（已迁顶栏中部，窄屏保留在抽屉）+ 本页内容 */
 export function SidebarContent({ decks, currentDeck }: Props) {
   const { toc } = useToc();
+  const location = useLocation();
   return (
     <>
       <p className="sidebar-h">全站导航</p>
       <ul className="site-nav">
         <li>
-          <Link to="/" className={currentDeck === null ? 'active' : undefined}>
+          <Link to={ALGO_BASE} className={currentDeck === null ? 'active' : undefined}>
             <span className="nav-no">◎</span>
             总目录 · 考点速查
           </Link>
         </li>
         {decks.map((d) => (
           <li key={d.id} data-deck={d.id}>
-            <Link to={`/deck/${d.id}`} className={currentDeck === d.id ? 'active' : undefined}>
+            <Link to={`${ALGO_BASE}/deck/${d.id}`} className={currentDeck === d.id ? 'active' : undefined}>
               <span className="nav-no">{d.no.replace('第', '').replace('讲', '')}</span>
               {decodeEntities(d.title)}
             </Link>
           </li>
         ))}
+        <li data-nav="practice">
+          <Link to={`${ALGO_BASE}/practice`} className={location.pathname === `${ALGO_BASE}/practice` ? 'active' : undefined}>
+            <span className="nav-no">练</span>
+            在线练习 · 420 题
+          </Link>
+        </li>
       </ul>
 
       {toc.length > 0 && <Toc />}

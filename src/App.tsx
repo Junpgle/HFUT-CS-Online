@@ -1,120 +1,33 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
-import { decks } from './content';
-import TopBar from './components/TopBar';
-import Sidebar, { SidebarContent } from './components/Sidebar';
-import MobileDrawer from './components/MobileDrawer';
-import Footer from './components/Footer';
-import HomePage from './pages/HomePage';
-import DeckPage from './pages/DeckPage';
+import { lazy, Suspense } from 'react';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
+import CourseHubPage from './pages/CourseHubPage';
+import CourseStubPage from './pages/CourseStubPage';
+import { ALGO_BASE } from './courses/registry';
 
-/** 各路由的滚动记忆（POP 导航时恢复） */
-const scrollPositions = new Map<string, number>();
+/** 算法课按需加载：首屏只载首页，进入课程时再拉取课程包 */
+const AlgorithmCourse = lazy(() => import('./courses/AlgorithmCourse'));
 
+/** 旧版单课程链接 → /algo/*（历史收藏与外链不失效） */
+function LegacyDeckRedirect() {
+  const { deckId } = useParams();
+  return <Navigate to={`${ALGO_BASE}/deck/${deckId}`} replace />;
+}
+
+/**
+ * 站点层路由：只做「首页 + 各课程前缀 → 课程根组件 + 旧链接重定向」。
+ * 每门课程是自包含布局（自带导航栏），在这里以一条 Route 接入。
+ */
 export default function App() {
-  const location = useLocation();
-  const navType = useNavigationType();
-  const reduced = useReducedMotion();
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const currentDeck = useMemo(() => {
-    const m = location.pathname.match(/^\/deck\/(deck[1-8])/);
-    return m ? m[1] : null;
-  }, [location.pathname]);
-
-  const subtitle = decks.find((d) => d.id === currentDeck)?.subtitle;
-
-  // 当前讲次 → html[data-deck]：顶栏 tabs / 进度条 / 侧栏 / h2 编号统一切换讲次主题色
-  useEffect(() => {
-    if (currentDeck) document.documentElement.dataset.deck = currentDeck;
-    else delete document.documentElement.dataset.deck;
-    return () => {
-      delete document.documentElement.dataset.deck;
-    };
-  }, [currentDeck]);
-
-  // 讲次方向性转场：记录上一次的讲次序号，前/后翻页用不同方向
-  const deckNo = currentDeck ? Number(currentDeck.slice(4)) : 0;
-  const prevNoRef = useRef(0);
-  const dir = deckNo && prevNoRef.current && deckNo !== prevNoRef.current ? Math.sign(deckNo - prevNoRef.current) : 0;
-  useEffect(() => {
-    prevNoRef.current = deckNo;
-  }, [deckNo]);
-
-  // Esc 关闭抽屉（搜索不设快捷键，点击顶栏按钮打开）
-  useEffect(() => {
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setDrawerOpen(false);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  // 滚动记忆：离开时保存；POP 恢复；新导航回顶部（?s= 定位交给页面处理）
-  useEffect(() => {
-    const key = location.key;
-    return () => {
-      scrollPositions.set(key, window.scrollY);
-    };
-  }, [location.key]);
-
-  useEffect(() => {
-    if (navType === 'POP') {
-      const y = scrollPositions.get(location.key) ?? 0;
-      requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'auto' }));
-    } else if (!location.search) {
-      window.scrollTo({ top: 0, behavior: 'auto' });
-    }
-  }, [location.key, navType, location.search]);
-
-  // 路由切换时关闭抽屉
-  useEffect(() => setDrawerOpen(false), [location.pathname]);
-
   return (
-    <div className="shell">
-      <TopBar
-        subtitle={subtitle}
-        currentDeck={currentDeck}
-        onOpenSidebar={() => setDrawerOpen(true)}
-      />
-
-      <div className="shell-body">
-        <Sidebar decks={decks} currentDeck={currentDeck} />
-        <AnimatePresence mode="wait" initial={false} custom={dir}>
-          <motion.div
-            key={location.pathname}
-            custom={dir}
-            variants={{
-              enter: (d: number) =>
-                reduced ? { opacity: 0 } : d === 0 ? { opacity: 0, y: 12 } : { opacity: 0, x: 28 * d },
-              center: { opacity: 1, x: 0, y: 0 },
-              leave: (d: number) =>
-                reduced ? { opacity: 0 } : d === 0 ? { opacity: 0, y: -8 } : { opacity: 0, x: -22 * d },
-            }}
-            initial="enter"
-            animate="center"
-            exit="leave"
-            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-          >
-            <Routes location={location}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/deck/:deckId" element={<DeckPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      <Footer />
-
-      <div className="drawer-root">
-        <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-          <SidebarContent decks={decks} currentDeck={currentDeck} />
-        </MobileDrawer>
-      </div>
-    </div>
+    <Suspense fallback={null}>
+      <Routes>
+        <Route path="/" element={<CourseHubPage />} />
+        <Route path={`${ALGO_BASE}/*`} element={<AlgorithmCourse />} />
+        <Route path="/course/:name/*" element={<CourseStubPage />} />
+        <Route path="/deck/:deckId" element={<LegacyDeckRedirect />} />
+        <Route path="/practice" element={<Navigate to={`${ALGO_BASE}/practice`} replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 }

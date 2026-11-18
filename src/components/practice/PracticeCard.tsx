@@ -1,0 +1,312 @@
+import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
+import { ALGO_BASE } from '../../courses/registry';
+import type { PracticeQuestion } from '../../content/practice';
+import { decodeEntities } from '../../lib/text';
+import { IconArrowRight, IconCheck, IconChevronDown, IconReset, IconX } from '../icons';
+
+interface Props {
+  quiz: PracticeQuestion;
+  /** 展示序号文案，如「单选 12」 */
+  label: string;
+  /** 已保存的作答结果（用于列表级状态点） */
+  result?: 'right' | 'wrong' | 'revealed';
+  /** 作答结果上报：right / wrong / revealed（直接看答案） */
+  onResult: (qid: string, result: 'right' | 'wrong' | 'revealed') => void;
+}
+
+const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+const normalize = (s: string) => s.replace(/\s+/g, '').replace(/　/g, '');
+
+/** 展示层排版：把纯文本写法的 ^上标 / _下标 转成 sup/sub（不改题库源文本） */
+function prettyMath(html: string): string {
+  return html
+    .replace(/\^\(([^()<>]+)\)/g, '<sup>$1</sup>')
+    .replace(/\^(-?[0-9]+(?:\.[0-9]+)?|[a-z])(?![a-zA-Z0-9])/g, '<sup>$1</sup>')
+    .replace(/([a-zA-Z0-9）)])_([a-zA-Z0-9]+)(?![a-zA-Z0-9])/g, '$1<sub>$2</sub>');
+}
+
+/** 在线练习题卡：与 QuizCard 同一套交互语言，外加可跳转的知识点标签与简答题支持 */
+export default function PracticeCard({ quiz, label, result, onResult }: Props) {
+  const navigate = useNavigate();
+  const [pulse, setPulse] = useState(false);
+
+  const correctLetters = useMemo<string[]>(() => {
+    if (quiz.kind === 'single' || quiz.kind === 'multi') return quiz.answer.split('、');
+    if (quiz.kind === 'judge') {
+      const idx = (quiz.options ?? []).findIndex((o) => decodeEntities(o).trim() === quiz.answer);
+      return idx >= 0 ? [LETTERS[idx]] : [];
+    }
+    return [];
+  }, [quiz]);
+
+  const fillVariants = useMemo(
+    () => (quiz.kind === 'fill' ? quiz.answer.split('｜').map((v) => normalize(decodeEntities(v))) : []),
+    [quiz],
+  );
+
+  const questionHtml = useMemo(() => prettyMath(quiz.question), [quiz]);
+  const optionsHtml = useMemo(() => (quiz.options ?? []).map(prettyMath), [quiz]);
+  const answerHtml = useMemo(() => prettyMath(quiz.answer), [quiz]);
+  const explanationHtml = useMemo(() => prettyMath(quiz.explanation), [quiz]);
+
+  const [picked, setPicked] = useState<string[]>([]);
+  const [wrongPicks, setWrongPicks] = useState<string[]>([]);
+  const [submitted, setSubmitted] = useState<'right' | 'wrong' | null>(null);
+  const [revealed, setRevealed] = useState(false);
+  const [fillInput, setFillInput] = useState('');
+  const [fillWrong, setFillWrong] = useState(false);
+
+  // 判分脉冲动画结束后摘掉标记
+  useEffect(() => {
+    if (!pulse) return;
+    const t = window.setTimeout(() => setPulse(false), 380);
+    return () => window.clearTimeout(t);
+  }, [pulse]);
+
+  const isEssay = quiz.kind === 'essay';
+  const isFill = quiz.kind === 'fill';
+  const showExplanation = submitted !== null || revealed;
+  const cls = submitted === 'right' ? ' answered-right' : submitted === 'wrong' ? ' answered-wrong' : '';
+  const locked = submitted !== null || revealed;
+
+  const pick = (letter: string) => {
+    if (locked) return;
+    if (quiz.kind === 'multi') {
+      setPicked((p) => (p.includes(letter) ? p.filter((l) => l !== letter) : [...p, letter]));
+      return;
+    }
+    setPicked([letter]);
+    setWrongPicks([]);
+  };
+
+  const submitAnswer = () => {
+    if (locked || picked.length === 0) return;
+    if (quiz.kind === 'multi') {
+      const ok = picked.length === correctLetters.length && correctLetters.every((l) => picked.includes(l));
+      setSubmitted(ok ? 'right' : 'wrong');
+      if (!ok) setWrongPicks(picked.filter((l) => !correctLetters.includes(l)));
+      setPulse(true);
+      onResult(quiz.id, ok ? 'right' : 'wrong');
+      return;
+    }
+    const ok = picked[0] === correctLetters[0];
+    setSubmitted(ok ? 'right' : 'wrong');
+    if (!ok) setWrongPicks(picked.filter((l) => !correctLetters.includes(l)));
+    setPulse(true);
+    onResult(quiz.id, ok ? 'right' : 'wrong');
+  };
+
+  const checkFill = () => {
+    if (!fillInput.trim()) return;
+    const ok = fillVariants.includes(normalize(fillInput));
+    setSubmitted(ok ? 'right' : 'wrong');
+    setFillWrong(!ok);
+    setPulse(true);
+    onResult(quiz.id, ok ? 'right' : 'wrong');
+  };
+
+  const reveal = () => {
+    if (locked) return;
+    setRevealed(true);
+    onResult(quiz.id, 'revealed');
+  };
+
+  const reset = () => {
+    setPicked([]);
+    setWrongPicks([]);
+    setSubmitted(null);
+    setRevealed(false);
+    setFillInput('');
+    setFillWrong(false);
+  };
+
+  const optionState = (letter: string): string => {
+    if (submitted === 'right' && correctLetters.includes(letter)) return 'correct';
+    if (wrongPicks.includes(letter)) return 'wrong';
+    if (quiz.kind === 'multi' && submitted === 'wrong' && correctLetters.includes(letter)) return 'correct';
+    if (picked.includes(letter)) return 'selected';
+    if (submitted !== null && !correctLetters.includes(letter) && !picked.includes(letter)) return 'dim';
+    if (revealed && correctLetters.includes(letter)) return 'correct';
+    if (revealed && !correctLetters.includes(letter)) return 'dim';
+    return '';
+  };
+
+  return (
+    <div
+      className={`quiz practice-q${cls}${pulse ? ' pq-pulse' : ''}`}
+      data-qid={quiz.id}
+      data-result={result}
+    >
+      {/* 已作答状态点（列表扫读用） */}
+      {result && (
+        <span className="pq-status" data-result={result} aria-label={result === 'right' ? '已答对' : result === 'wrong' ? '已答错' : '已看答案'}>
+          {result === 'right' && <IconCheck size={11} />}
+          {result === 'wrong' && <IconX size={11} />}
+        </span>
+      )}
+
+      <p className="quiz-q">
+        <span className="pq-kind" data-kind={quiz.kind}>
+          {label}
+        </span>
+        <span dangerouslySetInnerHTML={{ __html: questionHtml }} />
+      </p>
+
+      {!isEssay && !isFill && (
+        <ul className="quiz-opt">
+          {optionsHtml.map((o, i) => {
+            const letter = LETTERS[i];
+            const st = optionState(letter);
+            return (
+              <li key={i}>
+                <button
+                  type="button"
+                  className={`opt-btn${st ? ' ' + st : ''}`}
+                  disabled={locked}
+                  onClick={() => pick(letter)}
+                >
+                  <span className="opt-key">{letter}</span>
+                  <span dangerouslySetInnerHTML={{ __html: o }} />
+                  {st === 'correct' && (
+                    <motion.span
+                      className="opt-mark"
+                      initial={{ scale: 0, rotate: -30 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: 'spring', stiffness: 560, damping: 22 }}
+                      style={{ marginLeft: 'auto', color: 'var(--ok)', display: 'inline-flex' }}
+                    >
+                      <IconCheck size={16} />
+                    </motion.span>
+                  )}
+                  {st === 'selected' && (
+                    <motion.span
+                      className="opt-mark"
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 520, damping: 24 }}
+                      style={{ marginLeft: 'auto', color: 'var(--ink-3)', display: 'inline-flex' }}
+                    >
+                      <IconCheck size={15} />
+                    </motion.span>
+                  )}
+                  {st === 'wrong' && (
+                    <motion.span
+                      className="opt-mark"
+                      initial={{ scale: 0.6, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 560, damping: 22 }}
+                      style={{ marginLeft: 'auto', color: 'var(--hot)', display: 'inline-flex' }}
+                    >
+                      <IconX size={16} />
+                    </motion.span>
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {(quiz.kind === 'single' || quiz.kind === 'multi' || quiz.kind === 'judge') && !locked && (
+        <div className="quiz-actions">
+          <button className="btn primary" disabled={picked.length === 0} onClick={submitAnswer}>
+            {quiz.kind === 'multi' ? `提交答案（${picked.length} 项）` : '提交答案'}
+          </button>
+          <button className="btn" onClick={reveal}>
+            直接看答案
+          </button>
+        </div>
+      )}
+
+      {isFill && !locked && (
+        <>
+          <div className="quiz-fill">
+            <input
+              value={fillInput}
+              placeholder="输入你的答案…"
+              onChange={(e) => setFillInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && checkFill()}
+              aria-label="填空答案"
+            />
+            <button className="btn primary" onClick={checkFill}>
+              检查
+            </button>
+            <button className="btn" onClick={reveal}>
+              显示答案
+            </button>
+          </div>
+          {fillWrong && <p className="quiz-note">不完全一致——术语与记号要写全，可对照下方答案核对。</p>}
+        </>
+      )}
+
+      {isEssay && !locked && (
+        <div className="quiz-actions">
+          <button className="btn pq-disclose" onClick={reveal}>
+            查看参考答案与评分要点
+            <IconChevronDown size={14} />
+          </button>
+        </div>
+      )}
+
+      {(locked || (isEssay && revealed)) && (
+        <div className="quiz-actions">
+          <button className="btn" onClick={reset}>
+            <IconReset size={14} />
+            重做
+          </button>
+        </div>
+      )}
+
+      <AnimatePresence initial={false}>
+        {showExplanation && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
+            style={{ overflow: 'hidden' }}
+          >
+            {isEssay ? (
+              <>
+                <div className="quiz-a pq-answer">
+                  <b>参考答案</b>
+                  <div className="pq-answer-body" dangerouslySetInnerHTML={{ __html: answerHtml }} />
+                </div>
+                <div className="pq-rubric">
+                  <b>解析与评分要点</b>
+                  <div className="pq-answer-body" dangerouslySetInnerHTML={{ __html: explanationHtml }} />
+                </div>
+              </>
+            ) : (
+              <p className="quiz-a">
+                <b>答案：{decodeEntities(quiz.answer)}</b>
+                <span dangerouslySetInnerHTML={{ __html: explanationHtml }} />
+              </p>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 知识点标签：点击跳到对应讲次的对应位置 */}
+      <div className="pq-tags" aria-label="知识点标签">
+        {quiz.tags.map((t) => (
+          <button
+            key={`${t.deck}-${t.sec}-${t.text}`}
+            type="button"
+            className="ptag"
+            data-deck={`deck${t.deck}`}
+            data-tip={`跳转到 第 ${t.deck} 讲 · ${decodeEntities(t.text)}`}
+            title={`跳转到 第 ${t.deck} 讲 · ${decodeEntities(t.text)}`}
+            onClick={() => navigate(`${ALGO_BASE}/deck/deck${t.deck}?s=${t.sec}`)}
+          >
+            <span className="ptag-no">{t.deck}</span>
+            {decodeEntities(t.text)}
+            <IconArrowRight size={11} className="ptag-arrow" />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}

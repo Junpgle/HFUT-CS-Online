@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
+import { ALGO_BASE } from '../courses/registry';
 import { decks, homeData } from '../content';
 import { decodeEntities } from '../lib/text';
 import { IconSearch } from './icons';
@@ -113,8 +114,8 @@ export default function SearchBox() {
 
   const select = (item: IndexItem) => {
     setOpen(false);
-    if (item.deck) navigate(`/deck/${item.deck}?s=${item.sectionId}`);
-    else navigate(`/?s=${item.sectionId}`);
+    if (item.deck) navigate(`${ALGO_BASE}/deck/${item.deck}?s=${item.sectionId}`);
+    else navigate(`${ALGO_BASE}/?s=${item.sectionId}`);
   };
 
   const onKeyDown = (e: ReactKeyboardEvent) => {

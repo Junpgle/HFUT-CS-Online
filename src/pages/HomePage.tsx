@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ALGO_BASE } from '../courses/registry';
 import { homeData } from '../content';
 import { useToc } from '../lib/toc';
 import { decodeEntities } from '../lib/text';
@@ -19,7 +20,7 @@ export default function HomePage() {
   const jump = (id: string) => {
     scrollToId(id);
     toc.setActive(id);
-    navigate(`/?s=${id}`, { replace: true });
+    navigate(`${ALGO_BASE}/?s=${id}`, { replace: true });
   };
 
   useEffect(() => {

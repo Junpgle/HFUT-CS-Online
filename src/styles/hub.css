@@ -1,0 +1,236 @@
+/* ============================================================================
+   站点层样式：首页（课程目录）+ 课程占位页
+   只消费 tokens.css 的设计令牌与 base.css 的通用基类（.material / .icon-btn）。
+   各课程页面自带样式，不写在这里。
+   ======================================================================== */
+
+.hub-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+/* 顶栏：与算法课 topbar 同高的悬浮材质条 */
+.hub-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--hairline-soft);
+}
+
+.hub-brand {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.hub-brand .accent {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.hub-topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 主体：宽版心（卡片网格比文章版心宽） */
+.hub-main {
+  flex: 1;
+  width: min(var(--measure-wide), calc(100% - 48px));
+  margin: 0 auto;
+  padding: 52px 0 40px;
+}
+
+/* ---------------------------------------------------------- 首页头部 */
+.hub-hero h1 {
+  margin: 0;
+  font-size: clamp(30px, 4.5vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.hub-lede {
+  margin: 14px 0 0;
+  max-width: 640px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+
+.hub-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 44px;
+  margin-top: 30px;
+  padding: 18px 22px;
+  background: var(--panel);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-l);
+  width: fit-content;
+}
+.hub-stat b {
+  display: block;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.hub-stat span {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+/* ---------------------------------------------------------- 学期分组 */
+.hub-sem {
+  margin-top: 52px;
+}
+
+.hub-sem-h {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hairline-soft);
+}
+.hub-sem-h h2 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.hub-sem-h span {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+/* ---------------------------------------------------------- 课程卡片 */
+.course-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  height: 100%;
+  padding: 16px 16px 14px;
+  background: var(--panel);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-l);
+  text-decoration: none;
+  color: var(--ink);
+  transition:
+    transform 0.18s var(--press-ease),
+    box-shadow 0.18s var(--press-ease),
+    border-color 0.18s var(--press-ease),
+    background-color 0.18s var(--press-ease);
+}
+.course-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-1);
+  border-color: var(--hairline);
+  background: var(--panel-strong);
+}
+.course-card:active {
+  transform: scale(0.98);
+  transition-duration: 0.06s;
+}
+
+.course-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.course-go {
+  color: var(--accent);
+  transition: transform 0.18s var(--press-ease);
+}
+.course-card.ready:hover .course-go {
+  transform: translateX(3px);
+}
+
+.course-desc {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.course-meta {
+  font-size: 12px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}/* 未上线卡片弱化：鼠标悬停仍是链接反馈，但视觉重量低于已上线课程 */
+.course-card:not(.ready) .course-title {
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+/* ---------------------------------------------------------- 占位页 */
+.hub-stub {
+  width: min(var(--measure), calc(100% - 48px));
+  padding-top: 64px;
+}
+.hub-stub-kicker {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.hub-stub h1 {
+  margin: 10px 0 0;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.hub-stub-back {
+  margin-top: 40px;
+  font-size: 14px;
+}
+.hub-stub-back a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.hub-stub-back a:hover {
+  text-decoration: underline;
+}
+
+/* 页脚 */
+.hub-foot {
+  padding: 22px 20px 26px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.hub-foot a {
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.hub-foot a:hover {
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-card,
+  .course-go {
+    transition-duration: 0s;
+  }
+}

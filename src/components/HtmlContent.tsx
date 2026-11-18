@@ -1,5 +1,6 @@
 import { useEffect, useRef, type MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ALGO_BASE } from '../courses/registry';
 import { decks } from '../content';
 import { parseLegacyHref, scrollToId } from '../lib/scroll';
 
@@ -25,7 +26,7 @@ function tokenize(text: string): Tok[] {
 }
 
 function makeTokSpan(t: Tok, extra?: string) {
-  const  = document.createElement('span');
+  const s = document.createElement('span');
   s.textContent = t.text;
   s.className = extra ? `tok-${t.com ? 'com' : extra}` : t.com ? 'tok-com' : '';
   return s;
@@ -363,11 +364,11 @@ export default function HtmlContent({ html }: Props) {
     if (legacy) {
       e.preventDefault();
       if (legacy.deck) {
-        navigate(legacy.section ? `/deck/${legacy.deck}?s=${legacy.section}` : `/deck/${legacy.deck}`);
+        navigate(legacy.section ? `${ALGO_BASE}/deck/${legacy.deck}?s=${legacy.section}` : `${ALGO_BASE}/deck/${legacy.deck}`);
       } else if (legacy.section) {
-        navigate(`/?s=${legacy.section}`);
+        navigate(`${ALGO_BASE}/?s=${legacy.section}`);
       } else {
-        navigate('/');
+        navigate(ALGO_BASE);
       }
     }
   };

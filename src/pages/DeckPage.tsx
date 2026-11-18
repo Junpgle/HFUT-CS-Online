@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { ALGO_BASE } from '../courses/registry';
 import { decks } from '../content';
 import type { DeckData } from '../content/types';
 import { useToc } from '../lib/toc';
@@ -13,7 +14,7 @@ import { useScrollSpy } from '../lib/scrollspy';
 export default function DeckPage() {
   const { deckId } = useParams();
   const deck = decks.find((d) => d.id === deckId);
-  if (!deck) return <Navigate to="/" replace />;
+  if (!deck) return <Navigate to={ALGO_BASE} replace />;
   return <DeckInner key={deck.id} deck={deck} />;
 }
 
@@ -29,7 +30,7 @@ function DeckInner({ deck }: { deck: DeckData }) {
   const jump = (id: string) => {
     scrollToId(id);
     toc.setActive(id); // 立即高亮，不等滚动事件
-    navigate(`/deck/${deck.id}?s=${id}`, { replace: true });
+    navigate(`${ALGO_BASE}/deck/${deck.id}?s=${id}`, { replace: true });
   };
 
   // 上报目录到外壳侧栏

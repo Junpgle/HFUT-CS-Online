@@ -81,6 +81,7 @@
   --topbar-h: 52px;
   --sidebar-w: 288px;
   --measure: 880px;
+  --measure-wide: 1120px;      /* 首页卡片网格版心（比文章版心宽） */
 
   --press-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
