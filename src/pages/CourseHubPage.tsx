@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { catalog } from '../content/catalog';
 import { courses, findCourseByName, STUB_BASE } from '../courses/registry';
 import SiteHeader from '../components/SiteHeader';
 import { getRecentCourses } from '../lib/recentCourses';
 import { contributors } from '../content/contributors';
 import ContactCard from '../components/ContactCard';
-import { IconGitHub } from '../components/icons';
+import { IconChevronUp, IconGitHub } from '../components/icons';
 import { useToc } from '../lib/toc';
 
 /** 学期分组顺序：8 个学期在前，公共课与杂项殿后 */
@@ -38,6 +38,27 @@ export default function CourseHubPage() {
 
   // 最近查看的课程（localStorage，MRU）；无记录时整个板块隐藏
   const [recentNames] = useState(() => getRecentCourses());
+
+  // 置顶按钮：滚过约一屏内容后出现（rAF 节流，与在线练习页同款）
+  const [showTop, setShowTop] = useState(false);
+  useEffect(() => {
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      setShowTop(window.scrollY > 800);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(measure);
+    };
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
 
   // 站点层无正文目录，清空侧栏上报
   useEffect(() => {
@@ -219,6 +240,23 @@ export default function CourseHubPage() {
           </section>
         ))}
       </main>
+      {/* 置顶按钮 */}
+      <AnimatePresence>
+        {showTop && (
+          <motion.button
+            type="button"
+            className="pq-top"
+            aria-label="回到顶部"
+            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={reduced ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 480, damping: 30 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' })}
+          >
+            <IconChevronUp size={16} />
+          </motion.button>
+        )}
+      </AnimatePresence>
       <ContactCard open={contactOpen} onClose={() => setContactOpen(false)} />
     </div>
   );

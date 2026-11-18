@@ -2800,7 +2800,8 @@ pre.code .cl-code:empty + .cl-com {
   transition: transform 100ms var(--press-ease), color 140ms;
 }
 .pq-top:hover {
-  color: var(--deck-accent);
+  /* 全局主题色：置顶按钮也用于首页（首页无每讲注入的 --deck-accent） */
+  color: var(--accent);
 }
 .pq-top:active {
   transform: scale(0.92);
