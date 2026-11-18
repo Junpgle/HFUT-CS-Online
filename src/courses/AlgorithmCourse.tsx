@@ -5,7 +5,6 @@ import { decks } from '../content';
 import TopBar from '../components/TopBar';
 import Sidebar, { SidebarContent } from '../components/Sidebar';
 import MobileDrawer from '../components/MobileDrawer';
-import Footer from '../components/Footer';
 import HomePage from '../pages/HomePage';
 import DeckPage from '../pages/DeckPage';
 import PracticePage from '../pages/PracticePage';
@@ -122,8 +121,6 @@ export default function AlgorithmCourse() {
           </motion.div>
         </AnimatePresence>
       </div>
-
-      <Footer />
 
       <div className="drawer-root">
         <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>

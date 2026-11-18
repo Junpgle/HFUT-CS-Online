@@ -25,13 +25,6 @@ interface Card {
   total: number;
 }
 
-const REPO_LINKS = [
-  ['sunmiao0301/HFUT-CS', 'https://github.com/sunmiao0301/HFUT-CS'],
-  ['mox-hub/hfut-cs', 'https://github.com/mox-hub/hfut-cs'],
-  ['styitches/HFUT-CS', 'https://github.com/styitches/HFUT-CS'],
-  ['Tuning-Luna/HFUT_XC_Study_Things', 'https://github.com/Tuning-Luna/HFUT_XC_Study_Things'],
-] as const;
-
 const REPO_URL = 'https://github.com/SaltGardenia/HFUT-algorithm-design';
 
 export default function CourseHubPage() {
@@ -206,16 +199,6 @@ export default function CourseHubPage() {
         ))}
       </main>
       <ContactCard open={contactOpen} onClose={() => setContactOpen(false)} />
-      <footer className="hub-foot">
-        HFUT-CS-Online · 资料整理自{' '}
-        {REPO_LINKS.map(([name, href], i) => (
-          <span key={href}>
-            {i > 0 && ' · '}
-            <a href={href} target="_blank" rel="noreferrer">{name}</a>
-          </span>
-        ))}
-        {' '}· 规则与清单见仓库「整理说明」
-      </footer>
     </div>
   );
 }

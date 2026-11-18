@@ -350,12 +350,6 @@ button {
 .deck-tab.practice-tab .tab-short {
   color: var(--ink-2);
 }
-/* 紧凑档（1021~1280）：短写法是「1讲」，缩一点 tab 内边距给中栏留空间 */
-@media (min-width: 1021px) and (max-width: 1280.9px) {
-  .deck-tab {
-    padding: 4px 9px;
-  }
-}
 
 /* 顶栏内联搜索框：常驻显示、尺寸不变，聚焦弹出下拉菜单 */
 .search-box {
@@ -384,6 +378,12 @@ button {
 }
 .search-input:focus {
   border-color: color-mix(in srgb, var(--deck-accent) 45%, transparent);
+}
+/* 紧凑桌面（1021~1280）：tab 缩写「1讲」后中栏吃紧，搜索先让 60px（须在 ≤1020 折叠规则之前） */
+@media (min-width: 1021px) and (max-width: 1279px) {
+  .search-input {
+    width: 200px;
+  }
 }
 .search-input::placeholder {
   color: var(--ink-3);
@@ -468,13 +468,13 @@ button {
   transform: scale(0.9);
 }
 
-/* 窄桌面：副标题退场（信息在激活 tab 与 h1 中都有），让位讲次 tabs */
+/* 窄桌面：副标题退场（信息在激活 tab 与 h1 中都有），让位讲次 tabs（短写法「1讲」后 7px 才不溢出，1100px 实测） */
 @media (max-width: 1279px) {
   .topbar-sub {
     display: none;
   }
   .deck-tab {
-    padding: 4px 10px;
+    padding: 4px 7px;
   }
 }
 
@@ -1371,27 +1371,6 @@ pre.code .cl-code:empty + .cl-com {
 }
 
 /* 页脚 */
-.pagefoot {
-  margin-top: 48px;
-  padding-top: 16px;
-  border-top: 1px solid var(--hairline-soft);
-  font-size: 0.8125rem;
-  color: var(--ink-3);
-  text-align: center;
-}
-.app-foot {
-  padding: 22px 16px 30px;
-  text-align: center;
-  font-size: 0.7813rem;
-  color: var(--ink-3);
-}
-.app-foot a {
-  color: var(--ink-3);
-}
-.app-foot a:hover {
-  color: var(--deck-accent);
-}
-
 /* 本讲知识点导航卡：由目录 level-2 生成的可点标签，进页先给一张全讲地图 */
 .topic-map {
   display: flex;
@@ -2089,8 +2068,7 @@ pre.code .cl-code:empty + .cl-com {
   .demo-ctl,
   .demo-scrub,
   .copy-btn,
-  .quiz-actions,
-  .app-foot {
+  .quiz-actions {
     display: none !important;
   }
   .shell-body {

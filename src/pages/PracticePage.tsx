@@ -409,7 +409,6 @@ export default function PracticePage() {
         )}
       </AnimatePresence>
 
-      <footer className="pagefoot">题目依据课程 PPT 内容自编 · 仅供复习</footer>
     </div>
   );
 }

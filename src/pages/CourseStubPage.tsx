@@ -63,7 +63,6 @@ export default function CourseStubPage() {
         </p>
       </main>
 
-      <footer className="hub-foot">规则与文件清单见仓库「课件与期末题整理/整理说明」</footer>
     </div>
   );
 }

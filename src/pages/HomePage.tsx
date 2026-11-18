@@ -86,7 +86,6 @@ export default function HomePage() {
       </div>
       <ExtCards />
       <Sections sections={homeData.sections} />
-      <footer className="pagefoot">内容依据课程 PPT 整理 · 仅供复习</footer>
       <SectionCapsule />
     </div>
   );

@@ -75,7 +75,6 @@ function DeckInner({ deck }: { deck: DeckData }) {
         scores={scores}
         onQuizResult={(key, right) => setScores((s) => ({ ...s, [key]: right }))}
       />
-      <footer className="pagefoot">内容依据课程 PPT 整理 · 仅供复习</footer>
       <SectionCapsule />
     </div>
   );

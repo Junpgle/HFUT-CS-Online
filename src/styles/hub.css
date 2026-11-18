@@ -383,21 +383,6 @@
   text-decoration: underline;
 }
 
-/* 页脚 */
-.hub-foot {
-  padding: 22px 20px 26px;
-  text-align: center;
-  font-size: 12.5px;
-  color: var(--ink-3);
-}
-.hub-foot a {
-  color: var(--ink-2);
-  text-decoration: none;
-}
-.hub-foot a:hover {
-  color: var(--accent);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .course-card,
   .course-go {
