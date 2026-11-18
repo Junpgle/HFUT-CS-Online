@@ -8,7 +8,7 @@ import SearchBox from './SearchBox';
 
 const ISSUES_URL = 'https://github.com/SaltGardenia/HFUT-algorithm-design/issues';
 const EXT_LINKS = [
-  { href: 'https://www.hello-algo.com/', label: 'Hello 算法', icon: IconBook },
+  { href: 'https://www.hello-algo.com/chapter_hello_algo/', label: 'Hello 算法', icon: IconBook },
   { href: 'https://books.halfrost.com/leetcode', label: 'LeetCode 笔记（halfrost）', icon: IconCode },
 ] as const;
 
