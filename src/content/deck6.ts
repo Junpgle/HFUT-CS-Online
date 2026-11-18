@@ -347,7 +347,7 @@ const deck: DeckData = {
                 </div>
           
                 <svg class="fig" viewBox="0 0 960 230" role="img" aria-label="分治求幂 x 的 20 次方的分解链：20 除 2 得 10，10 除 2 得 5，5 减 1 再除 2 得 2，2 除 2 得 1；回代时共用 1+1+2+1 等于 5 次乘法">
-                  <text x="24" y="24" class="tx-b">x<sup>20</sup> 的分治分解链与回代乘法次数</text>
+                  <text x="24" y="24" class="tx-b">x^20 的分治分解链与回代乘法次数</text>
           
                   <rect x="30" y="46" width="120" height="46" rx="8" fill="var(--c-key-bg)" stroke="var(--c-accent)" stroke-width="2"></rect>
                   <text x="90" y="75" class="tx tx-b" text-anchor="middle">x^20</text>
