@@ -56,13 +56,17 @@
   margin-left: auto;
 }
 
-/* 占位页顶栏的回目录链接 */
+/* 占位页顶栏的回目录链接：收进 .topbar-ctl.nav-pill 胶囊，与全站控件同语言 */
 .hub-toplink {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
   font-size: 13px;
   color: var(--ink-2);
   text-decoration: none;
   white-space: nowrap;
-  margin-right: 4px;
   transition: color 160ms ease;
 }
 .hub-toplink:hover {
@@ -79,6 +83,7 @@
 
 /* ---------------------------------------------------------- 首屏 Hero */
 .hub-hero {
+  position: relative;
   min-height: calc(100vh - var(--topbar-h));
   min-height: calc(100svh - var(--topbar-h));
   display: flex;
@@ -88,6 +93,28 @@
   text-align: center;
   /* 内容轻微上移：加大底部留白 */
   padding: 56px 24px 120px;
+}
+
+/* 向下滚动提示：纯图标，滚离首屏即退场 */
+.hub-hero-scroll {
+  position: absolute;
+  bottom: 22px;
+  left: calc(50% - 18px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  color: var(--ink-3);
+  background: var(--panel);
+  border: 1px solid var(--hairline-soft);
+  box-shadow: var(--shadow-soft);
+  transition: color 140ms, border-color 140ms;
+}
+.hub-hero-scroll:hover {
+  color: var(--ink);
+  border-color: var(--hairline);
 }
 
 .hub-hero-name {
@@ -191,6 +218,19 @@
   justify-content: center;
   gap: 14px 44px;
   margin-top: 52px;
+}
+/* 手机：3+2 网格，避免 4+1 折行把最后一个统计孤行居中 */
+@media (max-width: 480px) {
+  .hub-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: center;
+    justify-items: center;
+    gap: 16px 36px;
+  }
+}
+.hub-stat {
+  text-align: center;
 }
 .hub-stat b {
   display: block;
@@ -334,6 +374,13 @@
   margin: 8px 0 0;
   font-size: 12.5px;
   color: var(--ink-3);
+}
+/* 模态底部按钮行（清空进度确认等复用 hub-modal 的场景） */
+.hub-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 .contact-row {

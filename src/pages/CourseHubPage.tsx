@@ -7,7 +7,7 @@ import SiteHeader from '../components/SiteHeader';
 import { getRecentCourses } from '../lib/recentCourses';
 import { contributors } from '../content/contributors';
 import ContactCard from '../components/ContactCard';
-import { IconChevronUp, IconGitHub } from '../components/icons';
+import { IconChevronDown, IconChevronUp, IconGitHub } from '../components/icons';
 import { useToc } from '../lib/toc';
 
 /** 学期分组顺序：8 个学期在前，公共课与杂项殿后 */
@@ -41,11 +41,14 @@ export default function CourseHubPage() {
 
   // 置顶按钮：滚过约一屏内容后出现（rAF 节流，与在线练习页同款）
   const [showTop, setShowTop] = useState(false);
+  // 首屏向下提示：滚离顶部即退场（衔接 hero 与下方学期目录）
+  const [showHint, setShowHint] = useState(true);
   useEffect(() => {
     let raf = 0;
     const measure = () => {
       raf = 0;
       setShowTop(window.scrollY > 800);
+      setShowHint(window.scrollY < 120);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(measure);
@@ -189,11 +192,11 @@ export default function CourseHubPage() {
           汇总合肥工业大学计算机与信息学院的在线课程资料
         </motion.p>
         <motion.div className="hub-hero-links" {...rise(0.08)}>
-          <a className="hub-cta ghost sm" href={REPO_URL} target="_blank" rel="noreferrer">
+          <a className="hub-cta" href={REPO_URL} target="_blank" rel="noreferrer">
             <IconGitHub size={16} />
             Github
           </a>
-          <button type="button" className="hub-cta ghost sm" onClick={() => setContactOpen(true)}>
+          <button type="button" className="hub-cta" onClick={() => setContactOpen(true)}>
             联系作者
           </button>
         </motion.div>
@@ -217,6 +220,25 @@ export default function CourseHubPage() {
           )}
           <p className="hub-hero-welcome">欢迎 Issue &amp; PR</p>
         </motion.div>
+        {/* 向下滚动提示：滚离首屏即退场 */}
+        <AnimatePresence>
+          {showHint && (
+            <motion.button
+              type="button"
+              className="hub-hero-scroll"
+              aria-label="查看下方课程目录"
+              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduced ? { opacity: 0 } : { opacity: 0, y: 6 }}
+              transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1], delay: 0.5 }}
+              onClick={() =>
+                document.getElementById('catalog')?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })
+              }
+            >
+              <IconChevronDown size={18} />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </section>
 
       <main className="hub-main" id="catalog">

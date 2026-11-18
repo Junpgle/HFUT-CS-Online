@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ALGO_BASE } from '../courses/registry';
 import { decks, homeData } from '../content';
 import { decodeEntities } from '../lib/text';
-import { IconSearch } from './icons';
+import { IconSearch, IconX } from './icons';
 
 /** 空搜索结果时给出的示例关键词 */
 const SUGGESTIONS = ['Θ 记号', 'LCS', '主方法', '哈夫曼', '循环不变式', 'BFPRT'];
@@ -18,6 +18,20 @@ interface IndexItem {
 }
 
 const stripTags = (s: string) => s.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+
+/** 结果文本里的命中片段：主题色加重标出（不铺底色），扫读时直接定位 */
+function Highlight({ text, query }: { text: string; query: string }) {
+  const q = query.trim().toLowerCase();
+  const i = q ? text.toLowerCase().indexOf(q) : -1;
+  if (i < 0) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, i)}
+      <mark className="pi-mark">{text.slice(i, i + q.length)}</mark>
+      {text.slice(i + q.length)}
+    </>
+  );
+}
 
 function buildIndex(): IndexItem[] {
   const items: IndexItem[] = [];
@@ -142,6 +156,19 @@ export default function SearchBox() {
       <span className="search-icon" aria-hidden="true">
         <IconSearch size={15} />
       </span>
+      {query && (
+        <button
+          type="button"
+          className="search-clear"
+          aria-label="清空搜索词"
+          onClick={() => {
+            setQuery('');
+            inputRef.current?.focus();
+          }}
+        >
+          <IconX size={13} />
+        </button>
+      )}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -194,7 +221,9 @@ export default function SearchBox() {
                   onClick={() => select(item)}
                 >
                   <span className="pi-kind">{item.kind}</span>
-                  <span className="pi-text">{item.text}</span>
+                  <span className="pi-text">
+                    <Highlight text={item.text} query={query} />
+                  </span>
                   <span className="pi-path">{item.deck ? item.deckTitle : '首页'}</span>
                 </li>
               ))}

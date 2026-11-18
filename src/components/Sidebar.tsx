@@ -71,18 +71,35 @@ function TocGroupItem({
   );
 }
 
+/** 拆出条目开头的编号前缀（"1." / "3.1"），编号占独立列、折行悬挂对齐 */
+const TOC_NO_RE = /^(\d+(?:\.\d+)*[.、．]?)\s*(.+)$/u;
+
 function TocLink({ e, active, onJump }: { e: TocEntry; active: boolean; onJump: (id: string) => void }) {
+  const text = decodeEntities(e.text);
+  const m = TOC_NO_RE.exec(text);
+  const cls = [active ? 'active' : '', e.level === 3 ? 'lvl3' : '', m ? 'has-no' : '']
+    .filter(Boolean)
+    .join(' ');
   return (
     <a
       href={`#${e.id}`}
-      className={active ? 'active' : e.level === 3 ? 'lvl3' : undefined}
+      className={cls || undefined}
       onClick={(ev) => {
         ev.preventDefault();
         onJump(e.id);
       }}
     >
       {active && <motion.span layoutId="toc-indicator" className="toc-indicator" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
-      {decodeEntities(e.text)}
+      {m ? (
+        <>
+          <span className="toc-no" aria-hidden="true">
+            {m[1]}
+          </span>
+          {m[2]}
+        </>
+      ) : (
+        text
+      )}
     </a>
   );
 }

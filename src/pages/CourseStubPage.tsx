@@ -39,9 +39,11 @@ export default function CourseStubPage() {
           <span className="hub-brand">{course?.name ?? name}</span>
         </div>
         <div className="hub-topbar-right">
-          <Link to="/" className="hub-toplink">
-            课程目录
-          </Link>
+          <div className="topbar-ctl nav-pill">
+            <Link to="/" className="hub-toplink">
+              课程目录
+            </Link>
+          </div>
           <div className="topbar-ctl nav-pill">
             <ThemeToggle />
           </div>
@@ -53,7 +55,7 @@ export default function CourseStubPage() {
         <h1>{course?.name ?? name}</h1>
         {course ? (
           <>
-            <p className="hub-lede">
+            <p className="lede">
               资料已整理完毕：课件 {course.courseware} 份、试题 {course.exams} 份、附件 {course.misc} 份，
               共 {course.total} 份文件（学期：{course.semester}）。
             </p>
@@ -65,7 +67,7 @@ export default function CourseStubPage() {
             </div>
           </>
         ) : (
-          <p className="hub-lede">未找到这门课的资料记录。</p>
+          <p className="lede">未找到这门课的资料记录。</p>
         )}
         <p className="hub-stub-back">
           <Link to="/">← 返回课程目录</Link>

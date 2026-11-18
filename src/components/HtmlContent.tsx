@@ -189,6 +189,21 @@ function enhance(root: HTMLElement) {
 }
 
 /**
+ * 横向溢出渐隐：公式卡 / 表格滚动容器实际溢出（可滑）时挂 .edge-fade，
+ * 提示「右边还有」；内容放得下则不挂，避免渐隐裁到正文。
+ */
+function fitOverflowFade(root: HTMLElement) {
+  const els = Array.from(root.querySelectorAll<HTMLElement>('.formula, .tbl-scroll'));
+  const update = () => {
+    for (const el of els) {
+      el.classList.toggle('edge-fade', el.scrollWidth > el.clientWidth + 1);
+    }
+  };
+  update();
+  return update;
+}
+
+/**
  * 表格自适应对齐：逐列检查 tbody 单元格，若整列都是短内容（无长句、无块级元素），
  * 则该列（含表头）居中；长文本列保持左对齐。每张表各自得到合适的显示方式。
  */
@@ -346,7 +361,12 @@ export default function HtmlContent({ html }: Props) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (ref.current) enhance(ref.current);
+    if (!ref.current) return;
+    enhance(ref.current);
+    // 溢出状态随窗口宽度变化重估（增强只跑一次，类名 toggle 可重复执行）
+    const updateFade = fitOverflowFade(ref.current);
+    window.addEventListener('resize', updateFade);
+    return () => window.removeEventListener('resize', updateFade);
   }, [html]);
 
   // 全局委托：页内锚点平滑滚动；旧静态页链接转为路由跳转
