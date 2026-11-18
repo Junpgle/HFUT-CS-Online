@@ -10,11 +10,9 @@
 
 ## 🙏 鸣谢
 
-本项目整理自以下 4 个开源资料仓库（8210 个文件，取并集互补）：
+本项目整理自以下 4 个开源资料仓库：
 
-| 项目 | 说明 |
-| --- | --- |
-| [sunmiao0301/HFUT-CS](https://github.com/sunmiao0301/HFUT-CS) | 已按 大一上~大四上 组织 |
-| [mox-hub/hfut-cs](https://github.com/mox-hub/hfut-cs) | term1~7，宣城校区 |
-| [styitches/HFUT-CS](https://github.com/styitches/HFUT-CS) | 按课程名组织，无学期信息 |
-| [Tuning-Luna/HFUT_XC_Study_Things](https://github.com/Tuning-Luna/HFUT_XC_Study_Things) | 按课程名组织，宣城校区 |
+- [sunmiao0301/HFUT-CS](https://github.com/sunmiao0301/HFUT-CS)
+- [mox-hub/hfut-cs](https://github.com/mox-hub/hfut-cs)
+- [styitches/HFUT-CS](https://github.com/styitches/HFUT-CS)
+- [Tuning-Luna/HFUT_XC_Study_Things](https://github.com/Tuning-Luna/HFUT_XC_Study_Things)
