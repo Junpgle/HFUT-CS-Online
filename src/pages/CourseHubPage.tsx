@@ -162,7 +162,7 @@ export default function CourseHubPage() {
         <motion.div className="hub-hero-links" {...rise(0.08)}>
           <a className="hub-cta ghost sm" href={REPO_URL} target="_blank" rel="noreferrer">
             <IconGitHub size={16} />
-            GitHub 仓库
+            Github
           </a>
           <button type="button" className="hub-cta ghost sm" onClick={() => setContactOpen(true)}>
             联系作者
