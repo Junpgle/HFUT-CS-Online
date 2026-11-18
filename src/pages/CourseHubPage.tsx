@@ -27,6 +27,10 @@ interface Card {
 }
 
 const REPO_URL = 'https://github.com/SaltGardenia/HFUT-CS-Online';
+/** 头像链接覆盖：站长指向个人站而非 GitHub 主页 */
+const CONTRIB_LINKS: Record<string, string> = {
+  SaltGardenia: 'https://saltgardenia.github.io/',
+};
 export default function CourseHubPage() {
   const toc = useToc();
   const reduced = useReducedMotion();
@@ -183,7 +187,7 @@ export default function CourseHubPage() {
           {contributors.length > 0 && (
             <div className="contrib-avatars">
               {contributors.map((c) => (
-                <a key={c.login} className="contrib-avatar" href={c.html_url} target="_blank" rel="noreferrer"
+                <a key={c.login} className="contrib-avatar" href={CONTRIB_LINKS[c.login] ?? c.html_url} target="_blank" rel="noreferrer"
                    aria-label={c.login} title={`${c.login} · ${c.repo}`}>
                   <img src={c.avatar_url} alt={c.login} loading="lazy" />
                 </a>
