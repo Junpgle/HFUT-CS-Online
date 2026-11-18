@@ -34,6 +34,8 @@ const COLS_L1: number[][] = [
   [7, 8, 32],
 ];
 const COLS_L2: number[][] = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [12]];
+/** 第 1 层分组「组内排序后」的形态（② 之后各帧都必须复用这份，不能回退到 COLS_L1） */
+const COLS_L1_SORTED: number[][] = COLS_L1.map((c) => [...c].sort((a, b) => a - b));
 
 /** 一列的中位数（列内已升序） */
 const medianOf = (col: number[]) => col[Math.floor((col.length - 1) / 2)];
@@ -76,25 +78,25 @@ export function build(): Frame[] {
       cap: '第 5 组只有 3 个元素 ⟨7,8,32⟩（不满 5 个）。中位数取第 ⌈3/2⌉ = 2 个 → <b>8</b>，不是第 3 行的 32 —— 组内中位数按"第 ⌈len/2⌉ 个"算。',
     },
     {
-      cols: COLS_L1.map((c) => c.slice()),
+      cols: COLS_L1_SORTED.map((c) => c.slice()),
       meds: [12, 16, 14, 18, 8], xv: null, lit: -1, ring: true, phase: '③ 中位数数组 medians',
       note: 'medians = ⟨12,16,14,18,8⟩，共 g = 5 个，下一步递归求它们的中位数',
       cap: '5 个组内中位数收集成 medians = ⟨12,16,14,18,8⟩（g = 5）。第 ③ 步对这 g 个中位数<b>递归调用 Select</b>，求"中位数的中位数" x。',
     },
     {
-      cols: COLS_L1.map((c) => c.slice()),
+      cols: COLS_L1_SORTED.map((c) => c.slice()),
       meds: [12, 16, 14, 18, 8], xv: 14, lit: -1, ring: true, phase: '③ 求 x',
       note: 'medians 排序 → 8,12,14,16,18，第 ⌈5/2⌉ = 3 个 = 14 ⇒ x = 14',
       cap: 'medians 排好序是 ⟨8,12,14,16,18⟩，取第 ⌈5/2⌉ = 3 个 ⇒ <b>x = 14</b>（橙色圈）。x 是 5 个中位数的中位数，所以有 2 个中位数 ≤ x、2 个 ≥ x。',
     },
     {
-      cols: COLS_L1.map((c) => c.slice()),
+      cols: COLS_L1_SORTED.map((c) => c.slice()),
       meds: [12, 16, 14, 18, 8], xv: 14, lit: -1, ring: true, phase: '④ 以 x 划分',
       note: '< 14 的 11 个：1,2,12,5,6,3,4,9,10,7,8 ｜14 在第 12 位｜> 14 的 11 个',
       cap: '第 ④ 步用 PARTITION-AROUND 以 x = 14 划分：<b>小于 14 的 11 个</b>（1,2,12,5,6,3,4,9,10,7,8）排在左边，14 落在<b>第 12 位</b>，右边是 11 个大于 14 的元素。',
     },
     {
-      cols: COLS_L1.map((c) => c.slice()),
+      cols: COLS_L1_SORTED.map((c) => c.slice()),
       meds: [12, 16, 14, 18, 8], xv: 14, lit: -1, ring: true, phase: '⑤ 判定并只递归一边',
       note: 'res = mid−left+1 = 12−1+1 = 12 > k = 8 ⇒ 左半边递归，右边 11 个丢弃',
       cap: '第 ⑤ 步：res = mid − left + 1 = 12 − 1 + 1 = <b>12</b>，而 k = 8 &lt; 12，所以第 8 小在左半边 → 递归左半边找第 8 小，<b>右边 11 个元素（16,18,26,32,39,45,47,58,68,72,97）整段丢弃</b>。',
