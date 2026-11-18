@@ -54,7 +54,7 @@ function highlightCode(code: HTMLElement) {
         inCom = true;
         cur.com.push({ text: p, com: true });
       } else {
-        cur.code.push({ text: p, com: false });
+        cur.code.push(t);
       }
     });
   }
