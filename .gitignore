@@ -15,4 +15,4 @@ data/**
 !data/整理说明.md
 !data/文件清单.csv
 !data/分类统计.txt
-# 四个上游仓库以子模块挂在 upstream/（与 data/ 处理产物解耦），不在 data/** 管辖内
+# 四个上游仓库以子模块挂在仓库根（与 data/ 处理产物解耦），不在 data/** 管辖内
