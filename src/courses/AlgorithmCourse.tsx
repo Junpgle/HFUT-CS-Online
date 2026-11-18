@@ -9,7 +9,8 @@ import Footer from '../components/Footer';
 import HomePage from '../pages/HomePage';
 import DeckPage from '../pages/DeckPage';
 import PracticePage from '../pages/PracticePage';
-import { ALGO_BASE } from './registry';
+import { ALGO_BASE, courses } from './registry';
+import { recordCourseView } from '../lib/recentCourses';
 
 /** 各路由的滚动记忆（POP 导航时恢复） */
 const scrollPositions = new Map<string, number>();
@@ -21,6 +22,11 @@ const scrollPositions = new Map<string, number>();
  */
 export default function AlgorithmCourse() {
   const location = useLocation();
+
+  // 记录「最近查看」（本地 localStorage），供首页最近查看板块使用
+  useEffect(() => {
+    recordCourseView(courses[0].name);
+  }, []);
   const navType = useNavigationType();
   const reduced = useReducedMotion();
   const [drawerOpen, setDrawerOpen] = useState(false);

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { catalog, type CatalogCourse } from '../content/catalog';
+import { recordCourseView } from '../lib/recentCourses';
 import { useToc } from '../lib/toc';
 import ThemeToggle from '../components/ThemeToggle';
 import { IconArrowLeft } from '../components/icons';
@@ -14,9 +15,10 @@ export default function CourseStubPage() {
 
   useEffect(() => {
     toc.report([], () => {});
+    if (name) recordCourseView(name);
     return () => toc.report([], () => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [name]);
 
   const course: CatalogCourse | undefined = catalog.find((c) => c.name === name);
 

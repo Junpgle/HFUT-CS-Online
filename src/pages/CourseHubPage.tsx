@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { catalog } from '../content/catalog';
 import { courses, findCourseByName, STUB_BASE } from '../courses/registry';
 import SiteHeader from '../components/SiteHeader';
+import { getRecentCourses } from '../lib/recentCourses';
 import ContactCard from '../components/ContactCard';
 import { IconGitHub } from '../components/icons';
 import { useToc } from '../lib/toc';
@@ -37,6 +38,8 @@ export default function CourseHubPage() {
   const toc = useToc();
   const reduced = useReducedMotion();
   const [contactOpen, setContactOpen] = useState(false);
+  // 最近查看的课程（localStorage，MRU）；无记录时整个板块隐藏
+  const [recentNames] = useState(() => getRecentCourses());
 
   // 站点层无正文目录，清空侧栏上报
   useEffect(() => {
@@ -131,6 +134,30 @@ export default function CourseHubPage() {
           transition: { duration: 0.4, delay, ease: [0.25, 0.1, 0.25, 1] as const },
         };
 
+  // 最近查看卡片（数据取 catalog + registry，名字已不在资料库的忽略）
+  const recentCards: Card[] = useMemo(
+    () =>
+      recentNames
+        .map((name) => {
+          const c = catalog.find((x) => x.name === name);
+          const entry = findCourseByName(name);
+          if (!c && !entry) return null;
+          return {
+            semester: c?.semester ?? entry!.semester,
+            name,
+            href: entry ? entry.base : `${STUB_BASE}/${encodeURIComponent(name)}`,
+            ready: !!entry,
+            source: entry?.source ?? null,
+            courseware: c?.courseware ?? 0,
+            exams: c?.exams ?? 0,
+            misc: c?.misc ?? 0,
+            total: c?.total ?? 0,
+          };
+        })
+        .filter((x): x is Card => !!x),
+    [recentNames],
+  );
+
   return (
     <div className="hub-shell">
       <SiteHeader />
@@ -159,6 +186,15 @@ export default function CourseHubPage() {
 
       <main className="hub-main" id="catalog">
         <p className="hub-hint">点击课程进入 · 灰字课程为资料统计页</p>
+        {recentCards.length > 0 && (
+          <section className="hub-sem" aria-label="最近查看">
+            <div className="hub-sem-h">
+              <h2>最近查看</h2>
+              <span>本地记录 · 按最近查看排序</span>
+            </div>
+            <div className="hub-grid">{recentCards.map(card)}</div>
+          </section>
+        )}
         {groups.map((g) => (
           <section className="hub-sem" key={g.semester}>
             <div className="hub-sem-h">
