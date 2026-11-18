@@ -5,10 +5,10 @@ import ThemeToggle from './ThemeToggle';
 export default function SiteHeader() {
   return (
     <header className="hub-topbar material">
-      <Link to="/" className="hub-brand">
+      <Link to="/" className="hub-brand nav-pill">
         HFUT-CS-Online
       </Link>
-      <div className="hub-topbar-right">
+      <div className="hub-topbar-right nav-pill">
         <ThemeToggle />
       </div>
     </header>

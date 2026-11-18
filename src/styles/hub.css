@@ -8,29 +8,44 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
 }
 
-/* 顶栏：与算法课 topbar 同高的悬浮材质条 */
+/* 顶栏：透明容器 + 玻璃胶囊（复刻目标站），与算法课 topbar 同构 */
 .hub-topbar {
   position: sticky;
   top: 0;
   z-index: 40;
-  height: var(--topbar-h);
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--hairline-soft);
+  gap: 12px;
+  padding: 14px 24px;
+  pointer-events: none;
+}
+.hub-topbar > * {
+  pointer-events: auto;
 }
 
 .hub-brand {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--ink);
   text-decoration: none;
   white-space: nowrap;
+}
+/* 品牌胶囊 */
+.hub-brand.nav-pill {
+  padding: 10px 20px;
+}
+/* 占位页：返回按钮 + 课程名 同胶囊 */
+.hub-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+}
+.hub-nav-left .hub-brand {
+  padding-right: 10px;
 }
 .hub-brand .accent {
   color: var(--accent);
@@ -41,7 +56,8 @@
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  padding: 4px;
 }
 
 /* 占位页顶栏的回目录链接 */

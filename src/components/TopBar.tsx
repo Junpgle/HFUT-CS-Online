@@ -31,7 +31,7 @@ function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
         <motion.span
           className="deck-tab-pill"
           layoutId="deck-tab-pill"
-          transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 480, damping: 34 }}
+          transition={reduced ? { duration: 0 } : { type: 'tween', duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         />
       )}
       <span className="deck-tab-no">
@@ -44,7 +44,7 @@ function SiteTabs({ currentDeck }: { currentDeck: string | null }) {
     <nav className="deck-tabs" aria-label="全站导航">
       {item(`${ALGO_BASE}`, '总目录', '目录', currentDeck === null && !practiceActive, null, '课程首页 · 考点速查表')}
       {decks.map((d: DeckData) =>
-        item(`${ALGO_BASE}/deck/${d.id}`, d.no, d.no.replace('第', '').replace('讲', ''), d.id === currentDeck, d.id, decodeEntities(d.title)),
+        item(`${ALGO_BASE}/deck/${d.id}`, d.no, d.no.replace('第', ''), d.id === currentDeck, d.id, decodeEntities(d.title)),
       )}
       {item(`${ALGO_BASE}/practice`, '在线练习', '练习', practiceActive, null, '在线练习 · 420 题自测', 'practice-tab')}
     </nav>

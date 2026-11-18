@@ -19,7 +19,10 @@ function LegacyDeckRedirect() {
  */
 export default function App() {
   return (
-    <Suspense fallback={null}>
+    <>
+      {/* 双色光晕背景：全站最底层，首页/课程页共用（CSS 在 base.css） */}
+      <div className="bg-aura" aria-hidden="true" />
+      <Suspense fallback={null}>
       <Routes>
         <Route path="/" element={<CourseHubPage />} />
         <Route path={`${ALGO_BASE}/*`} element={<AlgorithmCourse />} />
@@ -28,6 +31,7 @@ export default function App() {
         <Route path="/practice" element={<Navigate to={`${ALGO_BASE}/practice`} replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </Suspense>
+      </Suspense>
+    </>
   );
 }

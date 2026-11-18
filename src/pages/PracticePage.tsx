@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react';
 import { practiceQuestions, KIND_META, type PracticeKind } from '../content/practice';
 import { decks } from '../content';
@@ -64,6 +64,8 @@ export default function PracticePage() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'undone' | 'wrong'>('all');
   const [results, setResults] = useState<Record<string, Result>>(() => loadResults());
   const firstFilterRun = useRef(true);
+  // 热力图折叠态：宽屏默认展开，窄屏默认收起（首屏让位给题目）
+  const [heatOpen, setHeatOpen] = useState(() => window.matchMedia('(min-width: 1200px)').matches);
 
   // 持久化到 localStorage：验收 / 复习时刷新不丢进度
   useEffect(() => {
@@ -177,6 +179,22 @@ export default function PracticePage() {
   const segmentCount = Math.ceil(visible.length / SEGMENT);
   const activeSeg = Math.min(Math.floor(idx / SEGMENT), Math.max(0, segmentCount - 1));
 
+  // 右轨分段起点所在讲次（tooltip 里给出「落在哪一讲」）
+  const segDeck = (k: number) => {
+    const q = visible[k * SEGMENT];
+    return q ? Math.min(...q.tags.map((t) => t.deck)) : 0;
+  };
+  // 列表渲染用的分组游标（每次渲染重置）；各讲在当前筛选下的题数
+  const groups = useMemo(() => {
+    const counts = new Map<number, number>();
+    visible.forEach((q) => {
+      const d = Math.min(...q.tags.map((t) => t.deck));
+      counts.set(d, (counts.get(d) ?? 0) + 1);
+    });
+    return counts;
+  }, [visible]);
+  let lastDeck = 0;
+
   return (
     <div className="page practice-page">
       <h1>在线练习</h1>
@@ -197,7 +215,7 @@ export default function PracticePage() {
             </motion.b>{' '}
             题
           </span>
-          <button className="btn" onClick={resetAll} disabled={totalDone === 0}>
+          <button className="btn pq-danger" onClick={resetAll} disabled={totalDone === 0}>
             清空进度
           </button>
         </div>
@@ -212,19 +230,11 @@ export default function PracticePage() {
           <div className="pq-rail-block">
             <p className="pq-rail-h">题型</p>
             <div className="pq-kindnav">
-              {KINDS.map((k) => {
-                const { done, right } = countFor(k);
-                const meta = KIND_META[k];
-                return (
-                  <button key={k} type="button" className={`pq-kindbtn${kind === k ? ' active' : ''}`} onClick={() => setKind(k)}>
-                    <span className="pq-kindbtn-label">{meta.label}</span>
-                    <span className="pq-kindbtn-count" data-empty={done === 0}>
-                      {done}/{meta.total}
-                      {right > 0 && <i className="pq-tab-right">{right}</i>}
-                    </span>
-                  </button>
-                );
-              })}
+              {KINDS.map((k) => (
+                <button key={k} type="button" className={`pq-kindbtn${kind === k ? ' active' : ''}`} onClick={() => setKind(k)}>
+                  <span className="pq-kindbtn-label">{KIND_META[k].label}</span>
+                </button>
+              ))}
             </div>
           </div>
           <div className="pq-rail-block">
@@ -275,8 +285,9 @@ export default function PracticePage() {
             </div>
           </div>
           {/* 热力图：420 格，一格一题——绿=答对，红=答错，深灰=已看答案，浅灰=未作答；点击跳题 */}
-          <div className="pq-rail-block pq-heatblock">
-            <p className="pq-rail-h">热力图 · 点击跳题</p>
+          {/* 收进 details：窄屏默认收起，首屏以题目为主角 */}
+          <details className="pq-heatblock" open={heatOpen} onToggle={(e) => setHeatOpen((e.target as HTMLDetailsElement).open)}>
+            <summary className="pq-heat-sum">热力图 · 点击跳题</summary>
             {KINDS.map((k) => {
               const c = countFor(k);
               const short = KIND_META[k].label.replace('题', '');
@@ -310,24 +321,19 @@ export default function PracticePage() {
                 </div>
               );
             })}
-          </div>
+          </details>
         </aside>
 
         {/* 主列：吸顶摘要条 + 题目列表 */}
         <div className="pq-main">
-          <div className="pq-stickybar" aria-hidden={false}>
-            <span className="pq-stickybar-loc">
-              {KIND_META[kind].label}
-              {curNo > 0 && (
-                <>
-                  {' '}· 第 <b>{curNo}</b> 题
-                </>
-              )}
-            </span>
-            <span className="pq-stickybar-stat">
-              本型 <b>{visible.filter((q) => results[q.id]).length}</b>/{visible.length}
-            </span>
-          </div>
+          {/* 滚动中唯一有用的新信息是当前题号，其余进度数字不再复读 */}
+          {curNo > 0 && (
+            <div className="pq-stickybar" aria-hidden={false}>
+              <span className="pq-stickybar-loc">
+                第 <b>{curNo}</b> 题
+              </span>
+            </div>
+          )}
 
           <div className="pq-list" key={filterKey}>
             {visible.length === 0 ? (
@@ -339,15 +345,27 @@ export default function PracticePage() {
                     : '没有符合条件的题目。'}
               </p>
             ) : (
-              visible.map((q) => (
-                <PracticeCard
-                  key={q.id}
-                  quiz={q}
-                  label={`${KIND_META[q.kind].label.replace('题', '')} ${Number(q.id.slice(1))}`}
-                  result={results[q.id]}
-                  onResult={onResult}
-                />
-              ))
+              visible.map((q) => {
+                // 讲次分组分隔：按各题主讲次（tag 里最小的讲号）给长列表一个定位锚点
+                const d = Math.min(...q.tags.map((t) => t.deck));
+                const showHead = d !== lastDeck;
+                lastDeck = d;
+                return (
+                  <Fragment key={q.id}>
+                    {showHead && (
+                      <p className="pq-group-h" data-deck={`deck${d}`}>
+                        <b className="pq-group-no">{d}</b>第 {d} 讲 · {groups.get(d) ?? 0} 题
+                      </p>
+                    )}
+                    <PracticeCard
+                      quiz={q}
+                      label={`${KIND_META[q.kind].label.replace('题', '')} ${Number(q.id.slice(1))}`}
+                      result={results[q.id]}
+                      onResult={onResult}
+                    />
+                  </Fragment>
+                );
+              })
             )}
           </div>
         </div>
@@ -362,7 +380,7 @@ export default function PracticePage() {
                 key={k}
                 type="button"
                 className={`pq-track-seg${k === activeSeg ? ' active' : ''}`}
-                title={`第 ${k * SEGMENT + 1}–${Math.min((k + 1) * SEGMENT, visible.length)} 题`}
+                title={`第 ${k * SEGMENT + 1}–${Math.min((k + 1) * SEGMENT, visible.length)} 题 · ${segDeck(k) ? `第 ${segDeck(k)} 讲` : ''}`}
                 onClick={() => scrollToCard(k * SEGMENT)}
               >
                 <i />

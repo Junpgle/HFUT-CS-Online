@@ -51,12 +51,16 @@ export default function PracticeCard({ quiz, label, result, onResult }: Props) {
   const answerHtml = useMemo(() => prettyMath(quiz.answer), [quiz]);
   const explanationHtml = useMemo(() => prettyMath(quiz.explanation), [quiz]);
 
-  const [picked, setPicked] = useState<string[]>([]);
+  // 挂载时从已保存结果恢复判分态：状态点与卡片内容同源，不出现「红点 + 未作答」的矛盾
+  // （上次具体选了什么没有存，答错的卡片恢复为展示正确答案 + 红色状态点）
+  const [picked, setPicked] = useState<string[]>(() => (result === 'right' || result === 'wrong' ? correctLetters : []));
   const [wrongPicks, setWrongPicks] = useState<string[]>([]);
-  const [submitted, setSubmitted] = useState<'right' | 'wrong' | null>(null);
-  const [revealed, setRevealed] = useState(false);
-  const [fillInput, setFillInput] = useState('');
-  const [fillWrong, setFillWrong] = useState(false);
+  const [submitted, setSubmitted] = useState<'right' | 'wrong' | null>(() =>
+    result === 'right' || result === 'wrong' ? result : null,
+  );
+  const [revealed, setRevealed] = useState(() => result === 'revealed');
+  const [fillInput, setFillInput] = useState(() => (result ? fillVariants[0] ?? '' : ''));
+  const [fillWrong, setFillWrong] = useState(() => result === 'wrong');
 
   // 判分脉冲动画结束后摘掉标记
   useEffect(() => {
@@ -125,7 +129,7 @@ export default function PracticeCard({ quiz, label, result, onResult }: Props) {
   const optionState = (letter: string): string => {
     if (submitted === 'right' && correctLetters.includes(letter)) return 'correct';
     if (wrongPicks.includes(letter)) return 'wrong';
-    if (quiz.kind === 'multi' && submitted === 'wrong' && correctLetters.includes(letter)) return 'correct';
+    if (submitted === 'wrong' && correctLetters.includes(letter)) return 'correct';
     if (picked.includes(letter)) return 'selected';
     if (submitted !== null && !correctLetters.includes(letter) && !picked.includes(letter)) return 'dim';
     if (revealed && correctLetters.includes(letter)) return 'correct';

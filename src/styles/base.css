@@ -121,27 +121,73 @@ button {
   }
 }
 
-/* 顶栏：悬浮材质，内容从下方滚过；三栏网格让讲次切换条严格居中 */
+/* 双色光晕背景（复刻 saltgardenia.github.io）：全站最底层，首页/课程页共用；
+   颜色令牌 --aura-1（青 #2F6F6F）/ --aura-2（砖红 #C8372D）随主题切换 */
+.bg-aura {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(52% 44% at 16% 10%, var(--aura-1), transparent 70%),
+    radial-gradient(48% 48% at 88% 84%, var(--aura-2), transparent 72%);
+  animation: auraDrift 26s ease-in-out infinite alternate;
+}
+@keyframes auraDrift {
+  0% { transform: translate3d(-1%, -0.8%, 0) scale(1.01); }
+  to { transform: translate3d(1%, 1.2%, 0) scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-aura { animation: none; }
+}
+
+/* 玻璃胶囊：导航栏容器基类（透明度/模糊/描边/投影完全复刻） */
+.nav-pill,
+.topbar-left,
+.topbar-right,
+.deck-tabs {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid var(--hairline-soft);
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .nav-pill,
+  .topbar-left,
+  .topbar-right,
+  .deck-tabs {
+    background: var(--panel-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* 顶栏：透明容器 + 三段玻璃胶囊（复刻目标站）；pointer-events 穿透空白区 */
 .topbar {
     position: sticky;
     top: 0;
     z-index: 60;
-    height: var(--topbar-h);
     display: grid;
     /* 1fr 的最小宽度是 auto，右栏固定宽搜索框会把左栏压瘪——必须 minmax(0,1fr) */
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    column-gap: 16px;
+    column-gap: 12px;
     align-items: center;
-    padding: 0 18px;
-    background: var(--panel-strong);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid var(--hairline-soft);
+    padding: 14px 24px;
+    pointer-events: none;
   }
-@media (prefers-reduced-transparency: reduce) {
+.topbar-left,
+.topbar-right,
+.deck-tabs {
+  pointer-events: auto;
+}
+@media (max-width: 640px) {
   .topbar {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
+    padding: 12px 16px;
   }
 }
 
@@ -200,9 +246,7 @@ button {
 .deck-tabs {
   display: none;
   gap: 2px;
-  padding: 3px;
-  background: var(--panel-2);
-  border-radius: 999px;
+  padding: 4px;
 }
 @media (min-width: 1021px) {
   .deck-tabs {
@@ -266,6 +310,7 @@ button {
 }
 .deck-tab:hover {
   color: var(--ink);
+  background: var(--pressed);
 }
 .deck-tab:active {
   transform: scale(0.94);
@@ -280,8 +325,7 @@ button {
   position: absolute;
   inset: 0;
   border-radius: 999px;
-  background: var(--panel-solid);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);
+  background: var(--selected);
 }
 .deck-tab.active .deck-tab-no {
   color: var(--deck-accent);
@@ -305,6 +349,12 @@ button {
 .deck-tab.practice-tab .tab-full,
 .deck-tab.practice-tab .tab-short {
   color: var(--ink-2);
+}
+/* 紧凑档（1021~1280）：短写法是「1讲」，缩一点 tab 内边距给中栏留空间 */
+@media (min-width: 1021px) and (max-width: 1280.9px) {
+  .deck-tab {
+    padding: 4px 9px;
+  }
 }
 
 /* 顶栏内联搜索框：常驻显示、尺寸不变，聚焦弹出下拉菜单 */
@@ -2184,6 +2234,25 @@ pre.code .cl-code:empty + .cl-com {
 @media (prefers-reduced-motion: reduce) {
   .pq-progress-bar span { transition: none; }
 }
+/* 「清空进度」是不可逆危险操作：降级为小号幽灵按钮（红字暗示），不与总进度数字抢权重 */
+.pq-danger {
+  height: 30px;
+  padding: 0 12px;
+  white-space: nowrap;
+  background: transparent;
+  border: 1px solid var(--hairline-soft);
+  color: var(--hot);
+  font-size: 0.7813rem;
+}
+.pq-danger:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--hot) 50%, transparent);
+  background: color-mix(in srgb, var(--hot) 6%, transparent);
+}
+.pq-danger:disabled {
+  color: var(--ink-3);
+  background: transparent;
+  opacity: 0.7;
+}
 
 /* --------------------------------------------- 左栏：题型 / 讲次 / 状态 / 热力图 */
 /* 左栏粘性 + 内部滚动（热力图较高），与各讲页侧栏行为一致 */
@@ -2203,6 +2272,25 @@ pre.code .cl-code:empty + .cl-com {
     position: static;
     max-height: none;
     overflow: visible;
+  }
+}
+/* 宽屏：左栏一个可区分的「工具列」底色，与主列白卡分层（暗色下同样成立） */
+@media (min-width: 1200px) {
+  .pq-rail {
+    padding: 16px 16px 12px;
+    background: var(--panel);
+    border: 1px solid var(--hairline-soft);
+    border-radius: var(--r-l);
+  }
+}
+/* 窄屏：工具区压缩，让第一屏尽快出现第一道题 */
+@media (max-width: 1199.9px) {
+  .pq-rail-block { margin-bottom: 12px; }
+  .pq-progress { margin-top: 12px; }
+  /* 题型页签横向滚动：右缘渐隐暗示还有更多 */
+  .pq-kindnav {
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 18px), transparent);
+    mask-image: linear-gradient(90deg, #000 calc(100% - 18px), transparent);
   }
 }
 .pq-rail-block {
@@ -2324,9 +2412,42 @@ pre.code .cl-code:empty + .cl-com {
   background: var(--panel-2);
 }
 
-/* 热力图：420 格，一格一题（GitHub 贡献墙式） */
+/* 热力图：420 格，一格一题（GitHub 贡献墙式）；收在 details 里，窄屏默认收起 */
 .pq-heatblock {
   margin-bottom: 0;
+}
+.pq-heat-sum {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  font-size: 0.7188rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  cursor: pointer;
+  list-style: none;
+  transition: color 140ms;
+}
+.pq-heat-sum::-webkit-details-marker {
+  display: none;
+}
+.pq-heat-sum:hover {
+  color: var(--ink);
+}
+/* 折叠箭头（closed 朝下 / open 朝上） */
+.pq-heat-sum::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 160ms var(--press-ease);
+}
+.pq-heatblock[open] .pq-heat-sum::after {
+  transform: rotate(-135deg);
 }
 .pq-heat {
   margin-bottom: 10px;
@@ -2357,6 +2478,22 @@ pre.code .cl-code:empty + .cl-com {
   border: 1px solid var(--hairline-soft);
   transition: transform 120ms var(--press-ease), box-shadow 120ms;
 }
+/* 暗色下「未作答」格提亮一档，避免 420 格融进深底（状态色规则在下方仍会覆盖） */
+[data-theme='dark'] .pq-heat-cell {
+  background: #3a3a3e;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+/* 手机竖屏：11px 远低于触控目标，放大到 18px（热力图此时默认折叠，展开后也可点） */
+@media (max-width: 720px) {
+  .pq-heat-cell {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+  }
+  .pq-heat-grid {
+    gap: 3px;
+  }
+}
 .pq-heat-cell:hover {
   transform: scale(1.4);
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
@@ -2377,6 +2514,7 @@ pre.code .cl-code:empty + .cl-com {
 }
 
 /* --------------------------------------------- 吸顶摘要条 */
+/* 实色底：半透明材质会让滚过的卡片文字叠印进来（暗色模式实测） */
 .pq-stickybar {
   position: sticky;
   top: var(--topbar-h);
@@ -2389,18 +2527,13 @@ pre.code .cl-code:empty + .cl-com {
   border-radius: 999px;
   font-size: 0.7813rem;
   color: var(--ink-2);
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  backdrop-filter: blur(16px) saturate(180%);
+  background: var(--panel-solid);
   border: 1px solid var(--hairline-soft);
   box-shadow: var(--shadow-1);
   font-variant-numeric: tabular-nums;
 }
 .pq-stickybar b {
   color: var(--ink);
-}
-@media (prefers-reduced-transparency: reduce) {
-  .pq-stickybar { background: var(--panel-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 
 /* --------------------------------------------- 题目列表与题卡 */
@@ -2422,6 +2555,44 @@ pre.code .cl-code:empty + .cl-com {
   color: var(--ink-3);
   font-size: 0.875rem;
 }
+/* 讲次分组分隔：长列表的定位锚点，编号圆点用各讲主题色 */
+.pq-group-h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 18px;
+  font-size: 0.7813rem;
+  font-weight: 600;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.pq-group-h::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--hairline-soft);
+}
+.pq-group-no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--row-accent, var(--accent));
+}
+.pq-group-h[data-deck='deck1'] { --row-accent: var(--deck1); }
+.pq-group-h[data-deck='deck2'] { --row-accent: var(--deck2); }
+.pq-group-h[data-deck='deck3'] { --row-accent: var(--deck3); }
+.pq-group-h[data-deck='deck4'] { --row-accent: var(--deck4); }
+.pq-group-h[data-deck='deck5'] { --row-accent: var(--deck5); }
+.pq-group-h[data-deck='deck6'] { --row-accent: var(--deck6); }
+.pq-group-h[data-deck='deck7'] { --row-accent: var(--deck7); }
+.pq-group-h[data-deck='deck8'] { --row-accent: var(--deck8); }
 .quiz.practice-q {
   position: relative;
   margin: 0 0 24px;
