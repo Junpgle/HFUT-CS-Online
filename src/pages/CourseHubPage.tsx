@@ -185,12 +185,10 @@ export default function CourseHubPage() {
       </section>
 
       <main className="hub-main" id="catalog">
-        <p className="hub-hint">点击课程进入 · 灰字课程为资料统计页</p>
         {recentCards.length > 0 && (
           <section className="hub-sem" aria-label="最近查看">
             <div className="hub-sem-h">
               <h2>最近查看</h2>
-              <span>本地记录 · 按最近查看排序</span>
             </div>
             <div className="hub-grid">{recentCards.map(card)}</div>
           </section>
