@@ -47,6 +47,16 @@ const semesters = SEMESTER_ORDER.filter((s) => found.includes(s));
 const skipped = found.filter((s) => !SEMESTER_ORDER.includes(s)).sort();
 if (skipped.length) console.log(`[build-catalog] 跳过非学期目录（子模块等）: ${skipped.join(', ')}`);
 
+// CI 上 data/ 目录存在但只有入库的说明文件（课件本体被 gitignore）——此时不能生成空目录，保留已提交的 catalog.ts
+if (semesters.length === 0) {
+  if (existsSync(OUT)) {
+    console.warn('[build-catalog] data/ 下无学期目录（CI 环境），跳过（保留现有 catalog.ts）');
+    process.exit(0);
+  }
+  console.error('[build-catalog] data/ 下无学期目录且无现有 catalog.ts，中止');
+  process.exit(1);
+}
+
 const lines = [];
 let totalFiles = 0;
 for (const sem of semesters) {
