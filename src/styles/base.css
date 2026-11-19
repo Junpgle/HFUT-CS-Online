@@ -2878,6 +2878,10 @@ pre.code .cl-code:empty + .cl-com {
 .ptag[data-deck='deck6'] { --row-accent: var(--deck6); }
 .ptag[data-deck='deck7'] { --row-accent: var(--deck7); }
 .ptag[data-deck='deck8'] { --row-accent: var(--deck8); }
+/* 计网课：整课一个主题色（html[data-deck='net']），标签与分组头回落到 --net */
+.ptag[data-deck='net'],
+.pq-group-h[data-deck='net'],
+.site-nav li[data-deck='net'] { --row-accent: var(--net); }
 /* 程序设计艺术与方法课：整课一个主题色（html[data-deck='pat']），同上回落到 --pat */
 .ptag[data-deck='pat'],
 .pq-group-h[data-deck='pat'],
@@ -3060,4 +3064,114 @@ pre.code .cl-code:empty + .cl-com {
 .ext-card:hover .ext-card-arrow {
   color: var(--deck-accent);
   transform: translateX(3px);
+}
+
+/* ================================================ 计算机网络课 · 试卷列表/答题页 */
+/* 试卷卡：与首页课程卡同一套视觉语言（面板 + 细描边），hover 抬升不铺色底 */
+.net-paper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+.net-paper-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  height: 100%;
+  padding: 16px 16px 14px;
+  background: var(--panel);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-l);
+  text-decoration: none;
+  color: var(--ink);
+  transition:
+    transform 0.18s var(--press-ease),
+    box-shadow 0.18s var(--press-ease),
+    border-color 0.18s var(--press-ease),
+    background-color 0.18s var(--press-ease);
+}
+.net-paper-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-1);
+  border-color: var(--hairline);
+  background: var(--panel-strong);
+}
+.net-paper-card:active {
+  transform: scale(0.98);
+  transition-duration: 0.06s;
+}
+.net-paper-title {
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--ink);
+}
+.net-paper-meta {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.net-paper-source {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.net-paper-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.net-paper-progress i {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--bg-dim);
+  overflow: hidden;
+}
+.net-paper-progress i span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--deck-accent);
+}
+.net-paper-go {
+  position: absolute;
+  top: 16px;
+  right: 14px;
+  color: var(--ink-3);
+  transition: transform 0.18s var(--press-ease), color 140ms;
+}
+.net-paper-card:hover .net-paper-go {
+  color: var(--deck-accent);
+  transform: translateX(3px);
+}
+
+/* 答题页卷头 */
+.net-paper-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.net-paper-head h1 {
+  margin-bottom: 0;
+}
+.net-paper-sub {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  line-height: 1.6;
+}
+.net-paper-back {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  text-decoration: none;
+  width: fit-content;
+}
+.net-paper-back:hover {
+  color: var(--deck-accent);
 }

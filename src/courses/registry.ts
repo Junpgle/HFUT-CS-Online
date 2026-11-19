@@ -33,6 +33,14 @@ export const courses: readonly CourseEntry[] = [
     source: '七章课件精讲 · 期末大题精讲 · 4 份试卷在线练习',
   },
   {
+    id: 'computer-network',
+    name: '计算机网络',
+    semester: '大三上',
+    base: '/net',
+    ready: true,
+    source: '七章课件讲义 · 3 套期末试卷在线练习',
+  },
+  {
     id: 'program-design-art',
     name: '程序设计艺术与方法',
     semester: '大二上',
@@ -52,8 +60,11 @@ export const ALGO_BASE = courses[0].base;
 /** 操作系统课路由前缀（同上约定） */
 export const OS_BASE = courses[1].base;
 
+/** 计算机网络课路由前缀（同上约定） */
+export const NET_BASE = courses[2].base;
+
 /** 程序设计艺术与方法课路由前缀（同上约定） */
-export const PAT_BASE = courses[2].base;
+export const PAT_BASE = courses[3].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

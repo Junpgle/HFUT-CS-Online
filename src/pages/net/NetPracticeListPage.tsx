@@ -1,0 +1,171 @@
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { NET_BASE } from '../../courses/registry';
+import { netPapers } from '../../content/net';
+import { IconArrowRight, IconX } from '../../components/icons';
+
+/** 作答结果持久化 key（qid = `${paperId}:${questionId}`） */
+export const NET_PRACTICE_STORE_KEY = 'net-practice-progress-v1';
+export type NetResult = 'right' | 'wrong' | 'revealed';
+
+export function loadNetResults(): Record<string, NetResult> {
+  try {
+    const raw = localStorage.getItem(NET_PRACTICE_STORE_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, NetResult>) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function netPaperStats(paperId: string, results: Record<string, NetResult>) {
+  const paper = netPapers.find((p) => p.id === paperId);
+  if (!paper) return { done: 0, right: 0, total: 0 };
+  const done = paper.questions.filter((q) => results[`${paperId}:${q.id}`]).length;
+  const right = paper.questions.filter((q) => results[`${paperId}:${q.id}`] === 'right').length;
+  return { done, right, total: paper.questions.length };
+}
+
+/** 「计算机网络」在线练习 · 试卷列表：多份试卷先选卷，再进入答题页 */
+export default function NetPracticeListPage() {
+  const reduced = useReducedMotion();
+  const [results, setResults] = useState<Record<string, NetResult>>(() => loadNetResults());
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(NET_PRACTICE_STORE_KEY, JSON.stringify(results));
+    } catch {
+      /* 存储不可用时静默降级 */
+    }
+  }, [results]);
+
+  // 确认层 Esc 退出
+  useEffect(() => {
+    if (!confirmOpen) return;
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === 'Escape') setConfirmOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [confirmOpen]);
+
+  const { totalDone, totalRight, total } = useMemo(() => {
+    const total = netPapers.reduce((n, p) => n + p.questions.length, 0);
+    const done = netPapers.reduce((n, p) => n + netPaperStats(p.id, results).done, 0);
+    const right = netPapers.reduce((n, p) => n + netPaperStats(p.id, results).right, 0);
+    return { totalDone: done, totalRight: right, total };
+  }, [results]);
+
+  return (
+    <div className="page net-practice-page">
+      <h1>在线练习</h1>
+
+      <div className="pq-progress material">
+        <div className="pq-progress-text">
+          <span>
+            总进度：<span className="pq-frag">已作答 <b>{totalDone}</b> / {total}</span> ·{' '}
+            <span className="pq-frag">
+              答对{' '}
+              <motion.b
+                className="pq-right-num"
+                key={totalRight}
+                initial={reduced ? false : { scale: 1.4, color: 'var(--ok)' }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 520, damping: 20 }}
+              >
+                {totalRight}
+              </motion.b>{' '}
+              题
+            </span>
+          </span>
+          <button className="btn pq-danger" onClick={() => setConfirmOpen(true)} disabled={totalDone === 0}>
+            清空进度
+          </button>
+        </div>
+        <div className="pq-progress-bar" role="progressbar" aria-valuenow={totalDone} aria-valuemax={total}>
+          <span style={{ width: `${(totalDone / total) * 100}%` }} />
+        </div>
+      </div>
+
+      <div className="net-paper-grid">
+        {netPapers.map((p, i) => {
+          const { done, right, total: n } = netPaperStats(p.id, results);
+          return (
+            <motion.div
+              key={p.id}
+              initial={reduced ? undefined : { opacity: 0, y: 10 }}
+              animate={reduced ? undefined : { opacity: 1, y: 0 }}
+              transition={reduced ? { duration: 0 } : { duration: 0.24, delay: Math.min(i * 0.04, 0.2), ease: [0.25, 0.1, 0.25, 1] }}
+            >
+              <Link to={`${NET_BASE}/practice/${p.id}`} className="net-paper-card material" aria-label={`进入 ${p.title}`}>
+                <span className="net-paper-title">{p.title}</span>
+                <span className="net-paper-meta">{p.meta}</span>
+                <span className="net-paper-source">
+                  {p.answerSource} · {n} 题
+                </span>
+                {done > 0 && (
+                  <span className="net-paper-progress">
+                    已作答 {done} / {n} · 答对 {right} 题
+                    <i aria-hidden="true">
+                      <span style={{ width: `${(done / n) * 100}%` }} />
+                    </i>
+                  </span>
+                )}
+                <IconArrowRight size={15} className="net-paper-go" />
+              </Link>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* 清空进度确认：复用全站玻璃模态 */}
+      <AnimatePresence>
+        {confirmOpen && (
+          <motion.div
+            className="hub-modal-scrim"
+            initial={reduced ? undefined : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduced ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.16 }}
+            onClick={() => setConfirmOpen(false)}
+          >
+            <motion.div
+              className="hub-modal material"
+              role="dialog"
+              aria-modal="true"
+              aria-label="清空进度"
+              initial={reduced ? undefined : { opacity: 0, scale: 0.96, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={reduced ? undefined : { opacity: 0, scale: 0.97, y: 6 }}
+              transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="hub-modal-head">
+                <h2>清空进度</h2>
+                <button className="icon-btn" onClick={() => setConfirmOpen(false)} aria-label="关闭">
+                  <IconX size={16} />
+                </button>
+              </div>
+              <p className="hub-modal-tip">清空全部试卷的作答进度？</p>
+              <div className="hub-modal-actions">
+                <button className="btn" onClick={() => setConfirmOpen(false)}>
+                  取消
+                </button>
+                <button
+                  className="btn pq-danger"
+                  onClick={() => {
+                    setResults({});
+                    setConfirmOpen(false);
+                  }}
+                >
+                  清空
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
