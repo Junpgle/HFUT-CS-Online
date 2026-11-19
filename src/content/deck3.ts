@@ -370,7 +370,8 @@ const deck: DeckData = {
           
                 <p>许多实数的关系性质都可以用到渐近比较上（以下假定 f(n) 和 g(n) 都是渐近正的）：</p>
           
-                <table class="tbl">
+                <table class="tbl" style="table-layout: fixed">
+                  <colgroup><col style="width: 13%"><col style="width: 51%"><col style="width: 36%"></colgroup>
                   <thead><tr><th>性质</th><th>内容</th><th>附注</th></tr></thead>
                   <tbody>
                     <tr>
