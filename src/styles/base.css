@@ -205,10 +205,20 @@ button {
 .topbar-right {
   justify-self: end;
 }
-/* 讲次切换条作为胶囊时收窄内距（.nav-pill 的 6px 14px 会过松） */
+/* 讲次切换条作为胶囊时收窄内距（.nav-pill 的 6px 14px 会过松）；
+   高度锁定 42px 与左右胶囊一致，tab 高 34px 垂直居中 */
 .deck-tabs.nav-pill {
+  height: 42px;
   padding: 4px;
   gap: 2px;
+  align-items: center;
+}
+.deck-tabs.nav-pill .deck-tab {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 .topbar-right {
   justify-content: flex-end;
@@ -217,14 +227,17 @@ button {
 /* 独立控件胶囊（返回箭头 / 抽屉触发 / 搜索 / 亮暗切换）：统一收窄内距，
    内部 34px 控件 + 8px 内距 = 42px 胶囊；hover 只加深描边（不铺色底） */
 .topbar-ctl.nav-pill {
+  height: 42px;
   padding: 4px;
+  display: inline-flex;
+  align-items: center;
 }
 .topbar-ctl.nav-pill:hover {
   border-color: var(--hairline);
 }
-/* 课程名胶囊：文字型控件，横向内距比图标胶囊宽 */
+/* 课程名胶囊：文字型控件，横向内距比图标胶囊宽；高度同样锁 42px */
 .topbar-ctl.topbar-title {
-  padding: 5px 14px;
+  padding: 0 14px;
 }
 
 .topbar-title {
