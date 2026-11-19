@@ -604,7 +604,16 @@ button {
 .site-nav a:hover,
 .toc a:hover {
   color: var(--deck-accent);
-  transform: translateX(2px);
+}
+/* 目录条目整行可点：色带铺满整行（行内元素的文字宽色带会从 sticky 组头白底右侧露馅），
+   hover 不再位移（整行位移会晃出容器） */
+.toc a {
+  display: block;
+  padding-right: 10px;
+  border-radius: 8px;
+}
+.toc-row > a {
+  flex: 1 1 auto;
 }
 .site-nav li {
   --row-accent: var(--deck-accent);
