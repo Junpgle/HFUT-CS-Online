@@ -222,6 +222,10 @@ button {
 .topbar-ctl.nav-pill:hover {
   border-color: var(--hairline);
 }
+/* 课程名胶囊：文字型控件，横向内距比图标胶囊宽 */
+.topbar-ctl.topbar-title {
+  padding: 5px 14px;
+}
 
 .topbar-title {
   font-weight: 700;
@@ -463,7 +467,8 @@ button {
     width: 100%;
     max-width: none;
   }
-  .topbar-title {
+  .topbar-title,
+  .topbar-ctl.topbar-title {
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;

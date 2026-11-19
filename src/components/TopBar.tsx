@@ -70,7 +70,8 @@ export default function TopBar({ subtitle, currentDeck, onOpenSidebar }: Props) 
             <IconMenu />
           </span>
         </button>
-        <Link to={ALGO_BASE} className="topbar-title">
+        {/* 课程名独立胶囊：与返回箭头/搜索等同语言 */}
+        <Link to={ALGO_BASE} className="topbar-ctl nav-pill topbar-title" title="算法设计与分析 · 复习手册">
           算法设计与分析
         </Link>
         {subtitle && <span className="topbar-sub">{decodeEntities(subtitle)}</span>}
