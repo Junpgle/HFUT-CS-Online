@@ -1,8 +1,8 @@
 /* 【自动生成】由 scripts/build-catalog.mjs 扫描 data/ 生成，请勿手改。
- * 共 64 门课程 / 8210 份文件；增删资料后 npm run catalog 刷新。 */
+ * 共 58 门课程 / 7922 份文件；增删资料后 npm run catalog 刷新。 */
 
 export interface CatalogCourse {
-  /** 学期文件夹名：大一上…大四下、公共课与杂项 */
+  /** 学期文件夹名：大一上…大四下 */
   semester: string;
   /** 课程目录名（与整理文件夹一致） */
   name: string;
@@ -72,10 +72,4 @@ export const catalog: CatalogCourse[] = [
   { semester: "大四上", name: "领域方向综合设计", courseware: 0, exams: 0, misc: 6, total: 6 },
   { semester: "大四上", name: "软件工程师综合训练", courseware: 0, exams: 0, misc: 55, total: 55 },
   { semester: "大四下", name: "创新实践", courseware: 0, exams: 0, misc: 1, total: 1 },
-  { semester: "公共课与杂项", name: "仓库原始说明", courseware: 0, exams: 0, misc: 37, total: 37 },
-  { semester: "公共课与杂项", name: "大学英语四六级", courseware: 0, exams: 217, misc: 2, total: 219 },
-  { semester: "公共课与杂项", name: "培养方案", courseware: 0, exams: 0, misc: 6, total: 6 },
-  { semester: "公共课与杂项", name: "思政教材", courseware: 0, exams: 0, misc: 8, total: 8 },
-  { semester: "公共课与杂项", name: "思政题库", courseware: 0, exams: 9, misc: 5, total: 14 },
-  { semester: "公共课与杂项", name: "校园生活指南", courseware: 0, exams: 0, misc: 4, total: 4 },
 ];

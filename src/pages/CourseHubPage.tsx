@@ -10,7 +10,7 @@ import ContactCard from '../components/ContactCard';
 import { IconChevronDown, IconChevronUp, IconGitHub } from '../components/icons';
 import { useToc } from '../lib/toc';
 
-/** 学期分组顺序：8 个学期在前，公共课与杂项殿后 */
+/** 学期分组顺序：8 个学期 */
 const SEMESTERS = ['大一上', '大一下', '大二上', '大二下', '大三上', '大三下', '大四上', '大四下'];
 
 interface Card {

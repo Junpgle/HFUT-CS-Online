@@ -9,7 +9,7 @@ const ROOT = dirname(fileURLToPath(import.meta.url));
 const MATERIALS = join(ROOT, '..', 'data');
 const OUT = join(ROOT, '..', 'src', 'content', 'catalog.ts');
 
-const SEMESTER_ORDER = ['大一上', '大一下', '大二上', '大二下', '大三上', '大三下', '大四上', '大四下', '公共课与杂项'];
+const SEMESTER_ORDER = ['大一上', '大一下', '大二上', '大二下', '大三上', '大三下', '大四上', '大四下'];
 
 const CATS = ['课件', '试题', '附件'];
 
@@ -78,7 +78,7 @@ const ts = `/* 【自动生成】由 scripts/build-catalog.mjs 扫描 data/ 生�
  * 共 ${lines.length} 门课程 / ${totalFiles} 份文件；增删资料后 npm run catalog 刷新。 */
 
 export interface CatalogCourse {
-  /** 学期文件夹名：大一上…大四下、公共课与杂项 */
+  /** 学期文件夹名：大一上…大四下 */
   semester: string;
   /** 课程目录名（与整理文件夹一致） */
   name: string;
