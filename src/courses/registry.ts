@@ -32,6 +32,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '七章课件精讲 · 期末大题精讲 · 4 份试卷在线练习',
   },
+  {
+    id: 'program-design-art',
+    name: '程序设计艺术与方法',
+    semester: '大二上',
+    base: '/pat',
+    ready: true,
+    source: '三讲课件精讲 · ICPC 讲义六章 · 省赛真题在线练习',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -43,6 +51,9 @@ export const ALGO_BASE = courses[0].base;
 
 /** 操作系统课路由前缀（同上约定） */
 export const OS_BASE = courses[1].base;
+
+/** 程序设计艺术与方法课路由前缀（同上约定） */
+export const PAT_BASE = courses[2].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

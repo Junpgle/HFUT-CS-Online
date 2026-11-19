@@ -2,11 +2,12 @@ import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import CourseHubPage from './pages/CourseHubPage';
 import CourseStubPage from './pages/CourseStubPage';
-import { ALGO_BASE, OS_BASE } from './courses/registry';
+import { ALGO_BASE, OS_BASE, PAT_BASE } from './courses/registry';
 
 /** 课程按需加载：首屏只载首页，进入课程时再拉取课程包 */
 const AlgorithmCourse = lazy(() => import('./courses/AlgorithmCourse'));
 const OsCourse = lazy(() => import('./courses/OsCourse'));
+const PatCourse = lazy(() => import('./courses/PatCourse'));
 
 /** 旧版单课程链接 → /algo/*（历史收藏与外链不失效） */
 function LegacyDeckRedirect() {
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/" element={<CourseHubPage />} />
         <Route path={`${ALGO_BASE}/*`} element={<AlgorithmCourse />} />
         <Route path={`${OS_BASE}/*`} element={<OsCourse />} />
+        <Route path={`${PAT_BASE}/*`} element={<PatCourse />} />
         <Route path="/course/:name/*" element={<CourseStubPage />} />
         <Route path="/deck/:deckId" element={<LegacyDeckRedirect />} />
         <Route path="/practice" element={<Navigate to={`${ALGO_BASE}/practice`} replace />} />

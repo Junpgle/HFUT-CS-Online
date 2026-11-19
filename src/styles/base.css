@@ -2878,6 +2878,10 @@ pre.code .cl-code:empty + .cl-com {
 .ptag[data-deck='deck6'] { --row-accent: var(--deck6); }
 .ptag[data-deck='deck7'] { --row-accent: var(--deck7); }
 .ptag[data-deck='deck8'] { --row-accent: var(--deck8); }
+/* 程序设计艺术与方法课：整课一个主题色（html[data-deck='pat']），同上回落到 --pat */
+.ptag[data-deck='pat'],
+.pq-group-h[data-deck='pat'],
+.site-nav li[data-deck='pat'] { --row-accent: var(--pat); }
 
 /* --------------------------------------------- 右侧进度轨（仅 ≥1200px） */
 .pq-track {
