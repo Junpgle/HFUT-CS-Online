@@ -3,7 +3,6 @@ import { motion } from 'motion/react';
 import { Link, useLocation } from 'react-router-dom';
 import type { TocEntry } from '../content/types';
 import { useToc } from '../lib/toc';
-import { ALGO_BASE } from '../courses/registry';
 import { decodeEntities } from '../lib/text';
 
 export interface DeckMetaLite {
@@ -12,9 +11,17 @@ export interface DeckMetaLite {
   title: string;
 }
 
-interface Props {
-  decks: DeckMetaLite[];
-  currentDeck: string | null;
+/** 抽屉「全站导航」里的一个条目 */
+export interface NavEntry {
+  to: string;
+  /** 行首徽章（◎ / 讲次序号 / 练） */
+  no: string;
+  label: string;
+  active: boolean;
+  /** 讲次/章节 key → li[data-deck]（行首徽章按讲次取色） */
+  deckKey?: string;
+  /** 额外标记 → li[data-nav]（如 practice 行的样式钩子） */
+  navKey?: string;
 }
 
 /* ------------------------------------------------------------ 目录分组折叠 */
@@ -129,8 +136,9 @@ function Toc() {
 }
 
 /* -------------------------------------------------------------- 侧栏主体 */
-/** 移动端抽屉内容：全站导航（已迁顶栏中部，窄屏保留在抽屉）+ 本页内容 */
-export function SidebarContent({ decks, currentDeck }: Props) {
+/** 移动端抽屉内容：全站导航（已迁顶栏中部，窄屏保留在抽屉）+ 本页内容。
+ * 导航条目由课程注入；首页条目为所有课程共用，由本组件自带。 */
+export function SidebarContent({ nav }: { nav: NavEntry[] }) {
   const { toc } = useToc();
   const location = useLocation();
   return (
@@ -143,26 +151,14 @@ export function SidebarContent({ decks, currentDeck }: Props) {
             课程资料库 · 首页
           </Link>
         </li>
-        <li>
-          <Link to={ALGO_BASE} className={currentDeck === null ? 'active' : undefined}>
-            <span className="nav-no">◎</span>
-            总目录 · 考点速查
-          </Link>
-        </li>
-        {decks.map((d) => (
-          <li key={d.id} data-deck={d.id}>
-            <Link to={`${ALGO_BASE}/deck/${d.id}`} className={currentDeck === d.id ? 'active' : undefined}>
-              <span className="nav-no">{d.no.replace('第', '').replace('讲', '')}</span>
-              {decodeEntities(d.title)}
+        {nav.map((n) => (
+          <li key={n.to} data-deck={n.deckKey} data-nav={n.navKey}>
+            <Link to={n.to} className={n.active ? 'active' : undefined}>
+              <span className="nav-no">{n.no}</span>
+              {decodeEntities(n.label)}
             </Link>
           </li>
         ))}
-        <li data-nav="practice">
-          <Link to={`${ALGO_BASE}/practice`} className={location.pathname === `${ALGO_BASE}/practice` ? 'active' : undefined}>
-            <span className="nav-no">练</span>
-            在线练习 · 420 题
-          </Link>
-        </li>
       </ul>
 
       {toc.length > 0 && <Toc />}
@@ -171,7 +167,7 @@ export function SidebarContent({ decks, currentDeck }: Props) {
 }
 
 /** 桌面侧栏：只显示本页内容目录（全站导航由顶栏中部承接，不再首尾相连地每页重复） */
-export default function Sidebar(_props: Props) {
+export default function Sidebar() {
   const { toc, activeId } = useToc();
   const navRef = useRef<HTMLElement>(null);
 

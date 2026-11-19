@@ -24,6 +24,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '八讲考点手册 · 24 个交互式动画 · 420 题在线练习',
   },
+  {
+    id: 'os',
+    name: '操作系统',
+    semester: '大三上',
+    base: '/os',
+    ready: true,
+    source: '七章课件精讲 · 期末大题精讲 · 4 份试卷在线练习',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -33,6 +41,13 @@ export const STUB_BASE = '/course';
  * 课程整体换前缀只改 courses[0].base 与此处的对应关系。 */
 export const ALGO_BASE = courses[0].base;
 
+/** 操作系统课路由前缀（同上约定） */
+export const OS_BASE = courses[1].base;
+
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);
+}
+
+export function findCourseByBase(base: string): CourseEntry | undefined {
+  return courses.find((c) => c.base === base);
 }

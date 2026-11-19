@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { ALGO_BASE } from '../../courses/registry';
-import type { PracticeQuestion } from '../../content/practice';
+import type { PracticeQuestion, PracticeTag } from '../../content/practice';
 import { decodeEntities } from '../../lib/text';
 import { IconArrowRight, IconCheck, IconChevronDown, IconReset, IconX } from '../icons';
 
@@ -14,6 +14,10 @@ interface Props {
   result?: 'right' | 'wrong' | 'revealed';
   /** 作答结果上报：right / wrong / revealed（直接看答案） */
   onResult: (qid: string, result: 'right' | 'wrong' | 'revealed') => void;
+  /** 知识点标签 → 跳转目标；缺省为算法课（第 N 讲 ?s=） */
+  tagNav?: (t: PracticeTag) => { href: string; tip: string };
+  /** 标签主题色的 data-deck 取值；缺省为算法课的 deckN（计网课传 () => 'net'） */
+  tagDeckKey?: (deck: number) => string;
 }
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -28,7 +32,7 @@ function prettyMath(html: string): string {
 }
 
 /** 在线练习题卡：与 QuizCard 同一套交互语言，外加可跳转的知识点标签与简答题支持 */
-export default function PracticeCard({ quiz, label, result, onResult }: Props) {
+export default function PracticeCard({ quiz, label, result, onResult, tagNav, tagDeckKey }: Props) {
   const navigate = useNavigate();
   const [pulse, setPulse] = useState(false);
 
@@ -293,23 +297,29 @@ export default function PracticeCard({ quiz, label, result, onResult }: Props) {
         )}
       </AnimatePresence>
 
-      {/* 知识点标签：点击跳到对应讲次的对应位置 */}
+      {/* 知识点标签：点击跳到对应讲次/章节的对应位置 */}
       <div className="pq-tags" aria-label="知识点标签">
-        {quiz.tags.map((t) => (
-          <button
-            key={`${t.deck}-${t.sec}-${t.text}`}
-            type="button"
-            className="ptag"
-            data-deck={`deck${t.deck}`}
-            data-tip={`跳转到 第 ${t.deck} 讲 · ${decodeEntities(t.text)}`}
-            title={`跳转到 第 ${t.deck} 讲 · ${decodeEntities(t.text)}`}
-            onClick={() => navigate(`${ALGO_BASE}/deck/deck${t.deck}?s=${t.sec}`)}
-          >
-            <span className="ptag-no">{t.deck}</span>
-            {decodeEntities(t.text)}
-            <IconArrowRight size={11} className="ptag-arrow" />
-          </button>
-        ))}
+        {quiz.tags.map((t) => {
+          const nav = tagNav?.(t) ?? {
+            href: `${ALGO_BASE}/deck/deck${t.deck}?s=${t.sec}`,
+            tip: `跳转到 第 ${t.deck} 讲 · ${decodeEntities(t.text)}`,
+          };
+          return (
+            <button
+              key={`${t.deck}-${t.sec}-${t.text}`}
+              type="button"
+              className="ptag"
+              data-deck={tagDeckKey ? tagDeckKey(t.deck) : `deck${t.deck}`}
+              data-tip={nav.tip}
+              title={nav.tip}
+              onClick={() => navigate(nav.href)}
+            >
+              <span className="ptag-no">{t.deck}</span>
+              {decodeEntities(t.text)}
+              <IconArrowRight size={11} className="ptag-arrow" />
+            </button>
+          );
+        })}
       </div>
     </div>
   );

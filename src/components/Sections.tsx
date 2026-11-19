@@ -13,8 +13,8 @@ interface Props {
   onQuizResult?: (key: string, right: boolean) => void;
 }
 
-/** 把 h2 标题里已有的编号（"1." / "一、"）拆出来单独渲染成主题色刻度 */
-const H2_NO_RE = /^([0-9０-９一二三四五六七八九十]+[.、．])\s*(.+)$/u;
+/** 把 h2 标题里已有的编号（"1." / "2.1" / "一、"）拆出来单独渲染成主题色刻度 */
+const H2_NO_RE = /^((?:[0-9０-９一二三四五六七八九十]+)(?:\.\d+)*[.、．]?)\s*(.+)$/u;
 
 /** 把 content 模块的 sections 渲染成正文（html / demo / quiz 三类 block） */
 export default function Sections({ sections, scores, onQuizResult }: Props) {

@@ -41,6 +41,9 @@
   --deck6: #0071a4;              /* 递归与分治 · 青 */
   --deck7: #8d34c9;              /* 动态规划 · 紫 */
   --deck8: #c0397a;              /* 贪心法 · 玫红 */
+  --os: #4d7c0f;                 /* 操作系统课程 · 橄榄绿（黄绿相位，与算法课的绿/青/琥珀都拉开距离） */
+  --net: #0f766e;                /* 计算机网络课程 · 深青（青绿相位，介于算法课的绿与青之间且明显更暗更灰） */
+  --pat: #6a5aa8;                /* 程序设计艺术与方法课程 · 蓝紫（灰紫相位，介于算法课的靛与紫之间且明显更灰更暗） */
   --deck-accent: var(--accent);  /* 当前讲次色（无讲次时回落全局色） */
 
   /* 提示块底色 */
@@ -129,6 +132,9 @@
   --deck6: #4db8e8;
   --deck7: #bf5af2;
   --deck8: #ff6aa2;
+  --os: #a3cc3f;
+  --net: #2dd4bf;
+  --pat: #a391e0;
 
   --key-bg: rgba(10, 132, 255, 0.14);
   --warn-bg: rgba(255, 159, 10, 0.14);
@@ -182,6 +188,15 @@
 :root[data-deck='deck6'] { --deck-accent: var(--deck6); }
 :root[data-deck='deck7'] { --deck-accent: var(--deck7); }
 :root[data-deck='deck8'] { --deck-accent: var(--deck8); }
+
+/* ------------------------- 操作系统课程 → 橄榄绿主题（html[data-deck='os']） */
+:root[data-deck='os'] { --deck-accent: var(--os); }
+
+/* ------------------------- 计算机网络课程 → 深青主题（html[data-deck='net']） */
+:root[data-deck='net'] { --deck-accent: var(--net); }
+
+/* --------------------- 程序设计艺术与方法课程 → 蓝紫主题（html[data-deck='pat']） */
+:root[data-deck='pat'] { --deck-accent: var(--pat); }
 
 /* ------------------------------------------------------- 无障碍偏好适配 */
 @media (prefers-reduced-transparency: reduce) {

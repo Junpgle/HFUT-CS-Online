@@ -15,7 +15,8 @@ function flashSection(h2: HTMLElement) {
   // h2 由「编号 span + 标题 span」组成，直接 textContent 会连在一起，补回点号分隔
   const no = h2.querySelector('.h2-no')?.textContent;
   const title = h2.querySelector('.h2-title')?.textContent ?? h2.textContent ?? '';
-  flashEl.textContent = no ? `${no}. ${title}` : title;
+  // 「1」补点号成「1.」；「2.1」这类多级编号不再补，避免出现「2.1.」
+  flashEl.textContent = no ? (no.includes('.') ? `${no} ${title}` : `${no}. ${title}`) : title;
   flashEl.classList.remove('show');
   void flashEl.offsetWidth; // 重启动画
   flashEl.classList.add('show');

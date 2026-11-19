@@ -1,21 +1,29 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { ALGO_BASE } from '../courses/registry';
 import { decks, homeData } from '../content';
 import { decodeEntities } from '../lib/text';
 import { IconSearch, IconX } from './icons';
 
-/** 空搜索结果时给出的示例关键词 */
-const SUGGESTIONS = ['Θ 记号', 'LCS', '主方法', '哈夫曼', '循环不变式', 'BFPRT'];
-
-interface IndexItem {
-  kind: '章节' | '动画' | '题目';
-  deck: string | null; // null = 首页
-  deckTitle: string;
+export interface SearchIndexItem {
+  kind: '章节' | '动画' | '题目' | '试卷';
+  /** 所属讲次/章节 id；null = 课程首页 */
+  unit: string | null;
+  unitTitle: string;
   sectionId: string;
   text: string;
 }
+
+/** 空搜索结果时给出的示例关键词 */
+const ALGO_SUGGESTIONS = ['Θ 记号', 'LCS', '主方法', '哈夫曼', '循环不变式', 'BFPRT'];
+
+/** 概览行里每种条目的计数文案（固定顺序） */
+const KIND_UNITS: Record<SearchIndexItem['kind'], string> = {
+  章节: '个章节',
+  动画: '个动画',
+  题目: '道自测题',
+  试卷: '份试卷',
+};
 
 const stripTags = (s: string) => s.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 
@@ -33,8 +41,9 @@ function Highlight({ text, query }: { text: string; query: string }) {
   );
 }
 
-function buildIndex(): IndexItem[] {
-  const items: IndexItem[] = [];
+/** 算法课的搜索索引：各讲目录 / 动画 / 自测题 + 总目录 */
+export function buildAlgoIndex(): SearchIndexItem[] {
+  const items: SearchIndexItem[] = [];
   for (const deck of decks) {
     const demoSection = new Map<string, string>();
     const quizSectionIds = new Set<string>();
@@ -45,12 +54,12 @@ function buildIndex(): IndexItem[] {
       }
     }
     for (const t of deck.toc) {
-      items.push({ kind: '章节', deck: deck.id, deckTitle: decodeEntities(deck.title), sectionId: t.id, text: decodeEntities(t.text) });
+      items.push({ kind: '章节', unit: deck.id, unitTitle: decodeEntities(deck.title), sectionId: t.id, text: decodeEntities(t.text) });
     }
     for (const [name, secId] of demoSection) {
       const block = deck.sections.flatMap((s) => s.blocks).find((b) => b.type === 'demo' && b.name === name);
       const title = block && block.type === 'demo' ? decodeEntities(block.title) : name;
-      items.push({ kind: '动画', deck: deck.id, deckTitle: decodeEntities(deck.title), sectionId: secId, text: title });
+      items.push({ kind: '动画', unit: deck.id, unitTitle: decodeEntities(deck.title), sectionId: secId, text: title });
     }
     for (const sec of deck.sections) {
       if (!quizSectionIds.has(sec.id)) continue;
@@ -58,8 +67,8 @@ function buildIndex(): IndexItem[] {
         if (b.type !== 'quiz') continue;
         items.push({
           kind: '题目',
-          deck: deck.id,
-          deckTitle: decodeEntities(deck.title),
+          unit: deck.id,
+          unitTitle: decodeEntities(deck.title),
           sectionId: sec.id,
           text: decodeEntities(stripTags(b.quiz.question)).slice(0, 64),
         });
@@ -67,16 +76,25 @@ function buildIndex(): IndexItem[] {
     }
   }
   for (const t of homeData.toc) {
-    items.push({ kind: '章节', deck: null, deckTitle: '总目录', sectionId: t.id, text: decodeEntities(t.text) });
+    items.push({ kind: '章节', unit: null, unitTitle: '总目录', sectionId: t.id, text: decodeEntities(t.text) });
   }
   return items;
 }
 
+interface Props {
+  /** 搜索索引（由各课程自行构建） */
+  index: SearchIndexItem[];
+  /** 条目 → 跳转路由 */
+  linkTo: (item: SearchIndexItem) => string;
+  /** 空结果时的示例关键词 */
+  suggestions?: string[];
+}
+
 /**
  * 顶栏内联搜索框：点击在原位展开输入框，下拉菜单展示结果 / 概览，
- * 不再弹出居中的覆盖层。
+ * 不再弹出居中的覆盖层。索引与跳转由课程注入，本组件只管交互与样式。
  */
-export default function SearchBox() {
+export default function SearchBox({ index, linkTo, suggestions = ALGO_SUGGESTIONS }: Props) {
   const navigate = useNavigate();
   const reduced = useReducedMotion();
   const [open, setOpen] = useState(false);
@@ -84,18 +102,26 @@ export default function SearchBox() {
   const [active, setActive] = useState(0);
   const boxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const index = useMemo(buildIndex, []);
 
   const counts = useMemo(() => {
-    const c = { 章节: 0, 动画: 0, 题目: 0 };
-    for (const it of index) c[it.kind] += 1;
+    const c: Record<string, number> = {};
+    for (const it of index) c[it.kind] = (c[it.kind] ?? 0) + 1;
     return c;
   }, [index]);
+
+  const statsLabel = useMemo(
+    () =>
+      (Object.keys(KIND_UNITS) as SearchIndexItem['kind'][])
+        .filter((k) => counts[k])
+        .map((k) => `${counts[k]} ${KIND_UNITS[k]}`)
+        .join(' · '),
+    [counts],
+  );
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
-    const hits: { item: IndexItem; score: number }[] = [];
+    const hits: { item: SearchIndexItem; score: number }[] = [];
     for (const item of index) {
       const hay = item.text.toLowerCase();
       const idx = hay.indexOf(q);
@@ -118,10 +144,9 @@ export default function SearchBox() {
 
   useEffect(() => setActive(0), [query]);
 
-  const select = (item: IndexItem) => {
+  const select = (item: SearchIndexItem) => {
     setOpen(false);
-    if (item.deck) navigate(`${ALGO_BASE}/deck/${item.deck}?s=${item.sectionId}`);
-    else navigate(`${ALGO_BASE}/?s=${item.sectionId}`);
+    navigate(linkTo(item));
   };
 
   const onKeyDown = (e: ReactKeyboardEvent) => {
@@ -189,7 +214,7 @@ export default function SearchBox() {
                       没有匹配的内容
                       <span className="palette-suggest">
                         试试：
-                        {SUGGESTIONS.map((s) => (
+                        {suggestions.map((s) => (
                           <button key={s} type="button" className="palette-chip" onClick={() => setQuery(s)}>
                             {s}
                           </button>
@@ -198,12 +223,10 @@ export default function SearchBox() {
                     </>
                   ) : (
                     <span className="palette-overview">
-                      <span className="palette-stats">
-                        {counts['章节']} 个章节 · {counts['动画']} 个动画 · {counts['题目']} 道自测题
-                      </span>
+                      {statsLabel && <span className="palette-stats">{statsLabel}</span>}
                       <span className="palette-suggest">
                         热门：
-                        {SUGGESTIONS.map((s) => (
+                        {suggestions.map((s) => (
                           <button key={s} type="button" className="palette-chip" onClick={() => setQuery(s)}>
                             {s}
                           </button>
@@ -215,7 +238,7 @@ export default function SearchBox() {
               )}
               {results.map((item, i) => (
                 <li
-                  key={`${item.deck}-${item.sectionId}-${i}`}
+                  key={`${item.unit}-${item.sectionId}-${i}`}
                   className={`palette-item${i === active ? ' active' : ''}`}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => select(item)}
@@ -224,7 +247,7 @@ export default function SearchBox() {
                   <span className="pi-text">
                     <Highlight text={item.text} query={query} />
                   </span>
-                  <span className="pi-path">{item.deck ? item.deckTitle : '首页'}</span>
+                  <span className="pi-path">{item.unit ? item.unitTitle : '首页'}</span>
                 </li>
               ))}
             </ul>
