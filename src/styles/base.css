@@ -2886,6 +2886,10 @@ pre.code .cl-code:empty + .cl-com {
 .ptag[data-deck='pat'],
 .pq-group-h[data-deck='pat'],
 .site-nav li[data-deck='pat'] { --row-accent: var(--pat); }
+/* 人工智能原理课：整课一个主题色（html[data-deck='ai']），同上回落到 --ai */
+.ptag[data-deck='ai'],
+.pq-group-h[data-deck='ai'],
+.site-nav li[data-deck='ai'] { --row-accent: var(--ai); }
 
 /* --------------------------------------------- 右侧进度轨（仅 ≥1200px） */
 .pq-track {
@@ -3174,4 +3178,52 @@ pre.code .cl-code:empty + .cl-com {
 }
 .net-paper-back:hover {
   color: var(--deck-accent);
+}
+
+/* --------------------------------------------- 方向背景折叠块（人工智能原理题库） */
+.ai-kp {
+  margin: -4px 0 14px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: 12px;
+  background: var(--panel);
+  overflow: hidden;
+}
+.ai-kp summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-3);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: color 140ms;
+}
+.ai-kp summary::-webkit-details-marker {
+  display: none;
+}
+.ai-kp summary:hover {
+  color: var(--deck-accent);
+}
+/* 折叠箭头（closed 朝右 / open 朝下），与热力图同一语言 */
+.ai-kp summary::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  margin-top: -2px;
+  margin-left: auto;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 160ms var(--press-ease);
+}
+.ai-kp[open] summary::after {
+  transform: rotate(45deg);
+}
+.ai-kp-body {
+  padding: 2px 16px 14px;
+  font-size: 0.9rem;
+  color: var(--ink-2);
 }

@@ -48,6 +48,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '三讲课件精讲 · ICPC 讲义六章 · 省赛真题在线练习',
   },
+  {
+    id: 'artificial-intelligence',
+    name: '人工智能原理',
+    semester: '大三上',
+    base: '/ai',
+    ready: true,
+    source: '设计报告题库整理 · 15 个选题在线练习（课件未收录）',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -65,6 +73,9 @@ export const NET_BASE = courses[2].base;
 
 /** 程序设计艺术与方法课路由前缀（同上约定） */
 export const PAT_BASE = courses[3].base;
+
+/** 人工智能原理课路由前缀（同上约定） */
+export const AI_BASE = courses[4].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

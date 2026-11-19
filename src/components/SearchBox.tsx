@@ -6,7 +6,7 @@ import { decodeEntities } from '../lib/text';
 import { IconSearch, IconX } from './icons';
 
 export interface SearchIndexItem {
-  kind: '章节' | '动画' | '题目' | '试卷';
+  kind: '章节' | '动画' | '题目' | '试卷' | '方向';
   /** 所属讲次/章节 id；null = 课程首页 */
   unit: string | null;
   unitTitle: string;
@@ -23,6 +23,7 @@ const KIND_UNITS: Record<SearchIndexItem['kind'], string> = {
   动画: '个动画',
   题目: '道自测题',
   试卷: '份试卷',
+  方向: '个方向',
 };
 
 const stripTags = (s: string) => s.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();

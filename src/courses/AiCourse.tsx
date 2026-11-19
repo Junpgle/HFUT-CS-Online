@@ -1,0 +1,185 @@
+import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { Navigate, Route, Routes, useLocation, useNavigationType, useSearchParams } from 'react-router-dom';
+import { aiPaper } from '../content/ai';
+import TopBar, { type CourseTab } from '../components/TopBar';
+import Sidebar, { SidebarContent, type NavEntry } from '../components/Sidebar';
+import MobileDrawer from '../components/MobileDrawer';
+import type { SearchIndexItem } from '../components/SearchBox';
+import AiPracticePage from '../pages/ai/AiPracticePage';
+import { AI_BASE, findCourseByBase } from './registry';
+import { recordCourseView } from '../lib/recentCourses';
+import { decodeEntities } from '../lib/text';
+
+/** 各路由的滚动记忆（POP 导航时恢复） */
+const scrollPositions = new Map<string, number>();
+
+/** 人工智能课搜索索引：5 个方向 + 15 个设计题目 */
+function buildAiIndex(): SearchIndexItem[] {
+  const items: SearchIndexItem[] = [];
+  for (const sec of aiPaper.sections) {
+    items.push({ kind: '方向', unit: null, unitTitle: '设计报告题库', sectionId: sec.id, text: decodeEntities(sec.title) });
+  }
+  for (const q of aiPaper.questions) {
+    const plain = decodeEntities(q.question.replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
+    items.push({ kind: '题目', unit: null, unitTitle: '设计报告题库', sectionId: q.id, text: plain.slice(0, 30) });
+  }
+  return items;
+}
+
+/**
+ * 「人工智能原理」课程根组件 —— 挂在 /ai/* 下。
+ * 课件为 0：本课程只含设计报告题库的在线练习（单试卷直接展示），
+ * 布局与算法课完全一致（同一套上游样式），主题色为品红（--ai）。
+ */
+export default function AiCourse() {
+  const location = useLocation();
+  const [params] = useSearchParams();
+  const s = params.get('s');
+
+  // 记录「最近查看」（本地 localStorage），供首页最近查看板块使用
+  const course = findCourseByBase(AI_BASE);
+  useEffect(() => {
+    if (course) recordCourseView(course.name);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const navType = useNavigationType();
+  const reduced = useReducedMotion();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // 课程页 → html[data-deck='ai']：整套课程统一切换到人工智能主题色（品红）
+  useEffect(() => {
+    document.documentElement.dataset.deck = 'ai';
+    return () => {
+      delete document.documentElement.dataset.deck;
+    };
+  }, []);
+
+  // Esc 关闭抽屉
+  useEffect(() => {
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setDrawerOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // 滚动记忆：离开时保存；POP 恢复；无 ?s= 的新导航回顶部（定位交给页面处理）
+  useEffect(() => {
+    const key = location.key;
+    return () => {
+      scrollPositions.set(key, window.scrollY);
+    };
+  }, [location.key]);
+
+  useEffect(() => {
+    if (navType === 'POP') {
+      const y = scrollPositions.get(location.key) ?? 0;
+      requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'auto' }));
+    } else if (!location.search) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [location.key, navType, location.search]);
+
+  // 路由切换时关闭抽屉
+  useEffect(() => setDrawerOpen(false), [location.pathname]);
+
+  const practicePath = `${AI_BASE}/practice`;
+
+  // 顶栏导航：5 个方向（题库的高一级单位）+ 在线练习
+  const tabs = useMemo<CourseTab[]>(
+    () => [
+      ...aiPaper.sections.map((sec) => ({
+        to: `${practicePath}?s=${sec.id}`,
+        full: sec.title,
+        short: sec.short.slice(0, 2),
+        active: s === sec.id,
+        key: null,
+        tip: `设计报告题库 · ${sec.title}（${sec.questionIds.length} 题）`,
+      })),
+      {
+        to: practicePath,
+        full: '在线练习',
+        short: '练习',
+        active: !s,
+        key: null,
+        tip: '设计报告题库 · 15 个选题',
+        extra: 'practice-tab',
+      },
+    ],
+    [s],
+  );
+
+  // 抽屉导航：题库的 5 个方向 + 在线练习
+  const nav = useMemo<NavEntry[]>(
+    () => [
+      ...aiPaper.sections.map((sec) => ({
+        to: `${practicePath}?s=${sec.id}`,
+        no: `${sec.no}`,
+        label: `${sec.title} · ${sec.questionIds.length} 题`,
+        active: s === sec.id,
+        deckKey: 'ai',
+      })),
+      {
+        to: practicePath,
+        no: '练',
+        label: '在线练习 · 设计报告题库',
+        active: !s,
+        navKey: 'practice',
+      },
+    ],
+    [s],
+  );
+
+  // 搜索：方向/题目索引 + 跳转（同页 ?s= 定位）
+  const searchIndex = useMemo(buildAiIndex, []);
+  const searchLinkTo = (item: SearchIndexItem) => `${practicePath}?s=${item.sectionId}`;
+
+  return (
+    <div className="shell">
+      <TopBar
+        courseName="人工智能原理"
+        courseBase={AI_BASE}
+        courseTip="人工智能原理 · 设计报告题库"
+        tabs={tabs}
+        searchIndex={searchIndex}
+        searchLinkTo={searchLinkTo}
+        onOpenSidebar={() => setDrawerOpen(true)}
+      />
+
+      {/* 题库全程都是练习页：不上侧栏，正文占满整个版心 */}
+      <div className="shell-body no-sidebar">
+        <Sidebar />
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={location.pathname}
+            variants={{
+              enter: reduced ? { opacity: 0 } : { opacity: 0, y: 12 },
+              center: { opacity: 1, x: 0, y: 0 },
+              leave: reduced ? { opacity: 0 } : { opacity: 0, y: -8 },
+            }}
+            initial="enter"
+            animate="center"
+            exit="leave"
+            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <Routes location={location}>
+              <Route index element={<Navigate to={practicePath} replace />} />
+              <Route path="practice" element={<AiPracticePage />} />
+              <Route path="*" element={<Navigate to={practicePath} replace />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <div className="drawer-root">
+        <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+          <SidebarContent nav={nav} />
+        </MobileDrawer>
+      </div>
+    </div>
+  );
+}
