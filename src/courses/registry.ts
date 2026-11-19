@@ -56,6 +56,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '设计报告题库整理 · 15 个选题在线练习（课件未收录）',
   },
+  {
+    id: 'university-physics',
+    name: '大学物理',
+    semester: '大二上',
+    base: '/phys',
+    ready: true,
+    source: '十二章课件精讲（力学·热学·电磁学·光学）· 4 份期末试卷在线练习',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -76,6 +84,9 @@ export const PAT_BASE = courses[3].base;
 
 /** 人工智能原理课路由前缀（同上约定） */
 export const AI_BASE = courses[4].base;
+
+/** 大学物理课路由前缀（同上约定） */
+export const PHYS_BASE = courses[5].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

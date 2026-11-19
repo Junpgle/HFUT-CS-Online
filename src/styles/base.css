@@ -2890,6 +2890,10 @@ pre.code .cl-code:empty + .cl-com {
 .ptag[data-deck='ai'],
 .pq-group-h[data-deck='ai'],
 .site-nav li[data-deck='ai'] { --row-accent: var(--ai); }
+/* 大学物理课：整课一个主题色（html[data-deck='phys']），同上回落到 --phys */
+.ptag[data-deck='phys'],
+.pq-group-h[data-deck='phys'],
+.site-nav li[data-deck='phys'] { --row-accent: var(--phys); }
 
 /* --------------------------------------------- 右侧进度轨（仅 ≥1200px） */
 .pq-track {

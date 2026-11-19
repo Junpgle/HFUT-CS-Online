@@ -1,0 +1,215 @@
+import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
+import { physDecks, physHome, physPapers } from '../content/phys';
+import TopBar, { type CourseTab } from '../components/TopBar';
+import Sidebar, { SidebarContent, type NavEntry } from '../components/Sidebar';
+import MobileDrawer from '../components/MobileDrawer';
+import type { SearchIndexItem } from '../components/SearchBox';
+import PhysHome from '../pages/phys/Home';
+import PhysDeck from '../pages/phys/Deck';
+import PhysPracticeList from '../pages/phys/PracticeList';
+import PhysPracticePaper from '../pages/phys/PracticePaper';
+import { PHYS_BASE } from './registry';
+import { recordCourseView } from '../lib/recentCourses';
+import { decodeEntities } from '../lib/text';
+
+/** 各路由的滚动记忆（POP 导航时恢复） */
+const scrollPositions = new Map<string, number>();
+
+/** 本课程的搜索索引：章目录 + 课程主页目录 + 试卷题目（跳在线练习） */
+export function buildPhysIndex(): SearchIndexItem[] {
+  const items: SearchIndexItem[] = [];
+  for (const deck of physDecks) {
+    for (const t of deck.toc) {
+      if (t.level !== 2) continue;
+      items.push({ kind: '章节', unit: deck.id, unitTitle: decodeEntities(deck.title), sectionId: t.id, text: decodeEntities(t.text) });
+    }
+  }
+  for (const paper of physPapers) {
+    for (const q of paper.questions) {
+      items.push({
+        kind: '题目',
+        unit: null,
+        unitTitle: '在线练习',
+        sectionId: q.id,
+        text: `${q.no} ${q.title}`,
+      });
+    }
+  }
+  for (const t of physHome.toc) {
+    items.push({ kind: '章节', unit: null, unitTitle: '课程主页', sectionId: t.id, text: decodeEntities(t.text) });
+  }
+  return items;
+}
+
+const DECK_ID_RE = /^\/phys\/deck\/(deck(?:[1-9]|1[0-2]))$/;
+
+/**
+ * 「大学物理」课程根组件 —— 挂在 /phys/* 下。
+ * 布局与交互完全复用上游组件（TopBar/Sidebar/抽屉/页面骨架），
+ * 课程只注入自己的数据：12 章课件精讲 + 4 份期末试卷在线练习。
+ */
+export default function PhysCourse() {
+  const location = useLocation();
+
+  // 记录「最近查看」（本地 localStorage），供首页最近查看板块使用
+  useEffect(() => {
+    recordCourseView('大学物理');
+  }, []);
+  const navType = useNavigationType();
+  const reduced = useReducedMotion();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const currentDeck = useMemo(() => {
+    const m = location.pathname.match(DECK_ID_RE);
+    return m ? m[1] : null;
+  }, [location.pathname]);
+
+  const subtitle = physDecks.find((d) => d.id === currentDeck)?.subtitle;
+
+  // 整门课程共用一个主题色（藕紫）：html[data-deck='phys'] → --deck-accent
+  useEffect(() => {
+    document.documentElement.dataset.deck = 'phys';
+    return () => {
+      delete document.documentElement.dataset.deck;
+    };
+  }, []);
+
+  // Esc 关闭抽屉
+  useEffect(() => {
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setDrawerOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // 滚动记忆：离开时保存；POP 恢复；新导航回顶部（?s= 定位交给页面处理）
+  useEffect(() => {
+    const key = location.key;
+    return () => {
+      scrollPositions.set(key, window.scrollY);
+    };
+  }, [location.key]);
+
+  useEffect(() => {
+    if (navType === 'POP') {
+      const y = scrollPositions.get(location.key) ?? 0;
+      requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'auto' }));
+    } else if (!location.search) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [location.key, navType, location.search]);
+
+  // 路由切换时关闭抽屉
+  useEffect(() => setDrawerOpen(false), [location.pathname]);
+
+  // 顶栏导航：总目录 + 十二章 + 在线练习
+  const tabs = useMemo<CourseTab[]>(
+    () => [
+      { to: `${PHYS_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !location.pathname.startsWith(`${PHYS_BASE}/practice`), key: null, tip: '课程主页 · 内容地图与参考资料' },
+      ...physDecks.map((d, i) => ({
+        to: `${PHYS_BASE}/deck/${d.id}`,
+        full: d.no,
+        short: String(i + 1),
+        active: d.id === currentDeck,
+        key: null,
+        tip: decodeEntities(d.title),
+      })),
+      {
+        to: `${PHYS_BASE}/practice`,
+        full: '在线练习',
+        short: '练习',
+        active: location.pathname.startsWith(`${PHYS_BASE}/practice`),
+        key: null,
+        tip: '在线练习 · 4 份期末试卷 42 题',
+        extra: 'practice-tab',
+      },
+    ],
+    [currentDeck, location.pathname],
+  );
+
+  // 抽屉导航：首页条目由 SidebarContent 自带，这里只给课程内条目
+  const nav = useMemo<NavEntry[]>(
+    () => [
+      { to: `${PHYS_BASE}`, no: '◎', label: '课程主页 · 内容地图', active: !currentDeck && !location.pathname.startsWith(`${PHYS_BASE}/practice`) },
+      ...physDecks.map((d, i) => ({
+        to: `${PHYS_BASE}/deck/${d.id}`,
+        no: String(i + 1),
+        label: `${d.no} ${d.title}`,
+        active: d.id === currentDeck,
+        // 整课一个主题色：data-deck='phys' → --phys（不用算法课的 deckN 配色）
+        deckKey: 'phys',
+      })),
+      {
+        to: `${PHYS_BASE}/practice`,
+        no: '练',
+        label: '在线练习 · 4 份期末试卷',
+        active: location.pathname.startsWith(`${PHYS_BASE}/practice`),
+        navKey: 'practice',
+      },
+    ],
+    [currentDeck, location.pathname],
+  );
+
+  // 搜索：章/课程主页目录 + 试卷题目索引
+  const searchIndex = useMemo(buildPhysIndex, []);
+  const searchLinkTo = (item: SearchIndexItem) => {
+    if (item.unit) return `${PHYS_BASE}/deck/${item.unit}?s=${item.sectionId}`;
+    // 题目条目跳在线练习并定位到题；其余为课程主页目录
+    return item.unitTitle === '在线练习'
+      ? `${PHYS_BASE}/practice?s=${item.sectionId}`
+      : `${PHYS_BASE}/?s=${item.sectionId}`;
+  };
+
+  return (
+    <div className="shell phys-scope">
+      <TopBar
+        courseName="大学物理"
+        courseBase={PHYS_BASE}
+        courseTip="大学物理 · 力学 热学 电磁学 光学"
+        subtitle={subtitle}
+        tabs={tabs}
+        searchIndex={searchIndex}
+        searchLinkTo={searchLinkTo}
+        onOpenSidebar={() => setDrawerOpen(true)}
+      />
+
+      {/* 练习页不上报目录（无侧栏），让正文占满整个版心 */}
+      <div className={`shell-body${location.pathname.startsWith(`${PHYS_BASE}/practice`) ? ' no-sidebar' : ''}`}>
+        <Sidebar />
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={location.pathname}
+            variants={{
+              enter: reduced ? { opacity: 0 } : { opacity: 0, y: 12 },
+              center: { opacity: 1, x: 0, y: 0 },
+              leave: reduced ? { opacity: 0 } : { opacity: 0, y: -8 },
+            }}
+            initial="enter"
+            animate="center"
+            exit="leave"
+            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <Routes location={location}>
+              <Route index element={<PhysHome />} />
+              <Route path="deck/:deckId" element={<PhysDeck />} />
+              <Route path="practice" element={<PhysPracticeList />} />
+              <Route path="practice/:paperId" element={<PhysPracticePaper />} />
+              <Route path="*" element={<Navigate to={PHYS_BASE} replace />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <div className="drawer-root">
+        <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+          <SidebarContent nav={nav} />
+        </MobileDrawer>
+      </div>
+    </div>
+  );
+}
