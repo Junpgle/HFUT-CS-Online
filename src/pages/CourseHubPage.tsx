@@ -151,16 +151,14 @@ export default function CourseHubPage() {
           className={`course-card${c.ready ? ' ready' : ''}`}
           aria-label={c.ready ? `${c.name}，进入课程` : `${c.name}，查看资料统计`}
         >
-          <span className="course-title">
-            {c.name}
-            {c.ready && <span className="course-go" aria-hidden="true">→</span>}
-          </span>
+          <span className="course-title">{c.name}</span>
           {c.source && <span className="course-desc">{c.source}</span>}
           {c.total > 0 && (
             <span className="course-meta">
               课件 {c.courseware} · 试题 {c.exams} · 附件 {c.misc} · 共 {c.total} 份
             </span>
           )}
+          {c.ready && <span className="course-go" aria-hidden="true">→</span>}
         </Link>
         {/* 收藏按钮：卡片 Link 的兄弟节点，避免嵌套可点击元素 */}
         <button
