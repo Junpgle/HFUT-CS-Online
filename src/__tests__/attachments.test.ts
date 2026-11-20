@@ -15,6 +15,10 @@ interface AttNode {
   p: string;
   s?: number;
   c?: AttNode[];
+  /** 来源仓库 key（文件清单.csv 溯源） */
+  r?: string;
+  /** 上游仓库内路径 */
+  sp?: string;
 }
 interface AttManifest {
   semester: string;
@@ -23,6 +27,7 @@ interface AttManifest {
 }
 
 const CATS = ['课件', '试题', '附件'];
+const REPO_KEYS = ['sunmiao', 'styitches', 'mox', 'luna'];
 
 const countFiles = (nodes: AttNode[]): number => nodes.reduce((a, x) => a + (x.c ? countFiles(x.c) : 1), 0);
 
@@ -36,6 +41,12 @@ const checkNodes = (nodes: AttNode[]) => {
       checkNodes(node.c);
     } else {
       expect(node.s ?? -1).toBeGreaterThanOrEqual(0);
+      // 溯源：r 与 sp 成对出现，r 必须是四个上游仓库之一
+      if (node.r !== undefined || node.sp !== undefined) {
+        expect(REPO_KEYS).toContain(node.r);
+        expect(node.sp).not.toContain('..');
+        expect(node.sp!.length).toBeGreaterThan(0);
+      }
     }
   }
 };

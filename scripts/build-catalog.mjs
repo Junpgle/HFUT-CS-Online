@@ -3,7 +3,7 @@
  * ② public/attachments/<学期>__<课程>.json —— 各课程附件清单（附件页左目录树 / 右预览用）。
  * 目录结构契约见 data/整理说明.md：<学期>/<课程>/{课件,试题,附件}/**。
  * 只读目录名、文件名与文件大小，不读取文件内容。生成物随提交入库，运行时零 IO。 */
-import { readdirSync, statSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { readdirSync, statSync, writeFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
 
@@ -41,6 +41,23 @@ function pad(name) {
 
 const sortName = (a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN');
 
+/* 溯源表：data/文件清单.csv 的 目标路径 → { 仓库, 源路径 }（附件页据此生成仓库直链下载）。
+ * CSV 五列：来源仓库,源路径,目标路径,类别,处理；路径不含半角逗号（已核），按逗号切分即可。
+ * CI 上无此文件时全部节点不带 r/sp，附件页下载按钮降级为不可用态。 */
+function loadProvenance() {
+  const csvPath = join(MATERIALS, '文件清单.csv');
+  if (!existsSync(csvPath)) return new Map();
+  const map = new Map();
+  for (const line of readFileSync(csvPath, 'utf8').split('\n').slice(1)) {
+    const t = line.trim();
+    if (!t) continue;
+    const [repo, src, dest] = t.split(',');
+    if (repo && src && dest) map.set(dest, { repo, src });
+  }
+  return map;
+}
+const PROVENANCE = loadProvenance();
+
 /* 列出目录内容：目录在前、文件在后，各组内按中文序。 */
 function listSorted(d) {
   return readdirSync(d)
@@ -54,8 +71,17 @@ function listSorted(d) {
 
 /* 递归构建课程附件树。节点：目录 { n, p, c }，文件 { n, p, s }（p 为相对课程目录的 POSIX 路径）。
  * 顶层第一段目录名是类别（课件/试题/附件）则独立成组，其余全部归入「附件」。 */
-function buildCourseTree(dir) {
+function buildCourseTree(dir, provKey) {
   const roots = { 课件: [], 试题: [], 附件: [] };
+  const fileNode = (name, rel, size) => {
+    const node = { n: name, p: rel, s: size };
+    const prov = PROVENANCE.get(`${provKey}/${rel}`);
+    if (prov) {
+      node.r = prov.repo;
+      node.sp = prov.src;
+    }
+    return node;
+  };
   const pushChildren = (d, siblings) => {
     for (const e of listSorted(d)) {
       const rel = relative(dir, e.p).replaceAll('\\', '/');
@@ -64,7 +90,7 @@ function buildCourseTree(dir) {
         siblings.push(node);
         pushChildren(e.p, node.c);
       } else {
-        siblings.push({ n: e.name, p: rel, s: e.st.size });
+        siblings.push(fileNode(e.name, rel, e.st.size));
       }
     }
   };
@@ -75,7 +101,7 @@ function buildCourseTree(dir) {
       bucket.push(node);
       pushChildren(e.p, node.c);
     } else {
-      bucket.push({ n: e.name, p: e.name, s: e.st.size });
+      bucket.push(fileNode(e.name, e.name, e.st.size));
     }
   }
   return roots;
@@ -114,7 +140,7 @@ for (const sem of semesters) {
     const counts = countCourse(base);
     const total = counts.课件 + counts.试题 + counts.附件;
     totalFiles += total;
-    const tree = buildCourseTree(base);
+    const tree = buildCourseTree(base, `${sem}/${course}`);
     manifests.push({
       semester: sem,
       course,
