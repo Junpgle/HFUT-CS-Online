@@ -1,0 +1,68 @@
+{
+ "algo": {
+  "practice_light": "#4d7c0f",
+  "practice_light_adj": 106.5,
+  "practice_dark": "#a3cc3f",
+  "practice_dark_adj": 115.0
+ },
+ "os": {
+  "practice_light": "#248a3d",
+  "practice_light_adj": 93.8,
+  "practice_dark": "#30d158",
+  "practice_dark_adj": 106.9
+ },
+ "net": {
+  "practice_light": "#248a3d",
+  "practice_light_adj": 94.7,
+  "practice_dark": "#30d158",
+  "practice_dark_adj": 111.0
+ },
+ "pat": {
+  "practice_light": "#d70015",
+  "practice_light_adj": 109.9,
+  "att_light": "#5e3131",
+  "att_light_adj": 68.8,
+  "practice_dark": "#30d158",
+  "practice_dark_adj": 113.8
+ },
+ "ai": {
+  "practice_light": "#248a3d",
+  "practice_light_adj": 128.4,
+  "att_light": "#2e7d5b",
+  "att_light_adj": 25.2,
+  "practice_dark": "#30d158",
+  "practice_dark_adj": 134.2,
+  "att_dark": "#7cc9a3",
+  "att_dark_adj": 48.8
+ },
+ "sa": {
+  "att_light": "#8d34c9",
+  "att_light_adj": 125.6,
+  "att_dark": "#bf5af2",
+  "att_dark_adj": 130.1
+ },
+ "phys": {
+  "practice_light": "#d70015",
+  "practice_light_adj": 101.1,
+  "att_light": "#5e3131",
+  "att_light_adj": 68.8,
+  "practice_dark": "#ff453a",
+  "practice_dark_adj": 97.7,
+  "att_dark": "#ff6aa2",
+  "att_dark_adj": 50.5
+ },
+ "ca": {
+  "practice_light": "#5e5ce6",
+  "practice_light_adj": 103.3,
+  "practice_dark": "#bf5af2",
+  "practice_dark_adj": 110.0
+ },
+ "math": {
+  "practice_light": "#8d34c9",
+  "practice_light_adj": 125.6,
+  "att_light": "#b53aad",
+  "att_light_adj": 25.3,
+  "practice_dark": "#bf5af2",
+  "practice_dark_adj": 130.1
+ }
+}

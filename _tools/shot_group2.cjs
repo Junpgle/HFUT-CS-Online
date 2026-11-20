@@ -1,0 +1,17 @@
+const puppeteer = require('puppeteer-core');
+(async () => {
+  const browser = await puppeteer.launch({
+    executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
+    headless: 'new',
+    args: ['--window-size=1440,1000', '--force-device-scale-factor=2'],
+  });
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 2 });
+  await page.goto('http://localhost:5173/HFUT-CS-Online/#/os/practice/ac-2022a', { waitUntil: 'networkidle2', timeout: 30000 });
+  await new Promise((r) => setTimeout(r, 900));
+  const el = await page.$('.pq-group-h');
+  await el.screenshot({ path: '_tools/lab_out/group-zoom.png' });
+  const txt = await el.evaluate((e) => e.textContent);
+  console.log('header text:', txt);
+  await browser.close();
+})().catch((e) => { console.error(e.message); process.exit(1); });

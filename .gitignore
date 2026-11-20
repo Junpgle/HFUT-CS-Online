@@ -19,3 +19,12 @@ data/**
 
 # 本地截图产物
 _tools/shots/
+
+# 会话临时产物（截图 / 抽取中间件 / IDE 状态），工具脚本本身入库
+_tools/lab_out/
+_tools/lab_pages/
+_tools/lab_src/
+_tools/*_out/
+_tools/*_tmp/
+_tools/pptx/
+.kilo/
