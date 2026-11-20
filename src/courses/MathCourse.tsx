@@ -11,6 +11,7 @@ import MathHomePage from '../pages/MathHomePage';
 import MathChapterPage from '../pages/MathChapterPage';
 import MathPracticeIndex from '../pages/MathPracticeIndex';
 import MathPaperPage from '../pages/MathPaperPage';
+import CourseAttachmentsPage from '../pages/CourseAttachmentsPage';
 import { recordCourseView } from '../lib/recentCourses';
 import { decodeEntities } from '../lib/text';
 
@@ -52,6 +53,7 @@ export default function MathCourse() {
   }, [location.pathname]);
 
   const onPractice = location.pathname.startsWith(`${MATH_BASE}/practice`);
+  const onAtt = location.pathname.startsWith(`${MATH_BASE}/attachments`);
   const subtitle = mathChapters.find((c) => c.id === currentChapter)?.subtitle;
 
   // 课程主题色：html[data-deck='math'] → --deck-accent = 苔藓绿
@@ -106,10 +108,10 @@ export default function MathCourse() {
 
   useEffect(() => setDrawerOpen(false), [location.pathname]);
 
-  // 顶栏导航：总目录 + 第 8～13 章 + 在线练习（末位固定）
+  // 顶栏导航：总目录 + 第 8～13 章 + 在线练习 + 附件（末位固定）
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${MATH_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice, key: null, tip: '课程首页 · 课程与资料概况' },
+      { to: `${MATH_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice && !onAtt, key: null, tip: '课程首页 · 课程与资料概况' },
       ...mathChapters.map((c) => ({
         to: `${MATH_BASE}/chapter/${c.id}`,
         full: c.no,
@@ -127,14 +129,22 @@ export default function MathCourse() {
         tip: `在线练习 · ${mathPapers.length} 份试卷`,
         extra: 'practice-tab',
       },
+      {
+        to: `${MATH_BASE}/attachments`,
+        full: '附件',
+        short: '附件',
+        active: onAtt,
+        key: null,
+        tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+      },
     ],
-    [currentChapter, onPractice],
+    [currentChapter, onPractice, onAtt],
   );
 
   // 抽屉导航：首页条目由 SidebarContent 自带，这里只给课程内条目
   const nav = useMemo<NavEntry[]>(
     () => [
-      { to: `${MATH_BASE}`, no: '◎', label: '总目录 · 课程概况', active: !currentChapter && !onPractice },
+      { to: `${MATH_BASE}`, no: '◎', label: '总目录 · 课程概况', active: !currentChapter && !onPractice && !onAtt },
       ...mathChapters.map((c) => ({
         to: `${MATH_BASE}/chapter/${c.id}`,
         no: c.id.slice(2),
@@ -149,8 +159,14 @@ export default function MathCourse() {
         active: onPractice,
         navKey: 'practice',
       },
+      {
+        to: `${MATH_BASE}/attachments`,
+        no: '件',
+        label: '附件资料',
+        active: onAtt,
+      },
     ],
-    [currentChapter, onPractice],
+    [currentChapter, onPractice, onAtt],
   );
 
   const searchIndex = useMemo(buildMathIndex, []);
@@ -171,8 +187,8 @@ export default function MathCourse() {
         onOpenSidebar={() => setDrawerOpen(true)}
       />
 
-      {/* 练习页不上报目录（无侧栏），让正文占满整个版心 */}
-      <div className={`shell-body${onPractice ? ' no-sidebar' : ''}`}>
+      {/* 练习页/附件页不上报目录（无侧栏），让正文占满整个版心 */}
+      <div className={`shell-body${onPractice || onAtt ? ' no-sidebar' : ''}`}>
         <Sidebar />
         <AnimatePresence mode="wait" initial={false} custom={dir}>
           <motion.div
@@ -195,6 +211,7 @@ export default function MathCourse() {
               <Route path="chapter/:chapterId" element={<MathChapterPage />} />
               <Route path="practice" element={<MathPracticeIndex />} />
               <Route path="practice/:paperId" element={<MathPaperPage />} />
+              <Route path="attachments" element={<CourseAttachmentsPage />} />
               <Route path="*" element={<Navigate to={MATH_BASE} replace />} />
             </Routes>
           </motion.div>

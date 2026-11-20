@@ -9,6 +9,7 @@ import type { SearchIndexItem } from '../components/SearchBox';
 import PatHome from '../pages/pat/Home';
 import PatDeck from '../pages/pat/Deck';
 import PatPractice from '../pages/pat/Practice';
+import CourseAttachmentsPage from '../pages/CourseAttachmentsPage';
 import { PAT_BASE } from './registry';
 import { recordCourseView } from '../lib/recentCourses';
 import { decodeEntities } from '../lib/text';
@@ -114,10 +115,12 @@ export default function PatCourse() {
   // 路由切换时关闭抽屉
   useEffect(() => setDrawerOpen(false), [location.pathname]);
 
-  // 顶栏导航：总目录 + 三讲 + 讲义三章 + 在线练习
+  // 顶栏导航：总目录 + 三讲 + 讲义三章 + 在线练习 + 附件
+  const onPractice = location.pathname.startsWith(`${PAT_BASE}/practice`);
+  const onAtt = location.pathname.startsWith(`${PAT_BASE}/attachments`);
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${PAT_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !location.pathname.startsWith(`${PAT_BASE}/practice`), key: null, tip: '课程主页 · 内容地图与课程实验' },
+      { to: `${PAT_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !onPractice && !onAtt, key: null, tip: '课程主页 · 内容地图与课程实验' },
       ...patDecks.map((d) => ({
         to: `${PAT_BASE}/deck/${d.id}`,
         full: d.no,
@@ -130,19 +133,27 @@ export default function PatCourse() {
         to: `${PAT_BASE}/practice`,
         full: '在线练习',
         short: '练习',
-        active: location.pathname.startsWith(`${PAT_BASE}/practice`),
+        active: onPractice,
         key: null,
         tip: '在线练习 · 2019 省赛 12 题',
         extra: 'practice-tab',
       },
+      {
+        to: `${PAT_BASE}/attachments`,
+        full: '附件',
+        short: '附件',
+        active: onAtt,
+        key: null,
+        tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+      },
     ],
-    [currentDeck, location.pathname],
+    [currentDeck, onPractice, onAtt],
   );
 
   // 抽屉导航：首页条目由 SidebarContent 自带，这里只给课程内条目
   const nav = useMemo<NavEntry[]>(
     () => [
-      { to: `${PAT_BASE}`, no: '◎', label: '课程主页 · 内容地图', active: !currentDeck && !location.pathname.startsWith(`${PAT_BASE}/practice`) },
+      { to: `${PAT_BASE}`, no: '◎', label: '课程主页 · 内容地图', active: !currentDeck && !onPractice && !onAtt },
       ...patDecks.map((d) => ({
         to: `${PAT_BASE}/deck/${d.id}`,
         no: d.id === 'deck1' ? '1' : d.id === 'deck2' ? '2' : d.id === 'deck3' ? '3' : d.id === 'deck4' ? '4' : d.id === 'deck5' ? '5' : '6',
@@ -155,11 +166,17 @@ export default function PatCourse() {
         to: `${PAT_BASE}/practice`,
         no: '练',
         label: '在线练习 · 省赛 12 题',
-        active: location.pathname.startsWith(`${PAT_BASE}/practice`),
+        active: onPractice,
         navKey: 'practice',
       },
+      {
+        to: `${PAT_BASE}/attachments`,
+        no: '件',
+        label: '附件资料',
+        active: onAtt,
+      },
     ],
-    [currentDeck, location.pathname],
+    [currentDeck, onPractice, onAtt],
   );
 
   // 搜索：讲次/课程主页目录 + 赛题索引
@@ -186,7 +203,7 @@ export default function PatCourse() {
       />
 
       {/* 练习页不上报目录（无侧栏），让正文占满整个版心 */}
-      <div className={`shell-body${location.pathname === `${PAT_BASE}/practice` ? ' no-sidebar' : ''}`}>
+      <div className={`shell-body${onPractice || onAtt ? ' no-sidebar' : ''}`}>
         <Sidebar />
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -205,6 +222,7 @@ export default function PatCourse() {
               <Route index element={<PatHome />} />
               <Route path="deck/:deckId" element={<PatDeck />} />
               <Route path="practice" element={<PatPractice />} />
+              <Route path="attachments" element={<CourseAttachmentsPage />} />
               <Route path="*" element={<Navigate to={PAT_BASE} replace />} />
             </Routes>
           </motion.div>

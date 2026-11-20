@@ -9,6 +9,7 @@ import { buildAlgoIndex } from '../components/SearchBox';
 import HomePage from '../pages/HomePage';
 import DeckPage from '../pages/DeckPage';
 import PracticePage from '../pages/PracticePage';
+import CourseAttachmentsPage from '../pages/CourseAttachmentsPage';
 import { ALGO_BASE, courses } from './registry';
 import { recordCourseView } from '../lib/recentCourses';
 import { decodeEntities } from '../lib/text';
@@ -87,10 +88,12 @@ export default function AlgorithmCourse() {
   // 路由切换时关闭抽屉
   useEffect(() => setDrawerOpen(false), [location.pathname]);
 
-  // 顶栏导航：总目录 + 第1~8讲 + 在线练习
+  // 顶栏导航：总目录 + 第1~8讲 + 在线练习 + 附件
+  const onPractice = location.pathname.startsWith(`${ALGO_BASE}/practice`);
+  const onAtt = location.pathname.startsWith(`${ALGO_BASE}/attachments`);
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${ALGO_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !location.pathname.startsWith(`${ALGO_BASE}/practice`), key: null, tip: '课程首页 · 考点速查表' },
+      { to: `${ALGO_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !onPractice && !onAtt, key: null, tip: '课程首页 · 考点速查表' },
       ...decks.map((d) => ({
         to: `${ALGO_BASE}/deck/${d.id}`,
         full: d.no,
@@ -103,19 +106,27 @@ export default function AlgorithmCourse() {
         to: `${ALGO_BASE}/practice`,
         full: '在线练习',
         short: '练习',
-        active: location.pathname.startsWith(`${ALGO_BASE}/practice`),
+        active: onPractice,
         key: null,
         tip: '在线练习 · 420 题自测',
         extra: 'practice-tab',
       },
+      {
+        to: `${ALGO_BASE}/attachments`,
+        full: '附件',
+        short: '附件',
+        active: onAtt,
+        key: null,
+        tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+      },
     ],
-    [currentDeck, location.pathname],
+    [currentDeck, onPractice, onAtt],
   );
 
   // 抽屉导航：首页条目由 SidebarContent 自带，这里只给课程内条目
   const nav = useMemo<NavEntry[]>(
     () => [
-      { to: `${ALGO_BASE}`, no: '◎', label: '总目录 · 考点速查', active: !currentDeck && !location.pathname.startsWith(`${ALGO_BASE}/practice`) },
+      { to: `${ALGO_BASE}`, no: '◎', label: '总目录 · 考点速查', active: !currentDeck && !onPractice && !onAtt },
       ...decks.map((d) => ({
         to: `${ALGO_BASE}/deck/${d.id}`,
         no: d.no.replace('第', '').replace('讲', ''),
@@ -127,11 +138,17 @@ export default function AlgorithmCourse() {
         to: `${ALGO_BASE}/practice`,
         no: '练',
         label: '在线练习 · 420 题',
-        active: location.pathname.startsWith(`${ALGO_BASE}/practice`),
+        active: onPractice,
         navKey: 'practice',
       },
+      {
+        to: `${ALGO_BASE}/attachments`,
+        no: '件',
+        label: '附件资料',
+        active: onAtt,
+      },
     ],
-    [currentDeck, location.pathname],
+    [currentDeck, onPractice, onAtt],
   );
 
   // 搜索：讲次/动画/自测题索引 + 跳转路由
@@ -154,8 +171,8 @@ export default function AlgorithmCourse() {
         onOpenSidebar={() => setDrawerOpen(true)}
       />
 
-      {/* 练习页不上报目录（无侧栏），让正文占满整个版心 */}
-      <div className={`shell-body${location.pathname === `${ALGO_BASE}/practice` ? ' no-sidebar' : ''}`}>
+      {/* 练习页/附件页不上报目录（无侧栏），让正文占满整个版心 */}
+      <div className={`shell-body${onPractice || onAtt ? ' no-sidebar' : ''}`}>
         <Sidebar />
         <AnimatePresence mode="wait" initial={false} custom={dir}>
           <motion.div
@@ -177,6 +194,7 @@ export default function AlgorithmCourse() {
               <Route index element={<HomePage />} />
               <Route path="deck/:deckId" element={<DeckPage />} />
               <Route path="practice" element={<PracticePage />} />
+              <Route path="attachments" element={<CourseAttachmentsPage />} />
               <Route path="*" element={<Navigate to={ALGO_BASE} replace />} />
             </Routes>
           </motion.div>

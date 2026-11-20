@@ -1,13 +1,16 @@
-/* 扫描 data/ 生成 src/content/catalog.ts —— 课程目录数据（课程页与首页共用）。
+/* 扫描 data/ 生成两份生成物：
+ * ① src/content/catalog.ts —— 课程目录数据（课程页与首页共用）；
+ * ② public/attachments/<学期>__<课程>.json —— 各课程附件清单（附件页左目录树 / 右预览用）。
  * 目录结构契约见 data/整理说明.md：<学期>/<课程>/{课件,试题,附件}/**。
- * 只读目录名与文件计数，不读取文件内容。生成物随提交入库，运行时零 IO。 */
-import { readdirSync, statSync, writeFileSync, existsSync } from 'node:fs';
+ * 只读目录名、文件名与文件大小，不读取文件内容。生成物随提交入库，运行时零 IO。 */
+import { readdirSync, statSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const MATERIALS = join(ROOT, '..', 'data');
 const OUT = join(ROOT, '..', 'src', 'content', 'catalog.ts');
+const ATTACH_DIR = join(ROOT, '..', 'public', 'attachments');
 
 const SEMESTER_ORDER = ['大一上', '大一下', '大二上', '大二下', '大三上', '大三下', '大四上', '大四下'];
 
@@ -36,6 +39,48 @@ function pad(name) {
   return JSON.stringify(name);
 }
 
+const sortName = (a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN');
+
+/* 列出目录内容：目录在前、文件在后，各组内按中文序。 */
+function listSorted(d) {
+  return readdirSync(d)
+    .map((name) => {
+      const p = join(d, name);
+      const st = statSync(p);
+      return { name, p, st, dir: st.isDirectory() };
+    })
+    .sort((a, b) => (a.dir !== b.dir ? (a.dir ? -1 : 1) : sortName(a, b)));
+}
+
+/* 递归构建课程附件树。节点：目录 { n, p, c }，文件 { n, p, s }（p 为相对课程目录的 POSIX 路径）。
+ * 顶层第一段目录名是类别（课件/试题/附件）则独立成组，其余全部归入「附件」。 */
+function buildCourseTree(dir) {
+  const roots = { 课件: [], 试题: [], 附件: [] };
+  const pushChildren = (d, siblings) => {
+    for (const e of listSorted(d)) {
+      const rel = relative(dir, e.p).replaceAll('\\', '/');
+      if (e.dir) {
+        const node = { n: e.name, p: rel, c: [] };
+        siblings.push(node);
+        pushChildren(e.p, node.c);
+      } else {
+        siblings.push({ n: e.name, p: rel, s: e.st.size });
+      }
+    }
+  };
+  for (const e of listSorted(dir)) {
+    const bucket = roots[CATS.includes(e.name) ? e.name : '附件'];
+    if (e.dir) {
+      const node = { n: e.name, p: e.name, c: [] };
+      bucket.push(node);
+      pushChildren(e.p, node.c);
+    } else {
+      bucket.push({ n: e.name, p: e.name, s: e.st.size });
+    }
+  }
+  return roots;
+}
+
 if (!existsSync(MATERIALS)) {
   console.warn(`[build-catalog] 未找到资料目录 ${MATERIALS}，跳过（保留现有 catalog.ts）`);
   process.exit(0);
@@ -59,6 +104,7 @@ if (semesters.length === 0) {
 
 const lines = [];
 let totalFiles = 0;
+const manifests = [];
 for (const sem of semesters) {
   const courses = readdirSync(join(MATERIALS, sem))
     .filter((c) => statSync(join(MATERIALS, sem, c)).isDirectory())
@@ -68,6 +114,13 @@ for (const sem of semesters) {
     const counts = countCourse(base);
     const total = counts.课件 + counts.试题 + counts.附件;
     totalFiles += total;
+    const tree = buildCourseTree(base);
+    manifests.push({
+      semester: sem,
+      course,
+      cats: ['课件', '试题', '附件'].map((name) => ({ name, tree: tree[name] })),
+      total,
+    });
     lines.push(
       `  { semester: ${pad(sem)}, name: ${pad(course)}, courseware: ${counts.课件}, exams: ${counts.试题}, misc: ${counts.附件}, total: ${total} },`,
     );
@@ -96,3 +149,11 @@ ${lines.join('\n')}
 
 writeFileSync(OUT, ts, 'utf8');
 console.log(`[build-catalog] ${lines.length} 门课程 / ${totalFiles} 份文件 → ${OUT}`);
+
+// 附件清单：public/attachments/<学期>__<课程>.json（附件页运行时按需 fetch）
+mkdirSync(ATTACH_DIR, { recursive: true });
+for (const m of manifests) {
+  const file = join(ATTACH_DIR, `${m.semester}__${m.course}.json`);
+  writeFileSync(file, JSON.stringify(m), 'utf8');
+}
+console.log(`[build-catalog] 附件清单 ${manifests.length} 份 → ${ATTACH_DIR}`);

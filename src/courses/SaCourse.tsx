@@ -8,6 +8,7 @@ import MobileDrawer from '../components/MobileDrawer';
 import type { SearchIndexItem } from '../components/SearchBox';
 import SaHomePage from '../pages/SaHomePage';
 import SaUnitPage from '../pages/SaUnitPage';
+import CourseAttachmentsPage from '../pages/CourseAttachmentsPage';
 import { SA_BASE, findCourseByBase } from './registry';
 import { recordCourseView } from '../lib/recentCourses';
 import { decodeEntities } from '../lib/text';
@@ -105,14 +106,16 @@ export default function SaCourse() {
   // 路由切换时关闭抽屉
   useEffect(() => setDrawerOpen(false), [location.pathname]);
 
-  // 顶栏导航：总目录 + 第4/5/7章 + RSA 专题（试题未收录，无在线练习项）
+  const onAtt = location.pathname.startsWith(`${SA_BASE}/attachments`);
+
+  // 顶栏导航：总目录 + 第4/5/7章 + RSA 专题 + 附件（试题未收录，无在线练习项）
   const tabs = useMemo<CourseTab[]>(
     () => [
       {
         to: `${SA_BASE}`,
         full: '总目录',
         short: '目录',
-        active: !currentChapter,
+        active: !currentChapter && !onAtt,
         key: null,
         tip: '课程首页 · 章节脉络',
       },
@@ -124,8 +127,16 @@ export default function SaCourse() {
         key: null,
         tip: decodeEntities(d.title),
       })),
+      {
+        to: `${SA_BASE}/attachments`,
+        full: '附件',
+        short: '附件',
+        active: onAtt,
+        key: null,
+        tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+      },
     ],
-    [currentChapter],
+    [currentChapter, onAtt],
   );
 
   // 抽屉导航：首页条目由 SidebarContent 自带，这里只给课程内条目
@@ -135,7 +146,7 @@ export default function SaCourse() {
         to: `${SA_BASE}`,
         no: '◎',
         label: '总目录 · 章节脉络',
-        active: !currentChapter,
+        active: !currentChapter && !onAtt,
       },
       ...saChapters.map((d) => ({
         to: `${SA_BASE}/deck/${d.id}`,
@@ -144,8 +155,14 @@ export default function SaCourse() {
         active: d.id === currentChapter,
         deckKey: 'sa',
       })),
+      {
+        to: `${SA_BASE}/attachments`,
+        no: '件',
+        label: '附件资料',
+        active: onAtt,
+      },
     ],
-    [currentChapter],
+    [currentChapter, onAtt],
   );
 
   // 搜索：章节索引 + 跳转路由
@@ -166,7 +183,7 @@ export default function SaCourse() {
         onOpenSidebar={() => setDrawerOpen(true)}
       />
 
-      <div className="shell-body">
+      <div className={`shell-body${onAtt ? ' no-sidebar' : ''}`}>
         <Sidebar />
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -184,6 +201,7 @@ export default function SaCourse() {
             <Routes location={location}>
               <Route index element={<SaHomePage />} />
               <Route path="deck/:deckId" element={<SaUnitPage />} />
+              <Route path="attachments" element={<CourseAttachmentsPage />} />
               <Route path="*" element={<Navigate to={SA_BASE} replace />} />
             </Routes>
           </motion.div>

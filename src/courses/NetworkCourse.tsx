@@ -10,6 +10,7 @@ import NetHomePage from '../pages/NetHomePage';
 import NetUnitPage from '../pages/NetUnitPage';
 import NetPracticeListPage from '../pages/net/NetPracticeListPage';
 import NetPracticePaperPage from '../pages/net/NetPracticePaperPage';
+import CourseAttachmentsPage from '../pages/CourseAttachmentsPage';
 import { NET_BASE, findCourseByBase } from './registry';
 import { recordCourseView } from '../lib/recentCourses';
 import { decodeEntities } from '../lib/text';
@@ -115,11 +116,12 @@ export default function NetworkCourse() {
   useEffect(() => setDrawerOpen(false), [location.pathname]);
 
   const practiceActive = location.pathname.startsWith(`${NET_BASE}/practice`);
+  const onAtt = location.pathname.startsWith(`${NET_BASE}/attachments`);
 
-  // 顶栏导航：总目录 + 第1~7章 + 在线练习
+  // 顶栏导航：总目录 + 第1~7章 + 在线练习 + 附件
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${NET_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !practiceActive, key: null, tip: '课程首页 · 七章总览' },
+      { to: `${NET_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !practiceActive && !onAtt, key: null, tip: '课程首页 · 七章总览' },
       ...netChapters.map((d) => ({
         to: `${NET_BASE}/deck/${d.id}`,
         full: d.no,
@@ -137,14 +139,22 @@ export default function NetworkCourse() {
         tip: '在线练习 · 3 套期末试卷',
         extra: 'practice-tab',
       },
+      {
+        to: `${NET_BASE}/attachments`,
+        full: '附件',
+        short: '附件',
+        active: onAtt,
+        key: null,
+        tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+      },
     ],
-    [currentChapter, practiceActive],
+    [currentChapter, practiceActive, onAtt],
   );
 
   // 抽屉导航：首页条目由 SidebarContent 自带，这里只给课程内条目
   const nav = useMemo<NavEntry[]>(
     () => [
-      { to: `${NET_BASE}`, no: '◎', label: '总目录 · 七章总览', active: !currentChapter && !practiceActive },
+      { to: `${NET_BASE}`, no: '◎', label: '总目录 · 七章总览', active: !currentChapter && !practiceActive && !onAtt },
       ...netChapters.map((d) => ({
         to: `${NET_BASE}/deck/${d.id}`,
         no: d.no.replace('第', '').replace('章', ''),
@@ -159,8 +169,14 @@ export default function NetworkCourse() {
         active: practiceActive,
         navKey: 'practice',
       },
+      {
+        to: `${NET_BASE}/attachments`,
+        no: '件',
+        label: '附件资料',
+        active: onAtt,
+      },
     ],
-    [currentChapter, practiceActive],
+    [currentChapter, practiceActive, onAtt],
   );
 
   // 搜索：章节/试卷索引 + 跳转路由
@@ -186,7 +202,7 @@ export default function NetworkCourse() {
       />
 
       {/* 练习页不上报目录（无侧栏），让正文占满整个版心 */}
-      <div className={`shell-body${practiceActive ? ' no-sidebar' : ''}`}>
+      <div className={`shell-body${practiceActive || onAtt ? ' no-sidebar' : ''}`}>
         <Sidebar />
         <AnimatePresence mode="wait" initial={false} custom={dir}>
           <motion.div
@@ -209,6 +225,7 @@ export default function NetworkCourse() {
               <Route path="deck/:deckId" element={<NetUnitPage />} />
               <Route path="practice" element={<NetPracticeListPage />} />
               <Route path="practice/:paperId" element={<NetPracticePaperPage />} />
+              <Route path="attachments" element={<CourseAttachmentsPage />} />
               <Route path="*" element={<Navigate to={NET_BASE} replace />} />
             </Routes>
           </motion.div>

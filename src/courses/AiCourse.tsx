@@ -7,6 +7,7 @@ import Sidebar, { SidebarContent, type NavEntry } from '../components/Sidebar';
 import MobileDrawer from '../components/MobileDrawer';
 import type { SearchIndexItem } from '../components/SearchBox';
 import AiPracticePage from '../pages/ai/AiPracticePage';
+import CourseAttachmentsPage from '../pages/CourseAttachmentsPage';
 import { AI_BASE, findCourseByBase } from './registry';
 import { recordCourseView } from '../lib/recentCourses';
 import { decodeEntities } from '../lib/text';
@@ -88,8 +89,9 @@ export default function AiCourse() {
   useEffect(() => setDrawerOpen(false), [location.pathname]);
 
   const practicePath = `${AI_BASE}/practice`;
+  const onAtt = location.pathname.startsWith(`${AI_BASE}/attachments`);
 
-  // 顶栏导航：5 个方向（题库的高一级单位）+ 在线练习
+  // 顶栏导航：5 个方向（题库的高一级单位）+ 在线练习 + 附件
   const tabs = useMemo<CourseTab[]>(
     () => [
       ...aiPaper.sections.map((sec) => ({
@@ -109,11 +111,19 @@ export default function AiCourse() {
         tip: '设计报告题库 · 15 个选题',
         extra: 'practice-tab',
       },
+      {
+        to: `${AI_BASE}/attachments`,
+        full: '附件',
+        short: '附件',
+        active: onAtt,
+        key: null,
+        tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+      },
     ],
-    [s],
+    [s, onAtt],
   );
 
-  // 抽屉导航：题库的 5 个方向 + 在线练习
+  // 抽屉导航：题库的 5 个方向 + 在线练习 + 附件
   const nav = useMemo<NavEntry[]>(
     () => [
       ...aiPaper.sections.map((sec) => ({
@@ -130,8 +140,14 @@ export default function AiCourse() {
         active: !s,
         navKey: 'practice',
       },
+      {
+        to: `${AI_BASE}/attachments`,
+        no: '件',
+        label: '附件资料',
+        active: onAtt,
+      },
     ],
-    [s],
+    [s, onAtt],
   );
 
   // 搜索：方向/题目索引 + 跳转（同页 ?s= 定位）
@@ -169,6 +185,7 @@ export default function AiCourse() {
             <Routes location={location}>
               <Route index element={<Navigate to={practicePath} replace />} />
               <Route path="practice" element={<AiPracticePage />} />
+              <Route path="attachments" element={<CourseAttachmentsPage />} />
               <Route path="*" element={<Navigate to={practicePath} replace />} />
             </Routes>
           </motion.div>

@@ -11,6 +11,7 @@ import CaHomePage from '../pages/CaHomePage';
 import CaChapterPage from '../pages/CaChapterPage';
 import CaPracticeIndex from '../pages/CaPracticeIndex';
 import CaPaperPage from '../pages/CaPaperPage';
+import CourseAttachmentsPage from '../pages/CourseAttachmentsPage';
 import { recordCourseView } from '../lib/recentCourses';
 import { decodeEntities } from '../lib/text';
 
@@ -61,6 +62,7 @@ export default function CaCourse() {
   }, [location.pathname]);
 
   const onPractice = location.pathname.startsWith(`${CA_BASE}/practice`);
+  const onAtt = location.pathname.startsWith(`${CA_BASE}/attachments`);
   const subtitle = caChapters.find((c) => c.id === currentChapter)?.subtitle;
 
   // 课程主题色：html[data-deck='ca'] → --deck-accent = 暗酒红
@@ -142,16 +144,17 @@ export default function CaCourse() {
       };
     });
     return [
-      { to: `${CA_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice, key: null, tip: '课程首页 · 课程与资料概况' },
+      { to: `${CA_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice && !onAtt, key: null, tip: '课程首页 · 课程与资料概况' },
       ...groups,
       { to: `${CA_BASE}/practice`, full: '在线练习', short: '练习', active: onPractice, key: null, tip: '在线练习 · 3 份试题', extra: 'practice-tab' },
+      { to: `${CA_BASE}/attachments`, full: '附件', short: '附件', active: onAtt, key: null, tip: '附件资料 · 课件 / 试题 / 附件目录与预览' },
     ];
-  }, [currentChapter, onPractice, chapterById]);
+  }, [currentChapter, onPractice, onAtt, chapterById]);
 
   // 抽屉导航（首页条目由 SidebarContent 自带）：逐讲列出
   const nav = useMemo<NavEntry[]>(
     () => [
-      { to: `${CA_BASE}`, no: '◎', label: '总目录 · 课程概况', active: !currentChapter && !onPractice },
+      { to: `${CA_BASE}`, no: '◎', label: '总目录 · 课程概况', active: !currentChapter && !onPractice && !onAtt },
       ...caChapters.map((c) => ({
         to: `${CA_BASE}/chapter/${c.id}`,
         no: c.id.slice(2),
@@ -166,8 +169,14 @@ export default function CaCourse() {
         active: onPractice,
         navKey: 'practice',
       },
+      {
+        to: `${CA_BASE}/attachments`,
+        no: '件',
+        label: '附件资料',
+        active: onAtt,
+      },
     ],
-    [currentChapter, onPractice],
+    [currentChapter, onPractice, onAtt],
   );
 
   const searchIndex = useMemo(buildCaIndex, []);
@@ -188,8 +197,8 @@ export default function CaCourse() {
         onOpenSidebar={() => setDrawerOpen(true)}
       />
 
-      {/* 练习页不上报目录（无侧栏），让正文占满整个版心 */}
-      <div className={`shell-body${onPractice ? ' no-sidebar' : ''}`}>
+      {/* 练习页/附件页不上报目录（无侧栏），让正文占满整个版心 */}
+      <div className={`shell-body${onPractice || onAtt ? ' no-sidebar' : ''}`}>
         <Sidebar />
         <AnimatePresence mode="wait" initial={false} custom={dir}>
           <motion.div
@@ -212,6 +221,7 @@ export default function CaCourse() {
               <Route path="chapter/:chapterId" element={<CaChapterPage />} />
               <Route path="practice" element={<CaPracticeIndex />} />
               <Route path="practice/:paperId" element={<CaPaperPage />} />
+              <Route path="attachments" element={<CourseAttachmentsPage />} />
               <Route path="*" element={<Navigate to={CA_BASE} replace />} />
             </Routes>
           </motion.div>

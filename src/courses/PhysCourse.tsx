@@ -10,6 +10,7 @@ import PhysHome from '../pages/phys/Home';
 import PhysDeck from '../pages/phys/Deck';
 import PhysPracticeList from '../pages/phys/PracticeList';
 import PhysPracticePaper from '../pages/phys/PracticePaper';
+import CourseAttachmentsPage from '../pages/CourseAttachmentsPage';
 import { PHYS_BASE } from './registry';
 import { recordCourseView } from '../lib/recentCourses';
 import { decodeEntities } from '../lib/text';
@@ -117,10 +118,12 @@ export default function PhysCourse() {
   // 路由切换时关闭抽屉
   useEffect(() => setDrawerOpen(false), [location.pathname]);
 
-  // 顶栏导航：总目录 + 十二章 + 在线练习
+  // 顶栏导航：总目录 + 十二章 + 在线练习 + 附件
+  const onPractice = location.pathname.startsWith(`${PHYS_BASE}/practice`);
+  const onAtt = location.pathname.startsWith(`${PHYS_BASE}/attachments`);
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${PHYS_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !location.pathname.startsWith(`${PHYS_BASE}/practice`), key: null, tip: '课程主页 · 内容地图与参考资料' },
+      { to: `${PHYS_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !onPractice && !onAtt, key: null, tip: '课程主页 · 内容地图与参考资料' },
       ...physDecks.map((d, i) => ({
         to: `${PHYS_BASE}/deck/${d.id}`,
         full: d.no,
@@ -133,19 +136,27 @@ export default function PhysCourse() {
         to: `${PHYS_BASE}/practice`,
         full: '在线练习',
         short: '练习',
-        active: location.pathname.startsWith(`${PHYS_BASE}/practice`),
+        active: onPractice,
         key: null,
         tip: '在线练习 · 4 份期末试卷 42 题',
         extra: 'practice-tab',
       },
+      {
+        to: `${PHYS_BASE}/attachments`,
+        full: '附件',
+        short: '附件',
+        active: onAtt,
+        key: null,
+        tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+      },
     ],
-    [currentDeck, location.pathname],
+    [currentDeck, onPractice, onAtt],
   );
 
   // 抽屉导航：首页条目由 SidebarContent 自带，这里只给课程内条目
   const nav = useMemo<NavEntry[]>(
     () => [
-      { to: `${PHYS_BASE}`, no: '◎', label: '课程主页 · 内容地图', active: !currentDeck && !location.pathname.startsWith(`${PHYS_BASE}/practice`) },
+      { to: `${PHYS_BASE}`, no: '◎', label: '课程主页 · 内容地图', active: !currentDeck && !onPractice && !onAtt },
       ...physDecks.map((d, i) => ({
         to: `${PHYS_BASE}/deck/${d.id}`,
         no: String(i + 1),
@@ -158,11 +169,17 @@ export default function PhysCourse() {
         to: `${PHYS_BASE}/practice`,
         no: '练',
         label: '在线练习 · 4 份期末试卷',
-        active: location.pathname.startsWith(`${PHYS_BASE}/practice`),
+        active: onPractice,
         navKey: 'practice',
       },
+      {
+        to: `${PHYS_BASE}/attachments`,
+        no: '件',
+        label: '附件资料',
+        active: onAtt,
+      },
     ],
-    [currentDeck, location.pathname],
+    [currentDeck, onPractice, onAtt],
   );
 
   // 搜索：章/课程主页目录 + 试卷题目索引
@@ -189,7 +206,7 @@ export default function PhysCourse() {
       />
 
       {/* 练习页不上报目录（无侧栏），让正文占满整个版心 */}
-      <div className={`shell-body${location.pathname.startsWith(`${PHYS_BASE}/practice`) ? ' no-sidebar' : ''}`}>
+      <div className={`shell-body${onPractice || onAtt ? ' no-sidebar' : ''}`}>
         <Sidebar />
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -209,6 +226,7 @@ export default function PhysCourse() {
               <Route path="deck/:deckId" element={<PhysDeck />} />
               <Route path="practice" element={<PhysPracticeList />} />
               <Route path="practice/:paperId" element={<PhysPracticePaper />} />
+              <Route path="attachments" element={<CourseAttachmentsPage />} />
               <Route path="*" element={<Navigate to={PHYS_BASE} replace />} />
             </Routes>
           </motion.div>

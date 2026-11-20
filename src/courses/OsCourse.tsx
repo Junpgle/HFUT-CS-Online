@@ -11,6 +11,7 @@ import OsHomePage from '../pages/OsHomePage';
 import OsChapterPage from '../pages/OsChapterPage';
 import OsPracticeIndex from '../pages/OsPracticeIndex';
 import OsPaperPage from '../pages/OsPaperPage';
+import CourseAttachmentsPage from '../pages/CourseAttachmentsPage';
 import { recordCourseView } from '../lib/recentCourses';
 import { decodeEntities } from '../lib/text';
 
@@ -51,6 +52,7 @@ export default function OsCourse() {
   }, [location.pathname]);
 
   const onPractice = location.pathname.startsWith(`${OS_BASE}/practice`);
+  const onAtt = location.pathname.startsWith(`${OS_BASE}/attachments`);
   const subtitle = osChapters.find((c) => c.id === currentChapter)?.subtitle;
 
   // 课程主题色：html[data-deck='os'] → --deck-accent = 橄榄绿（首页/在线练习用）
@@ -109,7 +111,7 @@ export default function OsCourse() {
   // 顶栏导航：目录 + 第1～7章 + 大题精讲 + 在线练习（末位固定）
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${OS_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice, key: null, tip: '课程首页 · 课程与资料概况' },
+      { to: `${OS_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice && !onAtt, key: null, tip: '课程首页 · 课程与资料概况' },
       ...osChapters.map((c) => ({
         to: `${OS_BASE}/chapter/${c.id}`,
         full: c.no,
@@ -127,14 +129,22 @@ export default function OsCourse() {
         tip: '在线练习 · 4 份试卷',
         extra: 'practice-tab',
       },
+      {
+        to: `${OS_BASE}/attachments`,
+        full: '附件',
+        short: '附件',
+        active: onAtt,
+        key: null,
+        tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+      },
     ],
-    [currentChapter, onPractice],
+    [currentChapter, onPractice, onAtt],
   );
 
   // 抽屉导航（首页条目由 SidebarContent 自带）
   const nav = useMemo<NavEntry[]>(
     () => [
-      { to: `${OS_BASE}`, no: '◎', label: '总目录 · 课程概况', active: !currentChapter && !onPractice },
+      { to: `${OS_BASE}`, no: '◎', label: '总目录 · 课程概况', active: !currentChapter && !onPractice && !onAtt },
       ...osChapters.map((c) => ({
         to: `${OS_BASE}/chapter/${c.id}`,
         no: c.id === 'ch8' ? '讲' : c.no.replace('第', '').replace('章', ''),
@@ -149,8 +159,14 @@ export default function OsCourse() {
         active: onPractice,
         navKey: 'practice',
       },
+      {
+        to: `${OS_BASE}/attachments`,
+        no: '件',
+        label: '附件资料',
+        active: onAtt,
+      },
     ],
-    [currentChapter, onPractice],
+    [currentChapter, onPractice, onAtt],
   );
 
   const searchIndex = useMemo(buildOsIndex, []);
@@ -174,7 +190,7 @@ export default function OsCourse() {
       />
 
       {/* 练习页不上报目录（无侧栏），让正文占满整个版心 */}
-      <div className={`shell-body${onPractice ? ' no-sidebar' : ''}`}>
+      <div className={`shell-body${onPractice || onAtt ? ' no-sidebar' : ''}`}>
         <Sidebar />
         <AnimatePresence mode="wait" initial={false} custom={dir}>
           <motion.div
@@ -197,6 +213,7 @@ export default function OsCourse() {
               <Route path="chapter/:chapterId" element={<OsChapterPage />} />
               <Route path="practice" element={<OsPracticeIndex />} />
               <Route path="practice/:paperId" element={<OsPaperPage />} />
+              <Route path="attachments" element={<CourseAttachmentsPage />} />
               <Route path="*" element={<Navigate to={OS_BASE} replace />} />
             </Routes>
           </motion.div>
