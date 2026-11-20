@@ -27,6 +27,8 @@ function countCourse(dir) {
       if (st.isDirectory()) {
         walk(p, [...segs, name]);
       } else {
+        // 上游仓库自带的说明文件（README*，且位于课程/类别目录直属层）不算课程资料
+        if (/^readme/i.test(name) && segs.length <= 1) continue;
         const hit = segs.find((s) => CATS.includes(s));
         counts[hit ?? '附件'] += 1;
       }
@@ -100,6 +102,9 @@ function buildCourseTree(dir, provKey) {
       }
     }
   };
+  // 上游仓库自带的说明文件（README*）不算课程附件——仅限课程目录/类别目录（课件/试题/附件）
+  // 直属的那一层；实验工程等更深目录里的 ReadMe.txt 是课程内容，保留
+  const isRepoMeta = (name, e) => /^readme/i.test(name) && relative(dir, e.p).replaceAll('\\', '/').split('/').length <= 2;
   const pushChildren = (d, siblings) => {
     for (const e of listSorted(d)) {
       const rel = relative(dir, e.p).replaceAll('\\', '/');
@@ -108,6 +113,8 @@ function buildCourseTree(dir, provKey) {
         pushChildren(e.p, node.c);
         stampFolder(node);
         siblings.push(node);
+      } else if (isRepoMeta(e.name, e)) {
+        continue;
       } else {
         siblings.push(fileNode(e.name, rel, e.st.size));
       }
@@ -120,7 +127,7 @@ function buildCourseTree(dir, provKey) {
       pushChildren(e.p, node.c);
       stampFolder(node);
       bucket.push(node);
-    } else {
+    } else if (!isRepoMeta(e.name, e)) {
       bucket.push(fileNode(e.name, e.name, e.st.size));
     }
   }
