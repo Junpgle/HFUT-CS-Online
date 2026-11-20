@@ -57,6 +57,14 @@ export const courses: readonly CourseEntry[] = [
     source: '设计报告题库整理 · 15 个选题在线练习（课件未收录）',
   },
   {
+    id: 'software-architecture',
+    name: '软件体系结构',
+    semester: '大三上',
+    base: '/sa',
+    ready: true,
+    source: '四章课件讲义（第4/5/7章 + RSA 建模教程专题）· 试题暂未收录',
+  },
+  {
     id: 'university-physics',
     name: '大学物理',
     semester: '大二上',
@@ -85,8 +93,11 @@ export const PAT_BASE = courses[3].base;
 /** 人工智能原理课路由前缀（同上约定） */
 export const AI_BASE = courses[4].base;
 
+/** 软件体系结构课路由前缀（同上约定） */
+export const SA_BASE = courses[5].base;
+
 /** 大学物理课路由前缀（同上约定） */
-export const PHYS_BASE = courses[5].base;
+export const PHYS_BASE = courses[6].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);
