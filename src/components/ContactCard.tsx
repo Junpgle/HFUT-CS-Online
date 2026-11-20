@@ -84,7 +84,7 @@ export default function ContactCard({ open, onClose }: Props) {
                 <IconX size={16} />
               </button>
             </div>
-            <p className="hub-modal-tip">点击任意条目即可复制</p>
+            <p className="hub-modal-tip">反馈 bug，贡献资料，勘误</p>
             {CONTACTS.map(({ key, value }) => (
               <button
                 key={key}
