@@ -64,11 +64,14 @@ export default function OsPracticeIndex() {
               <span className="ext-card-desc">
                 {p.source} · {p.questions.length} 题（{kinds}） · 参考答案：{p.answerSource}
               </span>
-              {done > 0 && (
-                <span className="ext-card-desc">
-                  进度：已作答 {done}/{p.questions.length} · 答对 {right} 题
+              <span className="ext-card-progress">
+                <i aria-hidden="true">
+                  <span style={{ width: `${(done / p.questions.length) * 100}%` }} />
+                </i>
+                <span className="ext-card-progress-num">
+                  已作答 {done}/{p.questions.length} · 答对 {right} 题
                 </span>
-              )}
+              </span>
             </span>
             <IconArrowRight size={15} className="ext-card-arrow" />
           </Link>

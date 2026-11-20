@@ -3532,3 +3532,37 @@ pre.code .cl-code:empty + .cl-com {
     height: 60vh;
   }
 }
+
+/* --------------------- 练习列表：每卷卡内独立进度条（替代整课总进度条） --------------------- */
+.ext-card-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 7px;
+}
+.ext-card-progress i {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--bg-dim);
+  overflow: hidden;
+}
+.ext-card-progress i span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--deck-accent);
+  transition: width 0.25s var(--press-ease);
+}
+.ext-card-progress-num {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+/* 清空进度按钮行（总进度条移除后的落位） */
+.pq-clear-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: -4px 0 16px;
+}

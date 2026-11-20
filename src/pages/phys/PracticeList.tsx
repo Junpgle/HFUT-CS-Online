@@ -50,42 +50,20 @@ export default function PhysPracticeList() {
     return () => window.removeEventListener('keydown', onKey);
   }, [confirmOpen]);
 
-  const { totalDone, totalRight, total } = useMemo(() => {
-    const total = physPapers.reduce((n, p) => n + p.questions.length, 0);
-    const done = physPapers.reduce((n, p) => n + physPaperStats(p.id, results).done, 0);
-    const right = physPapers.reduce((n, p) => n + physPaperStats(p.id, results).right, 0);
-    return { totalDone: done, totalRight: right, total };
-  }, [results]);
+  // 清空按钮的可用性：任一卷有作答即可清
+  const totalDone = useMemo(
+    () => physPapers.reduce((n, p) => n + physPaperStats(p.id, results).done, 0),
+    [results],
+  );
 
   return (
     <div className="page phys-practice-page">
       <h1>在线练习</h1>
 
-      <div className="pq-progress material">
-        <div className="pq-progress-text">
-          <span>
-            总进度：<span className="pq-frag">已作答 <b>{totalDone}</b> / {total}</span> ·{' '}
-            <span className="pq-frag">
-              已展开解析{' '}
-              <motion.b
-                className="pq-right-num"
-                key={totalRight}
-                initial={reduced ? false : { scale: 1.4, color: 'var(--ok)' }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 520, damping: 20 }}
-              >
-                {totalRight}
-              </motion.b>{' '}
-              题
-            </span>
-          </span>
-          <button className="btn pq-danger" onClick={() => setConfirmOpen(true)} disabled={totalDone === 0}>
-            清空进度
-          </button>
-        </div>
-        <div className="pq-progress-bar" role="progressbar" aria-valuenow={totalDone} aria-valuemax={total}>
-          <span style={{ width: `${(totalDone / total) * 100}%` }} />
-        </div>
+      <div className="pq-clear-row">
+        <button className="btn pq-danger" onClick={() => setConfirmOpen(true)} disabled={totalDone === 0}>
+          清空进度
+        </button>
       </div>
 
       <div className="net-paper-grid">
@@ -104,14 +82,12 @@ export default function PhysPracticeList() {
                 <span className="net-paper-source">
                   {p.answerSource} · {n} 题
                 </span>
-                {done > 0 && (
-                  <span className="net-paper-progress">
-                    已作答 {done} / {n} · 已展开解析 {right} 题
-                    <i aria-hidden="true">
-                      <span style={{ width: `${(done / n) * 100}%` }} />
-                    </i>
-                  </span>
-                )}
+                <span className="net-paper-progress">
+                  已作答 {done} / {n} · 已展开解析 {right} 题
+                  <i aria-hidden="true">
+                    <span style={{ width: `${(done / n) * 100}%` }} />
+                  </i>
+                </span>
                 <IconArrowRight size={15} className="net-paper-go" />
               </Link>
             </motion.div>
