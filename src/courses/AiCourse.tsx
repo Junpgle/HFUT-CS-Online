@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { Navigate, Route, Routes, useLocation, useNavigationType, useSearchParams } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
 import { aiPaper } from '../content/ai';
 import TopBar, { type CourseTab } from '../components/TopBar';
 import Sidebar, { SidebarContent, type NavEntry } from '../components/Sidebar';
@@ -35,8 +35,6 @@ function buildAiIndex(): SearchIndexItem[] {
  */
 export default function AiCourse() {
   const location = useLocation();
-  const [params] = useSearchParams();
-  const s = params.get('s');
 
   // 记录「最近查看」（本地 localStorage），供首页最近查看板块使用
   const course = findCourseByBase(AI_BASE);
@@ -111,22 +109,14 @@ export default function AiCourse() {
   }, [onAtt]);
 
 
-  // 顶栏导航：5 个方向（题库的高一级单位）+ 在线练习 + 附件
+  // 顶栏导航：仅 在线练习 + 附件（本课无课件，不做知识总结页；方向选择在练习页热力图内完成）
   const tabs = useMemo<CourseTab[]>(
     () => [
-      ...aiPaper.sections.map((sec) => ({
-        to: `${practicePath}?s=${sec.id}`,
-        full: sec.title,
-        short: sec.short.slice(0, 2),
-        active: s === sec.id,
-        key: null,
-        tip: `设计报告题库 · ${sec.title}（${sec.questionIds.length} 题）`,
-      })),
       {
         to: practicePath,
         full: '在线练习',
         short: '练习',
-        active: !s,
+        active: !onAtt,
         key: null,
         tip: '设计报告题库 · 15 个选题',
         extra: 'practice-tab',
@@ -140,24 +130,17 @@ export default function AiCourse() {
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
       },
     ],
-    [s, onAtt],
+    [onAtt],
   );
 
-  // 抽屉导航：题库的 5 个方向 + 在线练习 + 附件
+  // 抽屉导航：仅 在线练习 + 附件
   const nav = useMemo<NavEntry[]>(
     () => [
-      ...aiPaper.sections.map((sec) => ({
-        to: `${practicePath}?s=${sec.id}`,
-        no: `${sec.no}`,
-        label: `${sec.title} · ${sec.questionIds.length} 题`,
-        active: s === sec.id,
-        deckKey: 'ai',
-      })),
       {
         to: practicePath,
         no: '练',
         label: '在线练习 · 设计报告题库',
-        active: !s,
+        active: !onAtt,
         navKey: 'practice',
       },
       {
@@ -167,7 +150,7 @@ export default function AiCourse() {
         active: onAtt,
       },
     ],
-    [s, onAtt],
+    [onAtt],
   );
 
   // 搜索：方向/题目索引 + 跳转（同页 ?s= 定位）
