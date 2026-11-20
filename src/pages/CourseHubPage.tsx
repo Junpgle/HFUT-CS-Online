@@ -70,6 +70,19 @@ export default function CourseHubPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 首页滚动记忆：离开（进课程/占位页）时保存，回到首页时恢复原位，不跳回顶部。
+  // 会话级存储，刷新后同样回到原位；带 ?s= 深链时让位给锚点定位。
+  useEffect(() => {
+    const KEY = 'home-scroll-y';
+    const saved = Number(sessionStorage.getItem(KEY) ?? 0);
+    if (saved > 0 && !window.location.search) {
+      requestAnimationFrame(() => window.scrollTo({ top: saved, behavior: 'auto' }));
+    }
+    return () => {
+      sessionStorage.setItem(KEY, String(window.scrollY));
+    };
+  }, []);
+
   const { groups, stats } = useMemo(() => {
     // catalog：学期 → 课程；已上线课程（registry）若不在 catalog 里则注入虚拟卡片
     const bySem = new Map<string, Card[]>();
