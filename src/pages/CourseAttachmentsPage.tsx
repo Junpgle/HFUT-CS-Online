@@ -13,9 +13,9 @@ interface AttNode {
   s?: number;
   /** 子节点（仅目录） */
   c?: AttNode[];
-  /** 来源仓库 key（文件清单.csv 溯源） */
+  /** 来源仓库 key（文件清单.csv 溯源；单一来源目录也带，供目录跳转） */
   r?: string;
-  /** 上游仓库内路径 */
+  /** 上游仓库内路径（目录为仓库内目录路径） */
   sp?: string;
 }
 interface AttManifest {
@@ -24,7 +24,7 @@ interface AttManifest {
   cats: { name: string; tree: AttNode[] }[];
 }
 
-/** 四个上游资料仓库 → raw 直链参数（分支已实测） */
+/** 四个上游资料仓库 → 直链参数（分支已实测） */
 const REPOS: Record<string, { owner: string; repo: string; branch: string }> = {
   sunmiao: { owner: 'sunmiao0301', repo: 'HFUT-CS', branch: 'main' },
   styitches: { owner: 'styitches', repo: 'HFUT-CS', branch: 'main' },
@@ -43,14 +43,19 @@ const countFiles = (nodes: AttNode[]): number => nodes.reduce((a, x) => a + (x.c
 /** 与类别同名的顶层目录（课件/课件）拍平到类别下，避免组头与目录重名 */
 const flattenCats = (m: AttManifest) => m.cats.map((c) => ({ name: c.name, tree: c.tree.flatMap((t) => (t.c && t.n === c.name ? t.c : [t])) }));
 
-/** 递归收集目录树里的全部文件（目录不单独成行，路径体现在每行的 meta 里） */
-const collectFiles = (nodes: AttNode[]): AttNode[] =>
-  nodes.flatMap((n) => (n.c ? collectFiles(n.c) : [n]));
+/** 树按当前展开集摊平成可见行（深度随层级递增），保持清单原有的「目录在前、名称排序」 */
+const visibleRows = (nodes: AttNode[], open: Set<string>, depth: number, out: { node: AttNode; depth: number }[]) => {
+  for (const n of nodes) {
+    out.push({ node: n, depth });
+    if (n.c && open.has(n.p)) visibleRows(n.c, open, depth + 1, out);
+  }
+};
 
 /**
  * 课程附件页 —— 所有课程共用的「附件」导航页。
  * 资料文件本体不入库（data/** 被 gitignore），预览不可用：页面按课件/试题/附件三类
- * 单列陈列文件清单，一键下载直接从四个上游资料仓库拉取 raw 文件存盘（fetch→blob→download）。
+ * 陈列层级目录树（保留上游仓库的目录结构），一键下载直接从四个上游资料仓库
+ * 拉取 raw 文件存盘（fetch→blob→download）；单一来源的项目目录额外提供 GitHub 跳转链接。
  * 清单由 npm run catalog 生成至 public/attachments/（含来源仓库与源路径溯源）。
  */
 export default function CourseAttachmentsPage() {
@@ -68,6 +73,8 @@ export default function CourseAttachmentsPage() {
   const [loading, setLoading] = useState(true);
   /** 正在下载的文件路径（按钮转「下载中…」） */
   const [pending, setPending] = useState<string | null>(null);
+  /** 已展开的目录路径集合（默认全收起，保持层级紧凑） */
+  const [openDirs, setOpenDirs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     toc.report([], () => {});
@@ -82,6 +89,7 @@ export default function CourseAttachmentsPage() {
     setLoading(true);
     setMissing(false);
     setManifest(null);
+    setOpenDirs(new Set());
     fetch(`${import.meta.env.BASE_URL}attachments/${key}.json`)
       .then((r) => {
         if (!r.ok) throw new Error(String(r.status));
@@ -95,10 +103,25 @@ export default function CourseAttachmentsPage() {
     };
   }, [key]);
 
+  const toggleDir = (p: string) =>
+    setOpenDirs((s) => {
+      const next = new Set(s);
+      if (next.has(p)) next.delete(p);
+      else next.add(p);
+      return next;
+    });
+
   /** 仓库 raw 直链（路径逐段编码，保留 /） */
   const rawUrl = (node: AttNode) => {
     const meta = REPOS[node.r!];
     return `https://raw.githubusercontent.com/${meta.owner}/${meta.repo}/${meta.branch}/${node.sp!.split('/').map(encodeURIComponent).join('/')}`;
+  };
+
+  /** 仓库目录页跳转链接（单一来源文件夹） */
+  const treeUrl = (node: AttNode) => {
+    const meta = REPOS[node.r!];
+    const seg = node.sp ? node.sp.split('/').map(encodeURIComponent).join('/') : '';
+    return `https://github.com/${meta.owner}/${meta.repo}/tree/${meta.branch}${seg ? `/${seg}` : ''}`;
   };
 
   /** 一键下载：fetch raw → blob → 存盘；失败兜底新开 raw 直链 */
@@ -128,12 +151,15 @@ export default function CourseAttachmentsPage() {
   const cats = manifest ? flattenCats(manifest) : [];
   const total = manifest ? countFiles(manifest.cats.reduce<AttNode[]>((a, c) => a.concat(c.tree), [])) : 0;
 
+  /** 行内缩进：类别卡内基础 16px，每层 +22px */
+  const indent = (depth: number) => ({ paddingLeft: 16 + depth * 22 });
+
   return (
     <div className="page att-page">
       <h1>附件</h1>
       <div className="lede">
         <p>
-          {course?.name} 课程资料：课件 · 试题 · 附件共 {manifest ? total : '—'} 份文件，均来自 4 个上游资料仓库，可一键下载原文件。
+          {course?.name} 课程资料：课件 · 试题 · 附件共 {manifest ? total : '—'} 份文件，按原仓库目录层级陈列，均来自 4 个上游资料仓库。
         </p>
       </div>
 
@@ -148,24 +174,51 @@ export default function CourseAttachmentsPage() {
 
       {!loading && manifest && (
         <div className="att-list">
-          {cats.map((cat) =>
-            cat.tree.length > 0 ? (
+          {cats.map((cat) => {
+            if (cat.tree.length === 0) return null;
+            const rows: { node: AttNode; depth: number }[] = [];
+            visibleRows(cat.tree, openDirs, 0, rows);
+            return (
               <section key={cat.name} className="att-cat material">
                 <p className="att-cat-h">
                   {cat.name}
                   <span className="att-cat-count">{countFiles(cat.tree)}</span>
                 </p>
                 <div className="att-rows">
-                  {collectFiles(cat.tree)
-                    .sort((a, b) => a.p.localeCompare(b.p, 'zh-Hans-CN'))
-                    .map((node) => (
-                      <div key={node.p} className="att-row">
+                  {rows.map(({ node, depth }) =>
+                    node.c ? (
+                      <div key={node.p} className="att-row att-row-dir" style={indent(depth)}>
+                        <button
+                          type="button"
+                          className="att-dir-btn"
+                          aria-expanded={openDirs.has(node.p)}
+                          onClick={() => toggleDir(node.p)}
+                        >
+                          <span className="att-caret" aria-hidden>
+                            ▸
+                          </span>
+                          <span className="att-row-name" title={node.n}>
+                            {node.n}
+                          </span>
+                          <span className="att-row-path">
+                            {countFiles(node.c)} 份文件
+                            {node.r ? ` · 来自 ${REPOS[node.r].owner}` : ' · 多仓库混合'}
+                          </span>
+                        </button>
+                        {node.r && (
+                          <a className="btn att-dl att-jump" href={treeUrl(node)} target="_blank" rel="noreferrer" title="在上游仓库打开该目录">
+                            仓库 ↗
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <div key={node.p} className="att-row att-row-file" style={indent(depth)}>
                         <div className="att-row-main">
                           <span className="att-row-name" title={node.n}>
                             {node.n}
                           </span>
                           <span className="att-row-path">
-                            {node.p} · {fmtSize(node.s ?? 0)}
+                            {fmtSize(node.s ?? 0)}
                             {node.r && ` · 来自 ${REPOS[node.r].owner}`}
                           </span>
                         </div>
@@ -179,11 +232,12 @@ export default function CourseAttachmentsPage() {
                           </button>
                         )}
                       </div>
-                    ))}
+                    ),
+                  )}
                 </div>
               </section>
-            ) : null,
-          )}
+            );
+          })}
         </div>
       )}
     </div>

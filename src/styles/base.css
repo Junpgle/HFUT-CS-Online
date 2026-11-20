@@ -3373,6 +3373,37 @@ pre.code .cl-code:empty + .cl-com {
 .att-dl {
   flex-shrink: 0;
 }
+/* 目录行：整体按钮折叠展开，单一来源目录右侧带仓库跳转链接 */
+.att-dir-btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.att-caret {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+  transition: transform 160ms ease, color 140ms;
+}
+.att-row-dir.open .att-caret {
+  transform: rotate(90deg);
+}
+.att-row:hover .att-caret {
+  color: var(--deck-accent);
+}
+.att-jump {
+  text-decoration: none;
+  white-space: nowrap;
+}
 .att-state {
   padding: 32px 24px;
   color: var(--ink-3);

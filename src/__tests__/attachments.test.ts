@@ -38,6 +38,14 @@ const checkNodes = (nodes: AttNode[]) => {
     expect(node.p.startsWith('/')).toBe(false);
     if (node.c) {
       expect(node.s).toBeUndefined();
+      // 单一来源目录：r 与 sp 成对（sp 为仓库内目录路径，空串表示仓库根），供附件页生成跳转链接
+      if (node.r !== undefined) {
+        expect(REPO_KEYS).toContain(node.r);
+        expect(node.sp).toBeDefined();
+        expect(node.sp).not.toContain('..');
+      } else {
+        expect(node.sp).toBeUndefined();
+      }
       checkNodes(node.c);
     } else {
       expect(node.s ?? -1).toBeGreaterThanOrEqual(0);
