@@ -1,0 +1,202 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
+import { MATH_BASE, courses, findCourseByBase } from './registry';
+import { mathChapters, mathPapers } from '../content/math';
+import { type SearchIndexItem } from '../components/SearchBox';
+import TopBar, { type CourseTab } from '../components/TopBar';
+import Sidebar, { SidebarContent, type NavEntry } from '../components/Sidebar';
+import MobileDrawer from '../components/MobileDrawer';
+import MathHomePage from '../pages/MathHomePage';
+import MathChapterPage from '../pages/MathChapterPage';
+import MathPracticeIndex from '../pages/MathPracticeIndex';
+import MathPaperPage from '../pages/MathPaperPage';
+import { recordCourseView } from '../lib/recentCourses';
+import { decodeEntities } from '../lib/text';
+
+/** 各路由的滚动记忆（POP 导航时恢复） */
+const scrollPositions = new Map<string, number>();
+
+/** 高等数学搜索索引：章节目录 + 试卷 */
+function buildMathIndex(): SearchIndexItem[] {
+  const items: SearchIndexItem[] = [];
+  for (const ch of mathChapters) {
+    const title = `${ch.no} ${decodeEntities(ch.title)}`;
+    for (const t of ch.toc) {
+      items.push({ kind: '章节', unit: ch.id, unitTitle: title, sectionId: t.id, text: decodeEntities(t.text) });
+    }
+  }
+  for (const p of mathPapers) {
+    items.push({ kind: '试卷', unit: null, unitTitle: '在线练习 · 试卷', sectionId: p.id, text: p.title });
+  }
+  return items;
+}
+
+const MATH_SUGGESTIONS = ['偏导数', '方向导数', '二重积分', '曲线积分', '高斯公式', '傅里叶'];
+
+/** 高等数学课程根组件 —— 挂在 /math/* 下，布局与算法课同构（顶栏 + 侧栏 + 章节页/练习页） */
+export default function MathCourse() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const course = findCourseByBase(MATH_BASE) ?? courses[0];
+    recordCourseView(course.name);
+  }, []);
+  const navType = useNavigationType();
+  const reduced = useReducedMotion();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const currentChapter = useMemo(() => {
+    const m = location.pathname.match(/^\/math\/chapter\/(ch\d+)/);
+    return m ? m[1] : null;
+  }, [location.pathname]);
+
+  const onPractice = location.pathname.startsWith(`${MATH_BASE}/practice`);
+  const subtitle = mathChapters.find((c) => c.id === currentChapter)?.subtitle;
+
+  // 课程主题色：html[data-deck='math'] → --deck-accent = 苔藓绿
+  useEffect(() => {
+    document.documentElement.dataset.deck = 'math';
+    return () => {
+      delete document.documentElement.dataset.deck;
+    };
+  }, []);
+
+  // 章节方向性转场：按章号前后翻页决定方向
+  const chNo = currentChapter ? Number(currentChapter.slice(2)) : 0;
+  const prevNoRef = useRef(0);
+  const dir = chNo && prevNoRef.current && chNo !== prevNoRef.current ? Math.sign(chNo - prevNoRef.current) : 0;
+  useEffect(() => {
+    prevNoRef.current = chNo;
+  }, [chNo]);
+
+  useEffect(() => {
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === 'Escape') setDrawerOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // 滚动记忆：离开时保存；POP 恢复；新导航回顶部
+  useEffect(() => {
+    const key = location.key;
+    return () => {
+      scrollPositions.set(key, window.scrollY);
+    };
+  }, [location.key]);
+
+  useEffect(() => {
+    if (navType === 'POP') {
+      const y = scrollPositions.get(location.key) ?? 0;
+      requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'auto' }));
+    } else if (!location.search) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [location.key, navType, location.search]);
+
+  useEffect(() => setDrawerOpen(false), [location.pathname]);
+
+  // 顶栏导航：总目录 + 第 8～13 章 + 在线练习（末位固定）
+  const tabs = useMemo<CourseTab[]>(
+    () => [
+      { to: `${MATH_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice, key: null, tip: '课程首页 · 课程与资料概况' },
+      ...mathChapters.map((c) => ({
+        to: `${MATH_BASE}/chapter/${c.id}`,
+        full: c.no,
+        short: c.no.replace('第', '').replace('章', ''),
+        active: c.id === currentChapter,
+        key: null,
+        tip: decodeEntities(c.title),
+      })),
+      {
+        to: `${MATH_BASE}/practice`,
+        full: '在线练习',
+        short: '练习',
+        active: onPractice,
+        key: null,
+        tip: `在线练习 · ${mathPapers.length} 份试卷`,
+        extra: 'practice-tab',
+      },
+    ],
+    [currentChapter, onPractice],
+  );
+
+  // 抽屉导航：首页条目由 SidebarContent 自带，这里只给课程内条目
+  const nav = useMemo<NavEntry[]>(
+    () => [
+      { to: `${MATH_BASE}`, no: '◎', label: '总目录 · 课程概况', active: !currentChapter && !onPractice },
+      ...mathChapters.map((c) => ({
+        to: `${MATH_BASE}/chapter/${c.id}`,
+        no: c.id.slice(2),
+        label: c.title,
+        active: c.id === currentChapter,
+        deckKey: 'math',
+      })),
+      {
+        to: `${MATH_BASE}/practice`,
+        no: '练',
+        label: `在线练习 · ${mathPapers.length} 份试卷`,
+        active: onPractice,
+        navKey: 'practice',
+      },
+    ],
+    [currentChapter, onPractice],
+  );
+
+  const searchIndex = useMemo(buildMathIndex, []);
+  const searchLinkTo = (item: SearchIndexItem) =>
+    item.unit ? `${MATH_BASE}/chapter/${item.unit}?s=${item.sectionId}` : `${MATH_BASE}/practice/${item.sectionId}`;
+
+  return (
+    <div className="shell">
+      <TopBar
+        courseName="高等数学"
+        courseBase={MATH_BASE}
+        courseTip="高等数学 · 课程资料与在线练习"
+        subtitle={subtitle}
+        tabs={tabs}
+        searchIndex={searchIndex}
+        searchLinkTo={searchLinkTo}
+        suggestions={MATH_SUGGESTIONS}
+        onOpenSidebar={() => setDrawerOpen(true)}
+      />
+
+      {/* 练习页不上报目录（无侧栏），让正文占满整个版心 */}
+      <div className={`shell-body${onPractice ? ' no-sidebar' : ''}`}>
+        <Sidebar />
+        <AnimatePresence mode="wait" initial={false} custom={dir}>
+          <motion.div
+            key={location.pathname}
+            custom={dir}
+            variants={{
+              enter: (d: number) =>
+                reduced ? { opacity: 0 } : d === 0 ? { opacity: 0, y: 12 } : { opacity: 0, x: 28 * d },
+              center: { opacity: 1, x: 0, y: 0 },
+              leave: (d: number) =>
+                reduced ? { opacity: 0 } : d === 0 ? { opacity: 0, y: -8 } : { opacity: 0, x: -22 * d },
+            }}
+            initial="enter"
+            animate="center"
+            exit="leave"
+            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <Routes location={location}>
+              <Route index element={<MathHomePage />} />
+              <Route path="chapter/:chapterId" element={<MathChapterPage />} />
+              <Route path="practice" element={<MathPracticeIndex />} />
+              <Route path="practice/:paperId" element={<MathPaperPage />} />
+              <Route path="*" element={<Navigate to={MATH_BASE} replace />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <div className="drawer-root">
+        <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+          <SidebarContent nav={nav} />
+        </MobileDrawer>
+      </div>
+    </div>
+  );
+}

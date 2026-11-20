@@ -2951,6 +2951,10 @@ pre.code .cl-code:empty + .cl-com {
 .ptag[data-deck='phys'],
 .pq-group-h[data-deck='phys'],
 .site-nav li[data-deck='phys'] { --row-accent: var(--phys); }
+/* 高等数学课：整课一个主题色（html[data-deck='math']），同上回落到 --math */
+.ptag[data-deck='math'],
+.pq-group-h[data-deck='math'],
+.site-nav li[data-deck='math'] { --row-accent: var(--math); }
 
 /* --------------------------------------------- 右侧进度轨（仅 ≥1200px） */
 .pq-track {

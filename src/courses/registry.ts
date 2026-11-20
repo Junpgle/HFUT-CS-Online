@@ -80,6 +80,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '十三讲课件精讲（第 2～14 讲）· 3 份试题在线练习',
   },
+  {
+    id: 'advanced-mathematics',
+    name: '高等数学',
+    semester: '大一上',
+    base: '/math',
+    ready: true,
+    source: '六章课件精讲（第 8～13 章）· 12 份试卷在线练习',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -109,6 +117,9 @@ export const PHYS_BASE = courses[6].base;
 
 /** 计算机体系结构课路由前缀（同上约定） */
 export const CA_BASE = courses[7].base;
+
+/** 高等数学课路由前缀（同上约定） */
+export const MATH_BASE = courses[8].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);
