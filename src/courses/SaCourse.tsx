@@ -133,16 +133,14 @@ export default function SaCourse() {
         active: !currentChapter && !onAtt,
         key: null,
         tip: '课程首页 · 章节脉络',
-        dot: 'var(--sa)',
       },
-      ...saChapters.map((d, i) => ({
+      ...saChapters.map((d) => ({
         to: `${SA_BASE}/deck/${d.id}`,
         full: d.no === '专题' ? 'RSA 专题' : d.no,
         short: d.no === '专题' ? '专' : d.no.replace('第', '').replace('章', ''),
         active: d.id === currentChapter,
         key: null,
         tip: decodeEntities(d.title),
-        dot: `var(--sa${i + 1})`,
       })),
       {
         to: `${SA_BASE}/attachments`,
@@ -151,7 +149,6 @@ export default function SaCourse() {
         active: onAtt,
         key: null,
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
-        dot: 'var(--sa-att)',
       },
     ],
     [currentChapter, onAtt],

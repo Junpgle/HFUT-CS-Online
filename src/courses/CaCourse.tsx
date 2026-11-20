@@ -139,7 +139,6 @@ export default function CaCourse() {
           label: `${c.no} ${decodeEntities(c.title)}`,
           active: c.id === currentChapter,
           tip: decodeEntities(c.title),
-          dot: `var(--ca${c.id.slice(2)})`,
         };
       });
       return {
@@ -150,7 +149,6 @@ export default function CaCourse() {
         key: currentChapter && u.chapters.includes(currentChapter) ? currentChapter : null,
         tip: u.tip,
         menu,
-        dot: `var(--ca${u.chapters[0].slice(2)})`,
       };
     });
     return [

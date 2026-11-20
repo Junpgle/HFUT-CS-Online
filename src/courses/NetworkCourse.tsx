@@ -147,7 +147,6 @@ export default function NetworkCourse() {
         active: d.id === currentChapter,
         key: 'net',
         tip: decodeEntities(d.title),
-        dot: `var(--net${d.id.slice(2)})`,
       })),
       {
         to: `${NET_BASE}/practice`,
@@ -157,7 +156,6 @@ export default function NetworkCourse() {
         key: null,
         tip: '在线练习 · 3 套期末试卷',
         extra: 'practice-tab',
-        dot: 'var(--net-practice)',
       },
       {
         to: `${NET_BASE}/attachments`,
@@ -166,7 +164,6 @@ export default function NetworkCourse() {
         active: onAtt,
         key: null,
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
-        dot: 'var(--net-att)',
       },
     ],
     [currentChapter, practiceActive, onAtt],

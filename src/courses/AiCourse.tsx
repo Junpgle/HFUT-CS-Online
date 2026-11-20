@@ -130,7 +130,6 @@ export default function AiCourse() {
         key: null,
         tip: '设计报告题库 · 15 个选题',
         extra: 'practice-tab',
-        dot: 'var(--ai-practice)',
       },
       {
         to: `${AI_BASE}/attachments`,
@@ -139,7 +138,6 @@ export default function AiCourse() {
         active: onAtt,
         key: null,
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
-        dot: 'var(--ai-att)',
       },
     ],
     [s, onAtt],

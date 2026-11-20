@@ -146,7 +146,6 @@ export default function PatCourse() {
         active: d.id === currentDeck,
         key: null,
         tip: decodeEntities(d.title),
-        dot: `var(--pat${d.id.slice(4)})`,
       })),
       {
         to: `${PAT_BASE}/practice`,
@@ -156,7 +155,6 @@ export default function PatCourse() {
         key: null,
         tip: '在线练习 · 2019 省赛 12 题',
         extra: 'practice-tab',
-        dot: 'var(--pat-practice)',
       },
       {
         to: `${PAT_BASE}/attachments`,
@@ -165,7 +163,6 @@ export default function PatCourse() {
         active: onAtt,
         key: null,
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
-        dot: 'var(--pat-att)',
       },
     ],
     [currentDeck, onPractice, onAtt],

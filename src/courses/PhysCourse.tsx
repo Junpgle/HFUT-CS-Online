@@ -149,7 +149,6 @@ export default function PhysCourse() {
         active: d.id === currentDeck,
         key: null,
         tip: decodeEntities(d.title),
-        dot: `var(--phys${i + 1})`,
       })),
       {
         to: `${PHYS_BASE}/practice`,
@@ -159,7 +158,6 @@ export default function PhysCourse() {
         key: null,
         tip: '在线练习 · 4 份期末试卷 42 题',
         extra: 'practice-tab',
-        dot: 'var(--phys-practice)',
       },
       {
         to: `${PHYS_BASE}/attachments`,
@@ -168,7 +166,6 @@ export default function PhysCourse() {
         active: onAtt,
         key: null,
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
-        dot: 'var(--phys-att)',
       },
     ],
     [currentDeck, onPractice, onAtt],

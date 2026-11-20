@@ -137,7 +137,6 @@ export default function OsCourse() {
         active: c.id === currentChapter,
         key: c.id,
         tip: decodeEntities(c.title),
-        dot: `var(--os${c.id.slice(2)})`,
       })),
       {
         to: `${OS_BASE}/practice`,
@@ -147,7 +146,6 @@ export default function OsCourse() {
         key: null,
         tip: '在线练习 · 4 份试卷',
         extra: 'practice-tab',
-        dot: 'var(--os-practice)',
       },
       {
         to: `${OS_BASE}/attachments`,
@@ -156,7 +154,6 @@ export default function OsCourse() {
         active: onAtt,
         key: null,
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
-        dot: 'var(--os-att)',
       },
     ],
     [currentChapter, onPractice, onAtt],

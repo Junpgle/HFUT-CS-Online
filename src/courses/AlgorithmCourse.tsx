@@ -115,7 +115,6 @@ export default function AlgorithmCourse() {
         active: d.id === currentDeck,
         key: d.id,
         tip: decodeEntities(d.title),
-        dot: `var(--${d.id})`,
       })),
       {
         to: `${ALGO_BASE}/practice`,
@@ -125,7 +124,6 @@ export default function AlgorithmCourse() {
         key: null,
         tip: '在线练习 · 420 题自测',
         extra: 'practice-tab',
-        dot: 'var(--deck-practice)',
       },
     ],
     [currentDeck, onPractice],
