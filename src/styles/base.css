@@ -979,7 +979,7 @@ button {
   margin: 5px 0;
 }
 /* 链接：hover 用下划线示意可点，不铺色底（块级卡片锚点不参与药丸/下划线，走各自的抬升+阴影） */
-.page a:not(.ext-card):not(.card):not(.btn) {
+.page a:not(.ext-card):not(.card):not(.btn):not(.net-paper-card) {
   color: var(--deck-accent);
   text-decoration: none;
   padding: 1px 3px;
@@ -987,7 +987,7 @@ button {
   border-radius: 5px;
   transition: color 140ms var(--press-ease);
 }
-.page a:not(.ext-card):not(.card):not(.btn):hover {
+.page a:not(.ext-card):not(.card):not(.btn):not(.net-paper-card):hover {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -1551,8 +1551,8 @@ pre.code .cl-code:empty + .cl-com {
 }
 .card:hover {
   border-color: color-mix(in srgb, var(--deck-accent) 40%, transparent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-1);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: var(--shadow-2);
 }
 .card:active {
   transform: translateY(0) scale(0.98);
@@ -1575,7 +1575,7 @@ pre.code .cl-code:empty + .cl-com {
 }
 .deck-map .card:hover {
   border-color: color-mix(in srgb, var(--deck-accent) 40%, transparent);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.01);
   box-shadow: var(--shadow-2);
 }
 /* 首页讲次卡：中性版面 + 元信息行（色标圆点与标题重叠且杂色，已移除） */
@@ -3090,7 +3090,8 @@ pre.code .cl-code:empty + .cl-com {
 }
 .ext-card:hover {
   border-color: color-mix(in srgb, var(--deck-accent) 45%, transparent);
-  box-shadow: var(--shadow-1);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: var(--shadow-2);
 }
 .ext-card:active {
   transform: scale(0.985);
@@ -3165,8 +3166,8 @@ pre.code .cl-code:empty + .cl-com {
     background-color 0.18s var(--press-ease);
 }
 .net-paper-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-1);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: var(--shadow-2);
   border-color: var(--hairline);
   background: var(--panel-strong);
 }
@@ -3375,9 +3376,9 @@ pre.code .cl-code:empty + .cl-com {
   transform: translateY(-2px) rotate(0deg);
 }
 .att-dir:hover .att-dir-name,
-.att-file:hover .att-file-name {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.att-file:hover .att-file-name,
+.att-file-row:hover .att-file-size {
+  color: var(--deck-accent);
 }
 .att-dir-name {
   flex: 1;
