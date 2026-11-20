@@ -76,6 +76,16 @@ export default function PhysCourse() {
     };
   }, []);
 
+  // 当前章 → html[data-ch]：tokens.css 按序数映射每章专属色（首页/练习无 data-ch，用课程基础色）
+  const deckNo = currentDeck ? Number(currentDeck.slice(4)) : 0;
+  useEffect(() => {
+    if (deckNo) document.documentElement.dataset.ch = String(deckNo);
+    else delete document.documentElement.dataset.ch;
+    return () => {
+      delete document.documentElement.dataset.ch;
+    };
+  }, [deckNo]);
+
   // Esc 关闭抽屉
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {

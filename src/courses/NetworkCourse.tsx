@@ -69,6 +69,14 @@ export default function NetworkCourse() {
 
   // 章节方向性转场：记录上一次的章号，前/后翻页用不同方向
   const chNo = currentChapter ? Number(currentChapter.slice(2)) : 0;
+  // 当前章 → html[data-ch]：tokens.css 按序数映射每章专属色（首页/练习无 data-ch，用课程基础色）
+  useEffect(() => {
+    if (chNo) document.documentElement.dataset.ch = String(chNo);
+    else delete document.documentElement.dataset.ch;
+    return () => {
+      delete document.documentElement.dataset.ch;
+    };
+  }, [chNo]);
   const prevNoRef = useRef(0);
   const dir = chNo && prevNoRef.current && chNo !== prevNoRef.current ? Math.sign(chNo - prevNoRef.current) : 0;
   useEffect(() => {

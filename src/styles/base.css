@@ -611,12 +611,12 @@ button {
   }
 }
 
-/* 移动端：顶栏显示抽屉触发按钮 */
-.drawer-trigger {
+/* 移动端：顶栏显示抽屉触发按钮（提到 .topbar-ctl 同级特异性，压过 .topbar-ctl.nav-pill 的 inline-flex） */
+.topbar-ctl.drawer-trigger {
   display: none;
 }
 @media (max-width: 1020px) {
-  .drawer-trigger {
+  .topbar-ctl.drawer-trigger {
     display: inline-flex;
   }
 }
@@ -631,7 +631,10 @@ button {
   padding: 14px 10px 26px;
   box-shadow: var(--shadow-1);
   scrollbar-width: none;
-  /* 底部渐隐：内部滚动时提示「下面还有」，材料本身随之溶解 */
+}
+/* 底部渐隐：仅目录溢出时启用（Sidebar 挂 .overflows），提示「下面还有」；
+ * 内容不满一屏时不溶解最后一条目录 */
+.sidebar.overflows {
   -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 18px), transparent);
   mask-image: linear-gradient(180deg, #000 calc(100% - 18px), transparent);
 }

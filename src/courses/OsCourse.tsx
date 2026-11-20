@@ -53,7 +53,7 @@ export default function OsCourse() {
   const onPractice = location.pathname.startsWith(`${OS_BASE}/practice`);
   const subtitle = osChapters.find((c) => c.id === currentChapter)?.subtitle;
 
-  // 课程主题色：html[data-deck='os'] → --deck-accent = 橄榄绿
+  // 课程主题色：html[data-deck='os'] → --deck-accent = 橄榄绿（首页/在线练习用）
   useEffect(() => {
     document.documentElement.dataset.deck = 'os';
     return () => {
@@ -63,6 +63,14 @@ export default function OsCourse() {
 
   // 章节方向性转场：按章号前后翻页决定方向
   const chNo = currentChapter ? Number(currentChapter.slice(2)) : 0;
+  // 当前章 → html[data-ch]：tokens.css 按序数映射每章专属色（首页/练习无 data-ch，用课程基础色）
+  useEffect(() => {
+    if (chNo) document.documentElement.dataset.ch = String(chNo);
+    else delete document.documentElement.dataset.ch;
+    return () => {
+      delete document.documentElement.dataset.ch;
+    };
+  }, [chNo]);
   const prevNoRef = useRef(0);
   const dir = chNo && prevNoRef.current && chNo !== prevNoRef.current ? Math.sign(chNo - prevNoRef.current) : 0;
   useEffect(() => {

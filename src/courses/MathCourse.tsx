@@ -64,6 +64,15 @@ export default function MathCourse() {
 
   // 章节方向性转场：按章号前后翻页决定方向
   const chNo = currentChapter ? Number(currentChapter.slice(2)) : 0;
+  // 当前章 → html[data-ch]：tokens.css 按课内序数（1..6）映射每章专属色（首页/练习无 data-ch，用课程基础色）
+  const chIdx = currentChapter ? mathChapters.findIndex((c) => c.id === currentChapter) + 1 : 0;
+  useEffect(() => {
+    if (chIdx) document.documentElement.dataset.ch = String(chIdx);
+    else delete document.documentElement.dataset.ch;
+    return () => {
+      delete document.documentElement.dataset.ch;
+    };
+  }, [chIdx]);
   const prevNoRef = useRef(0);
   const dir = chNo && prevNoRef.current && chNo !== prevNoRef.current ? Math.sign(chNo - prevNoRef.current) : 0;
   useEffect(() => {

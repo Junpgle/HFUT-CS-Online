@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Link, useLocation } from 'react-router-dom';
 import type { TocEntry } from '../content/types';
@@ -170,6 +170,19 @@ export function SidebarContent({ nav }: { nav: NavEntry[] }) {
 export default function Sidebar() {
   const { toc, activeId } = useToc();
   const navRef = useRef<HTMLElement>(null);
+  // 目录是否溢出面板：溢出才启用底部渐隐（CSS .sidebar.overflows），短目录不溶解最后一条
+  const [overflows, setOverflows] = useState(false);
+
+  // 内容或面板尺寸变化时重测溢出
+  useEffect(() => {
+    const box = navRef.current;
+    if (!box) return;
+    const update = () => setOverflows(box.scrollHeight > box.clientHeight + 2);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(box);
+    return () => ro.disconnect();
+  }, [toc]);
 
   // active 项滚出视野时，侧栏平滑滚动让它保持可见
   useEffect(() => {
@@ -187,7 +200,7 @@ export default function Sidebar() {
 
   if (toc.length === 0) return null;
   return (
-    <nav className="sidebar material" ref={navRef} aria-label="本页内容目录">
+    <nav className={`sidebar material${overflows ? ' overflows' : ''}`} ref={navRef} aria-label="本页内容目录">
       <Toc />
     </nav>
   );

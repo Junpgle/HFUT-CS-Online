@@ -64,6 +64,16 @@ export default function SaCourse() {
     };
   }, []);
 
+  // 当前单元 → html[data-ch]：tokens.css 按序数映射每单元专属色（首页/练习无 data-ch，用课程基础色）
+  const unitNo = currentChapter ? saChapters.findIndex((d) => d.id === currentChapter) + 1 : 0;
+  useEffect(() => {
+    if (unitNo) document.documentElement.dataset.ch = String(unitNo);
+    else delete document.documentElement.dataset.ch;
+    return () => {
+      delete document.documentElement.dataset.ch;
+    };
+  }, [unitNo]);
+
   // Esc 关闭抽屉
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {
