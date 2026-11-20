@@ -50,6 +50,12 @@ export function useScrollSpy(rootRef: RefObject<HTMLElement | null>, deps: unkno
         if (h.getBoundingClientRect().top <= threshold) best = h;
         else break;
       }
+      // 滚到页底：尾节内容不足一屏时其标题永远够不到阈值线，
+      // 此时最后一个标题就是当前小节（否则侧栏指示器永远指不到最后一项）
+      const docEl = document.documentElement;
+      if (window.innerHeight + window.scrollY >= docEl.scrollHeight - 48) {
+        best = heads[heads.length - 1] ?? best;
+      }
       setActive(best ? best.id : null);
 
       // 跨大节检测：当前小节所属 section 的 h2

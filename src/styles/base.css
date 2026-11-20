@@ -786,13 +786,21 @@ button {
 [data-theme='dark'] .sidebar .toc:has(> li.has-active) > li:not(.has-active) {
   opacity: 0.72;
 }
-/* 当前组头 sticky：长组滚动时大节标题保持可见 */
+/* 当前组头 sticky：长组滚动时大节标题保持可见。
+ * 底色用毛玻璃而非近白实底——近白药丸浮在白侧栏上像一块空白；组内含激活项时
+ * 组头文字转主题色加粗，与子项的浅底药丸形成「章 → 节」两级视觉层次。 */
 .sidebar .toc > li.has-active > .toc-row {
   position: sticky;
   top: 2px;
   z-index: 1;
-  background: color-mix(in srgb, var(--panel-solid) 94%, transparent);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
   border-radius: 8px;
+}
+.sidebar .toc > li.has-active > .toc-row > a:not(.active) {
+  color: var(--deck-accent);
+  font-weight: 700;
 }
 
 /* 移动端抽屉 */
