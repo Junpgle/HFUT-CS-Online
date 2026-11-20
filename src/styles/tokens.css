@@ -72,7 +72,7 @@
   --ca1: #31708e;  --ca2: #2e7d5b;  --ca3: #8f741c;  --ca4: #7d5ba6;
   --ca5: #a05a2c;  --ca6: #22767c;  --ca7: #b5485e;  --ca8: #6b7a2f;
   --ca9: #4a5aa8;  --ca10: #8a4a2f; --ca11: #56698f; --ca12: #9c4a72;
-  --ca13: #5e3131;
+  --ca13: #5e3131; --ca14: #6e4a24;
   /* 高等数学 · 6 章 */
   --math1: #31708e; --math2: #a05a2c; --math3: #7d5ba6; --math4: #b5485e;
   --math5: #22767c; --math6: #8f741c;
@@ -187,7 +187,7 @@
   --ca1: #74b3d2;  --ca2: #7cc9a3;  --ca3: #d4b95a;  --ca4: #b39be0;
   --ca5: #e0975f;  --ca6: #6cc4c9;  --ca7: #ec8ea0;  --ca8: #b3c26e;
   --ca9: #8f9ce0;  --ca10: #d18f6e; --ca11: #9db0d6; --ca12: #d69ab8;
-  --ca13: #d49a9a;
+  --ca13: #d49a9a; --ca14: #d69c63;
   --math1: #74b3d2; --math2: #e0975f; --math3: #b39be0; --math4: #ec8ea0;
   --math5: #6cc4c9; --math6: #d4b95a;
 
@@ -320,6 +320,7 @@
 :root[data-deck='ca'][data-ch='11'] { --deck-accent: var(--ca11); }
 :root[data-deck='ca'][data-ch='12'] { --deck-accent: var(--ca12); }
 :root[data-deck='ca'][data-ch='13'] { --deck-accent: var(--ca13); }
+:root[data-deck='ca'][data-ch='14'] { --deck-accent: var(--ca14); }
 :root[data-deck='math'][data-ch='1'] { --deck-accent: var(--math1); }
 :root[data-deck='math'][data-ch='2'] { --deck-accent: var(--math2); }
 :root[data-deck='math'][data-ch='3'] { --deck-accent: var(--math3); }

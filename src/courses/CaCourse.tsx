@@ -20,7 +20,7 @@ const scrollPositions = new Map<string, number>();
 
 /** 讲次较多：导航栏用「单元」按钮 + 下拉菜单列出各讲（用户约定的高一级单位） */
 const CA_UNITS: { name: string; tip: string; chapters: string[] }[] = [
-  { name: '基础', tip: '第 2～3 讲 · 性能评测、指令集架构', chapters: ['ch2', 'ch3'] },
+  { name: '基础', tip: '第 1～3 讲 · 基本概念、性能评测、指令集架构', chapters: ['ch1', 'ch2', 'ch3'] },
   { name: '流水线', tip: '第 4～6 讲 · 数据通路、流水线基础、相关与冒险', chapters: ['ch4', 'ch5', 'ch6'] },
   { name: 'ILP', tip: '第 7～8 讲 · 指令级并行 I / II', chapters: ['ch7', 'ch8'] },
   { name: '存储系统', tip: '第 9～12 讲 · 存储层次、Cache、缓存优化、虚存', chapters: ['ch9', 'ch10', 'ch11', 'ch12'] },

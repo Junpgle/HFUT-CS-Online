@@ -11,8 +11,9 @@ import { caChapters, caPapers, caAllQuestions } from '../content/ca';
 
 const ENTITY_RE = /&(#x?[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/;
 
-/** 讲次结构契约：13 讲（第 2～14 讲），各讲 section 数 */
+/** 讲次结构契约：14 讲（第 1～14 讲），各讲 section 数 */
 const EXPECT_SECTIONS: Record<string, number> = {
+  ch1: 6,
   ch2: 6,
   ch3: 6,
   ch4: 6,
@@ -36,11 +37,11 @@ const EXPECT_PAPER_COUNT: Record<string, number> = {
 };
 
 describe('计算机体系结构课件内容', () => {
-  it('共 13 讲（第 2～14 讲），id/no 符合约定', () => {
-    expect(caChapters.length).toBe(13);
+  it('共 14 讲（第 1～14 讲），id/no 符合约定', () => {
+    expect(caChapters.length).toBe(14);
     caChapters.forEach((c, i) => {
-      expect(c.id).toBe(`ch${i + 2}`);
-      expect(c.no).toBe(`第${i + 2}讲`);
+      expect(c.id).toBe(`ch${i + 1}`);
+      expect(c.no).toBe(`第${i + 1}讲`);
     });
   });
 

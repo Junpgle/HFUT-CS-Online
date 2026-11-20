@@ -19,6 +19,7 @@ const HOME_TOC = [
 
 /** 各讲一句话简介（来自各讲 lede 的事实性概括，供卡片扫读） */
 const CH_BLURB: Record<string, string> = {
+  ch1: '层次结构与系统结构定义（软硬件界面 = 指令集）、冯氏/Flynn 分类、Amdahl 与 CPU 性能公式、局部性原理、并行性三途径。',
   ch2: '性能指什么（响应时间/吞吐率）、CPU Time 铁律（IC × CPI × 时钟周期）、MIPS、基准测试与均值、Amdahl 定律。',
   ch3: '冯·诺依曼模型与 ISA 五个方面：R/I/J 指令格式、四种操作数模型、MIPS 寄存器与寻址模式、数据类型、流程控制。',
   ch4: '指令五步处理与单周期数据通路：R/I 型 ALU、LW/SW、J/BEQ 的通路差异，控制信号表，时延分析（LW 600 ps 最长）。',
@@ -69,7 +70,7 @@ export default function CaHomePage() {
         <HtmlContent
           html={`
         <p>依据李建华老师课程组课件（slides adapted from CA course of wisc / princeton / mit / berkeley 等）整理的课程精讲：
-        收录<strong>第 2～14 讲</strong>全部课件内容（第 1 讲为课程简介，课件未提供），以及
+        收录<strong>第 1～14 讲</strong>全部课件内容（第 1 讲据教材第一章讲义 PDF 整理），以及
         <strong>3 份试题</strong>的在线练习——课堂测试、2019 级期末回忆版与期末大题重点预测。</p>
       `}
         />
@@ -84,7 +85,8 @@ export default function CaHomePage() {
           <div className="card">
             <h3>课程信息</h3>
             <p>
-              课件按讲编号（02～14）；配套教材为《计算机系统结构》（课件/PPT 中的第一～八章）。
+              课程组课件按讲编号（02～14），第 1 讲取教材《计算机系统结构》第一章讲义 PDF（课件/PPT 内）；
+              配套教材为《计算机系统结构》（课件/PPT 中的第一～八章）。
               期末题型（据复习资料与回忆）：选择 5 题 10 分、填空 10 分、简答 5 题 30 分、综合 6 题 50 分；
               流水线、相关处理、ILP、存储层次、缓存与虚存为重点章节。
             </p>
@@ -92,7 +94,7 @@ export default function CaHomePage() {
           <div className="card">
             <h3>资料构成</h3>
             <p>
-              站点整理自 <strong>13 份讲座课件</strong>（02～14）与 <strong>3 份试题</strong>
+              站点整理自 <strong>14 份讲座课件</strong>（第 1 讲为教材第一章讲义 PDF，02～14 为课程组 pptx）与 <strong>3 份试题</strong>
               （第二次课堂测试含解析、2019 级期末回忆版、期末大题重点预测）。
               附件另含教材章节 PPT 与一版教材的期末 A 卷——术语体系与现行讲座课件不同，未收入在线练习。
             </p>

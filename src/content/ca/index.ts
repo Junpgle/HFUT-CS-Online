@@ -1,5 +1,6 @@
 /** 计算机体系结构课程内容汇总 —— 章节与试卷的入口（各模块为事实源） */
 import type { CaChapter, CaPaper, CaQuizKind } from './types';
+import ch1 from './ch1';
 import ch2 from './ch2';
 import ch3 from './ch3';
 import ch4 from './ch4';
@@ -17,9 +18,9 @@ import paperQuiz2 from './paper-quiz2';
 import paperRecall2019 from './paper-recall2019';
 import paperPredict from './paper-predict';
 
-/** 章节列表：第 2～14 讲（第 1 讲为课程简介，课件未提供） */
+/** 章节列表：第 1～14 讲（第 1 讲据教材第一章讲义 PDF 整理） */
 export const caChapters: CaChapter[] = [
-  ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, ch10, ch11, ch12, ch13, ch14,
+  ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, ch10, ch11, ch12, ch13, ch14,
 ];
 
 /** 试卷列表（按时间/正式程度：课堂测试 → 期末回忆 → 大题预测） */

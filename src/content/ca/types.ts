@@ -4,7 +4,7 @@ import type { PracticeTag } from '../practice/types';
 
 export type { DeckData, Section, TocEntry, Block, QuizData } from '../types';
 
-/** 计算机体系结构的一讲（第 2 讲…第 14 讲；第 1 讲为课程简介，未提供课件） */
+/** 计算机体系结构的一讲（第 1 讲…第 14 讲；第 1 讲据教材第一章讲义 PDF 整理） */
 export type CaChapter = DeckData;
 
 /** 在线练习知识点标签：复用算法课题库契约，deck 存讲号 2..14，
