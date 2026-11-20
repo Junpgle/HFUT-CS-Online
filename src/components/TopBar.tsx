@@ -1,9 +1,19 @@
+import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { decodeEntities } from '../lib/text';
 import { IconArrowLeft, IconMenu } from './icons';
 import ThemeToggle from './ThemeToggle';
 import SearchBox, { type SearchIndexItem } from './SearchBox';
+
+/** 分组菜单中的一讲/一章 */
+export interface CourseTabMenuItem {
+  to: string;
+  /** 菜单项文案，如「第5讲 流水线基础」 */
+  label: string;
+  active: boolean;
+  tip: string;
+}
 
 /** 顶栏中部的一个导航按钮（总目录 / 各讲次·章节 / 在线练习） */
 export interface CourseTab {
@@ -18,6 +28,8 @@ export interface CourseTab {
   /** 悬停提示（完整标题） */
   tip: string;
   extra?: string;
+  /** 讲次较多时的单元分组：有值时该按钮渲染为「单元」按钮，悬停/点击弹出讲次菜单 */
+  menu?: CourseTabMenuItem[];
 }
 
 interface Props {
@@ -43,29 +55,102 @@ function SiteTabs({ tabs }: { tabs: CourseTab[] }) {
   const reduced = useReducedMotion();
   return (
     <nav className="deck-tabs nav-pill" aria-label="课程导航">
-      {tabs.map((t) => (
-        <Link
-          key={t.to}
-          to={t.to}
-          className={`deck-tab${t.active ? ' active' : ''}${t.extra ? ' ' + t.extra : ''}`}
-          data-deck={t.key ?? undefined}
-          data-title={t.tip}
-          aria-current={t.active ? 'page' : undefined}
-        >
-          {t.active && (
-            <motion.span
-              className="deck-tab-pill"
-              layoutId="deck-tab-pill"
-              transition={reduced ? { duration: 0 } : { type: 'tween', duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            />
-          )}
-          <span className="deck-tab-no">
-            <span className="tab-full">{t.full}</span>
-            <span className="tab-short">{t.short}</span>
-          </span>
-        </Link>
-      ))}
+      {tabs.map((t) =>
+        t.menu ? (
+          <TabGroup key={t.to} tab={t} reduced={reduced} />
+        ) : (
+          <Link
+            key={t.to}
+            to={t.to}
+            className={`deck-tab${t.active ? ' active' : ''}${t.extra ? ' ' + t.extra : ''}`}
+            data-deck={t.key ?? undefined}
+            data-title={t.tip}
+            aria-current={t.active ? 'page' : undefined}
+          >
+            {t.active && (
+              <motion.span
+                className="deck-tab-pill"
+                layoutId="deck-tab-pill"
+                transition={reduced ? { duration: 0 } : { type: 'tween', duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              />
+            )}
+            <span className="deck-tab-no">
+              <span className="tab-full">{t.full}</span>
+              <span className="tab-short">{t.short}</span>
+            </span>
+          </Link>
+        ),
+      )}
     </nav>
+  );
+}
+
+/** 单元分组按钮：悬停/点击展开讲次菜单（讲次较多的课程用，替代一长排 tab） */
+function TabGroup({ tab, reduced }: { tab: CourseTab; reduced: boolean | null }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // 点击容器外部或按 Esc 收起
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: globalThis.MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  return (
+    <div
+      ref={ref}
+      className="deck-tab-group"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        className={`deck-tab${tab.active ? ' active' : ''}`}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        data-title={tab.tip}
+        onClick={() => setOpen((o) => !o)}
+      >
+        {tab.active && (
+          <motion.span
+            className="deck-tab-pill"
+            layoutId="deck-tab-pill"
+            transition={reduced ? { duration: 0 } : { type: 'tween', duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          />
+        )}
+        <span className="deck-tab-no">
+          <span className="tab-full">{tab.full}</span>
+          <span className="tab-short">{tab.short}</span>
+        </span>
+      </button>
+      {open && (
+        <div className="deck-menu" role="menu" aria-label={tab.full}>
+          {tab.menu!.map((m) => (
+            <Link
+              key={m.to}
+              to={m.to}
+              role="menuitem"
+              className={`deck-menu-item${m.active ? ' active' : ''}`}
+              title={m.tip}
+              onClick={() => setOpen(false)}
+            >
+              <span className="deck-menu-label">{m.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

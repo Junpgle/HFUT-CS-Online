@@ -357,6 +357,59 @@ button {
   color: var(--ink-2);
 }
 
+/* 讲次较多时的「单元」分组：分组按钮沿用 tab 胶囊语言，悬停/点击弹出讲次菜单 */
+.deck-tab-group {
+  position: relative;
+}
+.deck-tab-group > .deck-tab {
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+/* 分组按钮不显示讲次提示卡（菜单本身即提示） */
+.deck-tab-group > .deck-tab::after {
+  display: none;
+}
+.deck-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 180px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--r-l);
+  box-shadow: var(--shadow-2);
+  z-index: 80;
+}
+.deck-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.8438rem;
+  color: var(--ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 140ms var(--press-ease), border-color 140ms var(--press-ease);
+}
+.deck-menu-item:hover {
+  color: var(--ink);
+  border-color: var(--hairline);
+}
+.deck-menu-item.active {
+  color: var(--deck-accent);
+  font-weight: 600;
+}
+
 /* 顶栏内联搜索框：常驻显示、尺寸不变，聚焦弹出下拉菜单 */
 .search-box {
   position: relative;

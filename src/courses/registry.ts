@@ -72,6 +72,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '十二章课件精讲（力学·热学·电磁学·光学）· 4 份期末试卷在线练习',
   },
+  {
+    id: 'computer-architecture',
+    name: '计算机体系结构',
+    semester: '大三上',
+    base: '/ca',
+    ready: true,
+    source: '十三讲课件精讲（第 2～14 讲）· 3 份试题在线练习',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -98,6 +106,9 @@ export const SA_BASE = courses[5].base;
 
 /** 大学物理课路由前缀（同上约定） */
 export const PHYS_BASE = courses[6].base;
+
+/** 计算机体系结构课路由前缀（同上约定） */
+export const CA_BASE = courses[7].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);
