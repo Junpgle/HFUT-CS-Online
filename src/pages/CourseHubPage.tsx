@@ -7,7 +7,8 @@ import SiteHeader from '../components/SiteHeader';
 import { getRecentCourses } from '../lib/recentCourses';
 import { contributors } from '../content/contributors';
 import ContactCard from '../components/ContactCard';
-import { IconChevronDown, IconChevronUp, IconGitHub } from '../components/icons';
+import { IconChevronDown, IconChevronUp, IconGitHub, IconStar } from '../components/icons';
+import { getFavoriteCourses, toggleFavorite } from '../lib/favoriteCourses';
 import { useToc } from '../lib/toc';
 
 /** 学期分组顺序：8 个学期 */
@@ -36,8 +37,10 @@ export default function CourseHubPage() {
   const reduced = useReducedMotion();
   const [contactOpen, setContactOpen] = useState(false);
 
-  // 最近查看的课程（localStorage，MRU）；无记录时整个板块隐藏
+  // 最近查看的课程（localStorage，MRU）
   const [recentNames] = useState(() => getRecentCourses());
+  // 收藏的课程（localStorage，收藏先后序）；卡片星标与合并展示区共用
+  const [favs, setFavs] = useState<string[]>(() => getFavoriteCourses());
 
   // 置顶按钮：滚过约一屏内容后出现（rAF 节流，与在线练习页同款）
   const [showTop, setShowTop] = useState(false);
@@ -133,31 +136,49 @@ export default function CourseHubPage() {
     return { groups, stats };
   }, []);
 
-  const card = (c: Card, i: number) => (
-    <motion.div
-      key={c.name}
-      initial={reduced ? undefined : { opacity: 0, y: 10 }}
-      animate={reduced ? undefined : { opacity: 1, y: 0 }}
-      transition={reduced ? { duration: 0 } : { duration: 0.24, delay: Math.min(i * 0.03, 0.24), ease: [0.25, 0.1, 0.25, 1] }}
-    >
-      <Link
-        to={c.href}
-        className={`course-card${c.ready ? ' ready' : ''}`}
-        aria-label={c.ready ? `${c.name}，进入课程` : `${c.name}，查看资料统计`}
+  const card = (c: Card, i: number) => {
+    const fav = favs.includes(c.name);
+    return (
+      <motion.div
+        key={c.name}
+        className="course-cell"
+        initial={reduced ? undefined : { opacity: 0, y: 10 }}
+        animate={reduced ? undefined : { opacity: 1, y: 0 }}
+        transition={reduced ? { duration: 0 } : { duration: 0.24, delay: Math.min(i * 0.03, 0.24), ease: [0.25, 0.1, 0.25, 1] }}
       >
-        <span className="course-title">
-          {c.name}
-          {c.ready && <span className="course-go" aria-hidden="true">→</span>}
-        </span>
-        {c.source && <span className="course-desc">{c.source}</span>}
-        {c.total > 0 && (
-          <span className="course-meta">
-            课件 {c.courseware} · 试题 {c.exams} · 附件 {c.misc} · 共 {c.total} 份
+        <Link
+          to={c.href}
+          className={`course-card${c.ready ? ' ready' : ''}`}
+          aria-label={c.ready ? `${c.name}，进入课程` : `${c.name}，查看资料统计`}
+        >
+          <span className="course-title">
+            {c.name}
+            {c.ready && <span className="course-go" aria-hidden="true">→</span>}
           </span>
-        )}
-      </Link>
-    </motion.div>
-  );
+          {c.source && <span className="course-desc">{c.source}</span>}
+          {c.total > 0 && (
+            <span className="course-meta">
+              课件 {c.courseware} · 试题 {c.exams} · 附件 {c.misc} · 共 {c.total} 份
+            </span>
+          )}
+        </Link>
+        {/* 收藏按钮：卡片 Link 的兄弟节点，避免嵌套可点击元素 */}
+        <button
+          type="button"
+          className={`course-fav${fav ? ' on' : ''}`}
+          aria-pressed={fav}
+          aria-label={fav ? `取消收藏 ${c.name}` : `收藏 ${c.name}`}
+          title={fav ? '取消收藏' : '收藏'}
+          onClick={() => {
+            toggleFavorite(c.name);
+            setFavs(getFavoriteCourses());
+          }}
+        >
+          <IconStar size={16} />
+        </button>
+      </motion.div>
+    );
+  };
 
   // 首屏 hero 的分节淡入（reduced-motion 下直接呈现）
   const rise = (delay: number) =>
@@ -169,29 +190,36 @@ export default function CourseHubPage() {
           transition: { duration: 0.4, delay, ease: [0.25, 0.1, 0.25, 1] as const },
         };
 
-  // 最近查看卡片（数据取 catalog + registry，名字已不在资料库的忽略）
+  // 按课程名解析成展示卡片（数据取 catalog + registry，名字已不在资料库的忽略）
+  const resolveCard = (name: string): Card | null => {
+    const c = catalog.find((x) => x.name === name);
+    const entry = findCourseByName(name);
+    if (!c && !entry) return null;
+    return {
+      semester: c?.semester ?? entry!.semester,
+      name,
+      href: entry ? entry.base : `${STUB_BASE}/${encodeURIComponent(name)}`,
+      ready: !!entry,
+      source: entry?.source ?? null,
+      courseware: c?.courseware ?? 0,
+      exams: c?.exams ?? 0,
+      misc: c?.misc ?? 0,
+      total: c?.total ?? 0,
+    };
+  };
+
+  // 收藏卡片（收藏先后序在前）
+  const favCards: Card[] = useMemo(() => favs.map(resolveCard).filter((x): x is Card => !!x), [favs]);
+  // 最近查看卡片
   const recentCards: Card[] = useMemo(
-    () =>
-      recentNames
-        .map((name) => {
-          const c = catalog.find((x) => x.name === name);
-          const entry = findCourseByName(name);
-          if (!c && !entry) return null;
-          return {
-            semester: c?.semester ?? entry!.semester,
-            name,
-            href: entry ? entry.base : `${STUB_BASE}/${encodeURIComponent(name)}`,
-            ready: !!entry,
-            source: entry?.source ?? null,
-            courseware: c?.courseware ?? 0,
-            exams: c?.exams ?? 0,
-            misc: c?.misc ?? 0,
-            total: c?.total ?? 0,
-          };
-        })
-        .filter((x): x is Card => !!x),
+    () => recentNames.map(resolveCard).filter((x): x is Card => !!x),
     [recentNames],
   );
+  // 首屏合并展示：收藏在前，最近查看随后（与收藏重复的只出现一次）
+  const shownCards: Card[] = useMemo(() => {
+    const favSet = new Set(favs);
+    return [...favCards, ...recentCards.filter((r) => !favSet.has(r.name))];
+  }, [favCards, recentCards, favs]);
 
   return (
     <div className="hub-shell">
@@ -255,12 +283,12 @@ export default function CourseHubPage() {
       </section>
 
       <main className="hub-main" id="catalog">
-        {recentCards.length > 0 && (
-          <section className="hub-sem" aria-label="最近查看">
+        {shownCards.length > 0 && (
+          <section className="hub-sem" aria-label={favCards.length > 0 ? '收藏与最近查看' : '最近查看'}>
             <div className="hub-sem-h">
-              <h2>最近查看</h2>
+              <h2>{favCards.length > 0 ? '收藏与最近查看' : '最近查看'}</h2>
             </div>
-            <div className="hub-grid">{recentCards.map(card)}</div>
+            <div className="hub-grid">{shownCards.map(card)}</div>
           </section>
         )}
         {groups.map((g) => (
