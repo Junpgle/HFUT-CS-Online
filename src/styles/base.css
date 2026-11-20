@@ -234,6 +234,7 @@ button {
 }
 .topbar-ctl.nav-pill:hover {
   border-color: var(--hairline);
+  box-shadow: var(--shadow-1);
 }
 /* 课程名胶囊：文字型控件，横向内距比图标胶囊宽；高度同样锁 42px */
 .topbar-ctl.topbar-title {
@@ -595,7 +596,7 @@ button {
 }
 .icon-btn:hover {
   color: var(--deck-accent);
-  box-shadow: var(--shadow-1);
+  transform: scale(1.08);
 }
 .icon-btn:active {
   transform: scale(0.9);
