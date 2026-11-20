@@ -185,6 +185,7 @@ function PaperInner({ paper }: { paper: MathPaper }) {
   const right = paper.questions.filter((q) => results[q.id] === 'right').length;
   const total = paper.questions.length;
 
+  // 大题标题去掉「一、」前缀（原卷中文序数由 pq-group-no 徽章承担）；无前缀时徽章退回数组序号
   const stripPrefix = (t: string) => t.replace(/^[一二三四五六七八九十]+[、．.]/, '');
 
   let lastSection = 0;
@@ -297,8 +298,8 @@ function PaperInner({ paper }: { paper: MathPaper }) {
                 <Fragment key={q.id}>
                   {showHead && sec && (
                     <p className="pq-group-h" data-deck="math">
-                      <b className="pq-group-no">{sec.no}</b>
-                      {stripPrefix(sec.title)} · {sectionCounts.get(sec.no) ?? 0} 题
+                      <b className="pq-group-no">{MATH_KIND_LABEL[kind]}</b>
+                      {sec.title} · {sectionCounts.get(sec.no) ?? 0} 题
                     </p>
                   )}
                   <PracticeCard

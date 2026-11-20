@@ -190,7 +190,7 @@ function PaperInner({ paper }: { paper: OsPaper }) {
   const right = paper.questions.filter((q) => results[q.id] === 'right').length;
   const total = paper.questions.length;
 
-  // 大题标题去掉「一、」前缀（编号由 pq-group-no 徽章承担）
+  // 分段导航的 tooltip 用紧凑大题名（去掉「一、」前缀）
   const stripPrefix = (t: string) => t.replace(/^[一二三四五六七八九十]+、/, '');
 
   // 可见列表按大题序排列，分组渲染游标
@@ -311,8 +311,8 @@ function PaperInner({ paper }: { paper: OsPaper }) {
                 <Fragment key={q.id}>
                   {showHead && sec && (
                     <p className="pq-group-h">
-                      <b className="pq-group-no">{sec.no}</b>
-                      {stripPrefix(sec.title)} · {sectionCounts.get(sec.no) ?? 0} 题
+                      <b className="pq-group-no">{OS_KIND_LABEL[kind]}</b>
+                      {sec.title} · {sectionCounts.get(sec.no) ?? 0} 题
                     </p>
                   )}
                   <PracticeCard
