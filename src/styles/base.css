@@ -343,11 +343,6 @@ button {
   color: var(--deck-accent);
   font-weight: 700;
 }
-/* 「在线练习」tab：常显完整文字 */
-.deck-tab.practice-tab .tab-full,
-.deck-tab.practice-tab .tab-short {
-  color: var(--ink-2);
-}
 
 /* 讲次较多时的「单元」分组：分组按钮沿用 tab 胶囊语言，悬停/点击弹出讲次菜单 */
 .deck-tab-group {
