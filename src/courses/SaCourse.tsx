@@ -54,9 +54,6 @@ export default function SaCourse() {
     return m ? m[1] : null;
   }, [location.pathname]);
 
-  const chapter = saChapters.find((d) => d.id === currentChapter);
-  const subtitle = chapter?.subtitle;
-
   // 课程页 → html[data-deck='sa']：整套课程统一切换到软件体系结构主题色（石板蓝）
   useEffect(() => {
     document.documentElement.dataset.deck = 'sa';
@@ -176,7 +173,6 @@ export default function SaCourse() {
         courseName="软件体系结构"
         courseBase={SA_BASE}
         courseTip="软件体系结构 · 课件讲义"
-        subtitle={subtitle}
         tabs={tabs}
         searchIndex={searchIndex}
         searchLinkTo={searchLinkTo}

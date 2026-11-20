@@ -67,8 +67,6 @@ export default function PhysCourse() {
     return m ? m[1] : null;
   }, [location.pathname]);
 
-  const subtitle = physDecks.find((d) => d.id === currentDeck)?.subtitle;
-
   // 整门课程共用一个主题色（藕紫）：html[data-deck='phys'] → --deck-accent
   useEffect(() => {
     document.documentElement.dataset.deck = 'phys';
@@ -198,7 +196,6 @@ export default function PhysCourse() {
         courseName="大学物理"
         courseBase={PHYS_BASE}
         courseTip="大学物理 · 力学 热学 电磁学 光学"
-        subtitle={subtitle}
         tabs={tabs}
         searchIndex={searchIndex}
         searchLinkTo={searchLinkTo}

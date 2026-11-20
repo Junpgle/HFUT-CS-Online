@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { Link } from 'react-router-dom';
-import { decodeEntities } from '../lib/text';
 import { IconArrowLeft, IconMenu } from './icons';
 import ThemeToggle from './ThemeToggle';
 import SearchBox, { type SearchIndexItem } from './SearchBox';
@@ -40,7 +39,6 @@ interface Props {
   /** 课程名胶囊的悬停说明 */
   courseTip: string;
   /** 当前页副标（讲次/章节标题） */
-  subtitle?: string;
   tabs: CourseTab[];
   /** 搜索索引与条目跳转路由（各课程自行构建） */
   searchIndex: SearchIndexItem[];
@@ -162,7 +160,6 @@ export default function TopBar({
   courseName,
   courseBase,
   courseTip,
-  subtitle,
   tabs,
   searchIndex,
   searchLinkTo,
@@ -191,7 +188,6 @@ export default function TopBar({
         <Link to={courseBase} className="topbar-ctl nav-pill topbar-title" title={courseTip}>
           {courseName}
         </Link>
-        {subtitle && <span className="topbar-sub">{decodeEntities(subtitle)}</span>}
       </div>
       <SiteTabs tabs={tabs} />
       <div className="topbar-right">

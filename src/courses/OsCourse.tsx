@@ -53,8 +53,6 @@ export default function OsCourse() {
 
   const onPractice = location.pathname.startsWith(`${OS_BASE}/practice`);
   const onAtt = location.pathname.startsWith(`${OS_BASE}/attachments`);
-  const subtitle = osChapters.find((c) => c.id === currentChapter)?.subtitle;
-
   // 课程主题色：html[data-deck='os'] → --deck-accent = 橄榄绿（首页/在线练习用）
   useEffect(() => {
     document.documentElement.dataset.deck = 'os';
@@ -181,7 +179,6 @@ export default function OsCourse() {
         courseName="操作系统"
         courseBase={OS_BASE}
         courseTip="操作系统 · 课程资料与在线练习"
-        subtitle={subtitle}
         tabs={tabs}
         searchIndex={searchIndex}
         searchLinkTo={searchLinkTo}

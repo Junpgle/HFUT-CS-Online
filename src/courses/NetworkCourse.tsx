@@ -58,8 +58,6 @@ export default function NetworkCourse() {
     return m ? m[1] : null;
   }, [location.pathname]);
 
-  const subtitle = netChapters.find((d) => d.id === currentChapter)?.subtitle;
-
   // 课程页 → html[data-deck='net']：整套课程统一切换到计网主题色（深青）
   useEffect(() => {
     document.documentElement.dataset.deck = 'net';
@@ -194,7 +192,6 @@ export default function NetworkCourse() {
         courseName="计算机网络"
         courseBase={NET_BASE}
         courseTip="计算机网络 · 课件讲义"
-        subtitle={subtitle}
         tabs={tabs}
         searchIndex={searchIndex}
         searchLinkTo={searchLinkTo}

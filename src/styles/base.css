@@ -252,15 +252,6 @@ button {
 .topbar-title .accent {
   color: var(--deck-accent);
 }
-.topbar-sub {
-  color: var(--ink-3);
-  font-size: 0.8125rem;
-  padding-left: 12px;
-  border-left: 1px solid var(--hairline);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 /* 讲次分段切换条：桌面居中显示，激活项白底胶囊弹簧滑动 */
 .deck-tabs {
@@ -602,11 +593,8 @@ button {
   transform: scale(0.9);
 }
 
-/* 窄桌面：副标题退场（信息在激活 tab 与 h1 中都有），让位讲次 tabs（短写法「1讲」后 7px 才不溢出，1100px 实测） */
+/* 窄桌面：让位讲次 tabs（短写法「1讲」后 7px 才不溢出，1100px 实测） */
 @media (max-width: 1279px) {
-  .topbar-sub {
-    display: none;
-  }
   .deck-tab {
     padding: 4px 7px;
   }
@@ -811,9 +799,6 @@ button {
     padding: 16px 14px 48px;
   }
   .sidebar {
-    display: none;
-  }
-  .topbar-sub {
     display: none;
   }
 }

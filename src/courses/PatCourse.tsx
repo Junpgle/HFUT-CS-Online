@@ -64,8 +64,6 @@ export default function PatCourse() {
     return m ? m[1] : null;
   }, [location.pathname]);
 
-  const subtitle = patDecks.find((d) => d.id === currentDeck)?.subtitle;
-
   // 整门课程共用一个主题色（青碧）：html[data-deck='pat'] → --deck-accent
   useEffect(() => {
     document.documentElement.dataset.deck = 'pat';
@@ -195,7 +193,6 @@ export default function PatCourse() {
         courseName="程序设计艺术与方法"
         courseBase={PAT_BASE}
         courseTip="程序设计艺术与方法 · ICPC 竞赛基础课"
-        subtitle={subtitle}
         tabs={tabs}
         searchIndex={searchIndex}
         searchLinkTo={searchLinkTo}

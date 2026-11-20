@@ -63,8 +63,6 @@ export default function CaCourse() {
 
   const onPractice = location.pathname.startsWith(`${CA_BASE}/practice`);
   const onAtt = location.pathname.startsWith(`${CA_BASE}/attachments`);
-  const subtitle = caChapters.find((c) => c.id === currentChapter)?.subtitle;
-
   // 课程主题色：html[data-deck='ca'] → --deck-accent = 暗酒红
   useEffect(() => {
     document.documentElement.dataset.deck = 'ca';
@@ -189,7 +187,6 @@ export default function CaCourse() {
         courseName="计算机体系结构"
         courseBase={CA_BASE}
         courseTip="计算机体系结构 · 课程资料与在线练习"
-        subtitle={subtitle}
         tabs={tabs}
         searchIndex={searchIndex}
         searchLinkTo={searchLinkTo}

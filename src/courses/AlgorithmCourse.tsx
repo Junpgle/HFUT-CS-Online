@@ -37,8 +37,6 @@ export default function AlgorithmCourse() {
     return m ? m[1] : null;
   }, [location.pathname]);
 
-  const subtitle = decks.find((d) => d.id === currentDeck)?.subtitle;
-
   // 当前讲次 → html[data-deck]：顶栏 tabs / 进度条 / 侧栏 / h2 编号统一切换讲次主题色
   useEffect(() => {
     if (currentDeck) document.documentElement.dataset.deck = currentDeck;
@@ -148,7 +146,6 @@ export default function AlgorithmCourse() {
         courseName="算法设计与分析"
         courseBase={ALGO_BASE}
         courseTip="算法设计与分析 · 复习手册"
-        subtitle={subtitle}
         tabs={tabs}
         searchIndex={searchIndex}
         searchLinkTo={searchLinkTo}

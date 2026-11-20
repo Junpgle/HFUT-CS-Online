@@ -54,8 +54,6 @@ export default function MathCourse() {
 
   const onPractice = location.pathname.startsWith(`${MATH_BASE}/practice`);
   const onAtt = location.pathname.startsWith(`${MATH_BASE}/attachments`);
-  const subtitle = mathChapters.find((c) => c.id === currentChapter)?.subtitle;
-
   // 课程主题色：html[data-deck='math'] → --deck-accent = 苔藓绿
   useEffect(() => {
     document.documentElement.dataset.deck = 'math';
@@ -179,7 +177,6 @@ export default function MathCourse() {
         courseName="高等数学"
         courseBase={MATH_BASE}
         courseTip="高等数学 · 课程资料与在线练习"
-        subtitle={subtitle}
         tabs={tabs}
         searchIndex={searchIndex}
         searchLinkTo={searchLinkTo}
