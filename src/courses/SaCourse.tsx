@@ -8,7 +8,6 @@ import MobileDrawer from '../components/MobileDrawer';
 import type { SearchIndexItem } from '../components/SearchBox';
 import SaHomePage from '../pages/SaHomePage';
 import SaUnitPage from '../pages/SaUnitPage';
-import SaPracticePage from '../pages/sa/SaPracticePage';
 import { SA_BASE, findCourseByBase } from './registry';
 import { recordCourseView } from '../lib/recentCourses';
 import { decodeEntities } from '../lib/text';
@@ -32,7 +31,8 @@ function buildSaIndex(): SearchIndexItem[] {
 
 /**
  * 「软件体系结构」课程根组件 —— 挂在 /sa/* 下。
- * 布局与算法课完全一致（同一套上游样式），数据为第 4/5/7 章讲义 + RSA 专题；试题未收录，在线练习为空态。
+ * 布局与算法课完全一致（同一套上游样式），数据为第 4/5/7 章讲义 + RSA 专题；
+ * 试题未收录，不设在线练习页与导航按钮（旧链接由 * 兜底回总目录）。
  */
 export default function SaCourse() {
   const location = useLocation();
@@ -105,16 +105,14 @@ export default function SaCourse() {
   // 路由切换时关闭抽屉
   useEffect(() => setDrawerOpen(false), [location.pathname]);
 
-  const practiceActive = location.pathname.startsWith(`${SA_BASE}/practice`);
-
-  // 顶栏导航：总目录 + 第4/5/7章 + RSA 专题 + 在线练习
+  // 顶栏导航：总目录 + 第4/5/7章 + RSA 专题（试题未收录，无在线练习项）
   const tabs = useMemo<CourseTab[]>(
     () => [
       {
         to: `${SA_BASE}`,
         full: '总目录',
         short: '目录',
-        active: !currentChapter && !practiceActive,
+        active: !currentChapter,
         key: null,
         tip: '课程首页 · 章节脉络',
       },
@@ -126,17 +124,8 @@ export default function SaCourse() {
         key: null,
         tip: decodeEntities(d.title),
       })),
-      {
-        to: `${SA_BASE}/practice`,
-        full: '在线练习',
-        short: '练习',
-        active: practiceActive,
-        key: null,
-        tip: '在线练习 · 试题暂未收录',
-        extra: 'practice-tab',
-      },
     ],
-    [currentChapter, practiceActive],
+    [currentChapter],
   );
 
   // 抽屉导航：首页条目由 SidebarContent 自带，这里只给课程内条目
@@ -146,7 +135,7 @@ export default function SaCourse() {
         to: `${SA_BASE}`,
         no: '◎',
         label: '总目录 · 章节脉络',
-        active: !currentChapter && !practiceActive,
+        active: !currentChapter,
       },
       ...saChapters.map((d) => ({
         to: `${SA_BASE}/deck/${d.id}`,
@@ -155,15 +144,8 @@ export default function SaCourse() {
         active: d.id === currentChapter,
         deckKey: 'sa',
       })),
-      {
-        to: `${SA_BASE}/practice`,
-        no: '练',
-        label: '在线练习 · 试题暂未收录',
-        active: practiceActive,
-        navKey: 'practice',
-      },
     ],
-    [currentChapter, practiceActive],
+    [currentChapter],
   );
 
   // 搜索：章节索引 + 跳转路由
@@ -184,8 +166,7 @@ export default function SaCourse() {
         onOpenSidebar={() => setDrawerOpen(true)}
       />
 
-      {/* 练习页不上报目录（无侧栏），让正文占满整个版心 */}
-      <div className={`shell-body${practiceActive ? ' no-sidebar' : ''}`}>
+      <div className="shell-body">
         <Sidebar />
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -203,7 +184,6 @@ export default function SaCourse() {
             <Routes location={location}>
               <Route index element={<SaHomePage />} />
               <Route path="deck/:deckId" element={<SaUnitPage />} />
-              <Route path="practice" element={<SaPracticePage />} />
               <Route path="*" element={<Navigate to={SA_BASE} replace />} />
             </Routes>
           </motion.div>
