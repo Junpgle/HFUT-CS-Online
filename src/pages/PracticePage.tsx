@@ -61,8 +61,6 @@ export default function PracticePage() {
   const [kind, setKind] = useState<PracticeKind>('single');
   const [results, setResults] = useState<Record<string, Result>>(() => loadResults());
   const firstKindRun = useRef(true);
-  // 热力图折叠态：宽屏默认展开，窄屏默认收起（首屏让位给题目）
-  const [heatOpen, setHeatOpen] = useState(() => window.matchMedia('(min-width: 1200px)').matches);
   // 清空进度确认层：复用全站玻璃模态，替代原生 confirm
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -223,9 +221,7 @@ export default function PracticePage() {
         {/* 左栏：热力图即总览+导航——分块标题就是题型切换，格子里是每一题 */}
         <aside className="pq-rail" aria-label="题型与进度热力图">
           {/* 420 格，一格一题——绿=答对，红=答错，深灰=已看答案，浅灰=未作答；点击标题切题型、点击格子跳题 */}
-          {/* 收进 details：窄屏默认收起，首屏以题目为主角 */}
-          <details className="pq-heatblock" open={heatOpen} onToggle={(e) => setHeatOpen((e.target as HTMLDetailsElement).open)}>
-            <summary className="pq-heat-sum">热力图</summary>
+          <div className="pq-heatblock">
             {KINDS.map((k) => {
               const c = countFor(k);
               const short = KIND_META[k].label.replace('题', '');
@@ -264,7 +260,7 @@ export default function PracticePage() {
                 </div>
               );
             })}
-          </details>
+          </div>
         </aside>
 
         {/* 主列：题目列表 */}

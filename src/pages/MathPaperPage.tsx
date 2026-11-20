@@ -40,7 +40,6 @@ function PaperInner({ paper }: { paper: MathPaper }) {
     () => KINDS.find((k) => paper.questions.some((q) => q.kind === k)) ?? 'fill',
   );
   const firstKindRun = useRef(true);
-  const [heatOpen, setHeatOpen] = useState(() => window.matchMedia('(min-width: 1200px)').matches);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const pendingJump = useRef<string | null>(null);
 
@@ -250,8 +249,7 @@ function PaperInner({ paper }: { paper: MathPaper }) {
       <div className="pq-layout">
         {/* 左栏：热力图即总览+导航——分块标题就是题型切换，格子里是每一题 */}
         <aside className="pq-rail" aria-label="题型与进度热力图">
-          <details className="pq-heatblock" open={heatOpen} onToggle={(e) => setHeatOpen((e.target as HTMLDetailsElement).open)}>
-            <summary className="pq-heat-sum">热力图</summary>
+          <div className="pq-heatblock">
             {heatKinds.map((k) => {
               const c = countFor(k);
               const short = MATH_KIND_LABEL[k];
@@ -285,7 +283,7 @@ function PaperInner({ paper }: { paper: MathPaper }) {
                 </div>
               );
             })}
-          </details>
+          </div>
         </aside>
 
         {/* 主列：题目列表（按原卷大题分组） */}

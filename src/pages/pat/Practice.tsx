@@ -33,9 +33,6 @@ export default function PatPractice() {
 
   const paper: PatPaper | undefined = papers.find((p) => p.id === paperId);
 
-  // 热力图折叠态：宽屏默认展开，窄屏默认收起（首屏让位给题目）
-  const [heatOpen, setHeatOpen] = useState(() => window.matchMedia('(min-width: 1200px)').matches);
-
   useEffect(() => {
     if (!confirmOpen) return;
     const onKey = (e: globalThis.KeyboardEvent) => {
@@ -146,8 +143,7 @@ export default function PatPractice() {
       <div className="pq-layout">
         {/* 左栏：热力图即总览+导航——格子是每一道赛题，点击跳题 */}
         <aside className="pq-rail" aria-label="赛题进度热力图">
-          <details className="pq-heatblock" open={heatOpen} onToggle={(e) => setHeatOpen((e.target as HTMLDetailsElement).open)}>
-            <summary className="pq-heat-sum">热力图</summary>
+          <div className="pq-heatblock">
             <div className="pq-heat" data-active="true">
               <button type="button" className="pq-heat-label" aria-pressed="true">
                 <span className="pq-heat-kind">赛题</span>
@@ -179,7 +175,7 @@ export default function PatPractice() {
                 })}
               </div>
             </div>
-          </details>
+          </div>
         </aside>
 
         {/* 主列：题目列表（每题附知识点标签，可跳转到讲次对应位置） */}

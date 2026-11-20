@@ -46,8 +46,6 @@ function PaperInner({ paper }: { paper: OsPaper }) {
   const [results, setResults] = useState<Record<string, Result>>(() => loadResults());
   const [kind, setKind] = useState<OsQuizKind>('single');
   const firstKindRun = useRef(true);
-  // 热力图折叠态：宽屏默认展开，窄屏默认收起（首屏让位给题目）
-  const [heatOpen, setHeatOpen] = useState(() => window.matchMedia('(min-width: 1200px)').matches);
   // 清空进度确认层：复用全站玻璃模态
   const [confirmOpen, setConfirmOpen] = useState(false);
   // 热力图点击 → 跨题型时先切题型再跳
@@ -260,8 +258,7 @@ function PaperInner({ paper }: { paper: OsPaper }) {
       <div className="pq-layout">
         {/* 左栏：热力图即总览+导航——分块标题就是题型切换，格子里是每一题 */}
         <aside className="pq-rail" aria-label="题型与进度热力图">
-          <details className="pq-heatblock" open={heatOpen} onToggle={(e) => setHeatOpen((e.target as HTMLDetailsElement).open)}>
-            <summary className="pq-heat-sum">热力图</summary>
+          <div className="pq-heatblock">
             {heatKinds.map((k) => {
               const c = countFor(k);
               const short = OS_KIND_LABEL[k];
@@ -300,7 +297,7 @@ function PaperInner({ paper }: { paper: OsPaper }) {
                 </div>
               );
             })}
-          </details>
+          </div>
         </aside>
 
         {/* 主列：题目列表（按原卷大题分组） */}

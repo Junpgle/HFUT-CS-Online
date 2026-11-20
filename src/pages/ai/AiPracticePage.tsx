@@ -166,8 +166,7 @@ export default function AiPracticePage() {
       <div className="pq-layout">
         {/* 左栏：热力图按方向分块，格子是每一题 */}
         <aside className="pq-rail" aria-label="方向与进度热力图">
-          <details className="pq-heatblock" open>
-            <summary className="pq-heat-sum">热力图</summary>
+          <div className="pq-heatblock">
             {aiPaper.sections.map((sec) => {
               const doneSec = sec.questionIds.filter((id) => results[id]).length;
               return (
@@ -203,7 +202,7 @@ export default function AiPracticePage() {
                 </div>
               );
             })}
-          </details>
+          </div>
         </aside>
 
         {/* 主列：题目列表，按原文档方向分组 */}

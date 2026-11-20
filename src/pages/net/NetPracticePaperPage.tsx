@@ -156,8 +156,7 @@ function NetPaperInner({ paper }: { paper: NetPaper }) {
       <div className="pq-layout">
         {/* 左栏：热力图按大题分块，格子是每一题 */}
         <aside className="pq-rail" aria-label="大题与进度热力图">
-          <details className="pq-heatblock" open>
-            <summary className="pq-heat-sum">热力图</summary>
+          <div className="pq-heatblock">
             {paper.sections.map((sec) => {
               const st = sectionStats(sec.questionIds);
               return (
@@ -191,7 +190,7 @@ function NetPaperInner({ paper }: { paper: NetPaper }) {
                 </div>
               );
             })}
-          </details>
+          </div>
         </aside>
 
         {/* 主列：题目列表，按原卷大题分组 */}

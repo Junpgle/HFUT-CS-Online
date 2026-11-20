@@ -2536,42 +2536,9 @@ pre.code .cl-code:empty + .cl-com {
   color: var(--ink-3);
 }
 
-/* 热力图：420 格，一格一题（GitHub 贡献墙式）；收在 details 里，窄屏默认收起 */
+/* 热力图：一格一题（GitHub 贡献墙式），直接陈列在侧栏顶部 */
 .pq-heatblock {
   margin-bottom: 0;
-}
-.pq-heat-sum {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0 0 10px;
-  font-size: 0.7188rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--ink-3);
-  cursor: pointer;
-  list-style: none;
-  transition: color 140ms;
-}
-.pq-heat-sum::-webkit-details-marker {
-  display: none;
-}
-.pq-heat-sum:hover {
-  color: var(--ink);
-}
-/* 折叠箭头（closed 朝下 / open 朝上） */
-.pq-heat-sum::after {
-  content: '';
-  width: 6px;
-  height: 6px;
-  margin-top: -3px;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg);
-  transition: transform 160ms var(--press-ease);
-}
-.pq-heatblock[open] .pq-heat-sum::after {
-  transform: rotate(-135deg);
 }
 .pq-heat {
   margin-bottom: 10px;
