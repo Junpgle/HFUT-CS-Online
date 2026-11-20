@@ -1,6 +1,7 @@
 import { useEffect, type RefObject } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { useToc } from './toc';
+import { isAutoScrolling } from './scroll';
 
 /** 滚动跨节时右上角短暂浮现当前大节名（wayfinding，单例 DOM） */
 let flashEl: HTMLDivElement | null = null;
@@ -42,6 +43,9 @@ export function useScrollSpy(rootRef: RefObject<HTMLElement | null>, deps: unkno
     let raf = 0;
     const compute = () => {
       raf = 0;
+      // 程序化平滑滚动（点目录/标签跳转）途中不做中间态激活：
+      // 目标项已在跳转时立即高亮，沿途激活只会让指示器逐条弹跳、侧栏反复滚动
+      if (isAutoScrolling()) return;
       const topbar = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')) || 52;
       const threshold = topbar + 28;
       let best: HTMLElement | null = null;

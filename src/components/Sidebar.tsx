@@ -78,8 +78,8 @@ function TocGroupItem({
   );
 }
 
-/** 拆出条目开头的编号前缀（"1." / "3.1"），编号占独立列、折行悬挂对齐 */
-const TOC_NO_RE = /^(\d+(?:\.\d+)*[.、．]?)\s*(.+)$/u;
+/** 拆出条目开头的编号前缀（"1." / "3.1" / "1-1"），编号占独立列、折行悬挂对齐 */
+const TOC_NO_RE = /^(\d+(?:[.\-]\d+)*[.、．]?)\s*(.+)$/u;
 
 function TocLink({ e, active, onJump }: { e: TocEntry; active: boolean; onJump: (id: string) => void }) {
   const text = decodeEntities(e.text);
