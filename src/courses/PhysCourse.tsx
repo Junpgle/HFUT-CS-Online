@@ -119,9 +119,29 @@ export default function PhysCourse() {
   // 顶栏导航：总目录 + 十二章 + 在线练习 + 附件
   const onPractice = location.pathname.startsWith(`${PHYS_BASE}/practice`);
   const onAtt = location.pathname.startsWith(`${PHYS_BASE}/attachments`);
+  // 练习/附件页专属色：html[data-pg] → tokens.css 覆盖 --deck-accent（不与总目录、各章重复）
+  useEffect(() => {
+    const pg = onPractice ? 'practice' : onAtt ? 'att' : null;
+    if (pg) document.documentElement.dataset.pg = pg;
+    else delete document.documentElement.dataset.pg;
+    return () => {
+      delete document.documentElement.dataset.pg;
+    };
+  }, [onPractice, onAtt]);
+
+  // 练习/附件页专属色：html[data-pg] → tokens.css 覆盖 --deck-accent（不与总目录、各章重复）
+  useEffect(() => {
+    const pg = onPractice ? 'practice' : onAtt ? 'att' : null;
+    if (pg) document.documentElement.dataset.pg = pg;
+    else delete document.documentElement.dataset.pg;
+    return () => {
+      delete document.documentElement.dataset.pg;
+    };
+  }, [onPractice, onAtt]);
+
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${PHYS_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !onPractice && !onAtt, key: null, tip: '课程主页 · 内容地图与参考资料' },
+      { to: `${PHYS_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !onPractice && !onAtt, key: null, tip: '课程主页 · 内容地图与参考资料', dot: 'var(--phys)' },
       ...physDecks.map((d, i) => ({
         to: `${PHYS_BASE}/deck/${d.id}`,
         full: d.no,
@@ -129,6 +149,7 @@ export default function PhysCourse() {
         active: d.id === currentDeck,
         key: null,
         tip: decodeEntities(d.title),
+        dot: `var(--phys${i + 1})`,
       })),
       {
         to: `${PHYS_BASE}/practice`,
@@ -138,6 +159,7 @@ export default function PhysCourse() {
         key: null,
         tip: '在线练习 · 4 份期末试卷 42 题',
         extra: 'practice-tab',
+        dot: 'var(--phys-practice)',
       },
       {
         to: `${PHYS_BASE}/attachments`,
@@ -146,6 +168,7 @@ export default function PhysCourse() {
         active: onAtt,
         key: null,
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+        dot: 'var(--phys-att)',
       },
     ],
     [currentDeck, onPractice, onAtt],

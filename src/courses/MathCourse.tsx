@@ -54,6 +54,16 @@ export default function MathCourse() {
 
   const onPractice = location.pathname.startsWith(`${MATH_BASE}/practice`);
   const onAtt = location.pathname.startsWith(`${MATH_BASE}/attachments`);
+  // 练习/附件页专属色：html[data-pg] → tokens.css 覆盖 --deck-accent（不与总目录、各章重复）
+  useEffect(() => {
+    const pg = onPractice ? 'practice' : onAtt ? 'att' : null;
+    if (pg) document.documentElement.dataset.pg = pg;
+    else delete document.documentElement.dataset.pg;
+    return () => {
+      delete document.documentElement.dataset.pg;
+    };
+  }, [onPractice, onAtt]);
+
   // 课程主题色：html[data-deck='math'] → --deck-accent = 苔藓绿
   useEffect(() => {
     document.documentElement.dataset.deck = 'math';
@@ -109,14 +119,15 @@ export default function MathCourse() {
   // 顶栏导航：总目录 + 第 8～13 章 + 在线练习 + 附件（末位固定）
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${MATH_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice && !onAtt, key: null, tip: '课程首页 · 课程与资料概况' },
-      ...mathChapters.map((c) => ({
+      { to: `${MATH_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice && !onAtt, key: null, tip: '课程首页 · 课程与资料概况', dot: 'var(--math)' },
+      ...mathChapters.map((c, i) => ({
         to: `${MATH_BASE}/chapter/${c.id}`,
         full: c.no,
         short: c.no.replace('第', '').replace('章', ''),
         active: c.id === currentChapter,
         key: null,
         tip: decodeEntities(c.title),
+        dot: `var(--math${i + 1})`,
       })),
       {
         to: `${MATH_BASE}/practice`,
@@ -126,6 +137,7 @@ export default function MathCourse() {
         key: null,
         tip: `在线练习 · ${mathPapers.length} 份试卷`,
         extra: 'practice-tab',
+        dot: 'var(--math-practice)',
       },
       {
         to: `${MATH_BASE}/attachments`,
@@ -134,6 +146,7 @@ export default function MathCourse() {
         active: onAtt,
         key: null,
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+        dot: 'var(--math-att)',
       },
     ],
     [currentChapter, onPractice, onAtt],

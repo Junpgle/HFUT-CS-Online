@@ -115,11 +115,31 @@ export default function NetworkCourse() {
 
   const practiceActive = location.pathname.startsWith(`${NET_BASE}/practice`);
   const onAtt = location.pathname.startsWith(`${NET_BASE}/attachments`);
+  // 练习/附件页专属色：html[data-pg] → tokens.css 覆盖 --deck-accent（不与总目录、各章重复）
+  useEffect(() => {
+    const pg = practiceActive ? 'practice' : onAtt ? 'att' : null;
+    if (pg) document.documentElement.dataset.pg = pg;
+    else delete document.documentElement.dataset.pg;
+    return () => {
+      delete document.documentElement.dataset.pg;
+    };
+  }, [practiceActive, onAtt]);
+
+  // 练习/附件页专属色：html[data-pg] → tokens.css 覆盖 --deck-accent（不与总目录、各章重复）
+  useEffect(() => {
+    const pg = practiceActive ? 'practice' : onAtt ? 'att' : null;
+    if (pg) document.documentElement.dataset.pg = pg;
+    else delete document.documentElement.dataset.pg;
+    return () => {
+      delete document.documentElement.dataset.pg;
+    };
+  }, [practiceActive, onAtt]);
+
 
   // 顶栏导航：总目录 + 第1~7章 + 在线练习 + 附件
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${NET_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !practiceActive && !onAtt, key: null, tip: '课程首页 · 七章总览' },
+      { to: `${NET_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !practiceActive && !onAtt, key: null, tip: '课程首页 · 七章总览', dot: 'var(--net)' },
       ...netChapters.map((d) => ({
         to: `${NET_BASE}/deck/${d.id}`,
         full: d.no,
@@ -127,6 +147,7 @@ export default function NetworkCourse() {
         active: d.id === currentChapter,
         key: 'net',
         tip: decodeEntities(d.title),
+        dot: `var(--net${d.id.slice(2)})`,
       })),
       {
         to: `${NET_BASE}/practice`,
@@ -136,6 +157,7 @@ export default function NetworkCourse() {
         key: null,
         tip: '在线练习 · 3 套期末试卷',
         extra: 'practice-tab',
+        dot: 'var(--net-practice)',
       },
       {
         to: `${NET_BASE}/attachments`,
@@ -144,6 +166,7 @@ export default function NetworkCourse() {
         active: onAtt,
         key: null,
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+        dot: 'var(--net-att)',
       },
     ],
     [currentChapter, practiceActive, onAtt],

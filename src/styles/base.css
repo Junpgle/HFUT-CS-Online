@@ -279,6 +279,19 @@ button {
     display: none;
   }
 }
+/* 行首主题色点：每个按钮对应页面 own color，未激活也能一眼区分 */
+.tab-dot {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ink-3);
+}
+.deck-menu-item .tab-dot {
+  width: 6px;
+  height: 6px;
+}
+
 /* hover 预览：浮出讲次标题小卡（延迟 300ms，防误读） */
 .deck-tab::after {
   content: attr(data-title);

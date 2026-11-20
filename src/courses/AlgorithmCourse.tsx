@@ -87,9 +87,27 @@ export default function AlgorithmCourse() {
 
   // 顶栏导航：总目录 + 第1~8讲 + 在线练习（课程资料随仓库自建，无 data/ 附件，不设附件页）
   const onPractice = location.pathname.startsWith(`${ALGO_BASE}/practice`);
+  // 练习/附件页专属色：html[data-pg] → tokens.css 覆盖 --deck-accent（不与总目录、各章重复）
+  useEffect(() => {
+    if (onPractice) document.documentElement.dataset.pg = 'practice';
+    else delete document.documentElement.dataset.pg;
+    return () => {
+      delete document.documentElement.dataset.pg;
+    };
+  }, [onPractice]);
+
+  // 练习/附件页专属色：html[data-pg] → tokens.css 覆盖 --deck-accent（不与总目录、各章重复）
+  useEffect(() => {
+    if (onPractice) document.documentElement.dataset.pg = 'practice';
+    else delete document.documentElement.dataset.pg;
+    return () => {
+      delete document.documentElement.dataset.pg;
+    };
+  }, [onPractice]);
+
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${ALGO_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !onPractice, key: null, tip: '课程首页 · 考点速查表' },
+      { to: `${ALGO_BASE}`, full: '总目录', short: '目录', active: !currentDeck && !onPractice, key: null, tip: '课程首页 · 考点速查表', dot: 'var(--accent)' },
       ...decks.map((d) => ({
         to: `${ALGO_BASE}/deck/${d.id}`,
         full: d.no,
@@ -97,6 +115,7 @@ export default function AlgorithmCourse() {
         active: d.id === currentDeck,
         key: d.id,
         tip: decodeEntities(d.title),
+        dot: `var(--${d.id})`,
       })),
       {
         to: `${ALGO_BASE}/practice`,
@@ -106,6 +125,7 @@ export default function AlgorithmCourse() {
         key: null,
         tip: '在线练习 · 420 题自测',
         extra: 'practice-tab',
+        dot: 'var(--deck-practice)',
       },
     ],
     [currentDeck, onPractice],

@@ -12,6 +12,8 @@ export interface CourseTabMenuItem {
   label: string;
   active: boolean;
   tip: string;
+  /** 该项对应页面的主题色（CSS 颜色值，如 var(--pat3)），渲染为行首色点 */
+  dot?: string;
 }
 
 /** 顶栏中部的一个导航按钮（总目录 / 各讲次·章节 / 在线练习） */
@@ -29,6 +31,8 @@ export interface CourseTab {
   extra?: string;
   /** 讲次较多时的单元分组：有值时该按钮渲染为「单元」按钮，悬停/点击弹出讲次菜单 */
   menu?: CourseTabMenuItem[];
+  /** 该按钮对应页面的主题色（CSS 颜色值），渲染为行首色点；单元按钮取其落点讲次的颜色 */
+  dot?: string;
 }
 
 interface Props {
@@ -72,6 +76,7 @@ function SiteTabs({ tabs }: { tabs: CourseTab[] }) {
                 transition={reduced ? { duration: 0 } : { type: 'tween', duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               />
             )}
+            <TabDot dot={t.dot} />
             <span className="deck-tab-no">
               <span className="tab-full">{t.full}</span>
               <span className="tab-short">{t.short}</span>
@@ -81,6 +86,12 @@ function SiteTabs({ tabs }: { tabs: CourseTab[] }) {
       )}
     </nav>
   );
+}
+
+/** 行首主题色点：标识该按钮对应页面的专属色 */
+function TabDot({ dot }: { dot?: string }) {
+  if (!dot) return null;
+  return <span className="tab-dot" style={{ background: dot }} aria-hidden="true" />;
 }
 
 /** 单元分组按钮：悬停/点击展开讲次菜单（讲次较多的课程用，替代一长排 tab） */
@@ -127,6 +138,7 @@ function TabGroup({ tab, reduced }: { tab: CourseTab; reduced: boolean | null })
             transition={reduced ? { duration: 0 } : { type: 'tween', duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           />
         )}
+        <TabDot dot={tab.dot} />
         <span className="deck-tab-no">
           <span className="tab-full">{tab.full}</span>
           <span className="tab-short">{tab.short}</span>
@@ -143,6 +155,7 @@ function TabGroup({ tab, reduced }: { tab: CourseTab; reduced: boolean | null })
               title={m.tip}
               onClick={() => setOpen(false)}
             >
+              <span className="tab-dot" style={m.dot ? { background: m.dot } : undefined} aria-hidden="true" />
               <span className="deck-menu-label">{m.label}</span>
             </Link>
           ))}

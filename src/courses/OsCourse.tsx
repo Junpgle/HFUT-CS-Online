@@ -53,6 +53,26 @@ export default function OsCourse() {
 
   const onPractice = location.pathname.startsWith(`${OS_BASE}/practice`);
   const onAtt = location.pathname.startsWith(`${OS_BASE}/attachments`);
+  // 练习/附件页专属色：html[data-pg] → tokens.css 覆盖 --deck-accent（不与总目录、各章重复）
+  useEffect(() => {
+    const pg = onPractice ? 'practice' : onAtt ? 'att' : null;
+    if (pg) document.documentElement.dataset.pg = pg;
+    else delete document.documentElement.dataset.pg;
+    return () => {
+      delete document.documentElement.dataset.pg;
+    };
+  }, [onPractice, onAtt]);
+
+  // 练习/附件页专属色：html[data-pg] → tokens.css 覆盖 --deck-accent（不与总目录、各章重复）
+  useEffect(() => {
+    const pg = onPractice ? 'practice' : onAtt ? 'att' : null;
+    if (pg) document.documentElement.dataset.pg = pg;
+    else delete document.documentElement.dataset.pg;
+    return () => {
+      delete document.documentElement.dataset.pg;
+    };
+  }, [onPractice, onAtt]);
+
   // 课程主题色：html[data-deck='os'] → --deck-accent = 橄榄绿（首页/在线练习用）
   useEffect(() => {
     document.documentElement.dataset.deck = 'os';
@@ -109,7 +129,7 @@ export default function OsCourse() {
   // 顶栏导航：目录 + 第1～7章 + 大题精讲 + 在线练习（末位固定）
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${OS_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice && !onAtt, key: null, tip: '课程首页 · 课程与资料概况' },
+      { to: `${OS_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice && !onAtt, key: null, tip: '课程首页 · 课程与资料概况', dot: 'var(--os)' },
       ...osChapters.map((c) => ({
         to: `${OS_BASE}/chapter/${c.id}`,
         full: c.no,
@@ -117,6 +137,7 @@ export default function OsCourse() {
         active: c.id === currentChapter,
         key: c.id,
         tip: decodeEntities(c.title),
+        dot: `var(--os${c.id.slice(2)})`,
       })),
       {
         to: `${OS_BASE}/practice`,
@@ -126,6 +147,7 @@ export default function OsCourse() {
         key: null,
         tip: '在线练习 · 4 份试卷',
         extra: 'practice-tab',
+        dot: 'var(--os-practice)',
       },
       {
         to: `${OS_BASE}/attachments`,
@@ -134,6 +156,7 @@ export default function OsCourse() {
         active: onAtt,
         key: null,
         tip: '附件资料 · 课件 / 试题 / 附件目录与预览',
+        dot: 'var(--os-att)',
       },
     ],
     [currentChapter, onPractice, onAtt],

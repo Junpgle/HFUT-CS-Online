@@ -63,6 +63,16 @@ export default function CaCourse() {
 
   const onPractice = location.pathname.startsWith(`${CA_BASE}/practice`);
   const onAtt = location.pathname.startsWith(`${CA_BASE}/attachments`);
+  // 练习/附件页专属色：html[data-pg] → tokens.css 覆盖 --deck-accent（不与总目录、各章重复）
+  useEffect(() => {
+    const pg = onPractice ? 'practice' : onAtt ? 'att' : null;
+    if (pg) document.documentElement.dataset.pg = pg;
+    else delete document.documentElement.dataset.pg;
+    return () => {
+      delete document.documentElement.dataset.pg;
+    };
+  }, [onPractice, onAtt]);
+
   // 课程主题色：html[data-deck='ca'] → --deck-accent = 暗酒红
   useEffect(() => {
     document.documentElement.dataset.deck = 'ca';
@@ -129,6 +139,7 @@ export default function CaCourse() {
           label: `${c.no} ${decodeEntities(c.title)}`,
           active: c.id === currentChapter,
           tip: decodeEntities(c.title),
+          dot: `var(--ca${c.id.slice(2)})`,
         };
       });
       return {
@@ -139,13 +150,14 @@ export default function CaCourse() {
         key: currentChapter && u.chapters.includes(currentChapter) ? currentChapter : null,
         tip: u.tip,
         menu,
+        dot: `var(--ca${u.chapters[0].slice(2)})`,
       };
     });
     return [
       { to: `${CA_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !onPractice && !onAtt, key: null, tip: '课程首页 · 课程与资料概况' },
       ...groups,
-      { to: `${CA_BASE}/practice`, full: '在线练习', short: '练习', active: onPractice, key: null, tip: '在线练习 · 3 份试题', extra: 'practice-tab' },
-      { to: `${CA_BASE}/attachments`, full: '附件', short: '附件', active: onAtt, key: null, tip: '附件资料 · 课件 / 试题 / 附件目录与预览' },
+      { to: `${CA_BASE}/practice`, full: '在线练习', short: '练习', active: onPractice, key: null, tip: '在线练习 · 3 份试题', extra: 'practice-tab', dot: 'var(--ca-practice)' },
+      { to: `${CA_BASE}/attachments`, full: '附件', short: '附件', active: onAtt, key: null, tip: '附件资料 · 课件 / 试题 / 附件目录与预览', dot: 'var(--ca-att)' },
     ];
   }, [currentChapter, onPractice, onAtt, chapterById]);
 
