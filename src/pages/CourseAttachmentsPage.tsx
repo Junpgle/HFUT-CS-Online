@@ -24,10 +24,14 @@ interface AttManifest {
   cats: { name: string; tree: AttNode[] }[];
 }
 
-/** 四个上游资料仓库 → 直链参数（分支已实测） */
+/**
+ * 四个上游资料仓库 → 直链参数。
+ * 分支为各仓库默认分支实测值（styitches/mox 是 master，其余是 main）；
+ * 上游若改默认分支，跳转/下载会 404，需重新 `git ls-remote --symref` 核对。
+ */
 const REPOS: Record<string, { owner: string; repo: string; branch: string }> = {
   sunmiao: { owner: 'sunmiao0301', repo: 'HFUT-CS', branch: 'main' },
-  styitches: { owner: 'styitches', repo: 'HFUT-CS', branch: 'main' },
+  styitches: { owner: 'styitches', repo: 'HFUT-CS', branch: 'master' },
   mox: { owner: 'mox-hub', repo: 'hfut-cs', branch: 'master' },
   luna: { owner: 'Tuning-Luna', repo: 'HFUT_XC_Study_Things', branch: 'main' },
 };
