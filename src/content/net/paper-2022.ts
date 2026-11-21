@@ -16,7 +16,7 @@ const questions: PracticeQuestion[] = [
     id: 'p2-e2',
     kind: 'essay',
     question: '名词解释：ISO/OSI RM',
-    answer: `OSI/RM（Open Systems Interconnection/Reference Model，开放系统互连参考模型）：ISO 于 1977 年制定的开放系统互连国际标准，目的是使各种计算机在世界范围内互联成网、相互交互并共享资源。它把网络通信划分为应用层、表示层、会话层、传输层、网络层、数据链路层、物理层七层，具有概念清楚、理论完整的特点，是理论上的国际标准（但不是事实上的国际标准）。`,
+    answer: `OSI/RM（Open Systems Interconnection/Reference Model，开放系统互连参考模型）：ISO 在 20 世纪 70 年代末推动开放系统互连标准化，ISO 7498 参考模型标准于 1984 年发布，目的是使各种计算机在世界范围内互联成网、相互交互并共享资源。它把网络通信划分为应用层、表示层、会话层、传输层、网络层、数据链路层、物理层七层，具有概念清楚、理论完整的特点，是理论上的国际标准（但不是事实上的国际标准）。`,
     explanation: `要点：制定者与时间、开放互连的目的、七层结构、理论标准的地位。`,
     tags: [
       { deck: 2, sec: 'sec-ch2-osi', text: 'OSI 参考模型' },
@@ -35,7 +35,7 @@ const questions: PracticeQuestion[] = [
     id: 'p2-e4',
     kind: 'essay',
     question: '名词解释：ARP',
-    answer: `ARP（Address Resolution Protocol，地址解析协议）：IP 协议最重要的配套协议之一，其目的是将 IP 地址转化成 MAC（物理或硬件）地址。工作原理：发送方先查本地 ARP 表，查不到时以广播方式发出 ARP 请求报文，目标主机以单播方式回应自己的 MAC 地址，双方把对方的 IP-MAC 映射写入各自 ARP 缓存。ARP 报文封装在以太帧中直接在网络层传输。`,
+    answer: `ARP（Address Resolution Protocol，地址解析协议）：IP 协议最重要的配套协议之一，其目的是将 IP 地址转化成 MAC（物理或硬件）地址。工作原理：发送方先查本地 ARP 表，查不到时以广播方式发出 ARP 请求报文，目标主机以单播方式回应自己的 MAC 地址，双方把对方的 IP-MAC 映射写入各自 ARP 缓存。在以太网中，ARP 报文直接封装在以太网帧内传送（EtherType 0x0806），而非先封装成 IP 数据报；ARP 负责本地链路的 IPv4 地址到硬件地址映射。`,
     explanation: `要点：作用（IP→MAC）、广播请求/单播应答的工作过程、ARP 缓存。`,
     tags: [{ deck: 5, sec: 'sec-ch5-arp-h1', text: 'ARP 工作原理' }],
   },
@@ -67,8 +67,8 @@ const questions: PracticeQuestion[] = [
     id: 'p2-e8',
     kind: 'essay',
     question: '名词解释：VLAN',
-    answer: `VLAN（Virtual Local Area Network，虚拟局域网）：由局域网中不同网段上的结点所构成的逻辑网段，这些结点与其真实的物理位置和真实网段无关，通常具有某些共同的需求。每个 VLAN 的帧中插入 4 字节的 802.1Q VLAN 标记指明其所属 VLAN。VLAN 只是一种服务而不是一种新型局域网；和真实局域网一样，VLAN 能隔离广播风暴和冲突（每个 VLAN 是一个独立的广播域）。`,
-    explanation: `要点：逻辑网段与物理位置无关、802.1Q 标记、隔离广播风暴与冲突、只是服务而非新局域网。`,
+    answer: `VLAN（Virtual Local Area Network，虚拟局域网）：由局域网中不同网段上的结点所构成的逻辑网段，这些结点与其真实的物理位置和真实网段无关，通常具有某些共同的需求。在使用 802.1Q 标签的交换机链路上，帧可以携带 4 字节 VLAN 标记；接入端口通常传送无标签帧，并非所有 VLAN 帧都有标签。VLAN 形成独立广播域并限制广播传播；碰撞域隔离主要靠交换机端口，不能把两种机制混为一谈。`,
+    explanation: `要点：逻辑网段与物理位置无关、802.1Q 标记的使用场景及无标签帧、VLAN 隔离广播域而端口隔离碰撞域。`,
     tags: [{ deck: 4, sec: 'sec-ch4-broadcast-h5', text: '虚拟局域网' }],
   },
   /* ---------------- 二、填空题 ---------------- */
@@ -112,7 +112,7 @@ const questions: PracticeQuestion[] = [
     kind: 'fill',
     question: '用于计算机网络的传输媒体有两类：____和无导媒体；光纤可分为两种，单光纤和多模光纤。',
     answer: '有导媒体｜有线媒体｜导向传输媒体',
-    explanation: '传输媒体分为有导媒体（金属导体、光导纤维等固体介质）与无导媒体（自由空间中的电磁波，如微波、卫星）。',
+    explanation: '传输媒体分为有导媒体（金属导体、光导纤维等固体介质）与无导媒体（自由空间中的电磁波，如微波、卫星）。注意：原题干写「单光纤」疑为笔误，正确分类是「单模光纤」与「多模光纤」；原卷题干暂保留以便核对。',
     tags: [{ deck: 3, sec: 'sec-ch3-media', text: '传输媒体' }],
   },
   {
@@ -171,7 +171,7 @@ const questions: PracticeQuestion[] = [
     kind: 'fill',
     question: '以太网交换机对数据的交换和转发方式可以分为：直接交换、存储转发交换和____。',
     answer: '改进的直接交换｜混合交换',
-    explanation: '交换机的三种交换方式：直接交换（ Cut-Through ）、存储转发交换（Store-and-Forward）与改进的直接交换（先收帧头查地址转发，兼顾时延与可靠性）。',
+    explanation: '交换机的三种交换方式：直接交换（ Cut-Through ）、存储转发交换（Store-and-Forward）与改进的直接交换（Fragment-Free，无碎片交换：先接收帧的前 64 字节，再开始转发，避免转发多数碰撞产生的短碎片；仍不能像完整存储转发那样检验全部帧的 FCS）。',
     tags: [{ deck: 4, sec: 'sec-ch4-broadcast-h5', text: '以太网交换机' }],
   },
   {
@@ -317,7 +317,7 @@ const questions: PracticeQuestion[] = [
     question: '在以太网中，集线器的级联（　）。',
     options: ['必须使用直通UTP电缆', '必须使用交叉UTP电缆', '必须使用同一种速率的集线器', '可以使用不同速率的集线器'],
     answer: 'C',
-    explanation: '集线器级联只能级联相同速率的集线器（课件局域网扩展的缺点：碰撞域增大但总吞吐量未提高，只能级联相同速率的集线器）。集线器间级联属同类设备，用交叉 UTP 电缆——但速率必须相同才是必选项。',
+    explanation: '集线器级联只能级联相同速率的集线器（课件局域网扩展的缺点：碰撞域增大但总吞吐量未提高，只能级联相同速率的集线器）。传统相同速率的集线器级联一般采用交叉线，使用专用级联端口时接线方式可能不同；旧式共享碰撞域设备通常要求同速率。按本卷所用传统集线器模型选 C，不能把交叉线认作任何设备下的绝对要求。',
     tags: [{ deck: 4, sec: 'sec-ch4-broadcast-h5', text: '局域网扩展' }],
   },
   {
@@ -326,7 +326,7 @@ const questions: PracticeQuestion[] = [
     question: '有10台计算机建成10Mbps以太网，如分别采用共享以太网和交换以太网技术，则每个站点所获得的数据传输速率分别为（　）。',
     options: ['10Mbps和10Mbps', '10Mbps和1Mbps', '1Mbps和10Mbps', '1Mbps和1Mbps'],
     answer: 'C',
-    explanation: '共享式以太网 10 个站点共享 10Mbps 信道，每站平均 1Mbps；交换式以太网每个端口独享带宽，每站仍为 10Mbps。',
+    explanation: '按本题假定：10 台主机在共享 10 Mb/s 信道上平均且公平分摊、忽略碰撞和协议开销，平均每台可得约 1 Mb/s；交换式以太网每个端口标称 10 Mb/s 独享带宽。实际各站吞吐量取决于负载与竞争情况，并不保证固定 1 Mb/s。',
     tags: [{ deck: 4, sec: 'sec-ch4-broadcast-h5', text: '以太网交换机' }],
   },
   {
@@ -431,12 +431,12 @@ const questions: PracticeQuestion[] = [
     kind: 'essay',
     question: 'FDDI采用环型拓扑结构，使用令牌作为共享介质的访问控制方法，某个站点要求发送数据时，必须等到经过该点的空令牌，其它站点必须等到令牌上的数据传送结束并释放才可以再申请传输数据。试从多个方面比较共享式以太网和交换式以太网。',
     answer: `
-    <p>对比共享式以太网（总线/集线器 + CSMA/CD，如 FDDI 令牌环一类的共享介质方式）与交换式以太网（以太网交换机）：</p>
+    <p>题干先举 FDDI 令牌环的共享介质访问方式作为背景，但 <strong>FDDI 不是以太网</strong>：FDDI 使用定时令牌传递，而经典共享式以太网使用 CSMA/CD。以下严格比较共享式以太网（总线/集线器）与交换式以太网（交换机），不将 FDDI 当作共享式以太网：</p>
     <table class="tbl">
       <thead><tr><th>方面</th><th>共享式以太网</th><th>交换式以太网</th></tr></thead>
       <tbody>
-        <tr><td>信道使用</td><td>多个站点共享同一信道（逻辑总线），任一时刻只允许一个站点发送，靠 CSMA/CD 或令牌协调发送权</td><td>每个接口直接与站点相连并以全双工方式工作，能同时连通多对接口，各对站点像独占传输媒体那样无碰撞地传输</td></tr>
-        <tr><td>带宽</td><td>总带宽被所有站点分摊，10 个站点共享 10Mbps 时每站平均仅 1Mbps</td><td>每个接口独享带宽，N 接口交换机的总容量是同样带宽集线器的 N 倍</td></tr>
+        <tr><td>信道使用</td><td>多个站点共享同一信道（逻辑总线），通过 CSMA/CD 竞争发送权；不使用 FDDI 的令牌传递</td><td>每个接口直接与站点相连并以全双工方式工作，能同时连通多对接口，各对站点像独占传输媒体那样无碰撞地传输</td></tr>
+        <tr><td>带宽</td><td>总带宽由所有站点竞争使用；10 台主机共享 10 Mb/s 时，理想均分约 1 Mb/s，实际并非固定值</td><td>每个接口独享带宽，N 接口交换机的总容量是同样带宽集线器的 N 倍</td></tr>
         <tr><td>冲突</td><td>存在冲突（碰撞），需要碰撞检测与随机避退；冲突域覆盖所有站点</td><td>隔离冲突域（每个端口是一个独立冲突域），端口间通信无碰撞</td></tr>
         <tr><td>广播域</td><td>全网一个广播域</td><td>仍是一个广播域（可通过 VLAN 进一步划分隔离广播风暴）</td></tr>
         <tr><td>工作层次与方式</td><td>集线器工作在物理层；半双工</td><td>交换机工作在数据链路层（多接口网桥）；全双工，不使用 CSMA/CD</td></tr>

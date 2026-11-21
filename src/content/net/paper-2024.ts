@@ -146,7 +146,7 @@ const questions: PracticeQuestion[] = [
     question: '有一个 TCP 连接，最大报文段 MSS 长度为 2KB，拥塞窗口为 24KB 时发生快重传，采用快恢复算法，拥塞窗口大小为（　）。',
     options: ['1KB', '2KB', '12KB', '24KB'],
     answer: 'C',
-    explanation: '收到连续三个重复确认执行快恢复：ssthresh 减半（24/2 = 12KB），且不执行慢开始——cwnd 直接设置为减半后的 ssthresh = 12KB，然后执行拥塞避免（加法增大）。',
+    explanation: '按本课程《第七章传输层》课件第 132 页采用的简化快恢复模型，收到三个重复 ACK 后将拥塞窗口从 24 KB 减半为 12 KB，并进入拥塞避免，故选 C。注意该题采用课堂模型；在更细化的 TCP Reno 实现中，进入快恢复时还可能暂时将拥塞窗口增加 3 个 MSS，不能将各实现阶段的窗口值混同。',
     tags: [{ deck: 6, sec: 'sec-ch6-congestion-h3', text: '快重传与快恢复' }],
   },
   {
@@ -169,7 +169,7 @@ const questions: PracticeQuestion[] = [
       '采用持续连接的 HTTP 协议，连接永久打开',
     ],
     answer: 'B',
-    explanation: 'HTTP 1.0 是无状态的（stateless）——服务端不记录客户端信息（需要 Cookie 才能跟踪用户）；HTTP 本身无连接但使用 TCP 传送（C 错）；持续连接只是在一段时间内保持连接而非永久（D 错）；应用层协议之间不需要「应用层连接」（A 错）。',
+    explanation: 'HTTP 协议语义本身无状态，服务器不会仅凭两次请求之间的 HTTP 协议状态自动关联用户；Cookie 或会话机制可用于维护应用状态，因此按原卷口径 B 对。HTTP/1.1、HTTP/2 通常运行于 TCP，而 HTTP/3 通过 QUIC/UDP 传输；C 未限定 HTTP 版本，不能笼统说所有 HTTP 报文都采用 UDP。持续连接并非永久打开（D 错）；HTTP 通常不要求先建立独立的“应用层连接”（A 错）。',
     tags: [{ deck: 7, sec: 'sec-ch7-http-h2', text: 'HTTP 特点' }],
   },
   {
@@ -182,8 +182,8 @@ const questions: PracticeQuestion[] = [
       '主机广播发送 ARP 响应分组',
       'ARP 分组封装在 IP 数据报中发送',
     ],
-    answer: 'D',
-    explanation: 'ARP 是 IP 层协议，ARP 报文作为 IP 数据报的数据封装后发送（D 对）。ARP 缓存是动态建立并定期刷新的（B 错）；ARP 请求是广播、响应是单播（C 错）；发送方与目标在同一网段时直接解析，跨网段解析网关 MAC，并非严格只能在一个 LAN 中（A 错）。',
+    answer: 'A',
+    explanation: '普通以太网中 ARP 报文直接封装为链路层帧（EtherType 0x0806），不会作为 IP 数据报载荷，故 D 错。ARP 缓存一般动态维护（B 错），ARP 请求通常广播、应答通常单播（C 错）。ARP 请求一般限定于本地二层广播域，不会被路由器跨网段转发；跨网段通信时主机会在本地链路解析下一跳网关的 MAC 地址，按本题 LAN 口径选 A。',
     tags: [
       { deck: 5, sec: 'sec-ch5-arp-h1', text: 'ARP 工作原理' },
       { deck: 5, sec: 'sec-ch5-arp-h2', text: 'ARP 报文' },
@@ -265,7 +265,7 @@ const questions: PracticeQuestion[] = [
         <line x1="390" y1="10" x2="390" y2="70"/>
       </g>
       <path stroke="var(--net)" stroke-width="2" fill="none" stroke-linejoin="round"
-        d="M30 44 H50 V20 H90 V44 H130 V20 H150 V44 H190 V20 H210 V44 H250 V20 H290 V44 H330 V20 H350 V44 H390"/>
+        d="M30 44 H50 V20 H70 H90 V44 H110 V20 H130 V44 H150 H170 V20 H190 H210 V44 H230 H250 V20 H270 V44 H290 V20 H310 H330 V44 H350 H370 V20 H390"/>
       <g class="tx tx-b" fill="var(--ink)">
         <text x="47" y="86">1</text><text x="87" y="86">0</text><text x="127" y="86">0</text><text x="167" y="86">1</text>
         <text x="207" y="86">0</text><text x="247" y="86">1</text><text x="287" y="86">1</text><text x="327" y="86">0</text>
@@ -338,7 +338,7 @@ const questions: PracticeQuestion[] = [
     kind: 'essay',
     question: '主机 A 和 B 每个都通过 10Mbps 链路连接到交换机 S。在每条链路上的传播时延都是 20 微秒。S 是一个存储转发交换机，在它接收完一个分组后 35 微秒开始转发收到的分组。如果分组的大小是 500 比特，请计算把 50K 比特从 A 发送到 B 所需要的总时间。（7 分）',
     answer: `
-    <p>已知：链路速率 10 Mbps；每分组 500 bit，故 50K bit = 51200 bit 需要 <strong>100 个分组</strong>（51200/500 = 102.4，即 103 个分组？——按 50K = 50×10<sup>3</sup> bit 计为 100 个分组，每个分组 500 bit；课件口径按整除处理）。</p>
+    <p>已知：链路速率为 10 Mb/s，每个分组为 500 bit。通信中通常按十进制计算：50 kbit = 50 × 10<sup>3</sup> bit = 50000 bit，因此分组数为 <strong>50000 / 500 = 100 个</strong>。</p>
     <p><strong>基本量</strong>：</p>
     <ul>
       <li>每分组的发送时延 T<sub>D</sub> = 500 bit / 10 Mbps = 50 μs；</li>
@@ -372,7 +372,7 @@ const questions: PracticeQuestion[] = [
         <tr><td>选择重传</td><td>&gt;1</td><td>&gt;1</td><td>出错的帧单独重传，后面正确到达的帧先存入接收窗口，缓存开销大但重传少</td></tr>
       </tbody>
     </table>
-    <p><strong>窗口尺寸的限制</strong>：帧序号位数为 m 时，要求 W<sub>T</sub> ≥ W<sub>R</sub> 且 <strong>W<sub>T</sub> + W<sub>R</sub> ≤ 2<sup>m</sup></strong>——保证上一轮与下一轮的帧序号在窗口范围内不重复，否则接收端无法区分新帧与重发帧。停等协议是连续 ARQ 窗口为 1 的特例。</p>`,
+    <p><strong>窗口尺寸的限制</strong>：在选择重传 ARQ 中，若帧序号位数为 m，应满足 <strong>W<sub>T</sub> + W<sub>R</sub> ≤ 2<sup>m</sup></strong>，防止新帧与旧帧重发混淆。通常让发送窗口 W<sub>T</sub> 不小于接收窗口 W<sub>R</sub> 以避免接收缓存闲置，但后者不是正确性所必须的限制。停等协议可以看作窗口都为 1 的特例。</p>`,
     explanation: `要点：窗口=未确认帧上限、滑动=确认后前移；停等(1,1)/回退n(>1,1)/选择重传(>1,>1)；WT+WR ≤ 2^m。`,
     tags: [
       { deck: 4, sec: 'sec-ch4-flow-h2', text: '滑动窗口协议' },

@@ -165,7 +165,7 @@ const ch: NetChapter = {
           html: `
           <p>
             1974 年 IBM 提出了第一个层次化的系统网络体系结构 SNA（Systems Network Architecture）。
-            ISO 于 1977 年制定了开放系统互连标准，简称为 OSI 参考模型（Open Systems Interconnection/Reference Model, OSI/RM）。
+            ISO 在 20 世纪 70 年代末开展开放系统互连标准化工作，OSI 参考模型相关标准 ISO 7498 于 1984 年发布（Open Systems Interconnection/Reference Model, OSI/RM）。
             提出 OSI/RM 的目的是试图使各种计算机在世界范围内互联成网，可以相互交互、共享资源。
           </p>
           <h3 id="sec-ch2-osi-h1">三种模型的比较</h3>
@@ -245,8 +245,8 @@ const ch: NetChapter = {
               </tr>
               <tr>
                 <td><strong>2 数据链路层</strong></td>
-                <td>负责建立和管理节点间的链路，控制网络层与物理层之间的通信；通过差错控制、流量控制方法，在不可靠的物理介质上提供可靠的数据传输。又分为介质访问控制（MAC）与逻辑链路控制（LLC）两个子层——MAC 解决共享型网络中的信道竞争问题，完成网络介质的访问控制；LLC 建立和维护网络连接，执行差错校验、流量控制和链路控制</td>
-                <td>为上层提供可靠、无差错的节点间数据传输链路；物理地址寻址、数据的成帧、流量控制、差错控制</td>
+                <td>负责建立和管理节点间的链路，控制网络层与物理层之间的通信；实现成帧、差错检测等功能；是否通过确认、重传提供可靠交付由具体链路层协议决定。又分为介质访问控制（MAC）与逻辑链路控制（LLC）两个子层——MAC 解决共享型网络中的信道竞争问题，完成网络介质的访问控制；LLC 建立和维护网络连接，执行差错校验、流量控制和链路控制</td>
+                <td>为上层提供相邻结点间的帧传送服务，具体可靠性取决于所用协议；物理地址寻址、数据的成帧、流量控制、差错控制</td>
                 <td>Wi-Fi（IEEE 802.11）、WiMAX（IEEE 802.16）、ATM、DTM、令牌环、以太网、FDDI、帧中继、GPRS、HDLC、PPP、L2TP、ISDN、STP 等</td>
               </tr>
               <tr>
@@ -272,9 +272,9 @@ const ch: NetChapter = {
           <h3 id="sec-ch2-tcpip-h1">Internet 模型简介</h3>
           <p>
             早期的 ARPANET 使用的主要是 NCP（Network Control Protocol，网络控制协议）协议。随着网络的发展和用户对网络需求的不断提高，
-            NCP 暴露出许多问题，特别是只能够用于同构环境（所有计算机都必须运行相同的操作系统），制约了 ARPANET 发展成为一个分布广泛的网络。
+            NCP 暴露出许多问题，特别是缺乏在异构网络之间进行互联的完整机制，制约了 ARPANET 发展成为一个分布广泛的网络。
             1980 年，用于「异构」网络环境中的 TCP/IP 协议研制成功，TCP/IP 协议可以在各种硬件和操作系统上实现互操作；
-            1982 年，ARPANET 开始采用 TCP/IP 协议。
+            1983 年 1 月 1 日，ARPANET 正式完成从 NCP 向 TCP/IP 的切换。
           </p>
           <p>Internet 模型的四层（大体对应 OSI 的层次）：</p>
           <table class="tbl">
@@ -285,7 +285,7 @@ const ch: NetChapter = {
               <tr>
                 <td><strong>应用层</strong></td>
                 <td>大体对应 OSI 的应用层、表示层和会话层</td>
-                <td>FTP（文件传输协议）、SMTP（简单报文传输协议）、TELNET（远程网络登陆协议）、DNS（域名服务）、HTTP（超文本传输协议）等</td>
+                <td>FTP（文件传输协议）、SMTP（简单邮件传输协议）、TELNET（远程网络登陆协议）、DNS（域名服务）、HTTP（超文本传输协议）等</td>
               </tr>
               <tr>
                 <td><strong>传输层</strong></td>
@@ -315,7 +315,7 @@ const ch: NetChapter = {
           <ul>
             <li><strong>免费开放</strong>：协议标准完全开放，可以供普通用户和相关厂商自由、免费使用；</li>
             <li><strong>平台无关</strong>：可在任意硬件平台和操作系统环境中运行；</li>
-            <li><strong>可靠传输</strong>：可确保数据可靠的传输到目的节点；</li>
+            <li><strong>可靠传输</strong>：TCP 能通过确认、重传等机制提供可靠字节流；IP 和 UDP 本身不保证可靠交付；</li>
             <li><strong>伸缩灵活</strong>：既可用于大小不同规模的网络，也可以根据需要对各层进行裁剪、组合，并且支持多种应用层协议；</li>
             <li><strong>管理维护</strong>：对网络地址统一管理和分配，对网络运行状况进行检测和维护。</li>
           </ul>
