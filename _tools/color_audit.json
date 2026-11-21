@@ -110,5 +110,13 @@
  "mc/dark": {
   "dups": [],
   "adj": []
+ },
+ "nlu/light": {
+  "dups": [],
+  "adj": []
+ },
+ "nlu/dark": {
+  "dups": [],
+  "adj": []
  }
 }

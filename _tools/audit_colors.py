@@ -42,6 +42,7 @@ COURSES = {
     'nap':  ('nap', None, 0, ('att',)),
     'hd':   ('hd', 'hd', 4, ('att',)),
     'mc':   ('mc', None, 0, ('att',)),
+    'nlu':  ('nlu', None, 0, ('att',)),
 }
 
 report = {}

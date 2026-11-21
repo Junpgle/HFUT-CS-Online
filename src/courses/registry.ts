@@ -128,6 +128,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '移动计算实验报告 + 实验二/三/四代码 · 课件未收录',
   },
+  {
+    id: 'natural-language-understanding',
+    name: '自然语言理解',
+    semester: '大三上',
+    base: '/nlu',
+    ready: true,
+    source: '分词系统讲解课件（FMM 与 BMM）+ 实验报告与代码 · 试题未收录',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -175,6 +183,9 @@ export const HD_BASE = courses[12].base;
 
 /** 移动计算与应用开发课路由前缀（同上约定） */
 export const MC_BASE = courses[13].base;
+
+/** 自然语言理解课路由前缀（同上约定） */
+export const NLU_BASE = courses[14].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

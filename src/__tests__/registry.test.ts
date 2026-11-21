@@ -48,4 +48,13 @@ describe('课程注册表（registry）', () => {
     expect(mc!.base).toBe('/mc');
     expect(mc!.ready).toBe(true);
   });
+
+  it('自然语言理解：单讲课件 + 附件（试题未收录，无在线练习）', () => {
+    const nlu = courses.find((c) => c.name === '自然语言理解');
+    expect(nlu).toBeDefined();
+    expect(nlu!.id).toBe('natural-language-understanding');
+    expect(nlu!.semester).toBe('大三上');
+    expect(nlu!.base).toBe('/nlu');
+    expect(nlu!.ready).toBe(true);
+  });
 });
