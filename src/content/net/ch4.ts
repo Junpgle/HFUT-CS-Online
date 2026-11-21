@@ -14,29 +14,29 @@ const ch: NetChapter = {
     { id: 'sec-ch4-basic', text: '1. 数据链路层概述', level: 2 },
     { id: 'sec-ch4-basic-h1', text: '基本概念与术语', level: 3 },
     { id: 'sec-ch4-basic-h2', text: '为网络层提供的主要服务', level: 3 },
-    { id: 'sec-ch4-basic-h3', text: '主要功能与简单模型', level: 3 },
+    { id: 'sec-ch4-basic-h3', text: '★ 主要功能与简单模型', level: 3 },
     { id: 'sec-ch4-frame', text: '2. 数据链路层的基本问题', level: 2 },
-    { id: 'sec-ch4-frame-h1', text: '封装成帧', level: 3 },
-    { id: 'sec-ch4-frame-h2', text: '透明传输', level: 3 },
+    { id: 'sec-ch4-frame-h1', text: '★ 封装成帧', level: 3 },
+    { id: 'sec-ch4-frame-h2', text: '★ 透明传输', level: 3 },
     { id: 'sec-ch4-error', text: '3. 差错控制', level: 2 },
-    { id: 'sec-ch4-error-h1', text: '差错来源、检错码与纠错码', level: 3 },
+    { id: 'sec-ch4-error-h1', text: '★ 差错来源、检错码与纠错码', level: 3 },
     { id: 'sec-ch4-error-h2', text: '编码效率与海明距离', level: 3 },
     { id: 'sec-ch4-error-h3', text: '海明码', level: 3 },
-    { id: 'sec-ch4-error-h4', text: '循环冗余码 CRC', level: 3 },
+    { id: 'sec-ch4-error-h4', text: '★ 循环冗余码 CRC', level: 3 },
     { id: 'sec-ch4-error-h5', text: '其它差错控制编码', level: 3 },
     { id: 'sec-ch4-flow', text: '4. 流量控制', level: 2 },
-    { id: 'sec-ch4-flow-h1', text: '停—等协议', level: 3 },
-    { id: 'sec-ch4-flow-h2', text: '滑动窗口协议', level: 3 },
+    { id: 'sec-ch4-flow-h1', text: '★ 停—等协议', level: 3 },
+    { id: 'sec-ch4-flow-h2', text: '★ 滑动窗口协议', level: 3 },
     { id: 'sec-ch4-p2p', text: '5. 点到点信道数据链路层协议', level: 2 },
     { id: 'sec-ch4-p2p-h1', text: 'HDLC 协议', level: 3 },
-    { id: 'sec-ch4-p2p-h2', text: 'PPP 协议', level: 3 },
+    { id: 'sec-ch4-p2p-h2', text: '★ PPP 协议', level: 3 },
     { id: 'sec-ch4-p2p-h3', text: 'HDLC 与 PPP 的对比', level: 3 },
     { id: 'sec-ch4-broadcast', text: '6. 广播信道数据链路层', level: 2 },
     { id: 'sec-ch4-broadcast-h1', text: 'MAC 概述与动态接入分配协议', level: 3 },
-    { id: 'sec-ch4-broadcast-h2', text: 'CSMA/CD 与 CSMA/CA', level: 3 },
-    { id: 'sec-ch4-broadcast-h3', text: '局域网与经典以太网', level: 3 },
-    { id: 'sec-ch4-broadcast-h4', text: '以太网帧结构与 10BASE-T', level: 3 },
-    { id: 'sec-ch4-broadcast-h5', text: '局域网扩展与虚拟局域网', level: 3 },
+    { id: 'sec-ch4-broadcast-h2', text: '★ CSMA/CD 与 CSMA/CA', level: 3 },
+    { id: 'sec-ch4-broadcast-h3', text: '★ 局域网与经典以太网', level: 3 },
+    { id: 'sec-ch4-broadcast-h4', text: '★ 以太网帧结构与 10BASE-T', level: 3 },
+    { id: 'sec-ch4-broadcast-h5', text: '★ 局域网扩展与虚拟局域网', level: 3 },
     { id: 'sec-ch4-evolve', text: '7. 以太网的演进', level: 2 },
   ],
   sections: [
@@ -47,6 +47,10 @@ const ch: NetChapter = {
         {
           type: 'html',
           html: `
+          <div class="callout key">
+            <p class="callout-h">本章荧光笔重点</p>
+            <p><strong>成帧/透明</strong> · <strong>CRC/FCS</strong> · <strong>停止等待</strong> · <strong>连续 ARQ/滑动窗口</strong> · <strong>PPP</strong> · <strong>网卡/MAC</strong> · <strong>CSMA/CD</strong> · <strong>交换机自学习</strong> · <strong>VLAN</strong></p>
+          </div>
           <p>
             在传输信号时，物理线路可能会有差错。在可能出错的物理线路基础上，构造一个<strong>无差错的逻辑数据链路</strong>，从而为网络层提供高质量服务——
             数据链路层是整个模型中提供高质量数据通信服务最重要的一层。
@@ -94,6 +98,10 @@ const ch: NetChapter = {
             </tbody>
           </table>
           <h3 id="sec-ch4-basic-h3">主要功能与简单模型</h3>
+          <div class="callout tip">
+            <p class="callout-h">重点 B｜链路层三大问题</p>
+            <p>封装成帧确定边界，透明传输确保特殊字符或比特组合可传送，差错检测识别比特错误。</p>
+          </div>
           <p>将网络层的报文封装成数据帧并按顺序发送（一个数据帧可能会有几百到几千字节的长度），为了保证可靠传输，需要具有以下功能：</p>
           <ul>
             <li>一种合适的<strong>帧结构</strong>，以便封装上层数据；</li>
@@ -142,6 +150,11 @@ const ch: NetChapter = {
             若发送端在发送一个帧时出现故障、发送中断、随后又恢复正常重新发送，接收端通过判断 SOH 与 EOT 之间的匹配情况就可以判断前面收到的是个不完整的帧，丢弃即可。
           </p>
           <h3 id="sec-ch4-frame-h2">透明传输</h3>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜封装成帧与透明传输</p>
+            <p>封装成帧确定帧界限；透明传输要求数据中即使出现与定界符相同的位组合，也不会误判边界。透明传输不等于“永远不会出现差错”。</p>
+          </div>
+
           <p>
             <strong>透明</strong>是指某个实际存在的事物看起来似乎不存在。<strong>透明传输</strong>是指无论被传数据是什么样的比特组合，
             都能够在链路上传送；若被传数据中存在与某个控制信息相同的比特组合，则发送方必须采取适当的措施，使接收方不会将此数据误认为是某种控制信息。
@@ -175,6 +188,10 @@ const ch: NetChapter = {
           html: `
           <p>在数据通信过程中，由于自然环境等因素，差错总是不可避免。</p>
           <h3 id="sec-ch4-error-h1">差错来源、检错码与纠错码</h3>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜检错不等于可靠传输</p>
+            <p>CRC 可检测比特差错，但丢失、重复、失序需要编号、确认和重传等机制解决。</p>
+          </div>
           <table class="tbl">
             <thead>
               <tr><th>差错来源</th><th>特征</th></tr>
@@ -228,6 +245,11 @@ const ch: NetChapter = {
             要纠正这样的突发性出错，则必须加大海明距离；但加大海明距离势必会增加校验位长度，从而降低了编码效率，同时也会使编码系统过于复杂。
           </p>
           <h3 id="sec-ch4-error-h4">循环冗余码 CRC</h3>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜CRC 模 2 除法</p>
+            <p>练会生成多项式与二进制序列的对应、补零后模 2 除法、余数 FCS 和发送码字。余数为零表示通过检验，不是绝对无错保证。</p>
+          </div>
+
           <p>
             循环冗余码简称为 CRC 码（Cyclic Redundancy Code），是目前计算机网络中使用最广泛的一种<strong>检错码</strong>。
             CRC 码又称多项式码，每个码字对应于一个多项式：设码字为 a<sub>1</sub>a<sub>2</sub>a<sub>3</sub>…a<sub>n</sub>，
@@ -295,6 +317,15 @@ const ch: NetChapter = {
           html: `
           <p><em>课件将本节标注为「略」并要求自学，但保留了基本内容，此处按课件原文收录。</em></p>
           <h3 id="sec-ch4-flow-h1">停—等协议</h3>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜停止等待中的确认与重传</p>
+            <p>按正常发送、数据差错、确认丢失分别画时间线；超时重传后接收方须丢弃重复帧。</p>
+          </div>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜停止等待效率</p>
+            <p>区分数据帧发送时间、单向传播时间和 ACK 开销，再根据题目假设计算信道利用率；注意重传与编号机制。</p>
+          </div>
+
           <p>
             发送方发送一帧后，等待对方的应答。接收端收到一帧后，检查校验位串：若出错，返回「否认」信息；若无错，返回「确认」信息。
             发送端收到「确认」后立即发送下一帧，收到「否认」则重发该帧；发送端发送一帧后立即启动超时计时器，若超时中断，重发该帧；
@@ -306,6 +337,11 @@ const ch: NetChapter = {
           <p class="formula">U = (L/B) / (L/B + 2R)</p>
           <p>一个帧的完整周期 = 发送数据帧 L/B → 传播 2R → 确认帧。如考虑由于差错造成的重发，以及帧头、校验和冗余信息，信道实际利用率达不到最大利用率。</p>
           <h3 id="sec-ch4-flow-h2">滑动窗口协议</h3>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜GBN / SR 与滑动窗口</p>
+            <p>比较回退 N 帧和选择重传的接收窗口、确认与重传范围；能沿时间轴模拟发送窗口的移动。</p>
+          </div>
+
           <p>
             <strong>基本思想</strong>：为提高信道利用率，允许发送方连续发送若干帧后再等待对方应答。
             <strong>窗口</strong>：可容纳数据帧的缓冲区。<strong>发送窗口</strong>：发送方用来保存已发送但尚未经确认的数据帧；
@@ -449,6 +485,11 @@ const ch: NetChapter = {
             支持多种传输速率；具有很强的透明传输能力，可传输任何数据；具有自动重传机制和流量控制能力，有效提高了数据传输的可靠性和稳定性。
           </p>
           <h3 id="sec-ch4-p2p-h2">PPP 协议</h3>
+          <div class="callout tip">
+            <p class="callout-h">重点 B｜PPP 能做与不能做的事</p>
+            <p>把封装成帧、透明性、差错检测与可靠重传、流量控制分开判断：PPP 能检错，但不提供可靠重传保证。</p>
+          </div>
+
           <p>
             根据 OSI/RM 模型，数据链路层应该向网络层提供可靠的传输服务，因此在数据链路层的传输协议中要求有帧编号、确认帧、重传机制等（如 HDLC）。
             随着通信线路通信质量的提升，特别是光纤媒介的大规模普及，数据链路层协议取消了可靠传输服务，使数据链路层协议变得更加简单——
@@ -632,6 +673,15 @@ const ch: NetChapter = {
             数据无法使用必须重发，从而浪费信道资源。
           </p>
           <h3 id="sec-ch4-broadcast-h2">CSMA/CD 与 CSMA/CA</h3>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜碰撞窗口与指数退避</p>
+            <p>共享半双工以太网争用期为 2τ；随机退避取 r∈[0,2ᵏ−1]，k=min(重传次数,10)，退避 r 个基本时间。</p>
+          </div>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜CSMA/CD 与指数退避</p>
+            <p>会画最晚检测碰撞的时间关系，区分往返传播时延 2τ 与 RTT 的口语混用；退避参数 k=min(重传次数,10)，连续冲突达到 16 次后放弃。</p>
+          </div>
+
           <p>
             <strong>CSMA/CD</strong>（Carrier Sense Multiple Access with Collision Detection，载波侦听多址接入/碰撞检测）是针对纯 CSMA
             在发送数据时无法检测到是否与其他结点发生碰撞问题而提出的一种改进协议，是<strong>以太网的基础</strong>。
@@ -686,6 +736,15 @@ const ch: NetChapter = {
             确保接下来传送资料时不会被碰撞。
           </p>
           <h3 id="sec-ch4-broadcast-h3">局域网与经典以太网</h3>
+          <div class="callout tip">
+            <p class="callout-h">重点 B｜局域网和网卡</p>
+            <p>网卡（NIC）负责收发帧、串并转换、缓存等；分清共享式与交换式以太网的冲突特点。</p>
+          </div>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜MAC 帧与交换机自学习</p>
+            <p>掌握以太网 MAC 帧字段顺序、典型长度；交换机按源 MAC 学习端口，按目的 MAC 查表转发/泛洪，表项可老化。</p>
+          </div>
+
           <p>
             局域网（Local Area Network，LAN）是在一个局部的地理范围内（如一个学校、工厂和机关内，一般是方圆几千米以内），
             将各种计算机、外部设备和数据库等互相联接起来组成的计算机通信网，可以实现文件管理、应用软件共享、打印机共享、
@@ -733,6 +792,10 @@ const ch: NetChapter = {
           </p>
           <p class="formula">S<sub>max</sub> = T<sub>0</sub> / (T<sub>0</sub> + &tau;) = 1 / (1 + a)</p>
           <h3 id="sec-ch4-broadcast-h4">以太网帧结构与 10BASE-T</h3>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜MAC 地址及帧格式</p>
+            <p>以太网 V2 帧主要字段：目的 MAC 6B、源 MAC 6B、类型 2B、数据 46～1500B、FCS 4B。</p>
+          </div>
           <p>
             因为历史和利益诉求的不同，形成了大致相同略有区别的多种以太网协议（封装格式上有明显体现）：
             <strong>DIX Ethernet II</strong>（Ethernet V2/ARPA，目前的主流）、<strong>IEEE 802.3/802.2 LLC</strong>（将协议类型字段替换为长度字段，
@@ -766,6 +829,15 @@ const ch: NetChapter = {
             为以太网在局域网中的统治地位奠定了牢固的基础。
           </p>
           <h3 id="sec-ch4-broadcast-h5">局域网扩展与虚拟局域网</h3>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜交换机、网桥与表项老化</p>
+            <p>交换机相当于多端口网桥；由源 MAC 和入端口学习，根据目的 MAC 转发，过期表项自动删除。</p>
+          </div>
+          <div class="callout key">
+            <p class="callout-h">重点 A｜广播域、碰撞域与 VLAN</p>
+            <p>每个交换机端口一般是独立碰撞域；未划分 VLAN 的二层交换网络仍可处于同一广播域，VLAN 用于逻辑分隔广播域。</p>
+          </div>
+
           <p>
             <strong>一、从物理层进行扩展</strong>：① 利用光纤和光纤调制解调器扩展——利用光纤作为传输介质，信号远距离传输后还原；
             ② 利用集线器的级联——多个集线器级联成更大的局域网。例如某大学三个系各自有一个局域网（三个独立的碰撞域），

@@ -23,6 +23,11 @@ const home: DeckData = {
         {
           type: 'html',
           html: `
+          <div class="callout tip">
+            <p class="callout-h">课件重点速览</p>
+            <p>结合荧光笔标记整理：<strong>A 级优先掌握</strong>，<strong>B 级理解记忆</strong>。重点已标在各章对应知识点处。</p>
+          </div>
+
           <h3 id="sec-net-map-h1">章节脉络</h3>
           <p>课程按「体系结构 → 逐层展开」推进，章与章之间的承接关系如下：</p>
           <table class="tbl">

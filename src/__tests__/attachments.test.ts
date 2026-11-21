@@ -37,6 +37,8 @@ interface AttNode {
   r?: string;
   /** 上游仓库内路径 */
   sp?: string;
+  /** Git 上传者（由 build-catalog 从本地 git log 自动提取） */
+  u?: string;
 }
 interface AttManifest {
   semester: string;
@@ -45,7 +47,7 @@ interface AttManifest {
 }
 
 const CATS = ['课件', '试题', '附件'];
-/** 上游资料仓库 + 本站仓库（r='self'：2025 课件随 HFUT-CS-Online 入库，文件无 size 字段） */
+/** 上游资料仓库 + 本站仓库（r='self'：2025 课件随 HFUT-CS-Online 入库，文件可无 size 字段） */
 const REPO_KEYS = ['sunmiao', 'styitches', 'mox', 'luna', 'self'];
 
 const countFiles = (nodes: AttNode[]): number => nodes.reduce((a, x) => a + (x.c ? countFiles(x.c) : 1), 0);
@@ -55,6 +57,10 @@ const checkNodes = (nodes: AttNode[]) => {
     expect(node.n.length).toBeGreaterThan(0);
     expect(node.p).not.toContain('..');
     expect(node.p.startsWith('/')).toBe(false);
+    if (node.u !== undefined) {
+      expect(typeof node.u).toBe('string');
+      expect(node.u.trim().length).toBeGreaterThan(0);
+    }
     if (node.c) {
       expect(node.s).toBeUndefined();
       // 单一来源目录：r 与 sp 成对（sp 为仓库内目录路径，空串表示仓库根），供附件页生成跳转链接
@@ -67,9 +73,10 @@ const checkNodes = (nodes: AttNode[]) => {
       }
       checkNodes(node.c);
     } else {
-      // 本站入库文件（r='self'）无 size 字段；上游文件必须有 size
-      if (node.r === 'self') expect(node.s).toBeUndefined();
-      else expect(node.s ?? -1).toBeGreaterThanOrEqual(0);
+      // 本站入库文件（r='self'）可无 size 字段；上游文件必须有 size
+      if (node.r !== 'self' || node.s !== undefined) {
+        expect(node.s ?? -1).toBeGreaterThanOrEqual(0);
+      }
       // 溯源：r 与 sp 成对出现，r 必须是已登记的仓库之一
       if (node.r !== undefined || node.sp !== undefined) {
         expect(REPO_KEYS).toContain(node.r);
