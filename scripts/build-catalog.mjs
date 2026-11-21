@@ -155,6 +155,18 @@ if (semesters.length === 0) {
   process.exit(1);
 }
 
+// 只检出部分资料时（例如仓库仅跟踪新增 2025 课件），不能用不完整 data/ 覆盖全站索引。
+// 完整资料目录仍可正常扫描、生成新的课程总表与附件清单。
+const existingCatalog = existsSync(OUT) ? readFileSync(OUT, 'utf8') : '';
+const knownCourses = (existingCatalog.match(/^\s*\{\s*semester:\s*"/gm) ?? []).length;
+const presentCourses = semesters.reduce((count, sem) => count +
+  readdirSync(join(MATERIALS, sem))
+    .filter((course) => statSync(join(MATERIALS, sem, course)).isDirectory()).length, 0);
+if (knownCourses > presentCourses) {
+  console.warn(`[build-catalog] 仅发现 ${presentCourses}/${knownCourses} 门课程资料，保留已跟踪的静态索引`);
+  process.exit(0);
+}
+
 const lines = [];
 let totalFiles = 0;
 const manifests = [];
