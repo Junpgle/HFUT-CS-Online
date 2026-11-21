@@ -21,4 +21,13 @@ describe('课程注册表（registry）', () => {
     expect(ncd!.base).toBe('/ncd');
     expect(ncd!.ready).toBe(true);
   });
+
+  it('网络攻防实践：纯附件课程（课件/试题均为 0，仅附件页）', () => {
+    const nap = courses.find((c) => c.name === '网络攻防实践');
+    expect(nap).toBeDefined();
+    expect(nap!.id).toBe('network-attack-practice');
+    expect(nap!.semester).toBe('大三上');
+    expect(nap!.base).toBe('/nap');
+    expect(nap!.ready).toBe(true);
+  });
 });

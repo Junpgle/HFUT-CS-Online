@@ -39,6 +39,7 @@ COURSES = {
     'math': ('math', 'math', 6, ('practice', 'att')),
     'pd':   ('pd', 'pd', 11, ('att',)),
     'ncd':  ('ncd', None, 0, ('att',)),
+    'nap':  ('nap', None, 0, ('att',)),
 }
 
 report = {}

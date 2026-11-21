@@ -104,6 +104,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '课程设计报告 + 图书管理系统项目源码 · 课件与试题未收录',
   },
+  {
+    id: 'network-attack-practice',
+    name: '网络攻防实践',
+    semester: '大三上',
+    base: '/nap',
+    ready: true,
+    source: '项目实践报告（项目二/四）· 课件与试题未收录',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -142,6 +150,9 @@ export const PD_BASE = courses[9].base;
 
 /** 计算机网络课程设计课路由前缀（同上约定） */
 export const NCD_BASE = courses[10].base;
+
+/** 网络攻防实践课路由前缀（同上约定） */
+export const NAP_BASE = courses[11].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);
