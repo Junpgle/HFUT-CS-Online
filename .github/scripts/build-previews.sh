@@ -62,3 +62,7 @@ for row in "${rows[@]}"; do
 done
 
 echo "构建完成的预览：$(tr '\n' ' ' <"$built_file")"
+
+# 循环把工作区留在了最后一个预览分支上（那里的 .github/scripts 可能还不存在），
+# 后续索引页生成与产物整理都要回 main
+git checkout -f --quiet --detach origin/main
