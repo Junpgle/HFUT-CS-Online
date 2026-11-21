@@ -8,6 +8,10 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/hub.css';
 
+// 滚动恢复交给各页面自己处理（首页有"离开时记住位置"、课程页有 scroll-spy 记忆），
+// 关掉浏览器原生恢复，避免它在我们恢复之后又按自己的记录改写滚动位置（同 hash 内导航会竞态）。
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>

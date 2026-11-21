@@ -28,6 +28,8 @@ interface Card {
 }
 
 const REPO_URL = 'https://github.com/SaltGardenia/HFUT-CS-Online';
+/** 首页滚动位置（sessionStorage）：滚动即更新，回首页时据此恢复 */
+const HOME_SCROLL_KEY = 'home-scroll-y';
 /** 头像链接覆盖：站长指向个人站而非 GitHub 主页 */
 const CONTRIB_LINKS: Record<string, string> = {
   SaltGardenia: 'https://saltgardenia.github.io/',
@@ -54,6 +56,9 @@ export default function CourseHubPage() {
       setShowHint(window.scrollY < 120);
     };
     const onScroll = () => {
+      // 首页滚动位置就地记录：只在用户真的滚首页时写，不依赖卸载时机
+      // （卸载 cleanup 里读到的 scrollY 可能已是目标课程页的位置，会把记录覆盖成课程页滚动值）
+      sessionStorage.setItem(HOME_SCROLL_KEY, String(window.scrollY));
       if (!raf) raf = requestAnimationFrame(measure);
     };
     measure();
@@ -73,16 +78,36 @@ export default function CourseHubPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 首页滚动记忆：离开（进课程/占位页）时保存，回到首页时恢复原位，不跳回顶部。
-  // 会话级存储，刷新后同样回到原位；带 ?s= 深链时让位给锚点定位。
+  // 首页滚动记忆：回到首页时恢复原位，不跳回顶部。
+  // 恢复在双 rAF 后执行，并在字体就绪/稍后各校正一次（首帧排版可能未稳定，过早 scrollTo 会被夹到较小值）；
+  // 一旦用户主动滚动（滚轮/触摸/按键）就停止校正，避免把用户拽回去。
   useEffect(() => {
-    const KEY = 'home-scroll-y';
-    const saved = Number(sessionStorage.getItem(KEY) ?? 0);
-    if (saved > 0 && !window.location.search) {
-      requestAnimationFrame(() => window.scrollTo({ top: saved, behavior: 'auto' }));
-    }
+    const saved = Number(sessionStorage.getItem(HOME_SCROLL_KEY) ?? 0);
+    if (!saved) return;
+    let cancelled = false;
+    const stop = () => {
+      cancelled = true;
+    };
+    const apply = () => {
+      // instant：绕开全局 scroll-behavior:smooth，避免恢复过程中被读到中间位置
+      if (!cancelled) window.scrollTo({ top: saved, behavior: 'instant' });
+    };
+    window.addEventListener('wheel', stop, { passive: true, once: true });
+    window.addEventListener('touchmove', stop, { passive: true, once: true });
+    window.addEventListener('keydown', stop, { once: true });
+    requestAnimationFrame(() => {
+      requestAnimationFrame(apply);
+      void document.fonts?.ready.then(() => {
+        if (!cancelled) apply();
+      });
+      window.setTimeout(apply, 120);
+      window.setTimeout(apply, 400);
+    });
     return () => {
-      sessionStorage.setItem(KEY, String(window.scrollY));
+      cancelled = true;
+      window.removeEventListener('wheel', stop);
+      window.removeEventListener('touchmove', stop);
+      window.removeEventListener('keydown', stop);
     };
   }, []);
 
