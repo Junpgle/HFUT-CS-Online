@@ -53,6 +53,7 @@
   --ncd: #a04230;                /* 计算机网络课程设计 · 砖红（红橙相位，介于暗酒红与赭金之间的暗陶土，暗而不刺眼） */
   --nap: #8a705a;                /* 网络攻防实践 · 灰褐（暖灰褐相位，大幅去饱和的陶土灰，与相邻暖色均拉开明度与饱和差） */
   --hd: #c43a71;                 /* 系统硬件综合设计 · 玫红（紫红相位，落在算法课紫与玫红之间的空档，暗而不刺眼） */
+  --mc: #35505a;                 /* 移动计算与应用开发 · 深青灰（青灰相位，介于网络课青绿与软件体系结构课石板蓝之间的去饱和空档） */
 
   /* ---- 章节配色：各课程导航到的每一章/讲一色（与算法课 deck1..8 同机制）。
    * 序数为该课章节列表中的序号；课程首页与在线练习仍用上方课程基础色。
@@ -102,6 +103,7 @@
   --ncd-att: #37505f;
   --nap-att: #4a5f7a;
   --hd-att: #54527f;
+  --mc-att: #6e214f;
 
   --deck-accent: var(--accent);  /* 当前讲次色（无讲次时回落全局色） */
 
@@ -203,6 +205,7 @@
   --ncd: #c06040;
   --nap: #d4b896;
   --hd: #ca7195;
+  --mc: #65bac3;
   /* 章节配色（暗色提亮变体，与上方亮色一一对应） */
   --os1: #74b3d2;  --os2: #e0975f;  --os3: #7cc9a3;  --os4: #b39be0;
   --os5: #ec8ea0;  --os6: #d4b95a;  --os7: #6cc4c9;  --os8: #d69ab8;
@@ -237,6 +240,7 @@
   --ncd-att: #93b3c9;
   --nap-att: #93b8d4;
   --hd-att: #a8a4d4;
+  --mc-att: #b873a1;
 
   --key-bg: rgba(10, 132, 255, 0.14);
   --warn-bg: rgba(255, 159, 10, 0.14);
@@ -327,6 +331,9 @@
 /* --------------------- 系统硬件综合设计 → 玫红主题（html[data-deck='hd']） */
 :root[data-deck='hd'] { --deck-accent: var(--hd); }
 
+/* --------------------- 移动计算与应用开发 → 深青灰主题（html[data-deck='mc']） */
+:root[data-deck='mc'] { --deck-accent: var(--mc); }
+
 /* --------- 各章一色：章节页写 html[data-ch='序数']，覆盖课程基础色；
  * 首页/在线练习不带 data-ch，仍用课程基础色（与算法课 deck1..8 同机制） --------- */
 :root[data-deck='os'][data-ch='1'] { --deck-accent: var(--os1); }
@@ -402,6 +409,7 @@
 :root[data-deck='ncd'][data-pg='att'] { --deck-accent: var(--ncd-att); }
 :root[data-deck='nap'][data-pg='att'] { --deck-accent: var(--nap-att); }
 :root[data-deck='hd'][data-pg='att'] { --deck-accent: var(--hd-att); }
+:root[data-deck='mc'][data-pg='att'] { --deck-accent: var(--mc-att); }
 :root[data-deck='math'][data-ch='1'] { --deck-accent: var(--math1); }
 :root[data-deck='math'][data-ch='2'] { --deck-accent: var(--math2); }
 :root[data-deck='math'][data-ch='3'] { --deck-accent: var(--math3); }

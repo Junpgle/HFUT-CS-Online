@@ -39,4 +39,13 @@ describe('课程注册表（registry）', () => {
     expect(hd!.base).toBe('/hd');
     expect(hd!.ready).toBe(true);
   });
+
+  it('移动计算与应用开发：纯附件课程（课件未收录，试题仅为实验代码，无在线练习）', () => {
+    const mc = courses.find((c) => c.name === '移动计算与应用开发');
+    expect(mc).toBeDefined();
+    expect(mc!.id).toBe('mobile-computing-development');
+    expect(mc!.semester).toBe('大三上');
+    expect(mc!.base).toBe('/mc');
+    expect(mc!.ready).toBe(true);
+  });
 });

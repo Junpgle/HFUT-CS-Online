@@ -120,6 +120,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '四讲 CPU 设计课件精讲（RISC-V 流水线 / MIPS32 单周期）· 试题未收录',
   },
+  {
+    id: 'mobile-computing-development',
+    name: '移动计算与应用开发',
+    semester: '大三上',
+    base: '/mc',
+    ready: true,
+    source: '移动计算实验报告 + 实验二/三/四代码 · 课件未收录',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -164,6 +172,9 @@ export const NAP_BASE = courses[11].base;
 
 /** 系统硬件综合设计课路由前缀（同上约定） */
 export const HD_BASE = courses[12].base;
+
+/** 移动计算与应用开发课路由前缀（同上约定） */
+export const MC_BASE = courses[13].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

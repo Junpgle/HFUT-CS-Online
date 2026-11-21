@@ -102,5 +102,13 @@
  "hd/dark": {
   "dups": [],
   "adj": []
+ },
+ "mc/light": {
+  "dups": [],
+  "adj": []
+ },
+ "mc/dark": {
+  "dups": [],
+  "adj": []
  }
 }
