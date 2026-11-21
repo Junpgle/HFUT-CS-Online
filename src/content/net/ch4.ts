@@ -650,6 +650,12 @@ const ch: NetChapter = {
             t=τ 时 B 检测到碰撞停止发送；t=2τ−δ 时 A 检测到发生碰撞。可见<strong>发送数据帧后最多经过 2τ 的时间</strong>，
             发送端就可知道是否遭受了碰撞——这个时间称为<strong>争用期</strong>（碰撞窗口），只要超过这个时间就不会发生碰撞。
           </p>
+          <div class="callout warn">
+            <p class="callout-h">课件勘误｜CSMA/CD 争用期</p>
+            <p><strong>2025 年局域网课件原文</strong>把 2τ 写成「两倍的端到端往返时延」，但同页又将 τ 定义为单程传播时延。这里属于措辞错误：
+              <strong>2τ = 两倍单程传播时延 = 一次往返传播时延</strong>，不是「两倍往返时延」。
+              课件给出的标准以太网争用期 51.2 μs 无需翻倍。计算题请按 2τ 代入。</p>
+          </div>
           <p><strong>碰撞避退算法</strong>：判断发生碰撞后，CSMA/CD 采用「二进制指数退避」算法：</p>
           <ul>
             <li>每个站点确定一个基本推迟时间 T<sub>i</sub>（如 T<sub>i</sub> = 2τ）；</li>
@@ -833,12 +839,17 @@ const ch: NetChapter = {
           </p>
           <p>
             <strong>快速以太网（100BASE-T）</strong>：速率达到或超过 100 Mb/s 的以太网称为快速以太网（Fast Ethernet）。
-            在双绞线上传送 100 Mb/s 基带信号的星型拓扑以太网，仍使用 IEEE 802.3 的 CSMA/CD 协议。
-            特点：可在<strong>全双工</strong>方式下工作而无冲突发生（因此不使用 CSMA/CD 协议）；MAC 帧格式仍然是 802.3 标准规定的；
+            在双绞线上传送 100 Mb/s 基带信号的星型拓扑以太网；在<strong>半双工</strong>共享信道场景仍采用 IEEE 802.3 的 CSMA/CD 协议。
+            特点：可在<strong>全双工</strong>方式下工作而无冲突发生（全双工时不使用 CSMA/CD 协议）；MAC 帧格式仍然是 802.3 标准规定的；
             保持最短帧长不变，但将一个网段的最大电缆长度减小到 100 m；帧间时间间隔从原来的 9.6μs 改为现在的 0.96μs。
             三种不同的物理层：<strong>100BASE-TX</strong> 使用 2 对 UTP 5 类线或屏蔽双绞线 STP；
             <strong>100BASE-FX</strong> 通常使用 1 对光纤（两根，收发各一根）；<strong>100BASE-T4</strong> 使用 4 对 UTP 3 类线或 5 类线。
           </p>
+          <div class="callout warn">
+            <p class="callout-h">课件勘误｜100BASE-FX 光纤数量</p>
+            <p><strong>2025 年局域网课件原文</strong>写「100BASE-FX 使用 2 对光纤」；通常的双纤 100BASE-FX 为<strong>一对、共两根光纤</strong>，分别用于发送与接收。
+              这是把「两根」与「两对」混淆。复习时记住 100BASE-TX 为两对双绞线、100BASE-FX 为一对光纤，勿照抄这处数量笔误。</p>
+          </div>
           <p>
             <strong>千兆以太网</strong>：允许在 1 Gb/s 下全双工和半双工两种方式工作；使用 802.3 协议规定的帧格式；
             在半双工方式下使用 CSMA/CD 协议（全双工方式不需要使用）；与 10BASE-T 和 100BASE-T 技术向后兼容。
