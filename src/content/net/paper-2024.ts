@@ -182,8 +182,8 @@ const questions: PracticeQuestion[] = [
       '主机广播发送 ARP 响应分组',
       'ARP 分组封装在 IP 数据报中发送',
     ],
-    answer: 'D',
-    explanation: 'ARP 是 IP 层协议，ARP 报文作为 IP 数据报的数据封装后发送（D 对）。ARP 缓存是动态建立并定期刷新的（B 错）；ARP 请求是广播、响应是单播（C 错）；发送方与目标在同一网段时直接解析，跨网段解析网关 MAC，并非严格只能在一个 LAN 中（A 错）。',
+    answer: 'A',
+    explanation: 'ARP 通过链路层广播请求解析地址，路由器不转发 ARP 广播，因此解析只在同一个 LAN（广播域）内进行——跨网段通信时解析的对象也是本网段的网关，A 对。ARP 缓存由主机动态建立并定期刷新（B 错）；ARP 请求是广播、响应是单播（C 错）；ARP 报文直接封装在链路层帧（EtherType 0x0806）中发送，不封装进 IP 数据报（D 错）。',
     tags: [
       { deck: 5, sec: 'sec-ch5-arp-h1', text: 'ARP 工作原理' },
       { deck: 5, sec: 'sec-ch5-arp-h2', text: 'ARP 报文' },
@@ -265,7 +265,7 @@ const questions: PracticeQuestion[] = [
         <line x1="390" y1="10" x2="390" y2="70"/>
       </g>
       <path stroke="var(--net)" stroke-width="2" fill="none" stroke-linejoin="round"
-        d="M30 44 H50 V20 H90 V44 H130 V20 H150 V44 H190 V20 H210 V44 H250 V20 H290 V44 H330 V20 H350 V44 H390"/>
+        d="M30 44 H50 V20 H90 V44 H110 V20 H130 V44 H170 V20 H210 V44 H250 V20 H270 V44 H290 V20 H330 V44 H370 V20 H390"/>
       <g class="tx tx-b" fill="var(--ink)">
         <text x="47" y="86">1</text><text x="87" y="86">0</text><text x="127" y="86">0</text><text x="167" y="86">1</text>
         <text x="207" y="86">0</text><text x="247" y="86">1</text><text x="287" y="86">1</text><text x="327" y="86">0</text>
@@ -338,7 +338,7 @@ const questions: PracticeQuestion[] = [
     kind: 'essay',
     question: '主机 A 和 B 每个都通过 10Mbps 链路连接到交换机 S。在每条链路上的传播时延都是 20 微秒。S 是一个存储转发交换机，在它接收完一个分组后 35 微秒开始转发收到的分组。如果分组的大小是 500 比特，请计算把 50K 比特从 A 发送到 B 所需要的总时间。（7 分）',
     answer: `
-    <p>已知：链路速率 10 Mbps；每分组 500 bit，故 50K bit = 51200 bit 需要 <strong>100 个分组</strong>（51200/500 = 102.4，即 103 个分组？——按 50K = 50×10<sup>3</sup> bit 计为 100 个分组，每个分组 500 bit；课件口径按整除处理）。</p>
+    <p>已知：链路速率 10 Mbps；按网络课程惯例 K = 10<sup>3</sup>，50K bit = 50 000 bit，每分组 500 bit，共 <strong>100 个分组</strong>。</p>
     <p><strong>基本量</strong>：</p>
     <ul>
       <li>每分组的发送时延 T<sub>D</sub> = 500 bit / 10 Mbps = 50 μs；</li>

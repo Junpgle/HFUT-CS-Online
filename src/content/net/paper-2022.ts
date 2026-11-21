@@ -110,7 +110,7 @@ const questions: PracticeQuestion[] = [
   {
     id: 'p2-f5',
     kind: 'fill',
-    question: '用于计算机网络的传输媒体有两类：____和无导媒体；光纤可分为两种，单光纤和多模光纤。',
+    question: '用于计算机网络的传输媒体有两类：____和无导媒体；光纤可分为两种，单模光纤和多模光纤。',
     answer: '有导媒体｜有线媒体｜导向传输媒体',
     explanation: '传输媒体分为有导媒体（金属导体、光导纤维等固体介质）与无导媒体（自由空间中的电磁波，如微波、卫星）。',
     tags: [{ deck: 3, sec: 'sec-ch3-media', text: '传输媒体' }],

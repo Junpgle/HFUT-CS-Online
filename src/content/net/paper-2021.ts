@@ -304,7 +304,7 @@ const questions: PracticeQuestion[] = [
         <text x="2" y="106">差分曼彻斯特</text>
       </g>
       <g stroke-width="2" fill="none" stroke-linejoin="round">
-        <path stroke="var(--ink-2)" d="M74 52 H114 V34 H154 V52 H234 V34 H314 V52 H394"/>
+        <path stroke="var(--ink-2)" d="M74 52 H114 V34 H154 V52 H234 V34 H314 V52 H354 V34 H394"/>
         <path stroke="var(--net)" d="M74 64 H94 V82 H134 V64 H174 V82 H194 V64 H214 V82 H254 V64 H274 V82 H294 V64 H334 V82 H374 V64 H394"/>
         <path stroke="var(--warn)" d="M74 94 V112 H94 V94 H134 V112 H154 V94 H174 V112 H194 V94 H214 V112 H254 V94 H274 H294 V112 H314 V94 H334 V112 H354 H374 V94 H394"/>
       </g>
@@ -336,7 +336,7 @@ const questions: PracticeQuestion[] = [
   10100 ⊕ 11011 = 01111   → 商 1
   11110 ⊕ 11011 = 00101
 余数 R = 0101</pre>
-    <p>③ 余数 R(x) = x<sup>3</sup>+x<sup>2</sup>+1，CRC 码为 <strong>0101</strong>；</p>
+    <p>③ 余数 R(x) = x<sup>2</sup>+1，CRC 码为 <strong>0101</strong>；</p>
     <p>④ 发送的码字 T(x) = x<sup>4</sup>M(x) + R(x) = <strong>11001100 0101</strong>。</p>
     <p>验证：110011000101 ÷ 11011 余数为 0，译码判为无错。∴ 无传输错误时应正确收到 <strong>110011000101</strong>。</p>`,
     explanation: `要点：补 4 个 0 → 模 2 除（异或）得余数 0101 → 余数拼在信息位后；接收端用同一 G(x) 除尽即无错。`,

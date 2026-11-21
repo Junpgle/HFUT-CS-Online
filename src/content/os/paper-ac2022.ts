@@ -33,8 +33,8 @@ const qs: OsQuestion[] = [
     id: 'p1-f4',
     kind: 'fill',
     question: `一个文件系统采用单级索引分配方式管理存储空间。其中每个物理块（磁盘块）大小为 4KB，每个索引项（磁盘块号）为 4 个字节，则该文件系统中的文件最大为________KB。`,
-    answer: '4194304',
-    explanation: '一个磁盘块可存 4KB/4B = 1K 个索引项，单级索引支持的最大文件 = 1K × 4KB = 4GB = 4194304 KB。',
+    answer: '4096',
+    explanation: '一个磁盘块可存 4KB/4B = 1K 个索引项，单级索引支持的最大文件 = 1K × 4KB = 4096 KB = 4MB。',
     tags: [{ deck: 6, sec: 'sec-ch6-alloc-h3', text: '索引分配' }],
   },
   {
@@ -311,10 +311,10 @@ Parend</code></pre>若 PA 和 PB 并发执行 1 次循环，则 PB 可能的打�
   {
     id: 'p1-e3',
     kind: 'essay',
-    question: `某虚拟存储管理系统为请求分页存储系统，其逻辑地址结构为 32 位：位 0～13 为页内偏移量（14 位），位 14～31 为页号（18 位）。某进程 A 由 5 个页面组成，其页表如下（符号「-」表示该页不在主存）：页号 0 → 页框 6；页号 1 → 页框 1；页号 2 → -；页号 3 → -；页号 4 → 页框 2。请对逻辑地址 0x00010A2E（0x 表示十六进制）、0x00000F250 和 0x0003AF60 进行地址重定位，请计算页号及物理地址，如不成功说明为什么。`,
+    question: `某虚拟存储管理系统为请求分页存储系统，其逻辑地址结构为 32 位：位 0～13 为页内偏移量（14 位），位 14～31 为页号（18 位）。某进程 A 由 5 个页面组成，其页表如下（符号「-」表示该页不在主存）：页号 0 → 页框 6；页号 1 → 页框 1；页号 2 → -；页号 3 → -；页号 4 → 页框 2。请对逻辑地址 0x00010A2E（0x 表示十六进制）、0x0000F250 和 0x0003AF60 进行地址重定位，请计算页号及物理地址，如不成功说明为什么。`,
     answer: `
-      <p><strong>0x00010A2E</strong>：页号 = 0x00010A2E &gt;&gt; 14 = 4，页内偏移 = 0x00010A2E &amp; 0x3FFF = 0x0A2E。页 4 在主存（页框 2），物理地址 = 2 × 2<sup>14</sup> + 0x0A2E = 0x20000 + 0x0A2E = <strong>0x00020A2E</strong>。</p>
-      <p><strong>0x00000F250</strong>：页号 = 0x00000F250 &gt;&gt; 14 = 3。页表页 3 为「-」，该页不在主存，硬件发出<strong>缺页中断</strong>，本次地址重定位不能完成；由缺页中断处理程序把页 3 调入主存、修改页表后重新执行该指令。</p>
+      <p><strong>0x00010A2E</strong>：页号 = 0x00010A2E &gt;&gt; 14 = 4，页内偏移 = 0x00010A2E &amp; 0x3FFF = 0x0A2E。页 4 在主存（页框 2），物理地址 = 2 × 2<sup>14</sup> + 0x0A2E = 0x8000 + 0x0A2E = <strong>0x00008A2E</strong>。</p>
+      <p><strong>0x0000F250</strong>：页号 = 0x0000F250 &gt;&gt; 14 = 3。页表页 3 为「-」，该页不在主存，硬件发出<strong>缺页中断</strong>，本次地址重定位不能完成；由缺页中断处理程序把页 3 调入主存、修改页表后重新执行该指令。</p>
       <p><strong>0x0003AF60</strong>：页号 = 0x0003AF60 &gt;&gt; 14 = 14。进程只有 5 个页面（页号 0～4），页号 14 &gt; 页表长度，地址越界，硬件发出<strong>越界中断</strong>（非法访问），重定位失败。</p>
     `,
     explanation: '答题要点：三个地址分别对应「正常变换」「缺页中断」「越界中断」三种情形；注意按 14 位页内偏移拆分逻辑地址。',
@@ -372,12 +372,12 @@ Parend</code></pre>若 PA 和 PB 并发执行 1 次循环，则 PB 可能的打�
       <ul>
         <li>P0：Need(0,0,1,2) ≤ Work ✓ → Work = Work + Allocation(0,0,3,2) = (1,3,5,4)；</li>
         <li>P4：Need(0,3,4,2) ≤ Work ✓ → Work = (1,3,6,6)；</li>
-        <li>P1：Need(1,4,5,0) ≤ Work ✓ → Work = (2,3,6,6)；</li>
-        <li>P2：Need(0,3,5,5) ≤ Work ✓ → Work = (2,4,7,6)；</li>
+        <li>P2：Need(0,3,5,5) ≤ Work ✓ → Work = (1,4,7,6)；</li>
+        <li>P1：Need(1,4,5,0) ≤ Work ✓ → Work = (2,4,7,6)；</li>
         <li>P3：Need(2,3,5,3) ≤ Work ✓ → Work = (3,7,12,10)。</li>
       </ul>
-      <p>Finish 全为 true，存在安全序列 ⟨P0, P4, P1, P2, P3⟩，T0 时刻为<strong>安全状态</strong>。</p>
-      <p><strong>(2) P3 请求 Request₃(1,0,1,0)</strong>：① Request₃ ≤ Need₃(2,3,5,3) ✓；② Request₃ ≤ Available(1,3,2,2) ✓；③ 试分配：Available = (0,3,1,2)，Allocation₃ = (2,3,6,4)，Need₃ = (1,3,4,3)；④ 安全性检查：Work=(0,3,1,2) 时只有 P0（Need 0,0,1,2）可推进 → Work=(0,3,4,4)；随后 P4 → Work=(0,3,5,4)；此时 P1（Need 1,4,5,0）、P2（Need 0,3,5,5）、P3（Need 1,3,4,3）均无法满足，Finish 不全为 true——<strong>不安全</strong>。所以系统<strong>不能</strong>将资源分配给 P3：取消试分配，令 P3 等待。</p>
+      <p>Finish 全为 true，存在安全序列 ⟨P0, P4, P2, P1, P3⟩，T0 时刻为<strong>安全状态</strong>。</p>
+      <p><strong>(2) P3 请求 Request₃(1,0,1,0)</strong>：① Request₃ ≤ Need₃(2,3,5,3) ✓；② Request₃ ≤ Available(1,3,2,2) ✓；③ 试分配：Available = (0,3,1,2)，Allocation₃ = (2,3,6,4)，Need₃ = (1,3,4,3)；④ 安全性检查：Work=(0,3,1,2) 时只有 P0（Need 0,0,1,2）可推进 → Work=(0,3,4,4)；随后 P4 → Work=(0,3,5,6)；此时 P2（Need 0,3,5,5）虽可推进 → Work=(0,4,6,6)，但 P1（Need 1,4,5,0）、P3（Need 1,3,4,3）的 A 类资源均已无法满足，Finish 不全为 true——<strong>不安全</strong>。所以系统<strong>不能</strong>将资源分配给 P3：取消试分配，令 P3 等待。</p>
     `,
     explanation: '评分要点：安全性算法逐进程推进的 Work 变化过程、银行家算法五步检查（≤Need、≤Available、试分配、安全性检查、决定分配）。',
     tags: [{ deck: 3, sec: 'sec-ch3-avoid-h2', text: '银行家算法' }, { deck: 8, sec: 'sec-ch8-banker', text: '银行家算法' }],
