@@ -15,10 +15,10 @@ import napAtt from '../../public/attachments/大三上__网络攻防实践.json'
 import hdAtt from '../../public/attachments/大三上__系统硬件综合设计.json';
 import mcAtt from '../../public/attachments/大三上__移动计算与应用开发.json';
 import nluAtt from '../../public/attachments/大三上__自然语言理解.json';
-import oscdAtt from '../../public/attachments/大三下__操作系统课程设计.json';
+import oscdAtt from '../../public/attachments/大三上__操作系统课程设计.json';
 import cpdAtt from '../../public/attachments/大三下__编译原理课程设计.json';
 import ntrAtt from '../../public/attachments/大三下__网络工程师综合实训.json';
-import cvAtt from '../../public/attachments/大三下__计算机视觉与深度学习.json';
+import cvAtt from '../../public/attachments/大三上__计算机视觉与深度学习.json';
 import spmAtt from '../../public/attachments/大三下__软件项目管理.json';
 import bdAtt from '../../public/attachments/大三下__大数据处理技术.json';
 import capAtt from '../../public/attachments/大三下__计算机应用项目实训.json';

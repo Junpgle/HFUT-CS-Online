@@ -139,7 +139,7 @@ export const courses: readonly CourseEntry[] = [
   {
     id: 'operating-system-course-design',
     name: '操作系统课程设计',
-    semester: '大三下',
+    semester: '大三上',
     base: '/oscd',
     ready: true,
     source: '系统软件综合设计报告 · 课件与试题未收录',
@@ -163,7 +163,7 @@ export const courses: readonly CourseEntry[] = [
   {
     id: 'computer-vision-deep-learning',
     name: '计算机视觉与深度学习',
-    semester: '大三下',
+    semester: '大三上',
     base: '/cv',
     ready: true,
     source: '图像与视频信息处理实验报告 · 课件与试题未收录',

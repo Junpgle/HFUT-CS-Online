@@ -58,12 +58,10 @@ describe('课程注册表（registry）', () => {
     expect(nlu!.ready).toBe(true);
   });
 
-  it('大三下 12 门课程：base / 学期 / 上线状态锁定', () => {
+  it('大三下 10 门课程：base / 学期 / 上线状态锁定', () => {
     const expected: Array<[string, string, string]> = [
-      ['操作系统课程设计', 'operating-system-course-design', '/oscd'],
       ['编译原理课程设计', 'compiler-principles-course-design', '/cpd'],
       ['网络工程师综合实训', 'network-engineer-training', '/ntr'],
-      ['计算机视觉与深度学习', 'computer-vision-deep-learning', '/cv'],
       ['软件项目管理', 'software-project-management', '/spm'],
       ['大数据处理技术', 'big-data-processing', '/bd'],
       ['计算机应用项目实训', 'computer-application-project-training', '/cap'],
@@ -80,6 +78,18 @@ describe('课程注册表（registry）', () => {
       expect(c!.semester).toBe('大三下');
       expect(c!.base).toBe(base);
       expect(c!.ready).toBe(true);
+    }
+  });
+
+  it('调整到其他学期的课程：操作系统课程设计 / 计算机视觉与深度学习 → 大三上', () => {
+    for (const [name, base] of [
+      ['操作系统课程设计', '/oscd'],
+      ['计算机视觉与深度学习', '/cv'],
+    ] as const) {
+      const c = courses.find((x) => x.name === name);
+      expect(c, name).toBeDefined();
+      expect(c!.semester).toBe('大三上');
+      expect(c!.base).toBe(base);
     }
   });
 });
