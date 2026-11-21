@@ -33,8 +33,8 @@ const qs: OsQuestion[] = [
     id: 'p4-f4',
     kind: 'fill',
     question: '有四进程 P1，P2，P3，P4 分别于时刻 0，1，2，3 进入进程就绪队列，其 CPU 执行时间分别为 5，3，6，4 个时间单位。则采用短进程优先调度算法时，四进程平均周转时间是________。',
-    answer: '10.75',
-    explanation: '非抢占 SPF：P1 于 0 到达立即运行 0～5；5 时刻就绪的 P2(3)、P3(6)、P4(4) 中选最短的 P2，运行 5～8；8 时刻选 P4，运行 8～12；最后 P3 运行 12～18。完成时间 5/8/18/12，周转时间 5、7、16、15，平均 = (5+7+16+15)/4 = 10.75 个时间单位。',
+    answer: '9.25',
+    explanation: '非抢占 SPF：P1 于 0 到达立即运行 0～5；5 时刻就绪的 P2(3)、P3(6)、P4(4) 中选最短的 P2，运行 5～8；8 时刻选 P4，运行 8～12；最后 P3 运行 12～18。完成时间 5/8/18/12，周转时间 = 完成时刻 − 到达时刻：P1 5−0=5、P2 8−1=7、P4 12−3=9、P3 18−2=16，平均 = (5+7+9+16)/4 = 9.25 个时间单位。',
     tags: [{ deck: 3, sec: 'sec-ch3-algo-h2', text: '短进程优先调度' }],
   },
   {
@@ -348,9 +348,9 @@ const qs: OsQuestion[] = [
         <li>P4：Need(0,1,3,0) ≤ Work ✓ → Work = (2,2,3,5)。</li>
       </ul>
       <p>Finish 全为 true，存在安全序列 ⟨P2, P1, P0, P3, P4⟩，T0 时刻为<strong>安全状态</strong>。</p>
-      <p><strong>(2) P0 请求 Request₀(0,1,1,0)</strong>：① Request₀(0,1,1,0) ≤ Need₀(0,2,1,0) ✓；② Request₀ ≤ Available(1,1,2,1) ✓；③ 试分配：Available = (1,0,1,1)，Allocation₀ = (1,1,1,1)，Need₀ = (0,1,0,0)；④ 安全性检查：Work=(1,0,1,1) → 只有 P2（Need 1,0,1,1）可推进 → Work=(1,0,1,3)；P1（Need 1,0,0,2）→ Work=(1,1,1,3)；P0（Need 0,1,0,0）→ Work=(2,1,1,4)；P3（Need 2,1,0,1）→ Work=(2,1,2,4)；此时 P4 的 Need(0,1,3,0) 中 C 类需 3 &gt; 2，无法满足，且再无其他进程可推进——Finish 不全为 true，系统进入<strong>不安全状态</strong>。所以系统<strong>不能</strong>将资源分配给 P0：取消试分配，令 P0 等待。</p>
+      <p><strong>(2) P0 请求 Request₀(0,1,1,0)</strong>：① Request₀(0,1,1,0) ≤ Need₀(0,2,1,0) ✓；② Request₀ ≤ Available(1,1,2,1) ✓；③ 试分配：Available = (1,0,1,1)，Allocation₀ = (1,1,1,1)，Need₀ = (0,1,0,0)；④ 安全性检查：Work=(1,0,1,1) → 只有 P2（Need 1,0,1,1）可推进 → Work=(1,0,1,3)；P1（Need 1,0,0,2）→ Work=(1,1,1,3)；P0（Need 0,1,0,0）→ Work=(1,1,1,3)+Allocation₀(1,1,1,1)=(2,2,2,4)；P3（Need 2,1,0,1）→ Work=(2,2,3,4)；P4（Need 0,1,3,0）中 C 类 3 ≤ 3 → Work=(2,2,3,5)——Finish 全为 true，仍存在安全序列 ⟨P2, P1, P0, P3, P4⟩，系统处于<strong>安全状态</strong>。所以系统<strong>可以</strong>将资源分配给 P0：正式执行试分配的结果。</p>
     `,
-    explanation: '评分要点：安全性算法的 Work 推进过程、银行家算法五步检查；本例的考点在试分配后 P4 无法完成导致不安全。',
+    explanation: '评分要点：安全性算法的 Work 推进过程、银行家算法五步检查；本例的考点在试分配后 P0 的 Allocation 已更新为 (1,1,1,1)——安全性检查须按试分配后的新状态推进，结论为仍安全、可以分配。',
     tags: [{ deck: 3, sec: 'sec-ch3-avoid-h2', text: '银行家算法' }, { deck: 8, sec: 'sec-ch8-banker', text: '银行家算法' }],
   },
   {
