@@ -96,6 +96,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '十一章课件精讲（C 语言 + C++ 基础）· 试题未收录',
   },
+  {
+    id: 'computer-network-course-design',
+    name: '计算机网络课程设计',
+    semester: '大三上',
+    base: '/ncd',
+    ready: true,
+    source: '课程设计报告 + 图书管理系统项目源码 · 课件与试题未收录',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -131,6 +139,9 @@ export const MATH_BASE = courses[8].base;
 
 /** 程序设计基础课路由前缀（同上约定） */
 export const PD_BASE = courses[9].base;
+
+/** 计算机网络课程设计课路由前缀（同上约定） */
+export const NCD_BASE = courses[10].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

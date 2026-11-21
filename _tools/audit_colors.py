@@ -38,6 +38,7 @@ COURSES = {
     'ca':   ('ca', 'ca', 14, ('practice', 'att')),
     'math': ('math', 'math', 6, ('practice', 'att')),
     'pd':   ('pd', 'pd', 11, ('att',)),
+    'ncd':  ('ncd', None, 0, ('att',)),
 }
 
 report = {}
@@ -50,8 +51,11 @@ for name, (base, pre, n, extra) in COURSES.items():
             seq += [(f'{pre}{i}'.upper(), grab(f'{pre}{i}', text)) for i in range(1, n + 1)]
         else:
             seq += [(f'DECK{i}', grab(f'deck{i}', text)) for i in range(1, n + 1)]
-        if 'practice' in extra: seq.append(('练习', home))
-        if 'att' in extra: seq.append(('附件', home))
+        # 练习/附件页优先取真实专属色（--<课>-practice / --<课>-att），无定义时回落课程基础色
+        for kind in ('practice', 'att'):
+            if kind in extra:
+                real = grab(f'{base}-{kind}', text) if base else grab(f'deck-{kind}', text)
+                seq.append(('练习' if kind == 'practice' else '附件', real or home))
         # 审计
         dups = []
         seen = {}

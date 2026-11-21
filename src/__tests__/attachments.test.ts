@@ -1,5 +1,5 @@
 /* 附件清单契约：public/attachments/<学期>__<课程>.json 由 build-catalog 生成、随提交入库。
- * 已上线课程中，除算法课（资料随仓库自建、无 data/ 目录）外，其余 8 门必须有清单且结构合法。 */
+ * 已上线课程中，除算法课（资料随仓库自建、无 data/ 目录）外，其余 10 门必须有清单且结构合法。 */
 import { describe, expect, it } from 'vitest';
 import mathAtt from '../../public/attachments/大一上__高等数学.json';
 import osAtt from '../../public/attachments/大三上__操作系统.json';
@@ -9,6 +9,8 @@ import aiAtt from '../../public/attachments/大三上__人工智能原理.json';
 import saAtt from '../../public/attachments/大三上__软件体系结构.json';
 import physAtt from '../../public/attachments/大二上__大学物理.json';
 import caAtt from '../../public/attachments/大三上__计算机体系结构.json';
+import pdAtt from '../../public/attachments/大一上__程序设计基础.json';
+import ncdAtt from '../../public/attachments/大三上__计算机网络课程设计.json';
 
 interface AttNode {
   n: string;
@@ -68,6 +70,8 @@ const manifests: Array<[string, AttManifest]> = [
   ['软件体系结构', saAtt],
   ['大学物理', physAtt],
   ['计算机体系结构', caAtt],
+  ['程序设计基础', pdAtt],
+  ['计算机网络课程设计', ncdAtt],
 ];
 
 describe('附件清单（public/attachments）', () => {

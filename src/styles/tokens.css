@@ -50,6 +50,7 @@
   --ca: #5e3131;                 /* 计算机体系结构课程 · 暗酒红（深赭相位，全色相环上 CIEDE2000 距离最远的空档，暗而不刺眼） */
   --math: #4f6b3a;               /* 高等数学课程 · 苔藓绿（橄榄与正绿之间的低饱和空档，与现有课程色均拉开距离） */
   --pd: #a88820;                 /* 程序设计基础课程 · 赭金（金黄相位，全色相环上未被任何课程占用的空档，暗而不刺眼） */
+  --ncd: #a04230;                /* 计算机网络课程设计 · 砖红（红橙相位，介于暗酒红与赭金之间的暗陶土，暗而不刺眼） */
 
   /* ---- 章节配色：各课程导航到的每一章/讲一色（与算法课 deck1..8 同机制）。
    * 序数为该课章节列表中的序号；课程首页与在线练习仍用上方课程基础色。
@@ -94,6 +95,7 @@
   --ca-practice: #8d34c9;  --ca-att: #a1369d;
   --math-practice: #36a136; --math-att: #36a16b;
   --pd-att: #56698f;
+  --ncd-att: #37505f;
 
   --deck-accent: var(--accent);  /* 当前讲次色（无讲次时回落全局色） */
 
@@ -192,6 +194,7 @@
   --ca: #d49a9a;
   --math: #a9c98a;
   --pd: #d4a94f;
+  --ncd: #c06040;
   /* 章节配色（暗色提亮变体，与上方亮色一一对应） */
   --os1: #74b3d2;  --os2: #e0975f;  --os3: #7cc9a3;  --os4: #b39be0;
   --os5: #ec8ea0;  --os6: #d4b95a;  --os7: #6cc4c9;  --os8: #d69ab8;
@@ -222,6 +225,7 @@
   --ca-practice: #bf5af2;  --ca-att: #da6cc8;
   --math-practice: #bf5af2; --math-att: #da6cc8;
   --pd-att: #9db0d6;
+  --ncd-att: #93b3c9;
 
   --key-bg: rgba(10, 132, 255, 0.14);
   --warn-bg: rgba(255, 159, 10, 0.14);
@@ -303,6 +307,9 @@
 /* --------------------- 程序设计基础课程 → 赭金主题（html[data-deck='pd']） */
 :root[data-deck='pd'] { --deck-accent: var(--pd); }
 
+/* --------------------- 计算机网络课程设计 → 砖红主题（html[data-deck='ncd']） */
+:root[data-deck='ncd'] { --deck-accent: var(--ncd); }
+
 /* --------- 各章一色：章节页写 html[data-ch='序数']，覆盖课程基础色；
  * 首页/在线练习不带 data-ch，仍用课程基础色（与算法课 deck1..8 同机制） --------- */
 :root[data-deck='os'][data-ch='1'] { --deck-accent: var(--os1); }
@@ -375,6 +382,7 @@
 :root[data-deck='math'][data-pg='practice'] { --deck-accent: var(--math-practice); }
 :root[data-deck='math'][data-pg='att'] { --deck-accent: var(--math-att); }
 :root[data-deck='pd'][data-pg='att'] { --deck-accent: var(--pd-att); }
+:root[data-deck='ncd'][data-pg='att'] { --deck-accent: var(--ncd-att); }
 :root[data-deck='math'][data-ch='1'] { --deck-accent: var(--math1); }
 :root[data-deck='math'][data-ch='2'] { --deck-accent: var(--math2); }
 :root[data-deck='math'][data-ch='3'] { --deck-accent: var(--math3); }

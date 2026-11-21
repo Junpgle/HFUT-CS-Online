@@ -191,9 +191,12 @@ export default function TopBar({
       </div>
       <SiteTabs tabs={tabs} />
       <div className="topbar-right">
-        <div className="topbar-ctl nav-pill">
-          <SearchBox index={searchIndex} linkTo={searchLinkTo} suggestions={suggestions} />
-        </div>
+        {/* 纯附件/无内容课程（如课程设计）没有可检索的索引，不渲染搜索胶囊 */}
+        {searchIndex.length > 0 && (
+          <div className="topbar-ctl nav-pill">
+            <SearchBox index={searchIndex} linkTo={searchLinkTo} suggestions={suggestions} />
+          </div>
+        )}
         <div className="topbar-ctl nav-pill">
           <ThemeToggle />
         </div>
