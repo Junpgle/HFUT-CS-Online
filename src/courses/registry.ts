@@ -112,6 +112,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '项目实践报告（项目二/四）· 课件与试题未收录',
   },
+  {
+    id: 'system-hardware-design',
+    name: '系统硬件综合设计',
+    semester: '大三上',
+    base: '/hd',
+    ready: true,
+    source: '四讲 CPU 设计课件精讲（RISC-V 流水线 / MIPS32 单周期）· 试题未收录',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -153,6 +161,9 @@ export const NCD_BASE = courses[10].base;
 
 /** 网络攻防实践课路由前缀（同上约定） */
 export const NAP_BASE = courses[11].base;
+
+/** 系统硬件综合设计课路由前缀（同上约定） */
+export const HD_BASE = courses[12].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

@@ -52,6 +52,7 @@
   --pd: #a88820;                 /* 程序设计基础课程 · 赭金（金黄相位，全色相环上未被任何课程占用的空档，暗而不刺眼） */
   --ncd: #a04230;                /* 计算机网络课程设计 · 砖红（红橙相位，介于暗酒红与赭金之间的暗陶土，暗而不刺眼） */
   --nap: #8a705a;                /* 网络攻防实践 · 灰褐（暖灰褐相位，大幅去饱和的陶土灰，与相邻暖色均拉开明度与饱和差） */
+  --hd: #c43a71;                 /* 系统硬件综合设计 · 玫红（紫红相位，落在算法课紫与玫红之间的空档，暗而不刺眼） */
 
   /* ---- 章节配色：各课程导航到的每一章/讲一色（与算法课 deck1..8 同机制）。
    * 序数为该课章节列表中的序号；课程首页与在线练习仍用上方课程基础色。
@@ -83,6 +84,8 @@
   --pd1: #31708e;  --pd2: #a05a2c;  --pd3: #2e7d5b;  --pd4: #b5485e;
   --pd5: #8f741c;  --pd6: #4a5aa8;  --pd7: #22767c;  --pd8: #8a4a2f;
   --pd9: #7d5ba6;  --pd10: #6b7a2f; --pd11: #9c4a72;
+  /* 系统硬件综合设计 · 4 讲 */
+  --hd1: #31708e;  --hd2: #2e7d5b;  --hd3: #7d5ba6;  --hd4: #8f741c;
 
   /* ---- 在线练习 / 附件页专属色：每课与总目录、各章均不同色（选色见 _tools/pick_colors3.py，
    * 约束：课内全部颜色两两 ΔE≥22（不可达时≥18），导航相邻 ≥22；避开 ok/hot/warn 语义色） ---- */
@@ -98,6 +101,7 @@
   --pd-att: #56698f;
   --ncd-att: #37505f;
   --nap-att: #4a5f7a;
+  --hd-att: #54527f;
 
   --deck-accent: var(--accent);  /* 当前讲次色（无讲次时回落全局色） */
 
@@ -198,6 +202,7 @@
   --pd: #d4a94f;
   --ncd: #c06040;
   --nap: #d4b896;
+  --hd: #ca7195;
   /* 章节配色（暗色提亮变体，与上方亮色一一对应） */
   --os1: #74b3d2;  --os2: #e0975f;  --os3: #7cc9a3;  --os4: #b39be0;
   --os5: #ec8ea0;  --os6: #d4b95a;  --os7: #6cc4c9;  --os8: #d69ab8;
@@ -218,6 +223,7 @@
   --pd1: #74b3d2; --pd2: #e0975f; --pd3: #7cc9a3; --pd4: #ec8ea0;
   --pd5: #d4b95a; --pd6: #8f9ce0; --pd7: #6cc4c9; --pd8: #d18f6e;
   --pd9: #b39be0; --pd10: #b3c26e; --pd11: #d69ab8;
+  --hd1: #74b3d2; --hd2: #7cc9a3; --hd3: #b39be0; --hd4: #d4b95a;
   --deck-practice: #cfdeaf;
   --os-practice: #bf5af2;  --os-att: #da6cc8;
   --net-practice: #bf5af2; --net-att: #e279d4;
@@ -230,6 +236,7 @@
   --pd-att: #9db0d6;
   --ncd-att: #93b3c9;
   --nap-att: #93b8d4;
+  --hd-att: #a8a4d4;
 
   --key-bg: rgba(10, 132, 255, 0.14);
   --warn-bg: rgba(255, 159, 10, 0.14);
@@ -317,6 +324,9 @@
 /* --------------------- 网络攻防实践 → 灰褐主题（html[data-deck='nap']） */
 :root[data-deck='nap'] { --deck-accent: var(--nap); }
 
+/* --------------------- 系统硬件综合设计 → 玫红主题（html[data-deck='hd']） */
+:root[data-deck='hd'] { --deck-accent: var(--hd); }
+
 /* --------- 各章一色：章节页写 html[data-ch='序数']，覆盖课程基础色；
  * 首页/在线练习不带 data-ch，仍用课程基础色（与算法课 deck1..8 同机制） --------- */
 :root[data-deck='os'][data-ch='1'] { --deck-accent: var(--os1); }
@@ -391,6 +401,7 @@
 :root[data-deck='pd'][data-pg='att'] { --deck-accent: var(--pd-att); }
 :root[data-deck='ncd'][data-pg='att'] { --deck-accent: var(--ncd-att); }
 :root[data-deck='nap'][data-pg='att'] { --deck-accent: var(--nap-att); }
+:root[data-deck='hd'][data-pg='att'] { --deck-accent: var(--hd-att); }
 :root[data-deck='math'][data-ch='1'] { --deck-accent: var(--math1); }
 :root[data-deck='math'][data-ch='2'] { --deck-accent: var(--math2); }
 :root[data-deck='math'][data-ch='3'] { --deck-accent: var(--math3); }
@@ -408,6 +419,10 @@
 :root[data-deck='pd'][data-ch='9'] { --deck-accent: var(--pd9); }
 :root[data-deck='pd'][data-ch='10'] { --deck-accent: var(--pd10); }
 :root[data-deck='pd'][data-ch='11'] { --deck-accent: var(--pd11); }
+:root[data-deck='hd'][data-ch='1'] { --deck-accent: var(--hd1); }
+:root[data-deck='hd'][data-ch='2'] { --deck-accent: var(--hd2); }
+:root[data-deck='hd'][data-ch='3'] { --deck-accent: var(--hd3); }
+:root[data-deck='hd'][data-ch='4'] { --deck-accent: var(--hd4); }
 
 /* ------------------------------------------------------- 无障碍偏好适配 */
 @media (prefers-reduced-transparency: reduce) {

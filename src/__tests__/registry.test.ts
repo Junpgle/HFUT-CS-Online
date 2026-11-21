@@ -30,4 +30,13 @@ describe('课程注册表（registry）', () => {
     expect(nap!.base).toBe('/nap');
     expect(nap!.ready).toBe(true);
   });
+
+  it('系统硬件综合设计：四讲课件 + 附件（试题未收录，无在线练习）', () => {
+    const hd = courses.find((c) => c.name === '系统硬件综合设计');
+    expect(hd).toBeDefined();
+    expect(hd!.id).toBe('system-hardware-design');
+    expect(hd!.semester).toBe('大三上');
+    expect(hd!.base).toBe('/hd');
+    expect(hd!.ready).toBe(true);
+  });
 });

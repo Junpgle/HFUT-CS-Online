@@ -12,6 +12,7 @@ import caAtt from '../../public/attachments/大三上__计算机体系结构.jso
 import pdAtt from '../../public/attachments/大一上__程序设计基础.json';
 import ncdAtt from '../../public/attachments/大三上__计算机网络课程设计.json';
 import napAtt from '../../public/attachments/大三上__网络攻防实践.json';
+import hdAtt from '../../public/attachments/大三上__系统硬件综合设计.json';
 
 interface AttNode {
   n: string;
@@ -74,6 +75,7 @@ const manifests: Array<[string, AttManifest]> = [
   ['程序设计基础', pdAtt],
   ['计算机网络课程设计', ncdAtt],
   ['网络攻防实践', napAtt],
+  ['系统硬件综合设计', hdAtt],
 ];
 
 describe('附件清单（public/attachments）', () => {

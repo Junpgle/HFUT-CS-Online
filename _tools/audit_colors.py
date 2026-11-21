@@ -40,6 +40,7 @@ COURSES = {
     'pd':   ('pd', 'pd', 11, ('att',)),
     'ncd':  ('ncd', None, 0, ('att',)),
     'nap':  ('nap', None, 0, ('att',)),
+    'hd':   ('hd', 'hd', 4, ('att',)),
 }
 
 report = {}
