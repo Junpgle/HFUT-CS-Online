@@ -45,7 +45,8 @@ interface AttManifest {
 }
 
 const CATS = ['课件', '试题', '附件'];
-const REPO_KEYS = ['sunmiao', 'styitches', 'mox', 'luna'];
+/** 上游资料仓库 + 本站仓库（r='self'：2025 课件随 HFUT-CS-Online 入库，文件无 size 字段） */
+const REPO_KEYS = ['sunmiao', 'styitches', 'mox', 'luna', 'self'];
 
 const countFiles = (nodes: AttNode[]): number => nodes.reduce((a, x) => a + (x.c ? countFiles(x.c) : 1), 0);
 
@@ -66,8 +67,10 @@ const checkNodes = (nodes: AttNode[]) => {
       }
       checkNodes(node.c);
     } else {
-      expect(node.s ?? -1).toBeGreaterThanOrEqual(0);
-      // 溯源：r 与 sp 成对出现，r 必须是四个上游仓库之一
+      // 本站入库文件（r='self'）无 size 字段；上游文件必须有 size
+      if (node.r === 'self') expect(node.s).toBeUndefined();
+      else expect(node.s ?? -1).toBeGreaterThanOrEqual(0);
+      // 溯源：r 与 sp 成对出现，r 必须是已登记的仓库之一
       if (node.r !== undefined || node.sp !== undefined) {
         expect(REPO_KEYS).toContain(node.r);
         expect(node.sp).not.toContain('..');
