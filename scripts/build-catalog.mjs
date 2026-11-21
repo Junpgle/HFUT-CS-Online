@@ -200,6 +200,19 @@ ${lines.join('\n')}
 ];
 `;
 
+/* 防误伤：data/ 里只要有零星课件（如 PR 误提交了某门课的几个 PDF），扫描结果就会只剩这一门课，
+ * 直接覆盖会把已入库的完整目录缩成 1 门，附件清单也跟着只剩 1 份（CI 上就是这么把线上刷坏的）。
+ * 因此「扫描到的课程数比现有 catalog.ts 少」一律跳过写入，确需缩小用 npm run catalog -- --force。 */
+if (!process.argv.includes('--force') && existsSync(OUT)) {
+  const existing = (readFileSync(OUT, 'utf8').match(/semester:/g) ?? []).length;
+  if (existing > lines.length) {
+    console.warn(
+      `[build-catalog] 扫描到 ${lines.length} 门课，少于已入库的 ${existing} 门，跳过写入（data/ 可能不完整；确需缩小请加 --force）`,
+    );
+    process.exit(0);
+  }
+}
+
 writeFileSync(OUT, ts, 'utf8');
 console.log(`[build-catalog] ${lines.length} 门课程 / ${totalFiles} 份文件 → ${OUT}`);
 
