@@ -802,6 +802,12 @@ const ch: NetChapter = {
               而是将 cwnd 设置为新门限 ssthresh 的数值（原 cwnd 的一半，而非再次减半），然后开始执行拥塞避免算法（「加法增大」），使拥塞窗口缓慢地线性增大。
             </li>
           </ul>
+          <div class="callout warn">
+            <p class="callout-h">课件表述提示｜快恢复只减半一次</p>
+            <p>2025 年传输层课件第 132 页的文字含「把慢开始门限减半」与「拥塞窗口设置为慢开始门限减半后的数值」，
+              容易误看成连续两次减半。按本课程图示与简化算法：<strong>新 ssthresh = 原 cwnd / 2，新 cwnd = 新 ssthresh</strong>。
+              例如原 cwnd = 24 KB，则快恢复后按该课堂模型取 12 KB；这与某些 TCP Reno 实现进入快恢复时的短暂窗口膨胀表示法不同。</p>
+          </div>
           <div class="callout tip">
             <p class="callout-h">本章小结</p>
             <p>① 端到端通信的概念；传输层的作用、功能和主要服务；传输层的端口、地址和套接字。
