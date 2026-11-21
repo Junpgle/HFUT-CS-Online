@@ -97,6 +97,13 @@ scripts/                # 目录构建、内容迁移脚本
 
 `main` 分支的每次 push 会自动部署到 GitHub Pages（`.github/workflows/deploy.yml`），无需手动操作。如果部署后页面空白，优先检查 `vite.config` 的 `base` 是否与仓库名一致。
 
+同一次部署还会带上分支预览：根目录永远是 `origin/main`，预览挂在 `/HFUT-CS-Online/preview/<slug>/`，索引页为 `/HFUT-CS-Online/preview/`。
+
+- 收录同仓库里开着 PR 的 head 分支，以及 14 天内推送过、且领先 main 的分支，最多 8 个（`PREVIEW_MAX` / `PREVIEW_TTL_DAYS` 在 workflow 的 `env` 里调）。
+- `slug` 由分支名生成：`/` 换成 `--`，非 ASCII 字符丢弃后补一段哈希，中文分支名请以索引页上的链接为准。
+- 预览构建失败只跳过该预览，主站照常发布；PR 关闭或分支超过 14 天没推送，下一次运行自动下线。
+- 实现方式：预览构建用 `vite build --base=/HFUT-CS-Online/preview/<slug>/` 把整站搬进子目录（CLI 覆盖，分支不必先合入本功能），站内资源与附件清单都走 `BASE_URL` 随之迁移——**新增静态资源引用时别写死绝对路径**。
+
 ## License
 
 本项目以 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 发布：署名（BY）— 非商业性使用（NC）— 相同方式共享（SA）。提交即表示同意你的代码与内容以相同协议分发。
