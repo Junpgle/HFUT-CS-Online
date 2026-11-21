@@ -168,6 +168,11 @@ const ch: NetChapter = {
             ISO 在 20 世纪 70 年代末开展开放系统互连标准化工作，OSI 参考模型相关标准 ISO 7498 于 1984 年发布（Open Systems Interconnection/Reference Model, OSI/RM）。
             提出 OSI/RM 的目的是试图使各种计算机在世界范围内互联成网，可以相互交互、共享资源。
           </p>
+          <div class="callout warn">
+            <p class="callout-h">课件年代差异｜OSI 参考模型</p>
+            <p><strong>2025 年网络体系结构课件</strong>写「1983 年形成 ISO 7498」，这里可能指标准形成阶段；正式发布的标准版本为 <strong>ISO 7498:1984</strong>。
+              网站正文按正式版本写 1984 年。若考试专门问“课件所述形成时间”，须结合老师给出的题目与答案判断，不把两个年份混为一谈。</p>
+          </div>
           <h3 id="sec-ch2-osi-h1">三种模型的比较</h3>
           <p>除了 OSI/RM，在实际应用和科学研究领域中还有两个模型非常活跃，分别是 TCP/IP 模型和五层体系结构模型：</p>
           <table class="tbl">
