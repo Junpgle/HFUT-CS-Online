@@ -88,6 +88,14 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '六章课件精讲（第 8～13 章）· 12 份试卷在线练习',
   },
+  {
+    id: 'program-design-fundamentals',
+    name: '程序设计基础',
+    semester: '大一上',
+    base: '/pd',
+    ready: true,
+    source: '十一章课件精讲（C 语言 + C++ 基础）· 试题未收录',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -120,6 +128,9 @@ export const CA_BASE = courses[7].base;
 
 /** 高等数学课路由前缀（同上约定） */
 export const MATH_BASE = courses[8].base;
+
+/** 程序设计基础课路由前缀（同上约定） */
+export const PD_BASE = courses[9].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

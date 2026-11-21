@@ -49,6 +49,7 @@
   --phys: #8b5095;               /* 大学物理课程 · 藕紫（灰紫相位，介于算法课的紫与人工智能课的品红之间且明显更灰更暗） */
   --ca: #5e3131;                 /* 计算机体系结构课程 · 暗酒红（深赭相位，全色相环上 CIEDE2000 距离最远的空档，暗而不刺眼） */
   --math: #4f6b3a;               /* 高等数学课程 · 苔藓绿（橄榄与正绿之间的低饱和空档，与现有课程色均拉开距离） */
+  --pd: #a88820;                 /* 程序设计基础课程 · 赭金（金黄相位，全色相环上未被任何课程占用的空档，暗而不刺眼） */
 
   /* ---- 章节配色：各课程导航到的每一章/讲一色（与算法课 deck1..8 同机制）。
    * 序数为该课章节列表中的序号；课程首页与在线练习仍用上方课程基础色。
@@ -76,6 +77,10 @@
   /* 高等数学 · 6 章 */
   --math1: #31708e; --math2: #a05a2c; --math3: #7d5ba6; --math4: #b5485e;
   --math5: #22767c; --math6: #8f741c;
+  /* 程序设计基础 · 11 章（第 1～9、11、12 章，按章节序号取共享色板） */
+  --pd1: #31708e;  --pd2: #a05a2c;  --pd3: #2e7d5b;  --pd4: #b5485e;
+  --pd5: #8f741c;  --pd6: #4a5aa8;  --pd7: #22767c;  --pd8: #8a4a2f;
+  --pd9: #7d5ba6;  --pd10: #6b7a2f; --pd11: #9c4a72;
 
   /* ---- 在线练习 / 附件页专属色：每课与总目录、各章均不同色（选色见 _tools/pick_colors3.py，
    * 约束：课内全部颜色两两 ΔE≥22（不可达时≥18），导航相邻 ≥22；避开 ok/hot/warn 语义色） ---- */
@@ -88,6 +93,7 @@
   --phys-practice: #8d34c9; --phys-att: #b53aad;
   --ca-practice: #8d34c9;  --ca-att: #a1369d;
   --math-practice: #36a136; --math-att: #36a16b;
+  --pd-att: #56698f;
 
   --deck-accent: var(--accent);  /* 当前讲次色（无讲次时回落全局色） */
 
@@ -185,6 +191,7 @@
   --phys: #c897d6;
   --ca: #d49a9a;
   --math: #a9c98a;
+  --pd: #d4a94f;
   /* 章节配色（暗色提亮变体，与上方亮色一一对应） */
   --os1: #74b3d2;  --os2: #e0975f;  --os3: #7cc9a3;  --os4: #b39be0;
   --os5: #ec8ea0;  --os6: #d4b95a;  --os7: #6cc4c9;  --os8: #d69ab8;
@@ -202,6 +209,9 @@
   --ca13: #68de68; --ca14: #d69c63;
   --math1: #74b3d2; --math2: #e0975f; --math3: #b39be0; --math4: #ec8ea0;
   --math5: #6cc4c9; --math6: #d4b95a;
+  --pd1: #74b3d2; --pd2: #e0975f; --pd3: #7cc9a3; --pd4: #ec8ea0;
+  --pd5: #d4b95a; --pd6: #8f9ce0; --pd7: #6cc4c9; --pd8: #d18f6e;
+  --pd9: #b39be0; --pd10: #b3c26e; --pd11: #d69ab8;
   --deck-practice: #cfdeaf;
   --os-practice: #bf5af2;  --os-att: #da6cc8;
   --net-practice: #bf5af2; --net-att: #e279d4;
@@ -211,6 +221,7 @@
   --phys-practice: #bf5af2; --phys-att: #826cda;
   --ca-practice: #bf5af2;  --ca-att: #da6cc8;
   --math-practice: #bf5af2; --math-att: #da6cc8;
+  --pd-att: #9db0d6;
 
   --key-bg: rgba(10, 132, 255, 0.14);
   --warn-bg: rgba(255, 159, 10, 0.14);
@@ -289,6 +300,9 @@
 /* --------------------- 高等数学课程 → 苔藓绿主题（html[data-deck='math']） */
 :root[data-deck='math'] { --deck-accent: var(--math); }
 
+/* --------------------- 程序设计基础课程 → 赭金主题（html[data-deck='pd']） */
+:root[data-deck='pd'] { --deck-accent: var(--pd); }
+
 /* --------- 各章一色：章节页写 html[data-ch='序数']，覆盖课程基础色；
  * 首页/在线练习不带 data-ch，仍用课程基础色（与算法课 deck1..8 同机制） --------- */
 :root[data-deck='os'][data-ch='1'] { --deck-accent: var(--os1); }
@@ -360,12 +374,24 @@
 :root[data-deck='ca'][data-pg='att'] { --deck-accent: var(--ca-att); }
 :root[data-deck='math'][data-pg='practice'] { --deck-accent: var(--math-practice); }
 :root[data-deck='math'][data-pg='att'] { --deck-accent: var(--math-att); }
+:root[data-deck='pd'][data-pg='att'] { --deck-accent: var(--pd-att); }
 :root[data-deck='math'][data-ch='1'] { --deck-accent: var(--math1); }
 :root[data-deck='math'][data-ch='2'] { --deck-accent: var(--math2); }
 :root[data-deck='math'][data-ch='3'] { --deck-accent: var(--math3); }
 :root[data-deck='math'][data-ch='4'] { --deck-accent: var(--math4); }
 :root[data-deck='math'][data-ch='5'] { --deck-accent: var(--math5); }
 :root[data-deck='math'][data-ch='6'] { --deck-accent: var(--math6); }
+:root[data-deck='pd'][data-ch='1'] { --deck-accent: var(--pd1); }
+:root[data-deck='pd'][data-ch='2'] { --deck-accent: var(--pd2); }
+:root[data-deck='pd'][data-ch='3'] { --deck-accent: var(--pd3); }
+:root[data-deck='pd'][data-ch='4'] { --deck-accent: var(--pd4); }
+:root[data-deck='pd'][data-ch='5'] { --deck-accent: var(--pd5); }
+:root[data-deck='pd'][data-ch='6'] { --deck-accent: var(--pd6); }
+:root[data-deck='pd'][data-ch='7'] { --deck-accent: var(--pd7); }
+:root[data-deck='pd'][data-ch='8'] { --deck-accent: var(--pd8); }
+:root[data-deck='pd'][data-ch='9'] { --deck-accent: var(--pd9); }
+:root[data-deck='pd'][data-ch='10'] { --deck-accent: var(--pd10); }
+:root[data-deck='pd'][data-ch='11'] { --deck-accent: var(--pd11); }
 
 /* ------------------------------------------------------- 无障碍偏好适配 */
 @media (prefers-reduced-transparency: reduce) {

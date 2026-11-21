@@ -37,6 +37,7 @@ COURSES = {
     'phys': ('phys', 'phys', 12, ('practice', 'att')),
     'ca':   ('ca', 'ca', 14, ('practice', 'att')),
     'math': ('math', 'math', 6, ('practice', 'att')),
+    'pd':   ('pd', 'pd', 11, ('att',)),
 }
 
 report = {}
