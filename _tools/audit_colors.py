@@ -43,6 +43,10 @@ COURSES = {
     'hd':   ('hd', 'hd', 4, ('att',)),
     'mc':   ('mc', None, 0, ('att',)),
     'nlu':  ('nlu', None, 0, ('att',)),
+    'dp':   ('dp', None, 0, ('att',)),
+    'swt':  ('swt', None, 0, ('att',)),
+    'dsd':  ('dsd', None, 0, ('att',)),
+    'ip':   ('ip', None, 0, ('att',)),
 }
 
 report = {}

@@ -136,6 +136,38 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '分词系统讲解课件（FMM 与 BMM）+ 实验报告与代码 · 试题未收录',
   },
+  {
+    id: 'distributed-programming',
+    name: '分布式程序设计',
+    semester: '大四上',
+    base: '/dp',
+    ready: true,
+    source: '实践代码与课后作业、实验/设计/期末报告 · 课件与试题未收录',
+  },
+  {
+    id: 'software-engineer-training',
+    name: '软件工程师综合训练',
+    semester: '大四上',
+    base: '/swt',
+    ready: true,
+    source: '实习实训报告 + 订单系统源码与数据库备份 · 课件与试题未收录',
+  },
+  {
+    id: 'domain-direction-design',
+    name: '领域方向综合设计',
+    semester: '大四上',
+    base: '/dsd',
+    ready: true,
+    source: '综合设计报告（含模板）+ 校园巴士系统源码 · 课件与试题未收录',
+  },
+  {
+    id: 'innovation-practice',
+    name: '创新实践',
+    semester: '大四下',
+    base: '/ip',
+    ready: true,
+    source: '创新实践结课报告 · 课件与试题未收录',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -186,6 +218,18 @@ export const MC_BASE = courses[13].base;
 
 /** 自然语言理解课路由前缀（同上约定） */
 export const NLU_BASE = courses[14].base;
+
+/** 分布式程序设计课路由前缀（同上约定） */
+export const DP_BASE = courses[15].base;
+
+/** 软件工程师综合训练课路由前缀（同上约定） */
+export const SWT_BASE = courses[16].base;
+
+/** 领域方向综合设计课路由前缀（同上约定） */
+export const DSD_BASE = courses[17].base;
+
+/** 创新实践课路由前缀（同上约定） */
+export const IP_BASE = courses[18].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

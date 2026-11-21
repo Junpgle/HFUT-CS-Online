@@ -118,5 +118,37 @@
  "nlu/dark": {
   "dups": [],
   "adj": []
+ },
+ "dp/light": {
+  "dups": [],
+  "adj": []
+ },
+ "dp/dark": {
+  "dups": [],
+  "adj": []
+ },
+ "swt/light": {
+  "dups": [],
+  "adj": []
+ },
+ "swt/dark": {
+  "dups": [],
+  "adj": []
+ },
+ "dsd/light": {
+  "dups": [],
+  "adj": []
+ },
+ "dsd/dark": {
+  "dups": [],
+  "adj": []
+ },
+ "ip/light": {
+  "dups": [],
+  "adj": []
+ },
+ "ip/dark": {
+  "dups": [],
+  "adj": []
  }
 }

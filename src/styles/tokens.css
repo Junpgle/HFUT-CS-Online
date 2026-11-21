@@ -55,6 +55,10 @@
   --hd: #c43a71;                 /* 系统硬件综合设计 · 玫红（紫红相位，落在算法课紫与玫红之间的空档，暗而不刺眼） */
   --mc: #35505a;                 /* 移动计算与应用开发 · 深青灰（青灰相位，介于网络课青绿与软件体系结构课石板蓝之间的去饱和空档） */
   --nlu: #6736c9;                /* 自然语言理解 · 蓝紫罗兰（紫罗兰相位，落在程序设计艺术与方法课的灰蓝紫与大学物理课的藕紫之间的高饱和空档） */
+  --dp: #4f246b;                 /* 分布式程序设计 · 深紫（紫罗兰暗相位，比算法课紫与自然语言理解蓝紫罗兰都更暗更沉） */
+  --swt: #a1367d;                /* 软件工程师综合训练 · 玫红紫（紫红相位，介于人工智能课品红与系统硬件课玫红之间更沉更灰） */
+  --dsd: #88a136;                /* 领域方向综合设计 · 苹果绿（黄绿亮相位，比操作系统课橄榄绿更亮更黄） */
+  --ip: #36a18f;                 /* 创新实践 · 青绿（青绿相位，比网络课深青更亮更绿，与数据库课橄榄金拉开色相） */
 
   /* ---- 章节配色：各课程导航到的每一章/讲一色（与算法课 deck1..8 同机制）。
    * 序数为该课章节列表中的序号；课程首页与在线练习仍用上方课程基础色。
@@ -106,6 +110,10 @@
   --hd-att: #54527f;
   --mc-att: #6e214f;
   --nlu-att: #8f741c;
+  --dp-att: #6f36a1;
+  --swt-att: #37505f;
+  --dsd-att: #37335b;
+  --ip-att: #29367a;
 
   --deck-accent: var(--accent);  /* 当前讲次色（无讲次时回落全局色） */
 
@@ -209,6 +217,10 @@
   --hd: #ca7195;
   --mc: #65bac3;
   --nlu: #a86ed8;
+  --dp: #7275d5;
+  --swt: #de68a7;
+  --dsd: #a3e279;
+  --ip: #8ae5b2;
   /* 章节配色（暗色提亮变体，与上方亮色一一对应） */
   --os1: #74b3d2;  --os2: #e0975f;  --os3: #7cc9a3;  --os4: #b39be0;
   --os5: #ec8ea0;  --os6: #d4b95a;  --os7: #6cc4c9;  --os8: #d69ab8;
@@ -245,6 +257,10 @@
   --hd-att: #a8a4d4;
   --mc-att: #b873a1;
   --nlu-att: #d4b95a;
+  --dp-att: #ca8ae5;
+  --swt-att: #93b3c9;
+  --dsd-att: #da6cc8;
+  --ip-att: #a9d7e5;
 
   --key-bg: rgba(10, 132, 255, 0.14);
   --warn-bg: rgba(255, 159, 10, 0.14);
@@ -341,6 +357,18 @@
 /* --------------------- 自然语言理解 → 蓝紫罗兰主题（html[data-deck='nlu']） */
 :root[data-deck='nlu'] { --deck-accent: var(--nlu); }
 
+/* --------------------- 分布式程序设计 → 深紫主题（html[data-deck='dp']） */
+:root[data-deck='dp'] { --deck-accent: var(--dp); }
+
+/* --------------------- 软件工程师综合训练 → 玫红紫主题（html[data-deck='swt']） */
+:root[data-deck='swt'] { --deck-accent: var(--swt); }
+
+/* --------------------- 领域方向综合设计 → 苹果绿主题（html[data-deck='dsd']） */
+:root[data-deck='dsd'] { --deck-accent: var(--dsd); }
+
+/* --------------------- 创新实践 → 青绿主题（html[data-deck='ip']） */
+:root[data-deck='ip'] { --deck-accent: var(--ip); }
+
 /* --------- 各章一色：章节页写 html[data-ch='序数']，覆盖课程基础色；
  * 首页/在线练习不带 data-ch，仍用课程基础色（与算法课 deck1..8 同机制） --------- */
 :root[data-deck='os'][data-ch='1'] { --deck-accent: var(--os1); }
@@ -418,6 +446,10 @@
 :root[data-deck='hd'][data-pg='att'] { --deck-accent: var(--hd-att); }
 :root[data-deck='mc'][data-pg='att'] { --deck-accent: var(--mc-att); }
 :root[data-deck='nlu'][data-pg='att'] { --deck-accent: var(--nlu-att); }
+:root[data-deck='dp'][data-pg='att'] { --deck-accent: var(--dp-att); }
+:root[data-deck='swt'][data-pg='att'] { --deck-accent: var(--swt-att); }
+:root[data-deck='dsd'][data-pg='att'] { --deck-accent: var(--dsd-att); }
+:root[data-deck='ip'][data-pg='att'] { --deck-accent: var(--ip-att); }
 :root[data-deck='math'][data-ch='1'] { --deck-accent: var(--math1); }
 :root[data-deck='math'][data-ch='2'] { --deck-accent: var(--math2); }
 :root[data-deck='math'][data-ch='3'] { --deck-accent: var(--math3); }
