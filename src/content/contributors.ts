@@ -1,5 +1,5 @@
 /* 【自动生成】由 scripts/build-contributors.mjs 在构建时聚合 5 个仓库的贡献者，请勿手改。
- * 主仓库贡献者在前，上游仓库随后；按 login 去重，共 9 人。 */
+ * 主仓库贡献者在前，上游仓库随后；按 login 去重，共 10 人。 */
 
 export interface Contributor {
   login: string;
@@ -11,6 +11,7 @@ export interface Contributor {
 
 export const contributors: Contributor[] = [
   { login: "SaltGardenia", avatar_url: "https://avatars.githubusercontent.com/u/177207606?v=4", html_url: "https://github.com/SaltGardenia", repo: "SaltGardenia/HFUT-CS-Online" },
+  { login: "Junpgle", avatar_url: "https://avatars.githubusercontent.com/u/81464408?v=4", html_url: "https://github.com/Junpgle", repo: "SaltGardenia/HFUT-CS-Online" },
   { login: "LIn-Wan-fish", avatar_url: "https://avatars.githubusercontent.com/u/220185700?v=4", html_url: "https://github.com/LIn-Wan-fish", repo: "SaltGardenia/HFUT-CS-Online" },
   { login: "sunmiao0301", avatar_url: "https://avatars.githubusercontent.com/u/52996768?v=4", html_url: "https://github.com/sunmiao0301", repo: "sunmiao0301/HFUT-CS" },
   { login: "Martin-share", avatar_url: "https://avatars.githubusercontent.com/u/93062634?v=4", html_url: "https://github.com/Martin-share", repo: "sunmiao0301/HFUT-CS" },
