@@ -12,15 +12,16 @@ import type { PracticeKind } from '../content/practice/types';
 
 const ENTITY_RE = /&(#x?[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/;
 
-/** 章节结构契约：7 个章，各章 section 数 */
+/** 章节结构契约：8 个章，各章 section 数 */
 const EXPECT_SECTIONS: Record<string, number> = {
   ch1: 7,
   ch2: 5,
   ch3: 7,
-  ch4: 7,
-  ch5: 7,
+  ch4: 5,
+  ch5: 4,
   ch6: 7,
-  ch7: 4,
+  ch7: 7,
+  ch8: 4,
 };
 
 /** 试卷题量契约（与原始卷对齐） */
@@ -31,13 +32,13 @@ const EXPECT_PAPER_COUNT: Record<string, number> = {
 };
 
 describe('计算机网络课件内容', () => {
-  it('共 7 个章，id/no 符合约定', () => {
-    expect(netChapters.length).toBe(7);
+  it('共 8 个章，id/no 符合约定', () => {
+    expect(netChapters.length).toBe(8);
     netChapters.forEach((c, i) => {
       expect(c.id).toBe(`ch${i + 1}`);
     });
     expect(netChapters[0].no).toBe('第1章');
-    expect(netChapters[6].no).toBe('第7章');
+    expect(netChapters[7].no).toBe('第8章');
   });
 
   it('各章 section 数与契约一致，目录项与 section id 对齐', () => {
@@ -139,7 +140,7 @@ describe('计算机网络试卷题库', () => {
     for (const q of netAllQuestions) {
       for (const t of q.tags) {
         expect(t.deck, q.id).toBeGreaterThanOrEqual(1);
-        expect(t.deck, q.id).toBeLessThanOrEqual(7);
+        expect(t.deck, q.id).toBeLessThanOrEqual(8);
         const chapter = netChapters[t.deck - 1];
         const hit = chapter.toc.find((e) => e.id === t.sec) ?? chapter.sections.some((s) => s.id === t.sec);
         expect(hit, `${q.id} → ch${t.deck}/${t.sec} 不存在`).toBeTruthy();
@@ -149,9 +150,9 @@ describe('计算机网络试卷题库', () => {
     }
   });
 
-  it('知识点覆盖 7 个章（没有落单的章）', () => {
+  it('知识点覆盖 8 个章（没有落单的章）', () => {
     const covered = new Set(netAllQuestions.flatMap((q) => q.tags.map((t) => t.deck)));
-    for (let c = 1; c <= 7; c++) {
+    for (let c = 1; c <= 8; c++) {
       expect(covered.has(c), `ch${c} 无题目覆盖`).toBe(true);
     }
   });
