@@ -3453,3 +3453,23 @@ pre.code .cl-code:empty + .cl-com {
 .net-focus-source { margin: .9rem 0 0; font-size: .77rem; line-height: 1.6; color: var(--ink-3); overflow-wrap: anywhere; }
 .net-focus-none { margin: .5rem 0 0; }
 @media(max-width:600px){ .net-focus { padding: 1rem; } }
+
+/* 计网作业进度：沿用练习页 progress/heat/status 语义，适配章内窄版心。 */
+.net-hw-card.practice-q { position: relative; margin: 1rem 0; padding-right: 2.4rem; }
+.net-hw-progress { margin: 1rem 0 1.35rem; }
+.net-hw-heat { display: flex; flex-wrap: wrap; gap: 7px; padding-top: 3px; }
+.net-hw-heat-cell { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; font-size: .76rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.net-hw-heat-cell[data-state='right'],
+.net-hw-heat-cell[data-state='wrong'] { color: #fff; }
+.net-hw-evaluate { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 1rem 0 .3rem 14px; padding-top: .8rem; border-top: 1px dashed var(--hairline-soft); }
+.net-hw-evaluate > span { font-size: .8rem; color: var(--ink-3); margin-right: .25rem; }
+.net-hw-eval-btn { height: 30px; border: 1px solid var(--hairline); background: transparent; font-size: .8rem; }
+.net-hw-eval-btn[data-active='true'] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.net-hw-eval-btn[data-active='true']:hover { color: var(--bg); }
+.net-hw-reset { font-size: .8rem; }
+.net-hw-card .pq-status { top: 15px; right: 13px; }
+@media (max-width: 600px) {
+  .net-hw-card.practice-q { padding-right: 2rem; }
+  .net-hw-progress { padding: 12px; }
+  .net-hw-evaluate { margin-left: 6px; }
+}
