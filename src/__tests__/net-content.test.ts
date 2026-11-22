@@ -9,6 +9,7 @@ import { MemoryRouter } from 'react-router-dom';
 import Sections from '../components/Sections';
 import { netChapters, netPapers, netAllQuestions } from '../content/net';
 import { netHomework } from '../content/net/homework';
+import { netHighlights } from '../content/net/highlights';
 import type { PracticeKind } from '../content/practice/types';
 
 const ENTITY_RE = /&(#x?[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/;
@@ -187,5 +188,23 @@ describe('2025版计网作业与知识点跳转', () => {
     expect(netChapters[3].sections.every((section) => !/broadcast|evolve/.test(section.id))).toBe(true);
     expect(netChapters[4].sections.some((section) => section.id === 'sec-ch5-broadcast')).toBe(true);
     expect(netChapters[4].sections.some((section) => section.id === 'sec-ch5-evolve')).toBe(true);
+  });
+});
+
+describe('2025 课件原始 PDF 荧光笔索引', () => {
+  it('所有标出的知识点均对应可跳转的章节目录项', () => {
+    for (let i = 1; i <= 8; i++) {
+      const marked = netHighlights[i];
+      expect(marked).toBeDefined();
+      const destinations = new Set(netChapters[i - 1].toc.map((entry) => entry.id));
+      for (const focus of marked.groups) {
+        expect(destinations.has(focus.sec), `第${i}章：${focus.topic} 缺少对应锚点`).toBe(true);
+        expect(focus.pages).toContain('页');
+      }
+    }
+  });
+  it('第八章无黄色笔迹不代表没有考试范围', () => {
+    expect(netHighlights[8].markedPages).toBe(0);
+    expect(netHighlights[8].groups).toHaveLength(0);
   });
 });

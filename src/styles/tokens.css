@@ -274,7 +274,7 @@
   --os1: #74b3d2;  --os2: #e0975f;  --os3: #7cc9a3;  --os4: #b39be0;
   --os5: #ec8ea0;  --os6: #d4b95a;  --os7: #6cc4c9;  --os8: #d69ab8;
   --net1: #8f9ce0; --net2: #e0975f; --net3: #b3c26e; --net4: #d69ab8;
-  --net5: #6cc4c9; --net6: #d4b95a; --net7: #ec8ea0;
+  --net5: #6cc4c9; --net6: #d4b95a; --net7: #ec8ea0; --net8: #b7a8ee;
   --pat1: #74b3d2; --pat2: #ec8ea0; --pat3: #d4b95a; --pat4: #7cc9a3;
   --pat5: #d69ab8; --pat6: #8f9ce0;
   --sa1: #e0975f;  --sa2: #7cc9a3;  --sa3: #d69ab8;  --sa4: #d4b95a;
@@ -492,6 +492,7 @@
 :root[data-deck='net'][data-ch='5'] { --deck-accent: var(--net5); }
 :root[data-deck='net'][data-ch='6'] { --deck-accent: var(--net6); }
 :root[data-deck='net'][data-ch='7'] { --deck-accent: var(--net7); }
+:root[data-deck='net'][data-ch='8'] { --deck-accent: var(--net8); }
 :root[data-deck='pat'][data-ch='1'] { --deck-accent: var(--pat1); }
 :root[data-deck='pat'][data-ch='2'] { --deck-accent: var(--pat2); }
 :root[data-deck='pat'][data-ch='3'] { --deck-accent: var(--pat3); }

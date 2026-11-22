@@ -4,6 +4,7 @@ import { NET_BASE } from '../courses/registry';
 import { netChapters } from '../content/net';
 import { netHomework } from '../content/net/homework';
 import NetHomework from './net/NetHomework';
+import NetHighlights from './net/NetHighlights';
 import { useToc } from '../lib/toc';
 import { decodeEntities } from '../lib/text';
 import HtmlContent from '../components/HtmlContent';
@@ -72,6 +73,7 @@ function NetUnitInner({ chapter }: { chapter: (typeof netChapters)[number] }) {
       <div className="lede">
         <HtmlContent html={chapter.lede} />
       </div>
+      <NetHighlights chapterNo={chapterNo} />
       {level2.length > 1 && (
         <nav className="topic-map" aria-label="本章知识点导航">
           <span className="topic-map-label">本章脉络</span>

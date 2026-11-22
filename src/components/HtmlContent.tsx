@@ -1,6 +1,6 @@
 import { useEffect, useRef, type MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ALGO_BASE } from '../courses/registry';
+import { ALGO_BASE, NET_BASE } from '../courses/registry';
 import { decks } from '../content';
 import { parseLegacyHref, scrollToId } from '../lib/scroll';
 
@@ -378,6 +378,12 @@ export default function HtmlContent({ html }: Props) {
     if (href.startsWith('#')) {
       e.preventDefault();
       scrollToId(href.slice(1));
+      return;
+    }
+    // 2025版计网总目录的章链接走客户端路由，避免站点子路径直刷导致 404。
+    if (href.startsWith(`${NET_BASE}/deck/`)) {
+      e.preventDefault();
+      navigate(href);
       return;
     }
     const legacy = parseLegacyHref(href);

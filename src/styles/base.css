@@ -3418,3 +3418,25 @@ pre.code .cl-code:empty + .cl-com {
 .net-hw-empty { padding: 1.25rem; border-radius: 16px; }
 .net-hw-section h3[id] { scroll-margin-top: 110px; }
 @media (max-width: 600px) { .net-hw-card { padding: 1rem; } .net-hw-q-title { font-size: 1rem; } }
+
+
+/* 计算机网络 2025 PDF 荧光笔：按主题合并，避免逐笔迹长列表 */
+.net-focus { margin: 1.8rem 0 2rem; padding: 1.15rem 1.25rem; background: var(--panel-2); border: 1px solid var(--hairline-soft); border-radius: 18px; }
+.net-focus-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: .5rem 1rem; }
+.net-focus-head h2 { margin: 0; font-size: 1.12rem; line-height: 1.5; }
+.net-focus-head p { margin: .4rem 0 .7rem; font-size: .9rem; color: var(--ink-2); }
+.net-focus-count { padding: .13rem .65rem; border: 1px solid var(--hairline); border-radius: 50px; font-size: .78rem; white-space: nowrap; color: var(--ink-2); }
+.net-focus-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,250px),1fr)); gap: .65rem; }
+.net-focus-item { padding: .85rem 1rem; background: var(--panel-solid); border: 1px solid var(--hairline-soft); border-radius: 12px; }
+.net-focus-topic { display: flex; align-items: baseline; gap: .5rem; font-size: .96rem; font-weight: 650; }
+.net-focus-level { font-size: .72rem; color: var(--deck-accent,var(--net)); white-space: nowrap; }
+.net-focus-topic a, .net-focus-extra a { color: var(--deck-accent,var(--net)); text-decoration: underline; text-underline-offset: 3px; }
+.net-focus-item p { margin: .28rem 0; font-size: .84rem; color: var(--ink-2); }
+.net-focus-item small { display: block; font-size: .75rem; color: var(--ink-3); }
+.net-focus-extra { margin: .8rem 0 0; color: var(--ink-2); font-size: .85rem; }
+.net-focus-extra summary { cursor: pointer; font-weight: 600; }
+.net-focus-extra ul { margin: .3rem 0; padding-left: 1.3rem; }
+.net-focus-extra li { margin: .3rem 0; }
+.net-focus-source { margin: .9rem 0 0; font-size: .77rem; line-height: 1.6; color: var(--ink-3); overflow-wrap: anywhere; }
+.net-focus-none { margin: .5rem 0 0; }
+@media(max-width:600px){ .net-focus { padding: 1rem; } }
