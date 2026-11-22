@@ -3473,3 +3473,11 @@ pre.code .cl-code:empty + .cl-com {
   .net-hw-progress { padding: 12px; }
   .net-hw-evaluate { margin-left: 6px; }
 }
+
+/* 章内题号热力图：深色主题也保证数字可读，选中态按网站热力图配色。 */
+.net-hw-heat-cell { color: var(--ink); border-radius: 6px; }
+[data-theme='dark'] .net-hw-heat-cell { color: var(--ink); }
+.net-hw-heat-cell[data-state='right'],
+.net-hw-heat-cell[data-state='wrong'],
+[data-theme='dark'] .net-hw-heat-cell[data-state='right'],
+[data-theme='dark'] .net-hw-heat-cell[data-state='wrong'] { color: #fff; }

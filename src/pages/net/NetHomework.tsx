@@ -40,6 +40,11 @@ interface HomeworkCardProps {
 /** 对齐网站简答题：统一题卡、状态点、展示答案、复习标记和重做。 */
 function HomeworkCard({ chapterNo, question, result, onResult, reducedMotion }: HomeworkCardProps) {
   const [showAnswer, setShowAnswer] = useState(() => result !== undefined);
+
+  // 清空本章进度时同步关闭答案；刷新载入的已看/已自评题仍可直接复习。
+  useEffect(() => {
+    if (!result) setShowAnswer(false);
+  }, [result]);
   const chapterBase = `${NET_BASE}/deck/ch${chapterNo}`;
   const questionId = homeworkId(chapterNo, question.no);
   const answerId = `net-hw-answer-ch${chapterNo}-${question.no}`;
@@ -54,7 +59,7 @@ function HomeworkCard({ chapterNo, question, result, onResult, reducedMotion }: 
   };
 
   return (
-    <article className="net-hw-card quiz practice-q material" data-qid={questionId} data-result={result}>
+    <article className={`net-hw-card quiz practice-q material${result === 'right' ? ' answered-right' : result === 'wrong' ? ' answered-wrong' : ''}`} data-qid={questionId} data-result={result}>
       {result && (
         <span
           className="pq-status"

@@ -40,7 +40,7 @@ describe('计网章末作业交互与持久化', () => {
     expect(screen.getByText('参考答案与解析')).toBeTruthy();
     expect(screen.getByText(/原作业文件未附教师答案/)).toBeTruthy();
     expect(screen.queryByText('教师答案（整理转述）')).toBeNull();
-    expect(screen.getByText(/已掌握/).textContent).toContain('0');
+    expect(screen.getByRole('button', { name: '已掌握' }).getAttribute('aria-pressed')).toBe('false');
     expect(loadHomeworkResults()[homeworkId(6, netHomework[6][0].no)]).toBe('revealed');
   });
 
@@ -81,6 +81,7 @@ describe('计网章末作业交互与持久化', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     expect(loadHomeworkResults()['4:1']).toBeUndefined();
     expect(loadHomeworkResults()['6:1']).toBe('wrong');
+    expect(screen.getByRole('button', { name: '查看答案与解析' }).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('无效缓存记录被过滤，作业与历年试卷进度分别存储', () => {
