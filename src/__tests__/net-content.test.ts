@@ -208,3 +208,18 @@ describe('2025 课件原始 PDF 荧光笔索引', () => {
     expect(netHighlights[8].groups).toHaveLength(0);
   });
 });
+
+describe('PDF 文字转录字符完整性', () => {
+  it('计网作业不得含 PDF 符号字体私用区字符或异常替换字形', () => {
+    // U+F06D/U+F0B9 曾分别使 μs、≠ 显示为乱码；避免后续导入重复发生。
+    const invalid = /[\uE000-\uF8FF\u{F0000}-\u{FFFFD}\u{100000}-\u{10FFFD}\uFFFD\u0080-\u009F\u00AD\u200B]/u;
+    for (const [chapter, questions] of Object.entries(netHomework)) {
+      for (const question of questions) {
+        for (const [field, value] of Object.entries(question)) {
+          if (typeof value !== 'string') continue;
+          expect(invalid.test(value), `第${chapter}章第${question.no}题的${field}字段含乱码字形`).toBe(false);
+        }
+      }
+    }
+  });
+});
