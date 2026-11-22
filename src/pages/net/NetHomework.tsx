@@ -31,7 +31,7 @@ export function loadHomeworkResults(): HomeworkResults {
   }
 }
 
-/** 教师答案原文是纯文本；转入网站可信 HTML 题卡前必须转义。 */
+/** 原文件答案为纯文本；转入网站可信 HTML 题卡前必须转义。 */
 function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;')
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -45,7 +45,7 @@ function toPracticeQuestion(chapterNo: number, q: NetHomeworkQuestion): Practice
     id: homeworkId(chapterNo, q.no),
     kind: 'essay',
     question: escapeHtml(q.title),
-    answer: q.teacher ? `<p>${escapeHtml(q.teacher)}</p>` : q.reference,
+    answer: q.teacher ? `<p>${escapeHtml(q.teacher).replace(/\n/g, '<br />')}</p>` : q.reference,
     explanation: q.teacher ? q.reference : '',
     tags: [{ deck: chapterNo, sec: q.related, text: knowledge }],
   };
@@ -115,7 +115,7 @@ export default function NetHomework({
   return (
     <section className="net-hw-section" aria-label={`第${chapterNo}章作业`}>
       <h2 id={`sec-ch${chapterNo}-homework`}>本章作业 · {questions.length} 题</h2>
-      <p className="net-hw-intro">本章题目按课程作业原题编号整理。查看答案后可自评掌握情况；结果保存在当前浏览器，非自动判分。</p>
+      <p className="net-hw-intro">本章按原题编号整理。原文件答案按 PDF 文字转录；补充参考解析单独列示。可自评掌握情况，进度保存在当前浏览器。</p>
       {questions.length > 0 && (
         <div className="pq-progress material net-hw-progress">
           <div className="pq-progress-text">
@@ -173,7 +173,7 @@ export default function NetHomework({
             essayOptions={{
               anchorId: `sec-ch${chapterNo}-hw-${question.no}`,
               revealLabel: '查看参考答案与解析',
-              answerLabel: question.teacher ? '教师答案（整理转述）' : '参考答案与解析',
+              answerLabel: question.teacher ? '原文件答案（文字转录）' : '参考答案与解析',
               explanationLabel: '补充参考答案与解析',
               sourceNote: question.teacher ? undefined : '原作业文件未附教师答案；以下为独立编写的参考解答。',
               attention: question.attention,

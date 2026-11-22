@@ -35,7 +35,7 @@ describe('计网章末作业复用标准题卡及保存进度', () => {
     fireEvent.click(screen.getByRole('button', { name: '查看参考答案与解析' }));
     expect(view.container.querySelector('.quiz-a.pq-answer')).not.toBeNull();
     expect(view.container.querySelector('.pq-rubric')).not.toBeNull();
-    expect(screen.getByText('教师答案（整理转述）')).toBeTruthy();
+    expect(screen.getByText('原文件答案（文字转录）')).toBeTruthy();
     expect(screen.getByText('补充参考答案与解析')).toBeTruthy();
     expect(screen.getByRole('button', { name: '重做' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: '收起答案与解析' })).toBeNull();
@@ -48,7 +48,7 @@ describe('计网章末作业复用标准题卡及保存进度', () => {
     expect(screen.getByText('参考答案与解析')).toBeTruthy();
     expect(screen.getByText(/原作业文件未附教师答案/)).toBeTruthy();
     expect(view.container.querySelector('.pq-rubric')).toBeNull();
-    expect(screen.queryByText('教师答案（整理转述）')).toBeNull();
+    expect(screen.queryByText('原文件答案（文字转录）')).toBeNull();
     expect(loadHomeworkResults()[homeworkId(6, netHomework[6][0].no)]).toBe('revealed');
   });
 
