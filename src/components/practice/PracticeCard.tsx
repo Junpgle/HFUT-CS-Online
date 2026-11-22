@@ -6,6 +6,21 @@ import type { PracticeQuestion, PracticeTag } from '../../content/practice';
 import { decodeEntities } from '../../lib/text';
 import { IconArrowRight, IconCheck, IconChevronDown, IconReset, IconX } from '../icons';
 
+interface EssayOptions {
+  /** 章节页标题锚点；使用 h3 以保留目录高亮和滚动定位。 */
+  anchorId?: string;
+  revealLabel?: string;
+  answerLabel?: string;
+  explanationLabel?: string;
+  sourceNote?: string;
+  attention?: string | null;
+  statusLabels?: { right: string; wrong: string; revealed: string };
+  /** 主观题自评可复用进度结果，不表示机器判分。 */
+  review?: { onChange: (result: 'right' | 'wrong') => void };
+  /** 允许章节练习清理持久化记录。 */
+  onReset?: () => void;
+}
+
 interface Props {
   quiz: PracticeQuestion;
   /** 展示序号文案，如「单选 12」 */
@@ -18,6 +33,8 @@ interface Props {
   tagNav?: (t: PracticeTag) => { href: string; tip: string };
   /** 标签主题色的 data-deck 取值；缺省为算法课的 deckN（计网课传 () => 'net'） */
   tagDeckKey?: (deck: number) => string;
+  /** 仅主观题的来源、锚点及自评扩展；其他课程默认行为不变。 */
+  essayOptions?: EssayOptions;
 }
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -32,7 +49,7 @@ function prettyMath(html: string): string {
 }
 
 /** 在线练习题卡：与 QuizCard 同一套交互语言，外加可跳转的知识点标签与简答题支持 */
-export default function PracticeCard({ quiz, label, result, onResult, tagNav, tagDeckKey }: Props) {
+export default function PracticeCard({ quiz, label, result, onResult, tagNav, tagDeckKey, essayOptions }: Props) {
   const navigate = useNavigate();
   const [pulse, setPulse] = useState(false);
 
@@ -76,7 +93,12 @@ export default function PracticeCard({ quiz, label, result, onResult, tagNav, ta
   const isEssay = quiz.kind === 'essay';
   const isFill = quiz.kind === 'fill';
   const showExplanation = submitted !== null || revealed;
-  const cls = submitted === 'right' ? ' answered-right' : submitted === 'wrong' ? ' answered-wrong' : '';
+  const effectiveStatus = isEssay && essayOptions?.review ? result : submitted;
+  const cls = effectiveStatus === 'right' ? ' answered-right' : effectiveStatus === 'wrong' ? ' answered-wrong' : '';
+  const QuestionTag = essayOptions?.anchorId ? 'h3' : 'p';
+  const statusText = result === 'right' ? essayOptions?.statusLabels?.right ?? '已答对'
+    : result === 'wrong' ? essayOptions?.statusLabels?.wrong ?? '已答错'
+      : essayOptions?.statusLabels?.revealed ?? '已看答案';
   const locked = submitted !== null || revealed;
 
   const pick = (letter: string) => {
@@ -128,6 +150,7 @@ export default function PracticeCard({ quiz, label, result, onResult, tagNav, ta
     setRevealed(false);
     setFillInput('');
     setFillWrong(false);
+    essayOptions?.onReset?.();
   };
 
   const optionState = (letter: string): string => {
@@ -149,18 +172,21 @@ export default function PracticeCard({ quiz, label, result, onResult, tagNav, ta
     >
       {/* 已作答状态点（列表扫读用） */}
       {result && (
-        <span className="pq-status" data-result={result} aria-label={result === 'right' ? '已答对' : result === 'wrong' ? '已答错' : '已看答案'}>
+        <span className="pq-status" data-result={result} aria-label={statusText} title={statusText}>
           {result === 'right' && <IconCheck size={11} />}
           {result === 'wrong' && <IconX size={11} />}
         </span>
       )}
 
-      <p className="quiz-q">
+      <QuestionTag className={`quiz-q${essayOptions?.anchorId ? ' pq-question-heading' : ''}`} id={essayOptions?.anchorId}>
         <span className="pq-kind" data-kind={quiz.kind}>
           {label}
         </span>
         <span dangerouslySetInnerHTML={{ __html: questionHtml }} />
-      </p>
+      </QuestionTag>
+      {isEssay && essayOptions?.attention && (
+        <p className="quiz-note"><strong>题目核对：</strong>{essayOptions.attention}</p>
+      )}
 
       {!isEssay && !isFill && (
         <ul className="quiz-opt">
@@ -252,7 +278,7 @@ export default function PracticeCard({ quiz, label, result, onResult, tagNav, ta
       {isEssay && !locked && (
         <div className="quiz-actions">
           <button className="btn pq-disclose" onClick={reveal}>
-            查看参考答案与评分要点
+            {essayOptions?.revealLabel ?? '查看参考答案与评分要点'}
             <IconChevronDown size={14} />
           </button>
         </div>
@@ -279,13 +305,16 @@ export default function PracticeCard({ quiz, label, result, onResult, tagNav, ta
             {isEssay ? (
               <>
                 <div className="quiz-a pq-answer">
-                  <b>参考答案</b>
+                  <b>{essayOptions?.answerLabel ?? '参考答案'}</b>
+                  {essayOptions?.sourceNote && <p className="quiz-note">{essayOptions.sourceNote}</p>}
                   <div className="pq-answer-body" dangerouslySetInnerHTML={{ __html: answerHtml }} />
                 </div>
-                <div className="pq-rubric">
-                  <b>解析与评分要点</b>
-                  <div className="pq-answer-body" dangerouslySetInnerHTML={{ __html: explanationHtml }} />
-                </div>
+                {explanationHtml.trim() && (
+                  <div className="pq-rubric">
+                    <b>{essayOptions?.explanationLabel ?? '解析与评分要点'}</b>
+                    <div className="pq-answer-body" dangerouslySetInnerHTML={{ __html: explanationHtml }} />
+                  </div>
+                )}
               </>
             ) : (
               <p className="quiz-a">
@@ -296,6 +325,18 @@ export default function PracticeCard({ quiz, label, result, onResult, tagNav, ta
           </motion.div>
         )}
       </AnimatePresence>
+
+      {isEssay && essayOptions?.review && showExplanation && (
+        <div className="pq-review" role="group" aria-label="掌握情况自评">
+          <span>自评掌握情况</span>
+          <button type="button" className="btn" aria-pressed={result === 'right'} onClick={() => essayOptions.review?.onChange('right')}>
+            <IconCheck size={14} /> 已掌握
+          </button>
+          <button type="button" className="btn" aria-pressed={result === 'wrong'} onClick={() => essayOptions.review?.onChange('wrong')}>
+            <IconX size={14} /> 需复习
+          </button>
+        </div>
+      )}
 
       {/* 知识点标签：点击跳到对应讲次/章节的对应位置 */}
       <div className="pq-tags" aria-label="知识点标签">
