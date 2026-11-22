@@ -1,8 +1,84 @@
+import { useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Link } from 'react-router-dom';
+import { IconChevronDown } from '../../components/icons';
 import { NET_BASE } from '../../courses/registry';
 import type { NetHomeworkQuestion } from '../../content/net/homework';
 
-/** 章节末尾的课程作业：题目、教师答案与补充解答分开，并支持知识点回跳。 */
+interface HomeworkCardProps {
+  chapterNo: number;
+  question: NetHomeworkQuestion;
+  reducedMotion: boolean | null;
+}
+
+/** 与其他课程简答题相同的 disclosure：一键展开、收起整组答案及解析。 */
+function HomeworkCard({ chapterNo, question, reducedMotion }: HomeworkCardProps) {
+  const [showAnswer, setShowAnswer] = useState(false);
+  const chapterBase = `${NET_BASE}/deck/ch${chapterNo}`;
+  const answerId = `net-hw-answer-ch${chapterNo}-${question.no}`;
+
+  return (
+    <article className="net-hw-card quiz material">
+      <h3 id={`sec-ch${chapterNo}-hw-${question.no}`} className="net-hw-q-title">
+        <span className="net-hw-no">第 {question.no} 题</span>{question.title}
+      </h3>
+      <div className="net-hw-jump">
+        <Link to={`${chapterBase}?s=${question.related}`}>回看相关知识点</Link>
+        <Link to={`${chapterBase}?s=sec-ch${chapterNo}-homework`}>本章作业目录</Link>
+      </div>
+      {question.attention && (
+        <p className="net-hw-attention"><strong>题目核对：</strong>{question.attention}</p>
+      )}
+      <div className="quiz-actions net-hw-actions">
+        <button
+          type="button"
+          className="btn pq-disclose net-hw-disclose"
+          aria-expanded={showAnswer}
+          aria-controls={answerId}
+          onClick={() => setShowAnswer((open) => !open)}
+        >
+          {showAnswer ? '收起答案与解析' : '查看答案与解析'}
+          <IconChevronDown size={14} />
+        </button>
+      </div>
+      <div id={answerId} className="net-hw-answer-container">
+        <AnimatePresence initial={false}>
+          {showAnswer && (
+            <motion.div
+              key="answer"
+              initial={reducedMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
+              animate={reducedMotion ? { opacity: 1 } : { height: 'auto', opacity: 1 }}
+              exit={reducedMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
+              transition={reducedMotion ? { duration: 0 } : { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
+              style={{ overflow: 'hidden' }}
+            >
+              {question.teacher ? (
+                <>
+                  <div className="quiz-a pq-answer net-hw-answer-main">
+                    <b>教师答案（整理转述）</b>
+                    <p>{question.teacher}</p>
+                  </div>
+                  <div className="pq-rubric net-hw-answer-detail">
+                    <b>补充参考答案与解析</b>
+                    <div className="pq-answer-body net-hw-explanation" dangerouslySetInnerHTML={{ __html: question.reference }} />
+                  </div>
+                </>
+              ) : (
+                <div className="quiz-a pq-answer net-hw-answer-main">
+                  <b>参考答案与解析</b>
+                  <p className="net-hw-answer-source">原作业文件未附教师答案；以下为独立编写的参考解答。</p>
+                  <div className="pq-answer-body net-hw-explanation" dangerouslySetInnerHTML={{ __html: question.reference }} />
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </article>
+  );
+}
+
+/** 章节末尾的课程作业：与其他课程共用练习卡的按钮、解析层级及展开动效。 */
 export default function NetHomework({
   chapterNo,
   questions,
@@ -10,15 +86,16 @@ export default function NetHomework({
   chapterNo: number;
   questions: NetHomeworkQuestion[];
 }) {
-  const chapterBase = `${NET_BASE}/deck/ch${chapterNo}`;
+  const reducedMotion = useReducedMotion();
+
   return (
     <section className="net-hw-section" aria-label={`第${chapterNo}章作业`}>
       <h2 id={`sec-ch${chapterNo}-homework`}>本章作业 · {questions.length} 题</h2>
       <div className="net-hw-intro">
         <p>依据配套作业整理，保留原题编号；教师答案为整理转述，补充参考答案单独列出。
           原文件未提供答案处不冒充教师原话，计算步骤会说明所用条件。</p>
-        <p>点击题目中的「回看知识点」可定位到本章正文；
-          从正文相关知识点下方的题号可返回作业。侧栏也能直接定位每道题。</p>
+        <p>「查看答案与解析」可一次展开完整答案；「回看相关知识点」定位正文，
+          从正文相关知识点下方的题号可返回作业，也可通过侧栏直接定位题目。</p>
       </div>
       {questions.length === 0 ? (
         <div className="net-hw-empty material">
@@ -27,26 +104,13 @@ export default function NetHomework({
           <p>可继续阅读本章 DNS、邮件协议和 HTTP，并用历年试卷自测。</p>
           <Link to={`${NET_BASE}/practice`}>前往在线练习</Link>
         </div>
-      ) : questions.map((q) => (
-        <article className="net-hw-card material" key={q.no}>
-          <h3 id={`sec-ch${chapterNo}-hw-${q.no}`} className="net-hw-q-title">
-            <span className="net-hw-no">第 {q.no} 题</span>{q.title}
-          </h3>
-          <div className="net-hw-jump">
-            <Link to={`${chapterBase}?s=${q.related}`}>回看相关知识点</Link>
-            <Link to={`${chapterBase}?s=sec-ch${chapterNo}-homework`}>本章作业目录</Link>
-          </div>
-          {q.attention && <p className="net-hw-attention"><strong>题目核对：</strong>{q.attention}</p>}
-          <details className="net-hw-answer">
-            <summary>教师答案（整理转述）</summary>
-            {q.teacher ? <p>{q.teacher}</p> :
-              <p>本章原始作业未附教师参考答案；下方是独立编写的参考答案。</p>}
-          </details>
-          <details className="net-hw-answer">
-            <summary>展开完整参考答案与解析</summary>
-            <div className="net-hw-explanation" dangerouslySetInnerHTML={{ __html: q.reference }} />
-          </details>
-        </article>
+      ) : questions.map((question) => (
+        <HomeworkCard
+          key={question.no}
+          chapterNo={chapterNo}
+          question={question}
+          reducedMotion={reducedMotion}
+        />
       ))}
     </section>
   );

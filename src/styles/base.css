@@ -3409,10 +3409,23 @@ pre.code .cl-code:empty + .cl-com {
 .net-hw-jump { display: flex; flex-wrap: wrap; gap: 1rem; font-size: .88rem; margin: .4rem 0 1rem; }
 .net-hw-jump a, .net-hw-context a, .net-hw-empty a { color: var(--deck-accent, var(--net)); text-decoration: underline; text-underline-offset: 3px; }
 .net-hw-attention { margin: .9rem 0; padding: .65rem .9rem; border-left: 3px solid var(--warn); background: var(--panel-2); border-radius: .3rem; }
-.net-hw-answer { border-top: 1px solid var(--hairline-soft); padding: .65rem .1rem; }
-.net-hw-answer summary { cursor: pointer; color: var(--ink); font-weight: 650; }
-.net-hw-answer > p, .net-hw-explanation { margin: .75rem 0 .25rem; color: var(--ink-2); }
-.net-hw-explanation p { margin: .5rem 0; }
+/* 与算法、人工智能等课程一致：胶囊按钮 + 动画解析区 */
+.net-hw-card.quiz { background: var(--panel-solid); }
+.page .net-hw-card .net-hw-q-title { margin: 0 0 .75rem; font-size: 1.05rem; }
+.page .net-hw-card .net-hw-q-title::before { display: none; }
+.net-hw-actions { margin: .85rem 0 0; }
+.net-hw-disclose { min-height: 34px; }
+.net-hw-disclose[aria-expanded='true'] { color: var(--ink); border-color: color-mix(in srgb, var(--ink) 25%, transparent); }
+.net-hw-disclose[aria-expanded='true'] svg { transform: rotate(180deg); }
+.net-hw-answer-container { min-width: 0; }
+.net-hw-answer-main { border-left-color: var(--ink-3); color: var(--ink-2); }
+.net-hw-answer-main > b { color: var(--ink); }
+.net-hw-answer-main > p { margin: .45rem 0 .2rem; }
+.net-hw-answer-detail { border-left: 1px solid var(--hairline-soft); margin-top: .6rem; }
+.net-hw-answer-source { font-size: .8rem; color: var(--ink-3); }
+.net-hw-explanation { margin-top: .5rem; color: var(--ink-2); }
+.net-hw-explanation p { margin: .45rem 0; }
+.net-hw-explanation p:last-child { margin-bottom: 0; }
 .net-hw-context { margin: .3rem 0 2rem; padding: .6rem .9rem; background: var(--panel-2); border-radius: 12px; display: flex; gap: .5rem .8rem; flex-wrap: wrap; font-size: .88rem; align-items: center; }
 .net-hw-context > span { font-weight: 700; color: var(--ink-2); margin-right: .2rem; }
 .net-hw-empty { padding: 1.25rem; border-radius: 16px; }
