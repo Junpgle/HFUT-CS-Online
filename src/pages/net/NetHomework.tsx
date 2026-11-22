@@ -163,7 +163,7 @@ export default function NetHomework({
         const result = results[id];
         return (
           <PracticeCard
-            key={`${id}:${result ?? 'none'}`}
+            key={id}
             quiz={toPracticeQuestion(chapterNo, question)}
             label={`简答 ${question.no}`}
             result={result}

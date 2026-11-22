@@ -83,6 +83,15 @@ export default function PracticeCard({ quiz, label, result, onResult, tagNav, ta
   const [fillInput, setFillInput] = useState(() => (result ? fillVariants[0] ?? '' : ''));
   const [fillWrong, setFillWrong] = useState(() => result === 'wrong');
 
+  // 章末主观题的「清空本章进度」来自外层：仅在记录被删除时复位卡片，
+  // 其它课程的默认交互完全不受影响；状态变更无需卸载卡片，保留展开动画。
+  useEffect(() => {
+    if (essayOptions?.review && result === undefined) {
+      setSubmitted(null);
+      setRevealed(false);
+    }
+  }, [result]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // 判分脉冲动画结束后摘掉标记
   useEffect(() => {
     if (!pulse) return;
