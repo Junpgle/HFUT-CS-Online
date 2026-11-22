@@ -8,6 +8,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import Sections from '../components/Sections';
 import { netChapters, netPapers, netAllQuestions } from '../content/net';
+import { netHomework } from '../content/net/homework';
 import type { PracticeKind } from '../content/practice/types';
 
 const ENTITY_RE = /&(#x?[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/;
@@ -161,5 +162,30 @@ describe('计算机网络试卷题库', () => {
     for (const q of netAllQuestions) {
       expect(q.explanation.length, `${q.id} 解析过短`).toBeGreaterThan(20);
     }
+  });
+});
+
+describe('2025版计网作业与知识点跳转', () => {
+  it('八章共54道来源作业，未虚构第八章作业', () => {
+    const counts = [6, 3, 2, 7, 11, 16, 9, 0];
+    counts.forEach((count, i) => expect(netHomework[i + 1].length).toBe(count));
+    expect(counts.reduce((sum, n) => sum + n, 0)).toBe(54);
+  });
+  it('每题均有同章知识点锚点和独立题号锚点', () => {
+    netChapters.forEach((chapter, i) => {
+      const n = i + 1;
+      const anchors = new Set(chapter.toc.map((entry) => entry.id));
+      expect(anchors.has(`sec-ch${n}-homework`)).toBe(true);
+      for (const q of netHomework[n]) {
+        expect(anchors.has(q.related), q.title).toBe(true);
+        expect(anchors.has(`sec-ch${n}-hw-${q.no}`), q.title).toBe(true);
+        expect(q.reference.length, q.title).toBeGreaterThan(70);
+      }
+    });
+  });
+  it('第五章承接旧版中的局域网节，第4章不重复', () => {
+    expect(netChapters[3].sections.every((section) => !/broadcast|evolve/.test(section.id))).toBe(true);
+    expect(netChapters[4].sections.some((section) => section.id === 'sec-ch5-broadcast')).toBe(true);
+    expect(netChapters[4].sections.some((section) => section.id === 'sec-ch5-evolve')).toBe(true);
   });
 });

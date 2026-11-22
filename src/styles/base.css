@@ -3398,3 +3398,23 @@ pre.code .cl-code:empty + .cl-com {
   justify-content: flex-end;
   margin: -4px 0 16px;
 }
+
+
+/* 计算机网络：章末作业与双向知识点导航 */
+.net-hw-section { margin-top: 3rem; }
+.net-hw-intro { margin: .6rem 0 1.35rem; color: var(--ink-2); }
+.net-hw-card { margin: 1rem 0; padding: 1.35rem 1.5rem; border: 1px solid var(--hairline-soft); border-radius: 18px; }
+.net-hw-q-title { margin: 0 0 .75rem; line-height: 1.55; font-size: 1.05rem; font-weight: 650; }
+.net-hw-no { display: inline-block; color: var(--deck-accent, var(--net)); margin-right: .7rem; font-weight: 750; white-space: nowrap; }
+.net-hw-jump { display: flex; flex-wrap: wrap; gap: 1rem; font-size: .88rem; margin: .4rem 0 1rem; }
+.net-hw-jump a, .net-hw-context a, .net-hw-empty a { color: var(--deck-accent, var(--net)); text-decoration: underline; text-underline-offset: 3px; }
+.net-hw-attention { margin: .9rem 0; padding: .65rem .9rem; border-left: 3px solid var(--warn); background: var(--panel-2); border-radius: .3rem; }
+.net-hw-answer { border-top: 1px solid var(--hairline-soft); padding: .65rem .1rem; }
+.net-hw-answer summary { cursor: pointer; color: var(--ink); font-weight: 650; }
+.net-hw-answer > p, .net-hw-explanation { margin: .75rem 0 .25rem; color: var(--ink-2); }
+.net-hw-explanation p { margin: .5rem 0; }
+.net-hw-context { margin: .3rem 0 2rem; padding: .6rem .9rem; background: var(--panel-2); border-radius: 12px; display: flex; gap: .5rem .8rem; flex-wrap: wrap; font-size: .88rem; align-items: center; }
+.net-hw-context > span { font-weight: 700; color: var(--ink-2); margin-right: .2rem; }
+.net-hw-empty { padding: 1.25rem; border-radius: 16px; }
+.net-hw-section h3[id] { scroll-margin-top: 110px; }
+@media (max-width: 600px) { .net-hw-card { padding: 1rem; } .net-hw-q-title { font-size: 1rem; } }

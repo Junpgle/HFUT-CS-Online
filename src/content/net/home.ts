@@ -23,14 +23,14 @@ const home: DeckData = {
       便于区分已给结论和推导解释；2025 课件未布置的题不虚构为教师作业。</p></div>
       <h3 id="sec-net-map-h1">章节与作业对应</h3>
       <table class="tbl"><thead><tr><th>2025 版章节</th><th>核心主题</th><th>作业来源</th></tr></thead><tbody>
-      <tr><td>第1章 概论</td><td>网络构成、交换技术、性能指标</td><td>第1—3章合订作业题 1—5、7</td></tr>
-      <tr><td>第2章 网络结构与协议</td><td>协议三要素、服务、分层与模型</td><td>第1—3章合订作业题 6、8、9</td></tr>
-      <tr><td>第3章 数据通信与物理层</td><td>信道、编码、传输媒体与复用</td><td>第1—3章合订作业题 10、11</td></tr>
-      <tr><td>第4章 数据链路层</td><td>帧、CRC、ARQ、PPP</td><td>第4章题 1—7</td></tr>
-      <tr><td>第5章 局域网</td><td>CSMA/CD、以太网、交换机、VLAN</td><td>第5章题 1—11</td></tr>
-      <tr><td>第6章 网络层</td><td>IPv4、ARP、ICMP、子网、路由</td><td>第6章题 1—16</td></tr>
-      <tr><td>第7章 传输层</td><td>TCP/UDP、滑动窗口、拥塞控制</td><td>第7章题 1—9</td></tr>
-      <tr><td>第8章 应用层</td><td>DNS、SMTP/IMAP、HTTP</td><td>所提供作业中未单列第8章</td></tr>
+      <tr><td><a href="/net/deck/ch1">第1章 概论</a></td><td>网络构成、交换技术、性能指标</td><td>第1—3章合订作业题 1—5、7</td></tr>
+      <tr><td><a href="/net/deck/ch2">第2章 网络结构与协议</a></td><td>协议三要素、服务、分层与模型</td><td>第1—3章合订作业题 6、8、9</td></tr>
+      <tr><td><a href="/net/deck/ch3">第3章 数据通信与物理层</a></td><td>信道、编码、传输媒体与复用</td><td>第1—3章合订作业题 10、11</td></tr>
+      <tr><td><a href="/net/deck/ch4">第4章 数据链路层</a></td><td>帧、CRC、ARQ、PPP</td><td>第4章题 1—7</td></tr>
+      <tr><td><a href="/net/deck/ch5">第5章 局域网</a></td><td>CSMA/CD、以太网、交换机、VLAN</td><td>第5章题 1—11</td></tr>
+      <tr><td><a href="/net/deck/ch6">第6章 网络层</a></td><td>IPv4、ARP、ICMP、子网、路由</td><td>第6章题 1—16</td></tr>
+      <tr><td><a href="/net/deck/ch7">第7章 传输层</a></td><td>TCP/UDP、滑动窗口、拥塞控制</td><td>第7章题 1—9</td></tr>
+      <tr><td><a href="/net/deck/ch8">第8章 应用层</a></td><td>DNS、SMTP/IMAP、HTTP</td><td>所提供作业中未单列第8章</td></tr>
       </tbody></table>
       <h3 id="sec-net-map-h2">课件表述与现行实践</h3>
       <p>按照课件复习时注意<strong>适用前提</strong>：例如 CSMA/CD 属于经典半双工共享以太网，

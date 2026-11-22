@@ -9,6 +9,7 @@ import lan from './ch5-lan';
 import oldCh5 from './ch5';
 import oldCh6 from './ch6';
 import oldCh7 from './ch7';
+import { netHomework } from './homework';
 import paper2021 from './paper-2021';
 import paper2022 from './paper-2022';
 import paper2024 from './paper-2024';
@@ -45,12 +46,28 @@ const dataLink: DeckData = {
   sections: oldCh4.sections.filter((section) => !/^sec-ch4-(broadcast|evolve)/.test(section.id)),
 };
 
-export const netChapters: DeckData[] = [
+const chapterMaterial: DeckData[] = [
   ch1, ch2, ch3, dataLink, lan,
   shiftChapter(oldCh5, 5, 6),
   shiftChapter(oldCh6, 6, 7),
   shiftChapter(oldCh7, 7, 8),
 ];
+export const netChapters: DeckData[] = chapterMaterial.map((chapter, index) => {
+  const chapterNo = index + 1;
+  const questions = netHomework[chapterNo] ?? [];
+  return {
+    ...chapter,
+    toc: [
+      ...chapter.toc,
+      { id: `sec-ch${chapterNo}-homework`, text: `本章作业（${questions.length}题）`, level: 2 },
+      ...questions.map((q) => ({
+        id: `sec-ch${chapterNo}-hw-${q.no}`,
+        text: `作业题 ${q.no}`,
+        level: 3 as const,
+      })),
+    ],
+  };
+});
 
 /** 将 2024 版试卷知识点标签转换为 2025 版八章，保证原有题号/答案不变。 */
 function remapQuestion(question: PracticeQuestion): PracticeQuestion {
