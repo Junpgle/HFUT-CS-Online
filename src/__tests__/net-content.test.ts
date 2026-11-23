@@ -414,6 +414,22 @@ describe('第六轮计网核验：BGP 与 IDRP 路由机制', () => {
   });
 });
 
+describe('第七轮计网核验：HTTP/2、QUIC 的标准限定', () => {
+  const html = netChapters[7].sections.flatMap((s) => s.blocks)
+    .filter((b) => b.type === 'html').map((b) => b.html).join('');
+
+  it('不能断言 TCP/TLS 普遍需要4-5 RTT；QUIC是名称不是缩写', () => {
+    expect(html).toContain('课件“建连需 4～5 RTT”不适用于所有基于 TCP 的应用');
+    expect(html).toContain('RFC 9000 明确指出 QUIC 是名称而非首字母缩写');
+  });
+
+  it('QUIC 跨流队头阻塞与连接迁移都需限定适用条件', () => {
+    expect(html).toContain('单个 QUIC 流内仍然有可靠、有序交付');
+    expect(html).toContain('不能保证网络切换后绝对不断线');
+    expect(html).toContain('Connection ID');
+  });
+});
+
 describe('计网试卷离线进度数据健壮性', () => {
   it('localStorage 保存无效 JSON/null/数组时不崩溃，过滤错误的成绩状态', () => {
     const original = localStorage.getItem(NET_PRACTICE_STORE_KEY);

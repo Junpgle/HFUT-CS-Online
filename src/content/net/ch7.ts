@@ -732,9 +732,11 @@ const ch: NetChapter = {
             <strong>HTTP/2 的缺陷</strong>：最主要的缺陷是 HTTP/2 的下层是 TCP 协议——
             <strong>TCP 的队头阻塞</strong>：HTTP/2 解决了应用层意义上的队头阻塞，但对 TCP 中的队头阻塞无可奈何；
             TCP 是单连接，所有基于 TCP 的数据传输都会变成一个个字节段排队传输，只要有一个段丢失或延迟整个传输过程就会陷入等待
-            （当达到 2% 的丢包率时 HTTP/2 还不如 HTTP/1.1）；
-            <strong>TCP 连接过程延迟</strong>：所有基于 TCP 的应用都无法避免等待连接建立的过程——在真正开始传输数据前需要大约 4-5 个 RTT 时间
-            用于建立 TCP 连接和 TLS 连接（TCP 三次握手通常约需 1 个 RTT 才能开始正常交换应用数据；TLS 1.3 全握手通常再需约 1 个 RTT（会话恢复可进一步减少）；具体开销取决于连接复用、TLS 版本与握手方式），对于短 HTTP 请求性价比极低；
+            。课件所述“丢包率达到 2% 时 HTTP/2 不如 HTTP/1.1”缺少测试条件与统计出处，不能作为各网络环境通用的性能阈值；
+            <strong>TCP/TLS 建连延迟</strong>：在没有可复用连接的传统 HTTPS 场景中，先建立 TCP 连接通常约需 <strong>1 RTT</strong>，
+            再完成 TLS 1.3 的常规全握手通常约需 <strong>1 RTT</strong>，之后才交换应用数据；
+            TLS 1.2、额外往返、会话恢复、提前数据、连接复用等情况会改变总耗时。
+            课件“建连需 4～5 RTT”不适用于所有基于 TCP 的应用，也不是现代 TLS 1.3 的一般定律；
             <strong>连接迁移</strong>：TCP 连接受四元组（源 IP、源端口、目的 IP、目的端口）制约，一旦 IP 地址发生改变连接就会终止，会话也随之终止。
           </p>
           <p>
@@ -744,19 +746,23 @@ const ch: NetChapter = {
             HTTP/3 不是简单的在 QUIC 上运行 HTTP/2，而是一个重新开发的以 QUIC 为传输层协议的 HTTP 协议。
           </p>
           <p>
-            <strong>QUIC 协议</strong>（Quick UDP Internet Connections）：一个基于 <strong>UDP</strong> 的传输层协议，
-            由 Google 开发，2012 年部署上线，2013 年提交 IETF，2021 年 5 月 IETF 正式推出标准版 RFC9000。
+            <strong>QUIC 协议</strong>：一个基于 <strong>UDP</strong> 的安全多路复用传输协议，其前身是 Google QUIC，
+            IETF 于 2021 年将 QUIC v1 标准化为 RFC 9000。
+            “Quick UDP Internet Connections”是早期对名称的习惯性展开，但 <strong>RFC 9000 明确指出 QUIC 是名称而非首字母缩写</strong>。
             报文格式：QUIC 区分长首部与短首部，首部字段随分组类型不同；版本号仅在长首部中出现，Packet Number 等字段也受到头部保护，不能概括为首部全明文。
             加密载荷可携带 STREAM、ACK、PING、PADDING、MAX_DATA、STREAM_DATA_BLOCKED 等不同类型的帧。
           </p>
           <p>QUIC 的核心特性：</p>
           <ul>
             <li><strong>0-RTT 恢复连接</strong>：客户端此前已与服务器建立过连接并保存可用的恢复凭据时，才可能在新握手完成前发送 0-RTT 应用数据；首次连接通常不能使用 0-RTT，且 0-RTT 数据存在重放风险；</li>
-            <li><strong>无队头阻塞的多路复用</strong>：在 HTTP/2 多路复用思想的基础上 HTTP/3 为每个流建立一套滑动窗口，实现无队头阻塞的多路复用；</li>
+            <li><strong>减少跨流队头阻塞</strong>：HTTP/3 将请求响应映射到独立的 QUIC 流，某一流的数据丢失不会因 TCP 字节流的顺序交付而阻塞其他流的数据递交；
+              <strong>单个 QUIC 流内仍然有可靠、有序交付与等待重传的情况</strong>，拥塞控制也仍可能影响各流。</li>
             <li><strong>可靠传输</strong>：通过严格递增的 Packet Number 标识数据包，避免了 TCP 中发生重传后确认报文的歧义，进而 RTT 的测量更为准确、RTO 的估算更为合理，实现了可靠传输；</li>
             <li><strong>与 TCP 类似的流量控制</strong>：分别为连接和流构建了滑动窗口，以此为基础进行流控；</li>
             <li><strong>与 TCP 类似的拥塞控制</strong>：利用拥塞窗口、慢启动、拥塞避免、快重传和快恢复等方法构建了拥塞控制；</li>
-            <li><strong>连接迁移</strong>：QUIC 的连接基于 Connection ID——只要 Connection ID 没有改变，即使切换网络，客户端与服务器之间的连接并不会断开仍然可以正常通信，这在 TCP 中根本无法想象；</li>
+            <li><strong>连接迁移</strong>：QUIC 可以利用非零长度的 Connection ID，在 IP 地址或 UDP 端口变化后仍关联同一逻辑连接；
+              但迁移需要满足握手确认、路径验证、对端支持及网络可达性等条件，<strong>不能保证网络切换后绝对不断线，也不要求始终使用同一个 Connection ID</strong>；
+              连接 ID 还可为隐私和迁移目的轮换（RFC 9000 第 5、9 节）。</li>
             <li><strong>热拔插</strong>：QUIC 运行在用户空间，很多策略的调整用户可以自行调整；</li>
             <li><strong>前向纠错 FEC</strong>（Forward Error Correction）：属于可探索的扩展或实验性机制，不是 RFC 9000 定义的 QUIC v1 必备特性；QUIC v1 的标准恢复机制主要依靠确认、丢包检测和重传数据帧。</li>
           </ul>
