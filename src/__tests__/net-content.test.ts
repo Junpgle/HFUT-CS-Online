@@ -128,6 +128,7 @@ describe('计算机网络各章课件条目完整性', () => {
       '总线型', '星型', '树型', '环型', '网状型', '主干线故障']);
     containsAll(1, ['分布在不同地点，并具有独立功能', '通信设备和线路',
       '网络软件和协议', '独立计算机互联', '存在通信通道', '遵循通信规则']);
+    containsAll(1, ['定义要点：', '网络协议是关键技术，数据交换是基本功能，资源共享是最终目的。']);
     expect(netChapters[0].toc.some((entry) => entry.id === 'sec-ch1-definition-functions')).toBe(true);
   });
 
