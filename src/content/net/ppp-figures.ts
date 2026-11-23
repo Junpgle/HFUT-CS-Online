@@ -17,7 +17,7 @@ const header = (name: string, h: number, description: string, title: string, sha
     <title id="${name}-title">${xml(title)}</title><desc id="${name}-desc">${xml(description)}</desc>
     <defs><marker id="${name}-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L6 3 L0 6 Z" fill="${c.subtle}"/></marker></defs>
     ${shapes}
-  </svg><p class="fig-cap">${xml(caption)}（点击图片可放大查看）</p>`;
+  </svg><p class="fig-cap">${xml(caption)}</p>`;
 
 const stuffing = 'ppp-stuffing';
 export const pppStuffingFigure = header(stuffing, 380,
@@ -157,7 +157,7 @@ export const pppAuthFigure = header(auth, 338,
   '图 4-PPP-5　PAP 直接传口令；CHAP 使用挑战—响应机制');
 
 const ncp = 'ppp-ncp';
-export const pppNcpFigure = header(ncp, 274,
+export const pppNcpFigure = header(ncp, 292,
   'LCP 先建立 PPP 链路，认证可选；NCP 根据网络层协议分工：IPCP 协商 IPv4 的地址等参数，其他 NCP 处理其他网络层协议；完成配置后传输 IPv4 数据报。',
   'PPP 中 LCP、NCP、IPCP 的关系',
   [
@@ -180,6 +180,6 @@ export const pppNcpFigure = header(ncp, 274,
     path('M 617 205 V 219',ncp),
     box(420,225,314,32),
     txt(577,246,'配置成功后传输对应网络层数据',13,c.ink,600,'middle'),
-    txt(26,253,'认证（PAP / CHAP）可选；IPCP 是 NCP 的一个成员，不与 LCP 并列。',12,c.subtle),
+    txt(26,283,'认证（PAP / CHAP）可选；IPCP 是 NCP 的一个成员，不与 LCP 并列。',12,c.subtle),
   ].join('\n'),
   '图 4-PPP-6　LCP 管理链路，NCP 适配网络层；IPCP 属于 NCP');
