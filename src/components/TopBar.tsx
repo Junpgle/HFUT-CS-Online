@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { IconArrowLeft, IconMenu } from './icons';
 import ThemeToggle from './ThemeToggle';
 import SearchBox, { type SearchIndexItem } from './SearchBox';
+import AccountButton from './AccountButton';
 
 /** 分组菜单中的一讲/一章 */
 export interface CourseTabMenuItem {
@@ -200,6 +201,7 @@ export default function TopBar({
         <div className="topbar-ctl nav-pill">
           <ThemeToggle />
         </div>
+        <AccountButton />
       </div>
     </header>
   );

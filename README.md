@@ -23,3 +23,11 @@
 
 - `data/`：4 个上游仓库整理出的课程资料（课件 / 试题 / 附件），仅本地、不入库。
 - `补充资料/`：本站自有的补充资料（上游没有的新课课件、近年试卷等），随本仓库入库，附件页可直接下载；收录细则见 [补充资料/README.md](补充资料/README.md)。
+
+## 🔐 账号与同步（可选）
+
+站点默认是纯本地游客模式（localStorage）。配置 Supabase 后，顶栏出现「登录」，收藏、最近查看与答题进度可在多设备间同步；未配置时账号入口自动隐藏，不影响现有功能。
+
+- 架构、冲突规则与完整操作清单见 [docs/supabase-sync.md](docs/supabase-sync.md)
+- 数据库脚本见 [supabase/schema.sql](supabase/schema.sql)
+- 本地联调：复制 [.env.example](.env.example) 为 `.env.local` 并填入 Project URL 与 Publishable Key

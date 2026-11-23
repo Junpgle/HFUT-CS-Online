@@ -3,6 +3,7 @@ import { motion, useReducedMotion, AnimatePresence } from 'motion/react';
 import { practiceQuestions, KIND_META, type PracticeKind } from '../content/practice';
 import PracticeCard from '../components/practice/PracticeCard';
 import { IconChevronUp, IconX } from '../components/icons';
+import { useProgressStore } from '../lib/sync';
 
 /** 题型（固定顺序，与热力图分块一一对应） */
 const KINDS: PracticeKind[] = ['single', 'multi', 'judge', 'fill', 'essay'];
@@ -13,15 +14,6 @@ type Result = 'right' | 'wrong' | 'revealed';
 
 /** 右侧进度轨 / 吸顶摘要的分段大小 */
 const SEGMENT = 10;
-
-function loadResults(): Record<string, Result> {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, Result>) : {};
-  } catch {
-    return {};
-  }
-}
 
 /** 滚动监听：rAF 节流，返回「视口顶部最近的题目序号」与「是否该出现置顶按钮」 */
 function useScrollProbe(visibleLength: number, listResetKey: string) {
@@ -59,7 +51,7 @@ function useScrollProbe(visibleLength: number, listResetKey: string) {
 export default function PracticePage() {
   const reduced = useReducedMotion();
   const [kind, setKind] = useState<PracticeKind>('single');
-  const [results, setResults] = useState<Record<string, Result>>(() => loadResults());
+  const [results, setResults] = useProgressStore<Result>(STORE_KEY);
   const firstKindRun = useRef(true);
   // 清空进度确认层：复用全站玻璃模态，替代原生 confirm
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -73,15 +65,6 @@ export default function PracticePage() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [confirmOpen]);
-
-  // 持久化到 localStorage：验收 / 复习时刷新不丢进度
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级为会话内记忆 */
-    }
-  }, [results]);
 
   const onResult = (qid: string, r: Result) => setResults((s) => ({ ...s, [qid]: r }));
 

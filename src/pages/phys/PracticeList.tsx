@@ -4,19 +4,11 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { PHYS_BASE } from '../../courses/registry';
 import { physPapers } from '../../content/phys';
 import { IconArrowRight, IconX } from '../../components/icons';
+import { useProgressStore } from '../../lib/sync';
 
 /** 作答结果持久化 key（qid = `${paperId}:${questionId}`，与算法课的 practice-progress-v1 分开） */
 export const PHYS_PRACTICE_STORE_KEY = 'phys-practice-progress-v1';
 export type PhysResult = 'right' | 'wrong' | 'revealed';
-
-export function loadPhysResults(): Record<string, PhysResult> {
-  try {
-    const raw = localStorage.getItem(PHYS_PRACTICE_STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, PhysResult>) : {};
-  } catch {
-    return {};
-  }
-}
 
 export function physPaperStats(paperId: string, results: Record<string, PhysResult>) {
   const paper = physPapers.find((p) => p.id === paperId);
@@ -29,16 +21,8 @@ export function physPaperStats(paperId: string, results: Record<string, PhysResu
 /** 「大学物理」在线练习 · 试卷列表：多份试卷先选卷，再进入答题页 */
 export default function PhysPracticeList() {
   const reduced = useReducedMotion();
-  const [results, setResults] = useState<Record<string, PhysResult>>(() => loadPhysResults());
+  const [results, setResults] = useProgressStore<PhysResult>(PHYS_PRACTICE_STORE_KEY);
   const [confirmOpen, setConfirmOpen] = useState(false);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(PHYS_PRACTICE_STORE_KEY, JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级 */
-    }
-  }, [results]);
 
   // 确认层 Esc 退出
   useEffect(() => {

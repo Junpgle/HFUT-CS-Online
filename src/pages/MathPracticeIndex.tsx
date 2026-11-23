@@ -3,27 +3,19 @@ import { Link } from 'react-router-dom';
 import { MATH_BASE } from '../courses/registry';
 import { mathPapers, MATH_KIND_LABEL, type MathQuizKind } from '../content/math';
 import { useToc } from '../lib/toc';
+import { useStoredRecord } from '../lib/sync';
 import { IconArrowRight, IconFileText } from '../components/icons';
 
-/** 作答进度（与答题页共用同一 localStorage 键），列表卡上展示每卷完成度 */
+/** 作答进度（与答题页共用同一 key），列表卡上展示每卷完成度 */
 const STORE_KEY = 'math-practice-progress-v1';
 const KINDS: MathQuizKind[] = ['single', 'multi', 'judge', 'fill', 'essay'];
-
-function loadProgress(): Record<string, string> {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, string>) : {};
-  } catch {
-    return {};
-  }
-}
 
 /** 试卷列表页：多份试卷先列于此，点击进入答题页（热力图 + 答题区） */
 export default function MathPracticeIndex() {
   const toc = useToc();
+  const progress = useStoredRecord<string>(STORE_KEY);
 
   const cards = useMemo(() => {
-    const progress = loadProgress();
     return mathPapers.map((p) => {
       const done = p.questions.filter((q) => progress[q.id]).length;
       const right = p.questions.filter((q) => progress[q.id] === 'right').length;
@@ -32,7 +24,7 @@ export default function MathPracticeIndex() {
         .join(' · ');
       return { paper: p, done, right, kinds };
     });
-  }, []);
+  }, [progress]);
 
   useEffect(() => {
     toc.report([], () => {});

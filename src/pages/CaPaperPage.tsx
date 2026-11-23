@@ -6,6 +6,7 @@ import { caChapters, caPapers, CA_KIND_LABEL } from '../content/ca';
 import type { CaPaper, CaQuizKind, CaTag } from '../content/ca';
 import PracticeCard from '../components/practice/PracticeCard';
 import { IconChevronUp, IconX } from '../components/icons';
+import { useProgressStore } from '../lib/sync';
 
 /** 作答结果的持久化 key（体系结构课程独立于其它课程的进度存储） */
 const STORE_KEY = 'ca-practice-progress-v1';
@@ -16,15 +17,6 @@ const SEGMENT = 10;
 
 /** 题型固定顺序（与热力图分块一一对应） */
 const KINDS: CaQuizKind[] = ['single', 'multi', 'judge', 'fill', 'essay'];
-
-function loadResults(): Record<string, Result> {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, Result>) : {};
-  } catch {
-    return {};
-  }
-}
 
 /** 题卡序号文案：从题目 id 解出原卷编号（q2-7 → 解答 7） */
 function questionLabel(qid: string, kind: CaQuizKind): string {
@@ -42,7 +34,7 @@ export default function CaPaperPage() {
 
 function PaperInner({ paper }: { paper: CaPaper }) {
   const reduced = useReducedMotion();
-  const [results, setResults] = useState<Record<string, Result>>(() => loadResults());
+  const [results, setResults] = useProgressStore<Result>(STORE_KEY);
   // 初始题型：取本卷第一个非空题型（体系结构的试题以解答题为主）
   const [kind, setKind] = useState<CaQuizKind>(
     () => KINDS.find((k) => paper.questions.some((q) => q.kind === k)) ?? 'essay',
@@ -62,15 +54,6 @@ function PaperInner({ paper }: { paper: CaPaper }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [confirmOpen]);
-
-  // 持久化到 localStorage：刷新不丢进度
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级为会话内记忆 */
-    }
-  }, [results]);
 
   const onResult = (qid: string, r: Result) => setResults((s) => ({ ...s, [qid]: r }));
 

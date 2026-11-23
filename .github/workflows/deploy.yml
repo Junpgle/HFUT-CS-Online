@@ -28,6 +28,10 @@ jobs:
     # fork 的 PR 没有 Pages 写权限，也取不到 head 分支，交给 CI 工作流检查即可
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    # Supabase 连接信息（Publishable Key，可公开）；未配置时站点自动退回纯本地模式
+    env:
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:

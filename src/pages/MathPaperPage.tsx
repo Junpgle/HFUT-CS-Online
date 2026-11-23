@@ -6,6 +6,7 @@ import { mathPapers, MATH_KIND_LABEL, MATH_SECTIONS } from '../content/math';
 import type { MathPaper, MathQuizKind, MathTag } from '../content/math';
 import PracticeCard from '../components/practice/PracticeCard';
 import { IconChevronUp, IconX } from '../components/icons';
+import { useProgressStore } from '../lib/sync';
 
 /** 作答结果的持久化 key（高等数学课程独立于其它课程） */
 const STORE_KEY = 'math-practice-progress-v1';
@@ -17,15 +18,6 @@ const SEGMENT = 10;
 /** 题型固定顺序（与热力图分块一一对应） */
 const KINDS: MathQuizKind[] = ['single', 'multi', 'judge', 'fill', 'essay'];
 
-function loadResults(): Record<string, Result> {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, Result>) : {};
-  } catch {
-    return {};
-  }
-}
-
 export default function MathPaperPage() {
   const { paperId } = useParams();
   const paper = mathPapers.find((p) => p.id === paperId);
@@ -35,7 +27,7 @@ export default function MathPaperPage() {
 
 function PaperInner({ paper }: { paper: MathPaper }) {
   const reduced = useReducedMotion();
-  const [results, setResults] = useState<Record<string, Result>>(() => loadResults());
+  const [results, setResults] = useProgressStore<Result>(STORE_KEY);
   const [kind, setKind] = useState<MathQuizKind>(
     () => KINDS.find((k) => paper.questions.some((q) => q.kind === k)) ?? 'fill',
   );
@@ -51,14 +43,6 @@ function PaperInner({ paper }: { paper: MathPaper }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [confirmOpen]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级为会话内记忆 */
-    }
-  }, [results]);
 
   const onResult = (qid: string, r: Result) => setResults((s) => ({ ...s, [qid]: r }));
 

@@ -6,19 +6,11 @@ import { papers } from '../../content/pat';
 import type { PatPaper } from '../../content/pat';
 import PracticeCard from '../../components/practice/PracticeCard';
 import { IconChevronUp, IconX } from '../../components/icons';
+import { useProgressStore } from '../../lib/sync';
 
 /** 作答结果的持久化 key（与算法课的 practice-progress-v1 分开） */
 const STORE_KEY = 'pat-practice-progress-v1';
 type Result = 'right' | 'wrong' | 'revealed';
-
-function loadResults(): Record<string, Result> {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, Result>) : {};
-  } catch {
-    return {};
-  }
-}
 
 /** 热力图一格一题：绿=已看解析并理解，灰=已展开，浅灰=未作答 */
 export default function PatPractice() {
@@ -27,7 +19,7 @@ export default function PatPractice() {
   const deepLink = params.get('s');
   // 试卷选择：多份试卷先出列表；本课现只有一份省赛卷，直接进入答题
   const [paperId, setPaperId] = useState<string | null>(papers.length === 1 ? papers[0].id : null);
-  const [results, setResults] = useState<Record<string, Result>>(() => loadResults());
+  const [results, setResults] = useProgressStore<Result>(STORE_KEY);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
 
@@ -59,14 +51,6 @@ export default function PatPractice() {
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级为会话内记忆 */
-    }
-  }, [results]);
 
   // ?s=<题目id> 深链：定位到具体赛题
   useEffect(() => {

@@ -5,22 +5,13 @@ import { AI_BASE } from '../../courses/registry';
 import { aiPaper } from '../../content/ai';
 import PracticeCard from '../../components/practice/PracticeCard';
 import { IconChevronUp } from '../../components/icons';
+import { useProgressStore } from '../../lib/sync';
 
 /** 单卷进度存储 key（与算法课/计网课各自独立） */
 const AI_STORE_KEY = 'ai-practice-progress-v1';
 
 /** 单题作答状态（设计题为开放题，只会有 revealed） */
 type AiResult = 'right' | 'wrong' | 'revealed';
-
-type AiResults = Record<string, AiResult>;
-
-function loadAiResults(): AiResults {
-  try {
-    return JSON.parse(localStorage.getItem(AI_STORE_KEY) ?? '') as AiResults;
-  } catch {
-    return {};
-  }
-}
 
 /** 右侧进度轨的分段大小 */
 const SEGMENT = 10;
@@ -65,15 +56,7 @@ export default function AiPracticePage() {
   const [params] = useSearchParams();
   const s = params.get('s');
 
-  const [results, setResults] = useState<AiResults>(() => loadAiResults());
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(AI_STORE_KEY, JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级 */
-    }
-  }, [results]);
+  const [results, setResults] = useProgressStore<AiResult>(AI_STORE_KEY);
 
   const onResult = (qid: string, r: AiResult) => setResults((prev) => ({ ...prev, [qid]: r }));
 

@@ -4,19 +4,11 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { NET_BASE } from '../../courses/registry';
 import { netPapers } from '../../content/net';
 import { IconArrowRight, IconX } from '../../components/icons';
+import { useProgressStore } from '../../lib/sync';
 
 /** 作答结果持久化 key（qid = `${paperId}:${questionId}`） */
 export const NET_PRACTICE_STORE_KEY = 'net-practice-progress-v1';
 export type NetResult = 'right' | 'wrong' | 'revealed';
-
-export function loadNetResults(): Record<string, NetResult> {
-  try {
-    const raw = localStorage.getItem(NET_PRACTICE_STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, NetResult>) : {};
-  } catch {
-    return {};
-  }
-}
 
 export function netPaperStats(paperId: string, results: Record<string, NetResult>) {
   const paper = netPapers.find((p) => p.id === paperId);
@@ -29,16 +21,8 @@ export function netPaperStats(paperId: string, results: Record<string, NetResult
 /** 「计算机网络」在线练习 · 试卷列表：多份试卷先选卷，再进入答题页 */
 export default function NetPracticeListPage() {
   const reduced = useReducedMotion();
-  const [results, setResults] = useState<Record<string, NetResult>>(() => loadNetResults());
+  const [results, setResults] = useProgressStore<NetResult>(NET_PRACTICE_STORE_KEY);
   const [confirmOpen, setConfirmOpen] = useState(false);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(NET_PRACTICE_STORE_KEY, JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级 */
-    }
-  }, [results]);
 
   // 确认层 Esc 退出
   useEffect(() => {

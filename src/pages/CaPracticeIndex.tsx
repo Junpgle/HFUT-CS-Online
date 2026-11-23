@@ -3,29 +3,21 @@ import { Link } from 'react-router-dom';
 import { CA_BASE } from '../courses/registry';
 import { caPapers, CA_KIND_LABEL } from '../content/ca';
 import { useToc } from '../lib/toc';
+import { useStoredRecord } from '../lib/sync';
 import { IconArrowRight, IconFileText } from '../components/icons';
 
-/** 作答进度（与答题页共用同一 localStorage 键），列表卡上展示每卷的完成度 */
+/** 作答进度（与答题页共用同一 key），列表卡上展示每卷的完成度 */
 const STORE_KEY = 'ca-practice-progress-v1';
-
-function loadProgress(): Record<string, string> {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, string>) : {};
-  } catch {
-    return {};
-  }
-}
 
 /** 试卷列表页：多份试卷先列于此，点击进入答题页（热力图 + 答题区） */
 export default function CaPracticeIndex() {
   const toc = useToc();
+  const progress = useStoredRecord<string>(STORE_KEY);
 
   // 试卷卡上的题型统计与完成度
   const cards = useMemo(
     () =>
       caPapers.map((p) => {
-        const progress = loadProgress();
         const done = p.questions.filter((q) => progress[q.id]).length;
         const right = p.questions.filter((q) => progress[q.id] === 'right').length;
         const kinds = (['single', 'multi', 'judge', 'fill', 'essay'] as const)
@@ -34,7 +26,7 @@ export default function CaPracticeIndex() {
           .join(' · ');
         return { paper: p, done, right, kinds };
       }),
-    [],
+    [progress],
   );
 
   // 列表页无本页目录

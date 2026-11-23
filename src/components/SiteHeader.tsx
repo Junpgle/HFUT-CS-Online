@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
+import AccountButton from './AccountButton';
 
 /** 站点层顶栏 —— 只有首页使用；各课程页面自带导航栏，与本组件无关。 */
 export default function SiteHeader() {
@@ -9,6 +10,7 @@ export default function SiteHeader() {
         HFUT-CS-Online
       </Link>
       <div className="hub-topbar-right">
+        <AccountButton />
         <div className="topbar-ctl nav-pill">
           <ThemeToggle />
         </div>

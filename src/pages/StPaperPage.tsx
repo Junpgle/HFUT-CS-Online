@@ -6,6 +6,7 @@ import { stChapters, stPapers, ST_KIND_LABEL } from '../content/st';
 import type { StPaper, StQuizKind, StTag } from '../content/st';
 import PracticeCard from '../components/practice/PracticeCard';
 import { IconChevronUp, IconX } from '../components/icons';
+import { useProgressStore } from '../lib/sync';
 
 /** 作答结果的持久化 key（软件测试课程独立于算法课/OS/SE 等课程的进度存储） */
 const STORE_KEY = 'st-practice-progress-v1';
@@ -16,15 +17,6 @@ const SEGMENT = 10;
 
 /** 题型固定顺序（与热力图分块一一对应） */
 const KINDS: StQuizKind[] = ['single', 'multi', 'judge', 'fill', 'essay'];
-
-function loadResults(): Record<string, Result> {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, Result>) : {};
-  } catch {
-    return {};
-  }
-}
 
 /** 题卡序号文案：从题目 id 解出原卷编号（p1-f14-1 → 填空 14-1） */
 function questionLabel(qid: string, kind: StQuizKind): string {
@@ -43,7 +35,7 @@ export default function StPaperPage() {
 
 function PaperInner({ paper }: { paper: StPaper }) {
   const reduced = useReducedMotion();
-  const [results, setResults] = useState<Record<string, Result>>(() => loadResults());
+  const [results, setResults] = useProgressStore<Result>(STORE_KEY);
   const [kind, setKind] = useState<StQuizKind>('fill');
   const firstKindRun = useRef(true);
   // 清空进度确认层：复用全站玻璃模态
@@ -60,15 +52,6 @@ function PaperInner({ paper }: { paper: StPaper }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [confirmOpen]);
-
-  // 持久化到 localStorage：刷新不丢进度
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级为会话内记忆 */
-    }
-  }, [results]);
 
   const onResult = (qid: string, r: Result) => setResults((s) => ({ ...s, [qid]: r }));
 

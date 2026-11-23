@@ -5,7 +5,8 @@ import { NET_BASE } from '../../courses/registry';
 import { findNetPaper, type NetPaper } from '../../content/net';
 import PracticeCard from '../../components/practice/PracticeCard';
 import { IconChevronUp } from '../../components/icons';
-import { loadNetResults, netPaperStats, type NetResult } from './NetPracticeListPage';
+import { useProgressStore } from '../../lib/sync';
+import { NET_PRACTICE_STORE_KEY, netPaperStats, type NetResult } from './NetPracticeListPage';
 
 /** 右侧进度轨的分段大小 */
 const SEGMENT = 10;
@@ -51,16 +52,7 @@ export default function NetPracticePaperPage() {
 
 function NetPaperInner({ paper }: { paper: NetPaper }) {
   const reduced = useReducedMotion();
-  const [results, setResults] = useState<Record<string, NetResult>>(() => loadNetResults());
-
-  // 持久化（与列表页共用同一 key：qid = `${paperId}:${questionId}`）
-  useEffect(() => {
-    try {
-      localStorage.setItem('net-practice-progress-v1', JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级 */
-    }
-  }, [results]);
+  const [results, setResults] = useProgressStore<NetResult>(NET_PRACTICE_STORE_KEY);
 
   const onResult = (qid: string, r: NetResult) => setResults((s) => ({ ...s, [`${paper.id}:${qid}`]: r }));
 

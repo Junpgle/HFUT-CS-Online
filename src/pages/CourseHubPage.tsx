@@ -4,11 +4,11 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { catalog } from '../content/catalog';
 import { courses, findCourseByName, STUB_BASE } from '../courses/registry';
 import SiteHeader from '../components/SiteHeader';
-import { getRecentCourses } from '../lib/recentCourses';
+import { useFavoriteCourses, useRecentCourses } from '../lib/sync';
 import { contributors } from '../content/contributors';
 import ContactCard from '../components/ContactCard';
 import { IconChevronDown, IconChevronUp, IconGitHub, IconStar } from '../components/icons';
-import { getFavoriteCourses, toggleFavorite } from '../lib/favoriteCourses';
+import { toggleFavorite } from '../lib/favoriteCourses';
 import { useToc } from '../lib/toc';
 
 /** 学期分组顺序：8 个学期 */
@@ -39,10 +39,10 @@ export default function CourseHubPage() {
   const reduced = useReducedMotion();
   const [contactOpen, setContactOpen] = useState(false);
 
-  // 最近查看的课程（localStorage，MRU）
-  const [recentNames] = useState(() => getRecentCourses());
-  // 收藏的课程（localStorage，收藏先后序）；卡片星标与合并展示区共用
-  const [favs, setFavs] = useState<string[]>(() => getFavoriteCourses());
+  // 最近查看的课程（本地优先，登录后随云端合并刷新）
+  const recentNames = useRecentCourses();
+  // 收藏的课程（收藏先后序）；卡片星标与合并展示区共用
+  const favs = useFavoriteCourses();
 
   // 置顶按钮：滚过约一屏内容后出现（rAF 节流，与在线练习页同款）
   const [showTop, setShowTop] = useState(false);
@@ -194,7 +194,6 @@ export default function CourseHubPage() {
           title={fav ? '取消收藏' : '收藏'}
           onClick={() => {
             toggleFavorite(c.name);
-            setFavs(getFavoriteCourses());
           }}
         >
           <IconStar size={16} />

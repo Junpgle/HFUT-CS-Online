@@ -6,6 +6,7 @@ import { osChapters, osPapers, OS_KIND_LABEL } from '../content/os';
 import type { OsPaper, OsQuizKind, OsTag } from '../content/os';
 import PracticeCard from '../components/practice/PracticeCard';
 import { IconChevronUp, IconX } from '../components/icons';
+import { useProgressStore } from '../lib/sync';
 
 /** 作答结果的持久化 key（OS 课程独立于算法课的进度存储） */
 const STORE_KEY = 'os-practice-progress-v1';
@@ -16,15 +17,6 @@ const SEGMENT = 10;
 
 /** 题型固定顺序（与热力图分块一一对应） */
 const KINDS: OsQuizKind[] = ['single', 'multi', 'judge', 'fill', 'essay'];
-
-function loadResults(): Record<string, Result> {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, Result>) : {};
-  } catch {
-    return {};
-  }
-}
 
 /** 题卡序号文案：从题目 id 解出原卷编号（p2-f14-1 → 填空 14-1） */
 function questionLabel(qid: string, kind: OsQuizKind): string {
@@ -43,7 +35,7 @@ export default function OsPaperPage() {
 
 function PaperInner({ paper }: { paper: OsPaper }) {
   const reduced = useReducedMotion();
-  const [results, setResults] = useState<Record<string, Result>>(() => loadResults());
+  const [results, setResults] = useProgressStore<Result>(STORE_KEY);
   const [kind, setKind] = useState<OsQuizKind>('single');
   const firstKindRun = useRef(true);
   // 清空进度确认层：复用全站玻璃模态
@@ -60,15 +52,6 @@ function PaperInner({ paper }: { paper: OsPaper }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [confirmOpen]);
-
-  // 持久化到 localStorage：刷新不丢进度
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级为会话内记忆 */
-    }
-  }, [results]);
 
   const onResult = (qid: string, r: Result) => setResults((s) => ({ ...s, [qid]: r }));
 

@@ -5,7 +5,8 @@ import { PHYS_BASE } from '../../courses/registry';
 import { findPhysPaper, type PhysPaper, type PhysQuestion } from '../../content/phys';
 import PracticeCard from '../../components/practice/PracticeCard';
 import { IconChevronUp } from '../../components/icons';
-import { loadPhysResults, physPaperStats, type PhysResult } from './PracticeList';
+import { useProgressStore } from '../../lib/sync';
+import { PHYS_PRACTICE_STORE_KEY, physPaperStats, type PhysResult } from './PracticeList';
 
 /** 右侧进度轨的分段大小 */
 const SEGMENT = 10;
@@ -69,16 +70,7 @@ export default function PhysPracticePaper() {
 
 function PhysPaperInner({ paper }: { paper: PhysPaper }) {
   const reduced = useReducedMotion();
-  const [results, setResults] = useState<Record<string, PhysResult>>(() => loadPhysResults());
-
-  // 持久化（与列表页共用同一 key：qid = `${paperId}:${questionId}`）
-  useEffect(() => {
-    try {
-      localStorage.setItem('phys-practice-progress-v1', JSON.stringify(results));
-    } catch {
-      /* 存储不可用时静默降级 */
-    }
-  }, [results]);
+  const [results, setResults] = useProgressStore<PhysResult>(PHYS_PRACTICE_STORE_KEY);
 
   const onResult = (qid: string, r: PhysResult) => setResults((s) => ({ ...s, [`${paper.id}:${qid}`]: r }));
 

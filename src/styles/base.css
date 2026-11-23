@@ -3398,3 +3398,178 @@ pre.code .cl-code:empty + .cl-com {
   justify-content: flex-end;
   margin: -4px 0 16px;
 }
+
+/* --------------------------------------------------------- 账号 / 同步 */
+/* 顶栏账号胶囊：外壳复用 .topbar-ctl.nav-pill，内部按钮保持 34px 高度 */
+.account-wrap {
+  position: relative;
+}
+.account-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+.account-btn:hover {
+  color: var(--ink);
+}
+.account-label {
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+  flex-shrink: 0;
+}
+.account-dot.syncing {
+  background: var(--warn);
+}
+.account-dot.offline {
+  background: var(--ink-3);
+}
+.account-dot.error {
+  background: var(--hot);
+}
+.account-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 95;
+  width: 236px;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--hairline-soft);
+  background: var(--panel-strong);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: var(--shadow-2);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .account-menu {
+    background: var(--panel-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+.account-menu-mail {
+  padding: 8px 10px 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-menu-status {
+  padding: 0 10px 8px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.account-menu-item {
+  display: block;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: color 140ms ease;
+}
+.account-menu-item:hover {
+  color: var(--ink);
+}
+.account-menu-item:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.account-menu-item.danger:hover {
+  color: var(--hot);
+}
+
+/* 登录 / 注册表单（复用 hub-modal 外壳） */
+.auth-form {
+  margin-top: 14px;
+}
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.auth-field input {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+}
+.auth-field input:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--deck-accent) 45%, transparent);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+.auth-error,
+.auth-notice {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.auth-error {
+  color: var(--hot);
+}
+.auth-notice {
+  color: var(--ok);
+}
+.auth-switch {
+  margin-right: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: 12.5px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.auth-switch:hover {
+  color: var(--ink);
+}
+.hub-modal-actions {
+  align-items: center;
+}
+
+@media (max-width: 1180px) {
+  .topbar .account-label {
+    display: none;
+  }
+}
+@media (max-width: 420px) {
+  .hub-topbar .account-label {
+    display: none;
+  }
+}
