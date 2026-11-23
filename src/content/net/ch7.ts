@@ -567,11 +567,13 @@ const ch: NetChapter = {
           <p><strong>HTTP 的主要特点</strong>：</p>
           <ul>
             <li>HTTP 是面向事务的客户服务器协议；</li>
-            <li>HTTP 1.0 协议是<strong>无状态的</strong>（stateless）；</li>
-            <li>HTTP 协议本身也是无连接的，虽然它使用了面向连接的 TCP 向上提供的服务。</li>
+            <li>HTTP 是<strong>无状态的</strong>（stateless）：单次请求的语义不依赖服务器必须记住此前的请求；实际网站仍可通过 Cookie 或会话管理保持应用状态。</li>
+            <li>课件将 HTTP 称为“无连接”，主要对应 HTTP/1.0 非持续连接的教学场景，不代表它不能保持底层连接。HTTP/1.1 默认采用持续连接，HTTP/2 支持 TCP 连接内多路复用，HTTP/3 通过 QUIC 连接传输。</li>
           </ul>
           <p>
-            请求一个万维网文档所需的时间 = 2×RTT（发起 TCP 连接 + HTTP 请求报文）+ 传输文档的时间。
+            在忽略 DNS、TLS、排队、处理等开销，并采用 HTTP/1.0 非持续 TCP 连接的简化模型时，
+            获取一个万维网文档的时间约为 <strong>2×RTT + 文档传输时间</strong>：建立 TCP 连接约 1 RTT，
+            发出 HTTP 请求至响应首字节到达约 1 RTT。此模型不适合直接套用到 HTTP/1.1 复用连接或 HTTP/2、HTTP/3。
             <strong>持续连接</strong>（persistent connection）：HTTP/1.1 协议使用持续连接——万维网服务器在发送响应后仍然在一段时间内保持这条连接，
             使同一个客户（浏览器）和该服务器可以继续在这条连接上传送后续的 HTTP 请求报文和响应报文；
             这并不局限于传送同一个页面上链接的文档，而是只要这些文档都在同一个服务器上就行。

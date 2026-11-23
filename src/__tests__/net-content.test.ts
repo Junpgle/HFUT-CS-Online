@@ -265,6 +265,42 @@ describe('2025 课件数值笔误与标准对照', () => {
     expect(link).toContain('Terminate-Ack');
   });
 });
+describe('计网内容二次勘误回归', () => {
+  const chapterHtml = (n: number) => netChapters[n - 1].sections.flatMap((s) => s.blocks)
+    .filter((b) => b.type === 'html').map((b) => b.html).join('');
+
+  it('采样定理保留带限与抗混叠前提', () => {
+    expect(chapterHtml(3)).toContain('带限信号');
+    expect(chapterHtml(3)).toContain('抗混叠滤波');
+  });
+  it('PPP 区分 IPCP、同步异步填充以及16/32位FCS', () => {
+    const html = chapterHtml(4);
+    expect(html).toContain('0x8021 是 IPCP');
+    expect(html).toContain('32 位 FCS');
+    expect(html).toContain('同步链路上的比特填充');
+  });
+  it('IPv4配套协议、回环与未指定地址、OSPF收敛环路', () => {
+    const html = chapterHtml(6);
+    expect(html).toContain('这些都不是路由选择协议');
+    expect(html).toContain('127.0.0.0/8');
+    expect(html).toContain('程序绑定监听地址 0.0.0.0');
+    expect(html).toContain('短暂出现转发环路');
+  });
+  it('UDP、RPC、SACK、ssthresh 的语义不误导', () => {
+    const html = chapterHtml(7);
+    expect(html).toContain('TCP/IP 协议族的运输层');
+    expect(html).toContain('RPC 并非必然采用无连接对话');
+    expect(html).toContain('不是每一个 TCP 报文段都带 SACK');
+    expect(html).toContain('没有统一固定为 65535');
+  });
+  it('HTTP 分清无状态和连接复用；历年题同步更正回环范围', () => {
+    expect(chapterHtml(8)).toContain('HTTP/1.1 默认采用持续连接');
+    expect(chapterHtml(8)).toContain('2×RTT + 文档传输时间');
+    const q = netPapers.find((paper) => paper.id === 'paper-2021')?.questions.find((q) => q.id === 'p1-s4');
+    expect(q?.explanation).toContain('127.0.0.0/8');
+  });
+});
+
 describe('计网试卷离线进度数据健壮性', () => {
   it('localStorage 保存无效 JSON/null/数组时不崩溃，过滤错误的成绩状态', () => {
     const original = localStorage.getItem(NET_PRACTICE_STORE_KEY);
