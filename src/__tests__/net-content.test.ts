@@ -232,7 +232,8 @@ describe('PPP 配图完整性', () => {
     const section = ppp!.sections.find((item) => item.id === 'sec-ch4-p2p');
     const html = section?.blocks.filter((block) => block.type === 'html').map((block) => block.html).join('') ?? '';
     const figures = html.match(/<svg class="fig ppp-figure"/g) ?? [];
-    const captions = html.match(/class="fig-cap"/g) ?? [];
+    // 同一节还包含额外的「HDLC 与 PPP 对比」通用插图，不应被计入六幅 PPP 专项图。
+    const captions = html.match(/<p class="fig-cap">图 4-PPP-\d+/g) ?? [];
     expect(figures).toHaveLength(6);
     expect(captions).toHaveLength(6);
     for (const word of ['透明传输', 'PPP 会话生命周期', 'Code', 'Configure-Ack', 'PAP', 'CHAP', 'IPCP']) {
@@ -256,10 +257,11 @@ describe('2025 课件数值笔误与标准对照', () => {
     expect(physical).toContain('125 μs');
     expect(physical).toContain('微秒（μs）');
   });
-  it('保留 PPP 原课件文本，另注明 RFC 1661 MRU 不是固定帧长及 Padding 可选', () => {
+  it('PPP 明确更正课件中将 1500B 误解为固定帧长的说法，并说明 Padding 可选', () => {
     const link = netChapters[3].sections.flatMap((section) => section.blocks)
       .filter((block) => block.type === 'html').map((block) => block.html).join('');
-    expect(link).toContain('不足 1500 字节时填充');
+    expect(link).not.toContain('不足 1500 字节时填充');
+    expect(link).toContain('短帧不需要自动填充至 1500 字节');
     expect(link).toContain('1500 字节是默认 MRU');
     expect(link).toContain('Padding 是可选的');
     expect(link).toContain('Terminate-Ack');

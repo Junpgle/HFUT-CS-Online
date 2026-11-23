@@ -67,7 +67,7 @@ function FragmentPanel({index}:{index:number}){
   const cols=[36,100,234,367,504,622];
   const row=(y:number,values:string[],hot=false)=><g key={y}>
     {hot&&rect(31,y-15,691,23,'var(--panel-2)',accent,4)}
-    {values.map((v,j)=>tx(cols[j],y,v,12,hot?accent:ink,hot))}
+    {values.map((v,j)=><g key={j}>{tx(cols[j],y,v,12,hot?accent:ink,hot)}</g>)}
   </g>;
   const visible=Math.max(0,Math.min(6,index-2)); // 每出现一片就显示一行
   return <g>
@@ -157,12 +157,12 @@ function RipPanel({index}:{index:number}){
   ];
     return <g>
     {tx(35,25,'RIP：邻居 C 通告的距离需先加上 B→C 的一跳',13,ink,true)}
-    {['目的','B 旧表','经 C 的候选','B 新表'].map((col,i)=>tx([38,167,335,573][i],51,col,12,muted,true))}
+    {['目的','B 旧表','经 C 的候选','B 新表'].map((col,i)=><g key={col}>{tx([38,167,335,573][i],51,col,12,muted,true)}</g>)}
     {rows.map((r,j)=>{const from=j===0?0:j===1?3:j===2?4:j===3?5:j===4?6:7;
       const show=index>=from, y=77+j*27;
       return <g key={j}>
         {show&&index===from&&rect(31,y-18,696,24,'var(--panel-2)',accent,4)}
-        {r.map((v,k)=>tx([38,167,335,573][k],y,k===3&&!show?r[1]:v,12,k===3&&show?accent:ink,k===3&&show))}
+        {r.map((v,k)=><g key={k}>{tx([38,167,335,573][k],y,k===3&&!show?r[1]:v,12,k===3&&show?accent:ink,k===3&&show)}</g>)}
       </g>;
     })}
   </g>;
@@ -186,8 +186,8 @@ function OspfPanel({index}:{index:number}){
       {tx(x,y+5,n,15,ink,true,'middle')}
     </g>)}
     {tx(498,50,'当前最短距离',12,ink,true)}
-    {dist.map(([name,val],i)=>tx(504,86+i*33,name+'：'+(index<4?'未初始化':Number.isFinite(val)?val:'∞'),14,
-      index>=4&&i<Math.min(4,Math.max(1,index-3))?accent:index<4?quiet:ink,true))}
+    {dist.map(([name,val],i)=><g key={name}>{tx(504,86+i*33,name+'：'+(index<4?'未初始化':Number.isFinite(val)?val:'∞'),14,
+      index>=4&&i<Math.min(4,Math.max(1,index-3))?accent:index<4?quiet:ink,true)}</g>)}
     {tx(37,231,'边代价：AB=1、AC=4、BC=2、BD=5、CD=1；到 D 最短代价=4',11,muted)}
   </g>;
 }
@@ -264,7 +264,7 @@ function PacketPipelinePanel({index}:{index:number}){
   ];
   return <g>
     {tx(35,28,'分组交换 · P1、P2、P3 在每跳存储转发并流水线并行',13,ink,true)}
-    {hubs.map((name,i)=>tx(xs[i],62,name,13,ink,true,'middle'))}
+    {hubs.map((name,i)=><g key={name}>{tx(xs[i],62,name,13,ink,true,'middle')}</g>)}
     {[0,1,2].map((p)=>{
       const y=96+p*61;
       return <g key={p} opacity={index<1?0.18:p===1&&index<4?0.30:p===2&&index<5?0.30:1}>
