@@ -43,7 +43,7 @@ const questions: PracticeQuestion[] = [
     id: 'p2-e5',
     kind: 'essay',
     question: '名词解释：MAC 地址',
-    answer: `MAC 地址（Media Access Control 地址）：以太网中数据链路层的节点标识符，由于紧邻物理层也被称为物理地址、硬件地址。它由 48 位二进制数表示，通常写成 12 个十六进制数（如 08:00:20:0A:8C:6D）；前 24 位由 IEEE 分配给厂商，后 24 位由厂商自行编写并确保唯一。适配器只接收目的地址与之匹配的帧（广播帧、多播帧和发给自己的单播帧）。`,
+    answer: `MAC 地址（Media Access Control 地址）：以太网中数据链路层的节点标识符，由于紧邻物理层也被称为物理地址、硬件地址。它由 48 位二进制数表示，通常写成 12 个十六进制数（如 08:00:20:0A:8C:6D）；对传统基于 24 位 OUI 的全球管理 EUI-48 地址，前 24 位通常是 IEEE 分配的组织标识、其余 24 位由该组织管理；但还有其他大小的地址分配块，以及本地管理或随机化 MAC 地址，因此不能声称所有 MAC 地址都按固定“厂商 24 位 + 设备 24 位”划分且全球绝对唯一。适配器只接收目的地址与之匹配的帧（广播帧、多播帧和发给自己的单播帧）。`,
     explanation: `要点：所在层次与别名、48 位表示法、IEEE 分配前 24 位厂商编后 24 位、接收规则。`,
     tags: [{ deck: 5, sec: 'sec-ch5-arp-h0', text: 'MAC 地址' }],
   },
@@ -104,7 +104,7 @@ const questions: PracticeQuestion[] = [
     kind: 'fill',
     question: '在 TCP/IP RM 中，用于互联层的协议主要有：____、IP、RARP、ICMP 和 IGMP 协议。',
     answer: 'ARP',
-    explanation: '网际层的主要协议：IP（核心协议）、ICMP（报告网络状况）、ARP（IP→MAC）、RARP（MAC→IP）与 IGMP。',
+    explanation: '按原卷及旧版 TCP/IP 教学模型，填空为 ARP。需要注意：IP、ICMP、IGMP 与 ARP/RARP 常被一起列作网际互连相关协议，但以太网上的 ARP 报文直接封装在链路层帧中，不是 IPv4 载荷，也不属于路由选择协议；RARP 属历史性机制。',
     tags: [{ deck: 2, sec: 'sec-ch2-tcpip-h1', text: '网际层协议' }],
   },
   {

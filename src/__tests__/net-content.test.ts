@@ -301,6 +301,42 @@ describe('计网内容二次勘误回归', () => {
   });
 });
 
+describe('计网第三轮审查：计算条件与考试解释', () => {
+  const h3 = netChapters[2].sections.flatMap((s) => s.blocks)
+    .filter((b) => b.type === 'html').map((b) => b.html).join('');
+  const p2024 = netPapers.find((p) => p.id === 'paper-2024')!;
+
+  it('波特用 Bd，频分复用不是无时延，并行倍速须声明单线路条件', () => {
+    expect(h3).toContain('符号 <strong>Bd</strong>');
+    expect(h3).toContain('频分复用不等于没有传输时延');
+    expect(h3).toContain('每条信道的码元速率都与串行方案的单条信道相同');
+  });
+
+  it('2024试卷保留原答案，同时区别通信端点与进程', () => {
+    const q = p2024.questions.find((x) => x.id === 'p3-s12');
+    expect(q?.answer).toBe('D');
+    expect(q?.explanation).toContain('不能一般性地唯一标识某个操作系统进程');
+  });
+
+  it('2024试卷CSMA/CD 理论最短发送长度不冒充真实以太网最小帧长', () => {
+    const q = p2024.questions.find((x) => x.id === 'p3-e8');
+    expect(q?.answer).toContain('10000 bit');
+    expect(q?.answer).toContain('64 字节');
+    expect(q?.answer).toContain('载波延伸');
+  });
+
+  it('2024路由器题区分数据转发和差错报告', () => {
+    const q = p2024.questions.find((x) => x.id === 'p3-e4');
+    expect(q?.answer).toContain('ICMP 不是通常用来建立路由表的数据平面转发协议');
+  });
+
+  it('2022试卷ARP与MAC 历史表述有标准适用条件', () => {
+    const p2022 = netPapers.find((p) => p.id === 'paper-2022')!;
+    expect(p2022.questions.find((q) => q.id === 'p2-f4')?.explanation).toContain('直接封装在链路层帧');
+    expect(p2022.questions.find((q) => q.id === 'p2-e5')?.answer).toContain('本地管理或随机化 MAC 地址');
+  });
+});
+
 describe('计网试卷离线进度数据健壮性', () => {
   it('localStorage 保存无效 JSON/null/数组时不崩溃，过滤错误的成绩状态', () => {
     const original = localStorage.getItem(NET_PRACTICE_STORE_KEY);
