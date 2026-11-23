@@ -24,6 +24,15 @@ const W=760, H=438;
 const ink='var(--ink)', muted='var(--ink-2)', subtle='var(--ink-3)',
   accent='var(--deck-accent)', panel='var(--panel-solid)', wash='var(--panel-2)', line='var(--hairline)';
 const center=(i:number,n:number)=> n===1 ? W/2 : 95+(W-190)*i/(n-1);
+const compact=(value:string,max:number)=>{
+  let seen=0,out='';
+  for(const ch of value){
+    const weight=/[\x00-\x7f]/.test(ch)?0.57:1;
+    if(seen+weight>max) return out+'…';
+    out+=ch;seen+=weight;
+  }
+  return out;
+};
 function label(x:number,y:number,s:string,options?:{size?:number;color?:string;bold?:boolean;anchor?:'start'|'middle'|'end'}){
   return <text x={x} y={y} fontFamily="var(--font)" fontSize={options?.size??13} fontWeight={options?.bold?700:500}
     fill={options?.color??ink} textAnchor={options?.anchor??'start'}>{s}</text>;
@@ -59,7 +68,7 @@ function View({frame:f}:{frame:Frame}){
             fill={isCurrent?accent:muted} fillOpacity=".28" stroke={colorFor(index)}/>:
           <line x1={x1+(x2>x1?9:-9)} y1={y} x2={x2+(x1>x2?9:-9)} y2={y} stroke={colorFor(index)}
             strokeWidth={isCurrent?2.7:1.5} markerEnd={isCurrent?'url(#'+marker+')':undefined}/>}
-        {label(same?x1:(x1+x2)/2,y-10,step.event,
+        {label(same?x1:(x1+x2)/2,y-10,compact(step.event,actors.length>=5?11:actors.length===4?16:24),
           {size:11,color:isCurrent?ink:muted,bold:isCurrent,anchor:'middle'})}
       </g>;
     })}
@@ -69,7 +78,7 @@ function View({frame:f}:{frame:Frame}){
       const width=224,x=28+i*234;
       return <g key={i}>
         <rect x={x} y={352} width={width} height={39} rx={8} fill={panel} stroke={line}/>
-        {label(x+9,376,v,{size:v.length>27?10:12,color:i===0?accent:ink,bold:i===0})}
+        {label(x+9,376,compact(v,19),{size:v.length>27?10:12,color:i===0?accent:ink,bold:i===0})}
       </g>;
     })}
     {here.bits&&<g>
