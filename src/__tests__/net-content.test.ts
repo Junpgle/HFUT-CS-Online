@@ -34,6 +34,22 @@ const EXPECT_PAPER_COUNT: Record<string, number> = {
   'paper-2024': 29,
 };
 
+describe('2025 第1章网络发展阶段：四阶段归纳', () => {
+  it('第1章导语、历史表与阶段详述均使用课件第10页四阶段', () => {
+    const ch = netChapters[0];
+    const html = ch.sections.find((section) => section.id === 'sec-ch1-history')?.blocks
+      .filter((block) => block.type === 'html').map((block) => block.html).join('') ?? '';
+    expect(ch.lede).toContain('四个发展阶段');
+    expect(html).toContain('2025 版课件第 10 页');
+    for (const phase of [
+      '第一阶段：远程联机阶段', '第二阶段：多机互联网络阶段',
+      '第三阶段：标准化网络阶段', '第四阶段：互联与高速网络阶段',
+    ]) expect(html).toContain(phase);
+    expect(html).toContain('本课程复习以 2025 版课件的四阶段为准');
+    expect(html).not.toContain('计算机网络的发展经历了三个阶段');
+  });
+});
+
 describe('计算机网络课件内容', () => {
   it('共 8 个章，id/no 符合约定', () => {
     expect(netChapters.length).toBe(8);
