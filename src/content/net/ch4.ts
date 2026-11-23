@@ -828,7 +828,7 @@ const ch: NetChapter = {
           <p>
             因为历史和利益诉求的不同，形成了大致相同略有区别的多种以太网协议（封装格式上有明显体现）：
             <strong>DIX Ethernet II</strong>（Ethernet V2/ARPA，目前的主流）、<strong>IEEE 802.3/802.2 LLC</strong>（将协议类型字段替换为长度字段，
-            加入 802.2 LLC 头用以标志上层协议）、<strong>IEEE 802.3/802.2 SNAP</strong>（在保留 LLC 头的同时新增一个 2 字节的协议类型域）、
+            加入 802.2 LLC 头用以标志上层协议）、<strong>IEEE 802.3/802.2 SNAP</strong>（在 LLC 头后追加 <strong>5 字节 SNAP 协议标识：3 字节 OUI + 2 字节 PID</strong>；当 OUI=00-00-00 时后 2 字节通常可承载 EtherType）、
             <strong>RAW 802.3</strong>（NOVELL Ethernet 802.3，仅支持 IPX/SPX 网络）。
           </p>
           <p><strong>以太网 V2 的 MAC 帧格式</strong>：</p>
@@ -837,7 +837,7 @@ const ch: NetChapter = {
               <tr><th>字段</th><th>长度</th><th>说明</th></tr>
             </thead>
             <tbody>
-              <tr><td>目的地址 / 源地址</td><td>各 6 字节</td><td>48bit MAC 地址，也称为物理地址、硬件地址等。由 IEEE 管理和颁发——前 24 位由 IEEE 确定，后 24 位由硬件厂商确定。在以太网中每个适配器只接受与自身 MAC 相匹配的数据帧：广播帧、多播帧和发给自己的单播帧</td></tr>
+              <tr><td>目的地址 / 源地址</td><td>各 6 字节</td><td>48bit MAC 地址，也称为物理地址、硬件地址等。由 IEEE 管理和颁发——前 24 位由 IEEE 确定，后 24 位由硬件厂商确定。网卡通常接收发给自身 MAC 的单播及广播帧，也按已配置的多播组/过滤策略接收相应多播帧；混杂模式等特殊设置可接收其他帧。MAC 地址通常用于链路层转发，不能仅凭一条 MAC 地址断定全球唯一的设备身份</td></tr>
               <tr><td>类型</td><td>2 字节</td><td>指承载的上层协议，即在数据字段里封装着什么样的上层协议报文（IP、ARP、RARP 等）</td></tr>
               <tr><td>数据</td><td>46 ~ 1500 字节</td><td>至少 46 字节，不足则填充补足</td></tr>
               <tr><td>CRC（FCS）</td><td>4 字节</td><td>采用 CRC-32 的生成多项式 G(x) = x<sup>32</sup> + x<sup>26</sup> + x<sup>23</sup> + x<sup>22</sup> + x<sup>16</sup> + x<sup>12</sup> + x<sup>11</sup> + x<sup>10</sup> + x<sup>8</sup> + <strong>x<sup>7</sup></strong> + x<sup>5</sup> + x<sup>4</sup> + x<sup>2</sup> + x + 1（不计最高次 x<sup>32</sup> 时，32 位十六进制表示为 <strong>0x04C11DB7</strong>）</td></tr>

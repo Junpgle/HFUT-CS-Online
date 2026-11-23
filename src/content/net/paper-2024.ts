@@ -214,7 +214,7 @@ const questions: PracticeQuestion[] = [
       'BGP 协议只在边界路由器上运行',
     ],
     answer: 'C',
-    explanation: 'BGP 是不同自治域（AS）间的外部网关协议，在相邻 AS 之间交换网络可达性信息（C 对）。BGP 是<strong>路径矢量（Path Vector）协议</strong>，与距离向量算法有历史联系，但并非 RIP 那样仅依据跳数更新的距离矢量算法（B 不准确）；它是域间协议而非域内协议（A 错）；BGP 对等体之间是逻辑连通、不一定物理直接相邻（D 错）。',
+    explanation: 'BGP 是不同自治域（AS）间的外部网关协议，在相邻 AS 之间交换网络可达性信息（C 对）。BGP 是<strong>路径矢量（Path Vector）协议</strong>，与距离向量算法有历史联系，但并非 RIP 那样仅依据跳数更新的距离矢量算法（B 不准确）；它是域间协议而非域内协议（A 错）；D 所说“只在边界路由器上运行”不对：AS 内也可在非边界设备上建立 iBGP 会话，BGP 对等体不必物理直连。',
     tags: [{ deck: 5, sec: 'sec-ch5-protocol-h2', text: 'BGP 协议' }],
   },
   {

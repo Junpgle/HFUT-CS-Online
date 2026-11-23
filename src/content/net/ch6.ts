@@ -129,7 +129,7 @@ const ch: NetChapter = {
           </p>
           <ul>
             <li><strong>硬件端口与软件端口</strong>：路由器或交换机上的端口是硬件端口，是不同硬件设备进行交互的接口；协议栈层间的抽象的协议端口是软件端口，是应用层的各种协议进程与传输层协议进行层间交互的一种接口。</li>
-            <li><strong>端口号</strong>：用一个 16 位端口号进行标志，只具有本地意义——端口号只是为了标志本计算机应用层中的各进程，在因特网中不同计算机的相同端口号之间并无特别的关联性。</li>
+            <li><strong>端口号</strong>：用一个 16 位端口号标识传输端点，具有本地意义；端口号<strong>不与进程一一对应</strong>，一个进程可以持有多个套接字，具体协议及复用配置下也可能由多个进程共享监听端口；不同主机上的相同端口号并无必然关联。</li>
           </ul>
           <p>端口号分为三类：</p>
           <table class="tbl">
@@ -137,9 +137,9 @@ const ch: NetChapter = {
               <tr><th>类别</th><th>范围</th><th>说明</th></tr>
             </thead>
             <tbody>
-              <tr><td>熟知端口（well-known）</td><td>0-1023</td><td>由 Internet 数字分配机构 IANA（现已合并入 ICANN）管理；0 端口一般不使用</td></tr>
-              <tr><td>登记端口号</td><td>1024-49151</td><td>为没有熟知端口号的应用程序使用；使用这个范围的端口号必须在 IANA 登记，以防止重复</td></tr>
-              <tr><td>客户端口号（短暂端口号）</td><td>49152-65535</td><td>留给客户进程选择暂时使用；进程通信结束后该端口即可供其他进程使用</td></tr>
+              <tr><td>熟知端口（well-known）</td><td>0-1023</td><td>IANA 服务名与端口号登记处管理端口分配；IANA 职能现由 ICANN 的关联机构 PTI（Public Technical Identifiers）执行，不能简单说“IANA 已合并入 ICANN”。0 端口一般不作为正常服务的监听端口</td></tr>
+              <tr><td>登记端口号</td><td>1024-49151</td><td>也称 User Ports；希望为公开服务获得全球统一的端口分配，可按 RFC 6335 向 IANA 申请登记。但程序在自己的主机上绑定此范围的端口<strong>不是必须先向 IANA 注册</strong>；注册也不能确保任何主机上都没有占用</td></tr>
+              <tr><td>客户端口号（短暂端口号）</td><td>49152-65535</td><td>IANA 定义的 Dynamic/Private Ports 范围；实际操作系统自动分配临时源端口的范围可不同，例如 Linux 默认配置通常是 32768～60999；端口释放与复用还受 TIME_WAIT 等套接字状态及操作系统策略约束</td></tr>
             </tbody>
           </table>
           <p>

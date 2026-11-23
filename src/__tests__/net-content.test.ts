@@ -518,6 +518,54 @@ describe('第八轮协议准确性与波形可核验性', () => {
   });
 });
 
+describe('第九轮：协议注册语义与试卷历史考法区别', () => {
+  const chapterHtml = (number: number) => netChapters[number - 1].sections
+    .flatMap((s) => s.blocks).filter((b) => b.type === 'html').map((b) => b.html).join('');
+
+  it('IEEE 802.2 SNAP 的 OUI 与 PID 共占 5 字节，MAC 多播接收取决于过滤配置', () => {
+    const html = chapterHtml(4);
+    expect(html).toContain('5 字节 SNAP 协议标识：3 字节 OUI + 2 字节 PID');
+    expect(html).toContain('按已配置的多播组/过滤策略接收');
+    expect(html).not.toContain('新增一个 2 字节的协议类型域');
+  });
+
+  it('注册端口不等于使用前必须登记，IANA 职能由 PTI 执行', () => {
+    const html = chapterHtml(7);
+    expect(html).toContain('关联机构 PTI');
+    expect(html).toContain('不是必须先向 IANA 注册');
+    expect(html).toContain('32768～60999');
+    expect(html).toContain('端口号<strong>不与进程一一对应</strong>');
+  });
+
+  it('IPv4 地址定义不包含意外重复文本', () => {
+    const html = chapterHtml(6);
+    expect(html).toContain('IPv4 地址是分配给网络接口的 <strong>32 位逻辑地址</strong>');
+    expect(html).not.toContain('分配的\n            分配给');
+  });
+
+  it('2021 双绞线原答案 A 不变，但同时标出 D 选项限制过严', () => {
+    const q = netPapers.find((p) => p.id === 'paper-2021')!
+      .questions.find((x) => x.id === 'p1-s2')!;
+    expect(q.answer).toBe('A');
+    expect(q.explanation).toContain('D“通常只用作局域网通信介质”也不严谨');
+  });
+
+  it('2022 原答案不变，ARP 静态项、VLAN 与定向广播例外有说明', () => {
+    const paper = netPapers.find((p) => p.id === 'paper-2022')!;
+    expect(paper.questions.find((x) => x.id === 'p2-s20')?.answer).toBe('A');
+    expect(paper.questions.find((x) => x.id === 'p2-s20')?.explanation).toContain('静态 ARP 项可以由管理员人工配置');
+    expect(paper.questions.find((x) => x.id === 'p2-s16')?.explanation).toContain('逻辑划分的机制');
+    expect(paper.questions.find((x) => x.id === 'p2-f16')?.explanation).toContain('RFC 2644');
+  });
+
+  it('2024 BGP 单选保留 C，但解释 iBGP 也能运行于 AS 内部', () => {
+    const q = netPapers.find((p) => p.id === 'paper-2024')!
+      .questions.find((x) => x.id === 'p3-s19')!;
+    expect(q.answer).toBe('C');
+    expect(q.explanation).toContain('非边界设备上建立 iBGP 会话');
+  });
+});
+
 describe('计网试卷离线进度数据健壮性', () => {
   it('localStorage 保存无效 JSON/null/数组时不崩溃，过滤错误的成绩状态', () => {
     const original = localStorage.getItem(NET_PRACTICE_STORE_KEY);
