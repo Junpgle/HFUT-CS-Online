@@ -25,6 +25,9 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
   const total = frames.length;
   const [step, setStep] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [netSpeed, setNetSpeed] = useState<0.5 | 1 | 2>(1);
+  const isNetworkDemo = name.startsWith('net-');
+  const interval = isNetworkDemo ? Math.round(3200 / netSpeed) : PLAY_INTERVAL;
   const [fullscreen, setFullscreen] = useState(false);
   const [scrubbing, setScrubbing] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
@@ -53,9 +56,9 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
   // 自动播放：定时推进；到达末帧自动停
   useEffect(() => {
     if (!playing) return;
-    const id = window.setInterval(() => setStep((s) => Math.min(s + 1, total - 1)), PLAY_INTERVAL);
+    const id = window.setInterval(() => setStep((s) => Math.min(s + 1, total - 1)), interval);
     return () => window.clearInterval(id);
-  }, [playing, total]);
+  }, [playing, total, interval]);
 
   useEffect(() => {
     if (playing && step >= total - 1) setPlaying(false);
@@ -114,6 +117,15 @@ export default function DemoPlayer({ name, title: rawTitle }: Props) {
           左右滑动查看
         </span>
         <span className="demo-ctl">
+          {isNetworkDemo && (
+            <button className="ctl-btn" type="button"
+              style={{ width: 44, fontSize: 11, fontVariantNumeric: 'tabular-nums' }}
+              aria-label={`播放速度 ${netSpeed} 倍，点击切换`}
+              title="计网分步演示速度：0.5× / 1× / 2×"
+              onClick={() => setNetSpeed((speed) => speed === 0.5 ? 1 : speed === 1 ? 2 : 0.5)}>
+              {netSpeed}×
+            </button>
+          )}
           <motion.span
             key={step}
             className="demo-step-chip"

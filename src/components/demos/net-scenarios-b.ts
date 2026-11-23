@@ -1,4 +1,4 @@
-/** 计网第 6 章网络层：子网/分片/路由/ARP/ICMP/NAT 的可重放逐帧案例。 */
+/** 网络层演示：逐项计算中间值，保留原 PPT 情境并注明示例假设。 */
 import type { NetScenario } from './net-base';
 export const netScenariosB: NetScenario[] = [
   {
@@ -225,6 +225,17 @@ export const netScenariosB: NetScenario[] = [
         ]
       },
       {
+        "tag": "检查片偏移连续性",
+        "from": 1,
+        "to": 1,
+        "event": "偏移 0,185,370,555,740,925",
+        "cap": "每片的片偏移以 <b>8字节</b> 为单位：非末片载荷为1480B，故偏移每次增加185；最后片载荷800B，原载荷起点7400B。",
+        "values": [
+          "5×1480+800=8200",
+          "总片数6"
+        ]
+      },
+      {
         "tag": "目的端重组",
         "from": 1,
         "to": 2,
@@ -319,6 +330,17 @@ export const netScenariosB: NetScenario[] = [
         ]
       },
       {
+        "tag": "比较所有命中前缀",
+        "from": 1,
+        "to": 1,
+        "event": "/0、/8、/16、/24",
+        "cap": "候选路由中都命中时，必须选最长前缀长度 /24，不能误以为“路由表中最早匹配的条目”或“路径跳数最小”决定结果。",
+        "values": [
+          "最长 /24",
+          "与度量不冲突"
+        ]
+      },
+      {
         "tag": "转发分组",
         "from": 1,
         "to": 2,
@@ -368,6 +390,17 @@ export const netScenariosB: NetScenario[] = [
         "cap": "B 收到来自邻居 C 的通告：N2=4、N3=8、N6=4、N8=3、N9=5。B 到这些目的要再多经过 B→C 这一跳。",
         "values": [
           "每条候选距离+1"
+        ]
+      },
+      {
+        "tag": "对所有距离加1",
+        "from": 1,
+        "to": 1,
+        "event": "度量+1",
+        "cap": "本例 B 与 C 直接相连，链路度量按 RIP 跳数计为1。因此 C 的 N2=4、N3=8、N6=4、N8=3、N9=5 到 B 变成5、9、5、4、6。",
+        "values": [
+          "候选 5/9/5/4/6",
+          "不可达=16"
         ]
       },
       {
@@ -478,6 +511,16 @@ export const netScenariosB: NetScenario[] = [
         "values": [
           "B-C=2",
           "B-D=5"
+        ]
+      },
+      {
+        "tag": "洪泛到其他邻居",
+        "from": 2,
+        "to": 0,
+        "event": "LSA 传播到 A",
+        "cap": "收到新 LSA 的路由器按 OSPF 的机制传播到相关邻接路由器，使同区域路由器对拓扑变化建立可比较的 LSDB。",
+        "values": [
+          "LSA 区域内传播"
         ]
       },
       {
@@ -601,6 +644,16 @@ export const netScenariosB: NetScenario[] = [
         ]
       },
       {
+        "tag": "广播送达 B",
+        "from": 1,
+        "to": 2,
+        "event": "ARP Request 广播到 B",
+        "cap": "以太网广播目的地址为FF:FF:FF:FF:FF:FF，同一个二层广播域里的设备通常都会接收到请求并检查其中的目标协议地址。",
+        "values": [
+          "广播不穿越路由器"
+        ]
+      },
+      {
         "tag": "B 识别自身",
         "from": 1,
         "to": 2,
@@ -716,6 +769,36 @@ export const netScenariosB: NetScenario[] = [
         ]
       },
       {
+        "tag": "Echo Reply 经过 R2",
+        "from": 3,
+        "to": 2,
+        "event": "Echo Reply 回程",
+        "cap": "回程与去程的路由不必完全相同。为便于演示，这里假定回复沿原路经 R2、R1 返回源主机。",
+        "values": [
+          "路由可能不对称"
+        ]
+      },
+      {
+        "tag": "Echo Reply 经过 R1",
+        "from": 2,
+        "to": 1,
+        "event": "回复继续转发",
+        "cap": "R2 转发 Echo Reply 给 R1，若中间链路与策略允许，R1 再根据目标源 IP 转发到主机。",
+        "values": [
+          "不是一跳直达"
+        ]
+      },
+      {
+        "tag": "源主机收到 Echo Reply",
+        "from": 1,
+        "to": 0,
+        "event": "ping 获得 RTT",
+        "cap": "源主机获得相应标识/序号的 Echo Reply，计算本次往返时延 RTT。若没回复，也可能是策略阻断，而非一定网络断开。",
+        "values": [
+          "RTT：往返时间"
+        ]
+      },
+      {
         "tag": "traceroute TTL1",
         "from": 0,
         "to": 1,
@@ -726,6 +809,16 @@ export const netScenariosB: NetScenario[] = [
         ]
       },
       {
+        "tag": "R1 返回 Time Exceeded",
+        "from": 1,
+        "to": 0,
+        "event": "TTL Exceeded (第1跳)",
+        "cap": "TTL=1 的探测包在 R1 转发时减到0，R1 通常向源端发送 ICMP Time Exceeded。源端通过源地址等信息推断第一跳。",
+        "values": [
+          "显示第1跳 R1"
+        ]
+      },
+      {
         "tag": "traceroute TTL2",
         "from": 0,
         "to": 2,
@@ -733,6 +826,16 @@ export const netScenariosB: NetScenario[] = [
         "cap": "将初始 TTL 调为2，第二跳 R2 处耗尽，产生新的超时报文，从而逐跳发现路径。",
         "values": [
           "第2跳=R2"
+        ]
+      },
+      {
+        "tag": "R2 返回 Time Exceeded",
+        "from": 2,
+        "to": 0,
+        "event": "TTL Exceeded (第2跳)",
+        "cap": "TTL=2 的探测包经过 R1 时变为1，在 R2 递减为0，R2 通常回 ICMP Time Exceeded。",
+        "values": [
+          "显示第2跳 R2"
         ]
       },
       {
@@ -797,6 +900,16 @@ export const netScenariosB: NetScenario[] = [
         "values": [
           "公网源 IP",
           "公网源端口"
+        ]
+      },
+      {
+        "tag": "穿过公网",
+        "from": 1,
+        "to": 2,
+        "event": "公网报文转发",
+        "cap": "NAT 把内网地址替换为公网地址后，报文沿互联网路由；每一跳改变的通常是链路层封装，IP 源地址保留公网 NAT 地址。",
+        "values": [
+          "目标 IP 仍是服务器"
         ]
       },
       {

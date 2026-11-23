@@ -1,4 +1,4 @@
-/** 计网第 7—8 章：TCP 状态机、拥塞与应用层 DNS/HTTP/邮件流程的逐帧案例。 */
+/** 应用层与传输层真实时序：逐报文说明请求、应答、缓存与状态。 */
 import type { NetScenario } from './net-base';
 export const netScenariosC: NetScenario[] = [
   {
@@ -150,6 +150,27 @@ export const netScenariosC: NetScenario[] = [
         "values": [
           "半关闭",
           "FIN 不一定同 ACK"
+        ]
+      },
+      {
+        "tag": "B 发送剩余数据",
+        "from": 2,
+        "to": 0,
+        "event": "TCP Data seq=7000 len=1",
+        "cap": "为了让后续示例 FIN seq=7001 的序号有来源，本例假设 B 在自己的发送方向还有1字节数据，使用 seq=7000 发送给 A。",
+        "values": [
+          "B仍能发数据",
+          "seq7000、长度1"
+        ]
+      },
+      {
+        "tag": "A 确认剩余数据",
+        "from": 0,
+        "to": 2,
+        "event": "ACK ack=7001",
+        "cap": "A 虽已发送 FIN，但仍可接收 B 的数据并对这一字节回复 ACK=7001。B 后续 FIN 消耗一个新序号。",
+        "values": [
+          "A确认 B 的1字节"
         ]
       },
       {
@@ -315,9 +336,9 @@ export const netScenariosC: NetScenario[] = [
   {
     "name": "net-tcp-congestion",
     "actors": [
-      "发送端",
-      "网络拥塞",
-      "接收端"
+      "发送端 TCP",
+      "潜在拥塞链路",
+      "接收端 TCP"
     ],
     "steps": [
       {
@@ -325,106 +346,150 @@ export const netScenariosC: NetScenario[] = [
         "from": 0,
         "to": 0,
         "event": "cwnd=1 MSS",
-        "cap": "用教材式 TCP Reno 示意：初始 cwnd=1 MSS，慢开始门限 ssthresh=8 MSS（人为设定作图）。",
+        "cap": "采用经典 TCP Reno 教学示例：初始 cwnd=1 MSS，ssthresh=8 MSS。现代 TCP 可能采用更大的初始拥塞窗口与其他拥塞控制算法。",
         "values": [
-          "cwnd=1MSS",
-          "ssthresh=8"
+          "cwnd=1",
+          "ssthresh=8",
+          "慢开始"
         ]
       },
       {
-        "tag": "第 1 RTT",
+        "tag": "RTT 1",
         "from": 0,
         "to": 2,
-        "event": "ACK 推进",
-        "cap": "慢开始阶段在收到 ACK 后累计增窗，理想情况下一个 RTT 内 cwnd 大致翻倍，由1到2 MSS。",
+        "event": "ACK→cwnd2",
+        "cap": "慢开始阶段每收到确认会增长 cwnd，在理想 RTT 聚合模型里从1 MSS约翻倍到2 MSS。",
         "values": [
-          "RTT1:cwnd2",
-          "慢开始指数增长"
+          "cwnd=2",
+          "指数增长"
         ]
       },
       {
-        "tag": "第 2 RTT",
+        "tag": "RTT 2",
         "from": 0,
         "to": 2,
-        "event": "再次增长",
-        "cap": "下一个 RTT 大致由2到4 MSS；在没有丢包和拥塞信号时继续增长。",
+        "event": "ACK→cwnd4",
+        "cap": "慢开始仍在生效：本轮收到对新数据的累计确认，理想化一个 RTT 内拥塞窗口从2 MSS大致翻倍到4 MSS。",
         "values": [
-          "RTT2:cwnd4"
+          "cwnd=4"
         ]
       },
       {
-        "tag": "达到门限",
+        "tag": "RTT 3 达门限",
         "from": 0,
         "to": 2,
-        "event": "4→8 MSS",
-        "cap": "继续增长到 ssthresh=8 MSS，转入拥塞避免阶段。这里的门限不是整个网络容量的硬保证。",
+        "event": "ACK→cwnd8",
+        "cap": "窗口达到慢开始阈值 ssthresh=8 MSS，转入拥塞避免。",
         "values": [
-          "cwnd8",
-          "转拥塞避免"
+          "cwnd=8",
+          "拥塞避免开始"
         ]
       },
       {
-        "tag": "加性增大",
+        "tag": "RTT 4",
         "from": 0,
         "to": 2,
-        "event": "8→9 MSS",
-        "cap": "拥塞避免阶段近似每 RTT 增加 1 MSS，而不是像慢开始那样指数翻倍。",
+        "event": "cwnd8→9",
+        "cap": "拥塞避免阶段近似每 RTT 增长 1 MSS，cwnd 从8变9。",
         "values": [
-          "cwnd9"
+          "cwnd=9",
+          "线性增长"
         ]
       },
       {
-        "tag": "继续线性增长",
+        "tag": "RTT 5",
         "from": 0,
         "to": 2,
-        "event": "9→10 MSS",
-        "cap": "下一 RTT 继续加性增大到10 MSS，真实实现按收到的 ACK 更新，图为按 RTT 聚合的教学示意。",
+        "event": "cwnd9→10",
+        "cap": "下一 RTT 继续加性增大，cwnd 到10 MSS。",
         "values": [
-          "cwnd10"
+          "cwnd=10"
         ]
       },
       {
-        "tag": "发生丢包",
+        "tag": "某报文段丢失",
+        "from": 1,
+        "to": 2,
+        "event": "失序到达",
+        "cap": "网络出现数据段丢失，后续段仍可到达接收端，使接收端重复发送相同累计 ACK。",
+        "values": [
+          "接收方缺失某字节区间"
+        ]
+      },
+      {
+        "tag": "重复 ACK 第1次",
+        "from": 2,
+        "to": 0,
+        "event": "DupACK #1",
+        "cap": "接收方检测到高序号数据到达，但缺口仍在，回相同的累计 ACK。发送方暂不以一个重复 ACK 认定快重传。",
+        "values": [
+          "dupACK=1"
+        ]
+      },
+      {
+        "tag": "重复 ACK 第2次",
+        "from": 2,
+        "to": 0,
+        "event": "DupACK #2",
+        "cap": "第二个重复 ACK 到达，仍未达到三次重复 ACK 的快重传条件。",
+        "values": [
+          "dupACK=2"
+        ]
+      },
+      {
+        "tag": "重复 ACK 第3次",
+        "from": 2,
+        "to": 0,
+        "event": "DupACK #3",
+        "cap": "收到第三个重复 ACK：经典 Reno 设置 ssthresh=max(FlightSize/2,2 MSS)，教学简化令 FlightSize=10 MSS，所以 ssthresh=5 MSS；立即重传缺失数据。",
+        "values": [
+          "ssthresh=5",
+          "快速重传",
+          "dupACK=3"
+        ]
+      },
+      {
+        "tag": "进入快恢复",
+        "from": 0,
+        "to": 2,
+        "event": "cwnd=ssthresh+3=8",
+        "cap": "经典 Reno 快恢复开始时临时令 cwnd=ssthresh+3×MSS=<b>8 MSS</b>，反映重复 ACK 所表示的已离开网络的数据。不能直接把整个快恢复过程画成 cwnd=5。",
+        "values": [
+          "cwnd=8(临时)",
+          "ssthresh=5"
+        ]
+      },
+      {
+        "tag": "重传分段获确认",
+        "from": 2,
+        "to": 0,
+        "event": "新的累计 ACK",
+        "cap": "假设收到对重传缺口的完整确认，Reno 退出快恢复，将 cwnd 收缩到 ssthresh=5 MSS。",
+        "values": [
+          "cwnd=5",
+          "退出快恢复"
+        ]
+      },
+      {
+        "tag": "再进入拥塞避免",
+        "from": 0,
+        "to": 2,
+        "event": "cwnd5→6",
+        "cap": "之后继续拥塞避免，按 RTT 近似每轮增长1 MSS。",
+        "values": [
+          "cwnd≈6",
+          "AIMD"
+        ]
+      },
+      {
+        "tag": "如果是 RTO 超时",
         "from": 1,
         "to": 0,
-        "event": "3 个重复 ACK",
-        "cap": "假设出现三个重复 ACK，Reno 判定可能有报文段丢失：触发快重传，ssthresh 约设为当前 cwnd 的一半。",
+        "event": "RTO 对照分支",
+        "cap": "另一个分支：若是重传超时而非三重复 ACK，传统 Reno 会重新慢开始，ssthresh 通常减半，cwnd 重设为较小值；这是对照分支，并非本次事件顺序中又发生一次超时。",
         "values": [
-          "ssthresh≈5",
-          "快重传"
-        ]
-      },
-      {
-        "tag": "快恢复",
-        "from": 0,
-        "to": 2,
-        "event": "重发缺失报文段",
-        "cap": "Reno 快恢复期间可使用临时膨胀的 cwnd 规则，收到重传数据的确认后退出快恢复，cwnd 回到门限附近。",
-        "values": [
-          "cwnd≈5",
-          "乘性减小"
-        ]
-      },
-      {
-        "tag": "重新拥塞避免",
-        "from": 0,
-        "to": 2,
-        "event": "cwnd线性增长",
-        "cap": "之后继续按拥塞避免方式增大 cwnd。三重复 ACK 与 RTO 超时是不同拥塞信号，后者经典算法通常更激进地降低窗口。",
-        "values": [
-          "AIMD",
-          "加性增、乘性减"
-        ]
-      },
-      {
-        "tag": "RTO 对照",
-        "from": 1,
-        "to": 0,
-        "event": "超时重传",
-        "cap": "若是重传超时，传统 Reno 会设较低 ssthresh，并把 cwnd 退回较小初始值再慢开始；不能把超时和三重复 ACK 的处理完全混为一谈。",
-        "values": [
-          "RTO→慢开始",
-          "示例模型非唯一实现"
+          "分支：RTO",
+          "重启慢开始"
         ]
       }
     ]
@@ -432,9 +497,10 @@ export const netScenariosC: NetScenario[] = [
   {
     "name": "net-dns-recursive",
     "actors": [
-      "浏览器",
+      "客户端",
       "递归解析器",
-      "根/TLD DNS",
+      "根 DNS",
+      "TLD .com",
       "权威 DNS"
     ],
     "steps": [
@@ -443,90 +509,122 @@ export const netScenariosC: NetScenario[] = [
         "from": 0,
         "to": 0,
         "event": "www.example.com",
-        "cap": "应用要连接 www.example.com，需要先得到对应的地址记录。先查看浏览器/操作系统缓存；这里假定没有缓存。",
+        "cap": "客户端需要解析 www.example.com，先查浏览器、系统和已有 DNS 缓存；本例假设没有命中。",
         "values": [
-          "需要 A/AAAA 记录"
+          "目标 www.example.com",
+          "请求 A 记录"
         ]
       },
       {
-        "tag": "递归请求",
+        "tag": "递归查询",
         "from": 0,
         "to": 1,
-        "event": "RD=1 Query",
-        "cap": "客户端把查询交给本地递归解析器，表示希望它代为解析并返回最终结果或失败；客户端一般不亲自逐级查询根服务器。",
+        "event": "RD=1 查询 A",
+        "cap": "客户端向递归解析器发送查询，期望获得最终答案或失败状态，不直接询问各级权威 DNS。",
         "values": [
-          "客户端→递归解析器",
+          "客户端只请求解析器",
           "RD=1"
         ]
       },
       {
-        "tag": "查本地缓存",
+        "tag": "本地缓存未命中",
         "from": 1,
         "to": 1,
-        "event": "缓存未命中",
-        "cap": "递归解析器检查缓存，若没有有效答案，会向上游 DNS 权威层级进行查询；在常见实现中，上游通常是迭代查询。",
+        "event": "Cache Miss",
+        "cap": "递归解析器检查正/负缓存；未命中后，开始向 DNS 树中的权威服务器迭代查询。",
         "values": [
-          "缓存 Miss"
+          "从缓存转为上游查询"
         ]
       },
       {
-        "tag": "查询根 DNS",
+        "tag": "问根 DNS",
         "from": 1,
         "to": 2,
-        "event": "询问 example.com",
-        "cap": "递归解析器向根域名服务器查询，根返回 .com 顶级域名服务器的转介信息，而不代替解析器完成整条链路。",
+        "event": "Q: www.example.com A",
+        "cap": "递归解析器询问根 DNS，根服务器通常不提供目标主机的 A 记录，而返回 .com TLD 的转介。",
         "values": [
-          "根返回 .com 引荐"
+          "根：权威于根区"
         ]
       },
       {
-        "tag": "查询 TLD",
-        "from": 1,
-        "to": 2,
-        "event": "向 .com 询问",
-        "cap": "解析器联系 .com TLD 服务器，得到 example.com 的权威服务器信息。",
+        "tag": "根返回转介",
+        "from": 2,
+        "to": 1,
+        "event": "Referral: .com NS",
+        "cap": "根 DNS 把 .com 顶级域服务器的 NS/Glue 等线索返回递归解析器。<b>根不会替它继续问 TLD</b>。",
         "values": [
-          "TLD 返回权威 NS"
+          "下一站 TLD"
         ]
       },
       {
-        "tag": "询问权威",
+        "tag": "问 TLD .com",
         "from": 1,
         "to": 3,
-        "event": "查询 www.example.com",
-        "cap": "递归解析器向权威 DNS 服务器查询最终记录，得到答复或相应的错误结果。",
+        "event": "Q: www.example.com A",
+        "cap": "递归解析器联系 .com 顶级域 DNS，继续查询 www.example.com 的地址记录。",
         "values": [
-          "权威返回 IP"
+          "向 .com 发 Query"
         ]
       },
       {
-        "tag": "缓存答案",
+        "tag": "TLD 返回转介",
+        "from": 3,
+        "to": 1,
+        "event": "Referral: example.com NS",
+        "cap": "TLD 返回 example.com 的权威 DNS 信息；递归解析器由此决定下一站。",
+        "values": [
+          "下一站 example.com 权威"
+        ]
+      },
+      {
+        "tag": "查询权威",
+        "from": 1,
+        "to": 4,
+        "event": "Q: www.example.com A",
+        "cap": "递归解析器对 example.com 权威服务器发送实际资源记录查询。",
+        "values": [
+          "权威服务器答复"
+        ]
+      },
+      {
+        "tag": "权威返回结果",
+        "from": 4,
+        "to": 1,
+        "event": "Answer: A / CNAME",
+        "cap": "假设存在地址记录，权威 DNS 返回最终 A 记录；如果是 CNAME 可能需要继续查询，若名称不存在可返回 NXDOMAIN。",
+        "values": [
+          "示例答案 203.0.113.10",
+          "文档示例地址"
+        ]
+      },
+      {
+        "tag": "缓存最终记录",
         "from": 1,
         "to": 1,
         "event": "按 TTL 缓存",
-        "cap": "递归解析器根据 DNS 资源记录 TTL 等规则缓存记录，以减少后续重复查询。",
+        "cap": "递归解析器按资源记录的 TTL 和相关缓存规则保存结果，后续有相同查询时可直接命中。",
         "values": [
-          "TTL 控制缓存"
+          "缓存 TTL 不会无限期保留"
         ]
       },
       {
-        "tag": "递归应答",
+        "tag": "回答客户端",
         "from": 1,
         "to": 0,
-        "event": "最终 A / AAAA",
-        "cap": "解析器把最终结果返回客户端；客户端只需发起一次递归请求，后续迭代转介由递归解析器处理。",
+        "event": "Response: 203.0.113.10",
+        "cap": "递归解析器将最终结果返回客户端；这体现<b>客户端—递归解析器</b>的递归请求和<b>解析器—权威层级</b>的迭代查询区别。",
         "values": [
-          "客户端收到记录"
+          "客户端获得地址"
         ]
       },
       {
-        "tag": "启动连接",
+        "tag": "应用建立连接",
         "from": 0,
         "to": 0,
-        "event": "访问目标地址",
-        "cap": "浏览器得到 IP 后可建立到目标的传输层连接。DNS 本身不负责建立网页 TCP/QUIC 连接。",
+        "event": "向目标 IP 连接",
+        "cap": "拿到 IP 地址后，浏览器选择目标地址并建立传输连接；这是 DNS 解析结束后的动作，不属于 DNS 协议内部步骤。",
         "values": [
-          "DNS 完成"
+          "DNS 已完成"
         ]
       }
     ]
@@ -536,89 +634,101 @@ export const netScenariosC: NetScenario[] = [
     "actors": [
       "迭代解析器",
       "根 DNS",
-      "TLD DNS",
+      "TLD .com",
       "权威 DNS"
     ],
     "steps": [
       {
-        "tag": "先问根服务器",
+        "tag": "迭代解析器准备",
         "from": 0,
-        "to": 1,
-        "event": "example.com A?",
-        "cap": "迭代查询的被询问服务器若不知道最终答案，可以返回下一层权威服务器的转介信息，而非替客户端继续查到底。",
+        "to": 0,
+        "event": "目标 www.example.com",
+        "cap": "假设迭代解析器没有缓存，准备沿 DNS 分层委派结构查找 www.example.com 的 A 记录。",
         "values": [
           "从根开始",
-          "根提供线索"
+          "RD=0（典型迭代）"
         ]
       },
       {
-        "tag": "收到根的转介",
+        "tag": "向根发送 Query",
+        "from": 0,
+        "to": 1,
+        "event": "Q: www.example.com A",
+        "cap": "迭代解析器向根 DNS 询问目标域名。根区通常不直接保存该主机地址记录。",
+        "values": [
+          "解析器→根"
+        ]
+      },
+      {
+        "tag": "根返回 .com 转介",
         "from": 1,
         "to": 0,
-        "event": "指向 .com",
-        "cap": "根域名服务器返回 .com 的 NS/附加地址等信息（转介）；解析器必须自己决定后续查哪个服务器。",
+        "event": "Referral .com NS",
+        "cap": "根 DNS 返回 .com TLD DNS 的权威线索；<b>根服务器没有继续向 .com 发请求</b>。",
         "values": [
-          "下一站=.com"
+          "根→解析器",
+          "转介不是最终 IP"
         ]
       },
       {
-        "tag": "查询 .com",
+        "tag": "向 .com 查询",
         "from": 0,
         "to": 2,
-        "event": "www.example.com A?",
-        "cap": "解析器依据根服务器的转介信息向 .com TLD DNS 发起查询。",
+        "event": "Q: www.example.com A",
+        "cap": "迭代解析器根据根给的线索，自己向 .com TLD DNS 发新请求。",
         "values": [
-          "迭代第2跳"
+          "解析器→TLD"
         ]
       },
       {
-        "tag": "收到权威线索",
+        "tag": "TLD 返回权威转介",
         "from": 2,
         "to": 0,
-        "event": "指向 example.com NS",
-        "cap": "TLD 返回 example.com 的权威服务器 NS 等信息，通常不是最终主机 A 记录。",
+        "event": "Referral example.com NS",
+        "cap": "TLD 返回 example.com 权威服务器信息；解析器需要再次发送请求。",
         "values": [
-          "下一站=权威"
+          "TLD→解析器"
         ]
       },
       {
-        "tag": "查询权威",
+        "tag": "向权威服务器查询",
         "from": 0,
         "to": 3,
-        "event": "www.example.com A?",
-        "cap": "解析器向该域的权威服务器查询具体记录。权威服务器按其配置答复。",
+        "event": "Q: www.example.com A",
+        "cap": "解析器向 example.com 的权威 DNS 查询主机地址。",
         "values": [
-          "迭代第3跳"
+          "解析器→权威"
         ]
       },
       {
-        "tag": "返回最终答案",
+        "tag": "权威返回答案",
         "from": 3,
         "to": 0,
-        "event": "A / AAAA",
-        "cap": "收到目标域名地址记录，迭代查询链结束；地址可能是多个，或存在 CNAME 等额外步骤。",
+        "event": "Answer: 203.0.113.10",
+        "cap": "假定权威 DNS 含有 A 记录，返回示例 IPv4 地址203.0.113.10。若返回 CNAME，需要额外解析。",
         "values": [
-          "解析结果可缓存"
+          "权威→解析器",
+          "最终地址"
         ]
       },
       {
-        "tag": "对照递归查询",
+        "tag": "存入缓存",
         "from": 0,
         "to": 0,
-        "event": "责任划分不同",
-        "cap": "迭代查询中每个被询问的服务器通常给结果或下一步线索，解析器继续询问；递归查询由被问解析器负责求完整答案。",
+        "event": "TTL 控制缓存",
+        "cap": "解析器按 TTL 保存结果，后续同类查询可以减少对权威服务器的访问。",
         "values": [
-          "区别是查找责任"
+          "缓存机制"
         ]
       },
       {
-        "tag": "考试提醒",
+        "tag": "对照递归",
         "from": 0,
         "to": 0,
-        "event": "别画成根继续问 TLD",
-        "cap": "正确的迭代示意是解析器分别与根、TLD、权威 DNS 通信，<b>不是根 DNS 替解析器去查询 TLD</b>。",
+        "event": "谁负责后续查询？",
+        "cap": "递归与迭代的本质区别是责任：递归查询由受询方负责求完整答案；迭代查询的受询方可给出转介，询问方再发下一跳请求。",
         "values": [
-          "根只返回转介"
+          "迭代：解析器连续发问"
         ]
       }
     ]
@@ -627,8 +737,8 @@ export const netScenariosC: NetScenario[] = [
     "name": "net-http",
     "actors": [
       "浏览器",
-      "递归 DNS",
-      "Web 服务器"
+      "DNS 解析器",
+      "HTTPS 服务器"
     ],
     "steps": [
       {
@@ -636,94 +746,161 @@ export const netScenariosC: NetScenario[] = [
         "from": 0,
         "to": 0,
         "event": "https://example.com/",
-        "cap": "浏览器解析 URL 的 scheme、host、路径等，并检查缓存、已有连接等。此处以新的 HTTPS 访问为例。",
+        "cap": "浏览器解析 URL 的 scheme=https、host=example.com、路径=/，检查已有缓存与可复用连接。此例演示<b>首次建立的 HTTPS/1.1 TCP 连接</b>。",
         "values": [
-          "scheme=https",
-          "host=example.com"
+          "HTTP/1.1 over TLS",
+          "不演示 HTTP/3"
         ]
       },
       {
-        "tag": "解析域名",
+        "tag": "DNS 请求",
         "from": 0,
         "to": 1,
-        "event": "DNS Query",
-        "cap": "如果缓存没有可用地址，浏览器/操作系统发起 DNS 查询，得到服务器的 A/AAAA 等记录。",
+        "event": "A/AAAA Query",
+        "cap": "浏览器通过系统解析器请求 example.com 的 A/AAAA 记录。这里假设没有缓存命中。",
         "values": [
-          "DNS→IP 地址"
+          "名称→地址"
         ]
       },
       {
-        "tag": "取得 IP",
+        "tag": "DNS 响应",
         "from": 1,
         "to": 0,
-        "event": "DNS Answer",
-        "cap": "浏览器得到服务端地址后选择目标 IP，准备建立连接。",
+        "event": "A/AAAA Answer",
+        "cap": "DNS 查询返回服务器地址，例如文档用途 IP 203.0.113.10。浏览器根据连接策略选择目标地址。",
         "values": [
-          "服务器地址已知"
+          "DNS 完成"
         ]
       },
       {
-        "tag": "建立传输连接",
+        "tag": "TCP 第一次握手",
         "from": 0,
         "to": 2,
-        "event": "TCP SYN/SYN+ACK/ACK",
-        "cap": "以经典 HTTP/1.1 over TLS 为例，先建立 TCP 连接。<b>HTTP/3 使用 QUIC/UDP</b>，不执行相同的 TCP 三次握手。",
+        "event": "SYN seq=x",
+        "cap": "浏览器向服务器443端口发送 SYN（seq=x），开始建立 TCP 连接，客户端进入 SYN-SENT。",
         "values": [
-          "TCP 连接",
-          "HTTP/1.1 场景"
+          "SYN 占用1序号"
         ]
       },
       {
-        "tag": "TLS 握手",
+        "tag": "TCP 第二次握手",
+        "from": 2,
+        "to": 0,
+        "event": "SYN+ACK seq=y ack=x+1",
+        "cap": "服务器确认客户端 SYN 并发回自己的 SYN：ack=x+1，seq=y。服务器处于 SYN-RECEIVED。",
+        "values": [
+          "SYN+ACK"
+        ]
+      },
+      {
+        "tag": "TCP 第三次握手",
         "from": 0,
         "to": 2,
-        "event": "ClientHello 等",
-        "cap": "HTTPS 建立 TLS 安全会话，协商密钥和身份验证，随后应用数据以加密方式传输。",
+        "event": "ACK ack=y+1",
+        "cap": "浏览器确认服务器的 SYN，发送 ACK ack=y+1；服务器收到后完成 TCP 连接建立。",
         "values": [
-          "TLS 建立",
-          "验证证书"
+          "TCP ESTABLISHED"
         ]
       },
       {
-        "tag": "发送 HTTP 请求",
+        "tag": "TLS ClientHello",
+        "from": 0,
+        "to": 2,
+        "event": "ClientHello",
+        "cap": "浏览器发送 TLS ClientHello，提出可用协议版本、密码套件、SNI、ALPN 等信息（具体取决于 TLS 版本）。",
+        "values": [
+          "开始 TLS 握手"
+        ]
+      },
+      {
+        "tag": "TLS ServerHello",
+        "from": 2,
+        "to": 0,
+        "event": "ServerHello + 证书等",
+        "cap": "服务器返回协商参数及身份相关材料；客户端验证服务器证书、域名和信任链，双方派生会话密钥。",
+        "values": [
+          "身份验证与密钥协商"
+        ]
+      },
+      {
+        "tag": "TLS 握手完成",
+        "from": 0,
+        "to": 2,
+        "event": "Finished",
+        "cap": "TLS 双方完成握手确认后，HTTP 请求和响应通过加密的 TLS 通道传输。这里不展开 TLS 1.3 0-RTT 等优化。",
+        "values": [
+          "TLS 应用数据可发送"
+        ]
+      },
+      {
+        "tag": "发送 HTTP GET",
         "from": 0,
         "to": 2,
         "event": "GET / HTTP/1.1",
-        "cap": "浏览器发送包含方法、路径、Host、请求头等的 HTTP 请求，可能有 Cookie 与其他首部。",
+        "cap": "浏览器发送 GET / HTTP/1.1，请求头含 Host: example.com 等。HTTP 是应用层协议，TCP/TLS 承载其字节流。",
         "values": [
-          "GET /",
-          "Host:example.com"
+          "请求行 + 首部",
+          "请求正文可选"
         ]
       },
       {
-        "tag": "返回 HTTP 响应",
+        "tag": "服务器发送状态与首部",
         "from": 2,
         "to": 0,
-        "event": "200 OK + HTML",
-        "cap": "服务器返回状态行/头部和响应正文；浏览器还可能处理重定向、压缩和缓存指令。",
+        "event": "HTTP/1.1 200 OK",
+        "cap": "服务器先发送响应状态行和响应首部，如 Content-Type: text/html、Content-Length 或 Transfer-Encoding。",
         "values": [
-          "HTTP 200",
-          "Content-Type:text/html"
+          "响应状态与头部"
         ]
       },
       {
-        "tag": "解析并加载资源",
+        "tag": "服务器发送 HTML",
+        "from": 2,
+        "to": 0,
+        "event": "HTML 响应正文",
+        "cap": "浏览器接收 HTML 字节流；网络层、传输层的分段与应用层的 HTTP 报文边界不是一回事。",
+        "values": [
+          "HTML 已收到"
+        ]
+      },
+      {
+        "tag": "解析 HTML",
         "from": 0,
         "to": 0,
-        "event": "HTML→CSS/JS/图片",
-        "cap": "浏览器解析 HTML，构建 DOM，并根据需要继续请求 CSS、JavaScript、字体、图片等资源。",
+        "event": "DOM + 资源发现",
+        "cap": "浏览器解析 HTML 形成 DOM，同时发现 CSS、JavaScript、图片等资源 URL，按缓存和优先级继续安排请求。",
         "values": [
-          "渲染管线启动"
+          "发现后续资源"
         ]
       },
       {
-        "tag": "最终显示页面",
+        "tag": "请求 CSS/JS/图片",
+        "from": 0,
+        "to": 2,
+        "event": "GET 资源",
+        "cap": "浏览器通过已有连接或新的/复用连接请求额外资源，响应可能并行、复用，具体由 HTTP 版本与浏览器策略决定。",
+        "values": [
+          "获取静态资源"
+        ]
+      },
+      {
+        "tag": "计算样式与布局",
+        "from": 0,
+        "to": 0,
+        "event": "CSSOM / Layout",
+        "cap": "加载和处理样式、脚本，计算元素样式、页面布局，并安排绘制；实际浏览器渲染可能交错进行。",
+        "values": [
+          "样式→布局→绘制"
+        ]
+      },
+      {
+        "tag": "显示页面",
         "from": 0,
         "to": 0,
         "event": "页面可见",
-        "cap": "页面经历样式计算、布局、绘制等阶段后显示；浏览器还可继续执行脚本与异步网络请求。",
+        "cap": "页面首次呈现后，浏览器还可能继续加载资源、运行脚本和发起网络请求；不能把“显示”误认为所有网络活动结束。",
         "values": [
-          "DNS、TCP/TLS、HTTP、渲染"
+          "本次演示完成"
         ]
       }
     ]
@@ -732,20 +909,19 @@ export const netScenariosC: NetScenario[] = [
     "name": "net-email",
     "actors": [
       "发件人 MUA",
-      "发送 SMTP 服务器",
-      "接收邮件服务器",
+      "发送端 SMTP",
+      "收件端 SMTP",
       "收件人 MUA"
     ],
     "steps": [
       {
-        "tag": "撰写邮件",
+        "tag": "准备邮件内容",
         "from": 0,
         "to": 0,
-        "event": "收件地址+正文",
-        "cap": "用户代理（MUA）整理收件人、主题、正文与附件，附件等非文本内容通常通过 MIME 编码/封装。",
+        "event": "From/To/Subject/MIME",
+        "cap": "发件人用邮件用户代理（MUA）准备邮件，包括信封收件人与邮件头（To/From/Subject），以及 MIME 正文和附件。信封与邮件头是不同概念。",
         "values": [
-          "From/To/Subject",
-          "MIME 附件"
+          "邮件封装"
         ]
       },
       {
@@ -753,70 +929,140 @@ export const netScenariosC: NetScenario[] = [
         "from": 0,
         "to": 1,
         "event": "SMTP Submission",
-        "cap": "发件客户端使用邮件提交服务把邮件交给自己的邮件服务器；通常通过带身份验证的提交端口并结合 TLS。",
+        "cap": "发件客户端通过邮件提交服务向自己的邮件服务器发送邮件，常使用认证和 TLS；提交与服务器间的 SMTP 转发应区分。",
         "values": [
-          "客户端→提交服务"
+          "MUA→MSA",
+          "通常提交端口587"
         ]
       },
       {
-        "tag": "查询接收域 MX",
+        "tag": "发送端查 MX",
         "from": 1,
         "to": 1,
-        "event": "DNS MX 查询",
-        "cap": "发送方邮件服务器查询收件人域名的 MX 记录，决定优先向哪个接收服务器投递；具体还需按 DNS 和 SMTP 规则处理。",
+        "event": "DNS MX Lookup",
+        "cap": "邮件服务器查询收件人域的 MX 记录，选出目标邮件交换主机；如果没有 MX 可适用特定 fallback 规则。",
         "values": [
-          "DNS MX 记录"
+          "收件域 MX"
         ]
       },
       {
-        "tag": "服务器间投递",
+        "tag": "建立 SMTP 会话",
         "from": 1,
         "to": 2,
-        "event": "SMTP MAIL/RCPT/DATA",
-        "cap": "发送服务器通过 SMTP 与接收方邮件服务器通信；常见的 SMTP 命令包含 MAIL FROM、RCPT TO、DATA。",
+        "event": "TCP + EHLO",
+        "cap": "发送端联系收件服务器，建立 TCP 会话并使用 EHLO 声明客户端能力；是否使用 STARTTLS 取决于双方策略与支持。",
         "values": [
-          "SMTP 负责发送"
+          "SMTP 建立会话"
         ]
       },
       {
-        "tag": "接收服务器存储",
+        "tag": "MAIL FROM",
+        "from": 1,
+        "to": 2,
+        "event": "MAIL FROM:<sender>",
+        "cap": "发送 SMTP 信封发件人（MAIL FROM），用于传输和退信处理；它不一定与可见邮件头 From 相同。",
+        "values": [
+          "信封发件人"
+        ]
+      },
+      {
+        "tag": "RCPT TO",
+        "from": 1,
+        "to": 2,
+        "event": "RCPT TO:<recipient>",
+        "cap": "发送一个或多个 SMTP 信封收件人 RCPT TO，收件服务器可逐个接受或拒绝。",
+        "values": [
+          "信封收件人"
+        ]
+      },
+      {
+        "tag": "发送 DATA 命令",
+        "from": 1,
+        "to": 2,
+        "event": "DATA",
+        "cap": "SMTP 客户端先发送 DATA 命令请求进入邮件数据模式，而不是马上把整封邮件直接发出。",
+        "values": [
+          "等待服务器 354"
+        ]
+      },
+      {
+        "tag": "服务器允许发送",
+        "from": 2,
+        "to": 1,
+        "event": "354 Start mail input",
+        "cap": "SMTP 服务器返回 354，表示可以开始输入邮件内容。",
+        "values": [
+          "DATA阶段"
+        ]
+      },
+      {
+        "tag": "传输邮件数据",
+        "from": 1,
+        "to": 2,
+        "event": "邮件头 + 空行 + 正文",
+        "cap": "客户端发送 RFC 5322 格式的邮件头、空行和邮件正文（包括 MIME 附件结构），使用 SMTP 透明传输规则。",
+        "values": [
+          "头部/正文/MIME"
+        ]
+      },
+      {
+        "tag": "发送结束标记",
+        "from": 1,
+        "to": 2,
+        "event": "<CRLF>.<CRLF>",
+        "cap": "SMTP DATA 传输以仅一个句点的行结束（&lt;CRLF&gt;.&lt;CRLF&gt;）；正文若有以点开头的行，需要点透明传输处理。",
+        "values": [
+          "DATA消息结束"
+        ]
+      },
+      {
+        "tag": "接收端确认",
+        "from": 2,
+        "to": 1,
+        "event": "250 Accepted",
+        "cap": "接收服务器在成功接收邮件内容后返回 250 等应答。<b>SMTP 250 不保证最终送达用户收件箱</b>，后续仍可能过滤/转投。",
+        "values": [
+          "SMTP 事务完成"
+        ]
+      },
+      {
+        "tag": "投递本地邮箱",
         "from": 2,
         "to": 2,
-        "event": "邮箱存储",
-        "cap": "接收服务器接受并存储投递内容，可能触发垃圾邮件过滤、反病毒和其他投递策略。",
+        "event": "MDA / Mailbox",
+        "cap": "接收端执行垃圾邮件过滤、规则路由、投递到用户邮箱等步骤；是否存入收件箱取决于服务器策略。",
         "values": [
-          "投递可被策略拒绝"
+          "邮箱存储"
         ]
       },
       {
-        "tag": "收件人查看",
+        "tag": "收件人查询邮件",
         "from": 3,
         "to": 2,
         "event": "IMAP / POP3",
-        "cap": "收件人使用 IMAP 同步邮件夹，或使用 POP3 下载邮件，具体取决于客户端与服务配置。",
+        "cap": "收件用户代理通过 IMAP 同步文件夹、读取邮件，或用 POP3 下载邮件；SMTP 不负责用户读取邮箱。",
         "values": [
-          "IMAP 同步",
-          "POP3 下载"
+          "IMAP 同步/POP3下载"
         ]
       },
       {
-        "tag": "邮件显示",
+        "tag": "邮箱响应",
         "from": 2,
         "to": 3,
-        "event": "返回邮件内容",
-        "cap": "邮件内容到达收件人的客户端，显示正文与附件。SMTP 主要负责提交/传输，IMAP/POP3 主要负责读取。",
+        "event": "邮件内容 + 附件",
+        "cap": "收件客户端获得邮件正文、头部和附件并呈现给用户；附件通常在 MIME 结构中。",
         "values": [
-          "投递与读取区分"
+          "邮件可见"
         ]
       },
       {
-        "tag": "安全补充",
+        "tag": "安全协议各有作用",
         "from": 0,
-        "to": 3,
-        "event": "TLS、SPF/DKIM/DMARC",
-        "cap": "TLS 提供传输加密机制，SPF/DKIM/DMARC 主要用于发件域身份验证与策略，不表示邮件内容一定端到端加密。",
+        "to": 0,
+        "event": "TLS / SPF / DKIM / DMARC",
+        "cap": "TLS 保护相应的传输连接；SPF/DKIM/DMARC 处理发件身份和域策略，不代表邮件获得了端到端加密。",
         "values": [
-          "不同安全机制各司其职"
+          "防伪冒与加密不能混淆"
         ]
       }
     ]

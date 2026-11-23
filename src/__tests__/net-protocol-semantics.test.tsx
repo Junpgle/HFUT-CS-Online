@@ -1,0 +1,144 @@
+/** 计网动画语义回归：比较报文次序和计算结果，而不只验证“有几张帧”。 */
+import { describe, expect, it } from 'vitest';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { networkRegistry, networkScenarios } from '../components/demos/network-registry';
+import { calculateIpv4Fragments } from '../components/demos/net-detail';
+
+const named=(name:string)=>{
+  const scenario=networkScenarios.find((entry)=>entry.name===name);
+  if(!scenario)throw new Error('缺少场景：'+name);
+  return scenario;
+};
+const steps=(name:string)=>named(name).steps;
+const tags=(name:string)=>steps(name).map((step)=>step.tag);
+const events=(name:string)=>steps(name).map((step)=>step.event);
+const at=(names:string[],needle:string)=>names.findIndex((name)=>name.includes(needle));
+const ordered=(name:string,needles:string[])=>{
+  const words=tags(name);
+  const indices=needles.map((needle)=>at(words,needle));
+  expect(indices.every((i)=>i>=0),name+' 缺少步骤 '+needles).toBe(true);
+  for(let i=1;i<indices.length;i++) expect(indices[i],name+' 步骤顺序异常').toBeGreaterThan(indices[i-1]);
+};
+
+describe('计网动画的协议时序与状态',()=>{
+  it('PPP 双向 LCP 配置完成后才认证/NCP，终止用 Terminate-Ack',()=>{
+    ordered('net-ppp',['A 发配置请求','B 建议改参数','A 重新请求','B 接受 A 方向',
+      'B 发自己的请求','A 接受 B 方向','LCP Opened',
+      'CHAP Challenge','CHAP Response','认证成功','IPCP 请求','IPCP 应答','B 发 IPCP 请求','A 回 IPCP 确认','IPCP Opened',
+      '传输 IP 数据报','LCP Echo-Request','LCP Echo-Reply','请求终止','确认终止']);
+    expect(events('net-ppp').join('|')).toContain('Terminate-Ack');
+    expect(events('net-ppp').join('|')).not.toContain('Terminate-Reply');
+  });
+  it('DNS 根/TLD/权威为不同泳道，递归与迭代都画出查询及转介的返回路径',()=>{
+    const rec=named('net-dns-recursive');
+    expect(rec.actors).toEqual(['客户端','递归解析器','根 DNS','TLD .com','权威 DNS']);
+    const pairs=rec.steps.map((x)=>[x.from,x.to]);
+    expect(pairs).toEqual(expect.arrayContaining([[1,2],[2,1],[1,3],[3,1],[1,4],[4,1],[1,0]]));
+    const itr=named('net-dns-iterative');
+    expect(itr.steps.map((x)=>[x.from,x.to])).toEqual(expect.arrayContaining([[0,1],[1,0],[0,2],[2,0],[0,3],[3,0]]));
+    expect(itr.actors).toHaveLength(4);
+  });
+  it('VLAN10 到 VLAN20 只能经三层网关处理，不能直接跨二层广播域',()=>{
+    const scenario=named('net-vlan');
+    expect(scenario.actors.some((x)=>x.includes('三层网关'))).toBe(true);
+    ordered('net-vlan',['Access 接入口','Trunk 跨交换机','二层隔离','A 判断跨网段',
+      '发给三层网关','路由与新帧','进入 VLAN20','交付给 B']);
+    const routing=scenario.steps.find((x)=>x.tag==='路由与新帧')!;
+    expect(scenario.actors[routing.to]).toContain('三层网关');
+  });
+  it('TCP Reno 具有三个独立重复 ACK 和完整快恢复窗口而非直接减半',()=>{
+    ordered('net-tcp-congestion',['重复 ACK 第1次','重复 ACK 第2次','重复 ACK 第3次',
+      '进入快恢复','重传分段获确认','再进入拥塞避免','如果是 RTO 超时']);
+    const cap=steps('net-tcp-congestion').find((x)=>x.tag==='进入快恢复')!.cap;
+    expect(cap).toContain('cwnd=ssthresh+3×MSS');
+    expect(cap).toContain('8 MSS');
+    expect(steps('net-tcp-congestion').find((x)=>x.tag==='重传分段获确认')!.values).toContain('cwnd=5');
+  });
+  it('停止等待 ACK 丢失必须先重传重复帧，再去重与再次 ACK',()=>{
+    ordered('net-stop-wait',['A 发送帧1','B 收到帧1','B 回 ACK1',
+      'A 等待超时','超时重发帧1','B 识别重复','B 再次发送 ACK1','A 收到重发确认']);
+  });
+  it('GBN 丢失1以后丢弃2、3并重传1、2、3，SR单独确认2、3且只重传1',()=>{
+    ordered('net-gbn',['发送 DATA1','发送 DATA2','R 发送重复 ACK0',
+      '发送 DATA3','等待超时','GBN 重传 DATA1','GBN 重传 DATA2','GBN 重传 DATA3',
+      '累计 ACK3']);
+    ordered('net-sr',['发送 DATA1','发送 DATA2','独立 ACK2','发送 DATA3','独立 ACK3',
+      '只有 DATA1 超时','重传 DATA1','R 回 ACK1']);
+    expect(steps('net-sr').filter((x)=>x.tag.startsWith('重传 DATA'))).toHaveLength(1);
+    expect(steps('net-gbn').filter((x)=>x.tag.startsWith('GBN 重传 DATA'))).toHaveLength(3);
+  });
+  it('HTTP/1.1 over TLS 展开为三次握手、TLS 与请求/响应，不再一帧包含全部握手',()=>{
+    ordered('net-http',['TCP 第一次握手','TCP 第二次握手','TCP 第三次握手',
+      'TLS ClientHello','TLS ServerHello','TLS 握手完成',
+      '发送 HTTP GET','服务器发送状态与首部','服务器发送 HTML','解析 HTML',
+      '请求 CSS/JS/图片','计算样式与布局','显示页面']);
+  });
+  it('位填充至少五步连续1、插0、接收端去0；异步转义分别说明7E、7D、04',()=>{
+    ordered('net-bit-stuff',['读到第 1 个 1','读到第 2 个 1','读到第 3 个 1',
+      '读到第 4 个 1','读到第 5 个 1','插入零位','接收端找到 5 个 1',
+      '删除插入 0','异步 PPP 处理 0x7E','异步 PPP 处理 0x7D',
+      '异步 PPP 处理控制字节','接收端逆转义']);
+  });
+});
+
+describe('计网计算题的可重复核验结果',()=>{
+  it('IPv4 8200B 载荷、MTU1500/IP首部20 ⇒ 六片，偏移与 MF 全正确',()=>{
+    const f=calculateIpv4Fragments(8200,1500,20);
+    expect(f.map(x=>x.payload)).toEqual([1480,1480,1480,1480,1480,800]);
+    expect(f.map(x=>x.total)).toEqual([1500,1500,1500,1500,1500,820]);
+    expect(f.map(x=>x.offset)).toEqual([0,185,370,555,740,925]);
+    expect(f.map(x=>x.mf)).toEqual([1,1,1,1,1,0]);
+    expect(f.reduce((sum,x)=>sum+x.payload,0)).toBe(8200);
+    expect(f.every(x=>x.total<=1500)).toBe(true);
+    expect(f.slice(0,-1).every(x=>x.payload%8===0)).toBe(true);
+    expect(()=>calculateIpv4Fragments(50,20,20)).toThrow();
+  });
+  it('CRC 发送端余数 1110，接收端逐位除得0000',()=>{
+    const crc=steps('net-crc');
+    expect(crc.filter(x=>x.tag.startsWith('发送端：'))).toHaveLength(10);
+    expect(crc.filter(x=>x.tag.startsWith('接收端：'))).toHaveLength(10);
+    const div=(word:string,g:string)=>{
+      const a=word.split('');
+      for(let i=0;i<=a.length-g.length;i++){
+        if(a[i]==='1') for(let j=0;j<g.length;j++)a[i+j]=a[i+j]===g[j]?'0':'1';
+      }
+      return a.slice(-(g.length-1)).join('');
+    };
+    const original='1101011011',divisor='10011';
+    expect(div(original+'0000',divisor)).toBe('1110');
+    expect(div(original+'1110',divisor)).toBe('0000');
+    expect(crc.at(-1)?.cap).toContain('0000');
+  });
+  it('子网 140.252.20.68/27 的网络号、广播号和可用主机数',()=>{
+    const ip=68,mask=224;
+    const network=ip&mask;
+    expect(network).toBe(64);
+    expect(network|(~mask&255)).toBe(95);
+    expect(2**5-2).toBe(30);
+    expect(steps('net-subnet').some(x=>x.cap.includes('140.252.20.64/27'))).toBe(true);
+  });
+  it('RIP 样例来自 C 的候选距离先加1，同下一跳更新即使变差',()=>{
+    const r=steps('net-rip');
+    expect(r.some(x=>x.cap.includes('4+1=5'))).toBe(true);
+    expect(r.some(x=>x.cap.includes('下一跳就是 C'))).toBe(true);
+    expect(r.some(x=>x.values?.some(v=>v.includes('N2=5')))).toBe(true);
+  });
+});
+describe('全部动画的 SVG 逐帧可渲染性',()=>{
+  it('所有 31 个动画每一帧均能 SSR，不出现 NaN/undefined 或空画面',()=>{
+    expect(networkScenarios).toHaveLength(31);
+    for(const scenario of networkScenarios){
+      const demo=networkRegistry[scenario.name];
+      const View=demo.View;
+      const frames=demo.build();
+      expect(frames.length).toBe(scenario.steps.length);
+      for(const frame of frames){
+        const html=renderToStaticMarkup(<svg viewBox={'0 0 '+demo.w+' '+demo.h}><View frame={frame}/></svg>);
+        expect(html,scenario.name).toContain('<svg');
+        expect(html,scenario.name).toContain('<text');
+        expect(html,scenario.name).not.toContain('NaN');
+        expect(html,scenario.name).not.toContain('undefined');
+      }
+    }
+  });
+});

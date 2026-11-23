@@ -1,5 +1,6 @@
 /** 计网分步协议演示的公共 SVG 视图。播放、暂停、步进、拖拽与全屏复用 DemoPlayer。 */
 import type { DemoDef, DemoFrame } from './types';
+import { NetDetail } from './net-detail';
 
 export interface NetStep {
   tag: string;
@@ -20,7 +21,7 @@ interface Frame extends DemoFrame {
   index: number;
   scenario: NetScenario;
 }
-const W=760, H=438;
+const W=760, H=605;
 const ink='var(--ink)', muted='var(--ink-2)', subtle='var(--ink-3)',
   accent='var(--deck-accent)', panel='var(--panel-solid)', wash='var(--panel-2)', line='var(--hairline)';
 const center=(i:number,n:number)=> n===1 ? W/2 : 95+(W-190)*i/(n-1);
@@ -48,13 +49,14 @@ function View({frame:f}:{frame:Frame}){
   return <g>
     <defs><marker id={marker} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill={accent}/></marker></defs>
-    <rect x={12} y={12} width={736} height={416} rx={12} fill={wash} fillOpacity={0.32} stroke={line}/>
+    <rect x={12} y={12} width={736} height={302} rx={12} fill={wash} fillOpacity={0.32} stroke={line}/>
+    {label(29,56,'消息时序 · 最近最多 6 步（拖动下方进度条可查看全部）',{size:10,color:subtle})}
     {label(29,35,here.tag,{size:16,bold:true,color:accent})}
     {label(731,35,'步骤 '+(f.index+1)+' / '+steps.length,{size:12,color:subtle,anchor:'end'})}
     {actors.map((name,i)=><g key={i}>
       <rect x={xs[i]-Math.min(68,252/actors.length)} y={49} width={Math.min(136,504/actors.length)} height={37} rx={8}
         fill={i===here.from||i===here.to?wash:panel} stroke={i===here.from||i===here.to?accent:line}/>
-      {label(xs[i],72,name,{size:actors.length>=5?11:13,bold:i===here.from||i===here.to,anchor:'middle'})}
+      {label(xs[i],72,compact(name,actors.length>=5?8:actors.length===4?13:20),{size:actors.length>=5?11:13,bold:i===here.from||i===here.to,anchor:'middle'})}
       <line x1={xs[i]} y1={92} x2={xs[i]} y2={299} stroke={line} strokeDasharray="5 5"/>
     </g>)}
     {shown.map((step,j)=>{
@@ -72,22 +74,7 @@ function View({frame:f}:{frame:Frame}){
           {size:11,color:isCurrent?ink:muted,bold:isCurrent,anchor:'middle'})}
       </g>;
     })}
-    <line x1={28} y1={320} x2={730} y2={320} stroke={line}/>
-    {label(29,343,'本步状态 / 关键量',{size:12,color:subtle,bold:true})}
-    {(here.values??[]).slice(0,3).map((v,i)=>{
-      const width=224,x=28+i*234;
-      return <g key={i}>
-        <rect x={x} y={352} width={width} height={39} rx={8} fill={panel} stroke={line}/>
-        {label(x+9,376,compact(v,19),{size:v.length>27?10:12,color:i===0?accent:ink,bold:i===0})}
-      </g>;
-    })}
-    {here.bits&&<g>
-      {label(29,408,here.bits.label,{size:11,color:subtle})}
-      <text x={232} y={410} fontFamily="var(--font-mono), monospace" fontSize={16} fill={accent} fontWeight={650}>
-        {here.bits.value}
-      </text>
-    </g>}
-    {!here.bits&&label(29,413,'使用「下一步 / 上一步」观察消息与状态如何变化；下方有本步完整解释。',{size:11,color:subtle})}
+    <NetDetail scenario={f.scenario} step={here} index={f.index}/>
   </g>;
 }
 export function makeNetDemo(scenario:NetScenario):DemoDef<Frame>{
