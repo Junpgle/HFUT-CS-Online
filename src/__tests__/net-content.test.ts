@@ -34,51 +34,74 @@ const EXPECT_PAPER_COUNT: Record<string, number> = {
   'paper-2024': 29,
 };
 
-describe('2025 第1章远程联机系统的局限性', () => {
-  it('保留课件第21页的两项主要问题，并区分第19页线路利用率及第二阶段特点', () => {
-    const history = netChapters[0].sections.find((section) => section.id === 'sec-ch1-history');
-    const html = history?.blocks.filter((block) => block.type === 'html')
-      .map((block) => block.html).join('') ?? '';
-    expect(html).toContain('<h3 id="sec-ch1-history-remote-issues">远程联机系统存在的主要问题</h3>');
-    expect(html).toContain('远程联机系统主要存在以下两个问题');
-    expect(html).toContain('主计算机负荷重，响应时间可能过长');
-    expect(html).toContain('单机系统的可靠性较低，主机故障可能导致整个系统瘫痪');
-    expect(html).toContain('线路利用率低、费用较高');
-    expect(html).toContain('线路利用率低');
-    expect(html).toContain('向多机互联发展');
-    expect(html).toContain('具有独立处理能力的多台计算机互联');
-  });
-});
+/** 对照第1章形成与发展部分，防止“仅列阶段名称”导致要点缺漏。 */
+describe('第1章：计算机网络发展的四个阶段', () => {
+  const chapter = netChapters[0];
+  const html = chapter.sections.find((section) => section.id === 'sec-ch1-history')?.blocks
+    .filter((block) => block.type === 'html').map((block) => block.html).join('') ?? '';
 
-describe('2025 第1章订票系统术语勘误', () => {
-  it('保留 2025 课件 SABRAI 原文并明确指出正确名称 SABRE', () => {
-    const history = netChapters[0].sections.find((section) => section.id === 'sec-ch1-history');
-    const html = history?.blocks.filter((block) => block.type === 'html')
-      .map((block) => block.html).join('') ?? '';
+  it('四阶段独立成节，顺序与目录锚点一致', () => {
+    const stages = [
+      ['sec-ch1-history-remote', '第一阶段：远程联机系统'],
+      ['sec-ch1-history-multi', '第二阶段：多机互联网络'],
+      ['sec-ch1-history-standard', '第三阶段：标准化网络'],
+      ['sec-ch1-history-fast', '第四阶段：互联与高速网络'],
+    ] as const;
+    expect(chapter.lede).toContain('远程联机、多机互联、标准化网络、互联与高速网络');
+    expect(html).toContain('<h3 id="sec-ch1-history-phases">计算机网络发展的四个阶段</h3>');
+    let previous = -1;
+    for (const [id, heading] of stages) {
+      const pos = html.indexOf(`<h3 id="${id}">${heading}</h3>`);
+      expect(pos, heading).toBeGreaterThan(previous);
+      expect(chapter.toc.some((item) => item.id === id && item.level === 3), heading).toBe(true);
+      previous = pos;
+    }
+  });
+
+  it('远程联机包括连接方式、FEP/Modem/集中器、系统实例及主要问题', () => {
+    for (const term of [
+      '点到点专线方式', '多点或分支连接方式',
+      '前端处理机（FEP', '调制解调器（Modem', '集中器（Concentrator',
+      'SABRE 飞机订票系统', '23 个地点的 75 个远程集中器',
+      '主计算机负荷重，响应时间可能过长',
+      '单机系统的可靠性较低，主机故障可能导致整个系统瘫痪',
+      '线路利用率低、费用较高',
+    ]) expect(html).toContain(term);
+  });
+
+  it('多机互联包括 ARPANET 五项特点、四方面贡献与第一阶段区别', () => {
+    for (const term of [
+      'ARPANET（阿帕网）', '资源共享', '分散控制', '分组交换',
+      '采用专门的通信控制处理机', '采用分层网络协议',
+      '网络定义与分类', '资源子网', '通信子网',
+      '分组交换方法', '分层网络体系结构与协议体系',
+      '通信双方的能力不同', '网络功能的侧重点不同',
+    ]) expect(html).toContain(term);
+  });
+
+  it('标准化包括厂商不兼容问题、SNA/DNA/DCA、OSI/TCP-IP 两条发展脉络', () => {
+    for (const term of [
+      '缺乏兼容性', '系统网络体系结构 SNA', '数字网络体系结构 DNA',
+      '分布式通信体系结构 DCA', '1977 年', '1984 年',
+      '开放系统互连参考模型（OSI/RM）', '1983 年', 'TCP/IP',
+    ]) expect(html).toContain(term);
+  });
+
+  it('互联与高速网络包括 Internet、高速化双特征、综合业务与 ISDN', () => {
+    for (const term of [
+      'Internet', '宽频带', '低时延', '光纤',
+      '网络业务综合化', '语音、数据、图像、视频',
+      '综合业务数字网（ISDN）', '智能化网络',
+    ]) expect(html).toContain(term);
+  });
+
+  it('SABRAI 勘误保留，但正文无课件版本和页码编辑说明', () => {
     expect(html).toContain('名称勘误｜SABRE 订票系统');
     expect(html).toContain('SABRAI');
     expect(html).toContain('正确英文名称是 <strong>SABRE</strong>');
     expect(html).toContain('Semi-Automated Business Research Environment');
-  });
-});
-
-describe('2025 第1章网络发展阶段：四阶段归纳', () => {
-  it('第1章导语、历史表与阶段详述均使用课件第10页四阶段', () => {
-    const ch = netChapters[0];
-    const html = ch.sections.find((section) => section.id === 'sec-ch1-history')?.blocks
-      .filter((block) => block.type === 'html').map((block) => block.html).join('') ?? '';
-    expect(ch.lede).toContain('四个发展阶段');
-    expect(html).toContain('<h3 id="sec-ch1-history-phases">计算机网络发展的四个阶段</h3>');
-    expect(html).toContain('计算机网络的发展可以归纳为');
-    for (const phase of [
-      '第一阶段：远程联机阶段', '第二阶段：多机互联网络阶段',
-      '第三阶段：标准化网络阶段', '第四阶段：互联与高速网络阶段',
-    ]) expect(html).toContain(phase);
-    expect(html).toContain('各阶段的时间范围可能交叠');
-    expect(html).not.toContain('计算机网络的发展经历了三个阶段');
-    // 编辑用的课件页码和版本标识不应出现在面向读者的复习正文中。
-    const visible = [ch.lede, ...ch.toc.map((item) => item.text),
-      ...ch.sections.flatMap((section) => section.blocks)
+    const visible = [chapter.lede, ...chapter.toc.map((item) => item.text),
+      ...chapter.sections.flatMap((section) => section.blocks)
         .filter((block) => block.type === 'html').map((block) => block.html)].join('\n');
     expect(visible).not.toMatch(/2025\s*版?课件|课件第\s*\d+|PPT\s*第\s*\d+|旧版网站|不是课件原题/);
   });
