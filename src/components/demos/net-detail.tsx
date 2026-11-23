@@ -236,10 +236,162 @@ function FlowPanel({index}:{index:number}){
   </g>;
 }
 
+
+function PacketPipelinePanel({index}:{index:number}){
+  const hubs=['主机 A','R1','R2','主机 B'], xs=[104,282,460,638];
+  const pos=[
+    index<2?0:index<6?1:index<7?2:3,
+    index<4?0:index<8?1:index<11?2:3,
+    index<5?0:index<9?1:index<12?2:3
+  ];
+  return <g>
+    {tx(35,28,'分组交换 · P1、P2、P3 在每跳存储转发并流水线并行',13,ink,true)}
+    {hubs.map((name,i)=>tx(xs[i],62,name,13,ink,true,'middle'))}
+    {[0,1,2].map((p)=>{
+      const y=96+p*61;
+      return <g key={p} opacity={index<1?0.18:p===1&&index<4?0.30:p===2&&index<5?0.30:1}>
+        <line x1={xs[0]} y1={y} x2={xs[3]} y2={y} stroke={line} strokeDasharray="5 5" strokeWidth={2}/>
+        {xs.map((x,i)=><circle key={i} cx={x} cy={y} r={6} fill={i<=pos[p]?accent:soft} stroke={i<=pos[p]?accent:line}/>)}
+        <rect x={xs[pos[p]]-37} y={y-19} width={74} height={38} rx={8} fill={soft} stroke={accent} strokeWidth={2}/>
+        {tx(xs[pos[p]],y+5,'P'+(p+1),14,accent,true,'middle')}
+        {tx(37,y+5,'分组'+(p+1),12,muted)}
+      </g>;
+    })}
+    {tx(36,239,index>=12?'所有分组抵达后，仍需上层按其协议语义处理交付。':
+      '每个分组在不同链路上的进度可重叠；不意味着链路或路由器没有排队时延。',11,muted)}
+  </g>;
+}
+function CsmaPanel({index}:{index:number}){
+  const collision=index>=3&&index<=7,backoff=index>=8&&index<=11,successful=index>=12&&index<=13;
+  return <g>
+    {tx(35,28,'经典共享半双工总线 · 载波侦听 / 冲突检测 / 退避',13,ink,true)}
+    <line x1={80} y1={126} x2={682} y2={126} stroke={collision?warn:accent} strokeWidth={7} strokeLinecap="round"/>
+    {[[88,'A'],[674,'B']].map(([cx,name])=><g key={String(name)}>
+      <circle cx={Number(cx)} cy={126} r={20} fill={soft} stroke={accent} strokeWidth={2}/>
+      {tx(Number(cx),132,String(name),15,ink,true,'middle')}
+    </g>)}
+    {collision? <g>
+      <path d="M 255 104 L 277 148 L 299 105 L 321 148 L 343 104 L 365 148 L 387 104 L 409 148 L 431 104 L 453 148 L 475 104"
+        fill="none" stroke={warn} strokeWidth={3}/>
+      {tx(380,88,'碰撞！信号互相干扰',14,warn,true,'middle')}
+    </g>:successful?tx(380,106,index===12?'A 先成功发送':'B 在 A 发送结束后再试',14,accent,true,'middle'):
+      tx(380,106,backoff?'退避期间双方停止发送正常数据':'两端各自监听共享介质',13,muted,true,'middle')}
+    {rect(34,181,690,46)}
+    {tx(51,209,collision?'A、B 停止正常发送并发 Jam，让所有站点检测冲突':
+      backoff?'示例退避：A 选择 K=0，B 选择 K=1；继续载波侦听':
+      index>=14?'条件分支：若再次发生碰撞，随机退避窗口扩大':
+      '载波侦听不能消除传播时延造成的“双方都认为空闲”',12,ink)}
+    {tx(35,247,'争用时隙=512 bit times（经典以太网）；全双工交换式以太网无 CSMA/CD 碰撞。',11,muted)}
+  </g>;
+}
+function DelayPanel({index}:{index:number}){
+  const cells=[['处理','d_proc','本地首部处理'],['排队','d_queue','等待出口'],['发送','L/R = 1ms','1000bit÷1Mbit/s'],['传播','d/v = 1ms','200km÷2×10⁸m/s']];
+  const hot=index===1?0:index===2||index===7?1:index===3?2:index===4||index===5?3:-1;
+  return <g>
+    {tx(35,28,'四类时延不是同一回事：发送使比特上链路，传播使信号走距离',13,ink,true)}
+    {cells.map(([name,formula,note],i)=>{
+      const x=35+i*176;
+      return <g key={i}>
+        {rect(x,54,163,126,hot===i?'var(--panel-2)':soft,hot===i?accent:line,9)}
+        {tx(x+13,82,name,17,hot===i?accent:ink,true)}
+        {tx(x+13,115,formula,14,ink,true)}
+        {tx(x+13,147,note,11,muted)}
+        {i<3&&tx(x+167,119,'→',16,accent,true,'middle')}
+      </g>;
+    })}
+    {tx(35,210,'示例已知：发送时延 1ms，传播时延 1ms；处理与排队未给出，不能编造固定数值。',12,muted)}
+    {tx(35,236,'首比特抵达 ≠ 最后一比特抵达；两种时延可在时间线上重叠。',12,accent,true)}
+  </g>;
+}
+function EncapsulationPanel({index}:{index:number}){
+  const header=['MAC帧头','IP首部','TCP首部','应用数据 M','FCS'],colors=[accent,muted,'var(--c-warn)',ok,accent];
+  let active:number[];
+  if(index===0||index===8)active=[3];
+  else if(index===1||index===7)active=[2,3];
+  else if(index===2||index===5)active=[1,2,3];
+  else active=[0,1,2,3,4];
+  const widths=[119,110,115,205,74],start=36;
+  let x=start;
+  return <g>
+    {tx(35,28,'封装与解封装：按本层职责添加/移除首部',13,ink,true)}
+    {header.map((name,i)=>{
+      const xx=x;x+=widths[i];const visible=active.includes(i);
+      return <g key={i} opacity={visible?1:0.20}>
+        {rect(xx,74,widths[i]-4,77,visible?'var(--panel-2)':soft,visible?colors[i]:line,6)}
+        {tx(xx+(widths[i]-4)/2,114,name,13,visible?colors[i]:quiet,true,'middle')}
+      </g>;
+    })}
+    {tx(35,184,index===3?'发送本跳以太网帧，帧头包含本跳源/目的 MAC。':
+      index===4?'物理层把已经组成的帧转换为实际电、光或无线信号。':
+      index===5?'路由器去掉旧链路帧头，检查 IP 首部和路由表。':
+      index===6?'路由器在下一跳重新加链路层首尾，MAC 地址随本跳更新。':
+      index===7?'目标端逐层解封装，按协议号/端口把段交给目标进程。':
+      index===8?'应用最终获得原数据 M，数据链路层只负责相邻节点的帧传送。':
+      '本步高亮的是当前协议数据单元已经包含的字段。',12,ink)}
+    {tx(35,232,'教学简化为以太网 + IPv4 + TCP：UDP、IPv6、其他链路协议的首部格式会不同。',11,muted)}
+  </g>;
+}
+function NyquistPanel({index}:{index:number}){
+  const rows=[
+    ['信道带宽','B = 3000 Hz','题设'],
+    ['理想最高码元率','2B = 6000 Baud','奈奎斯特'],
+    ['V=2 数据率','6000 × log₂2 = 6000 bit/s','二进制码元'],
+    ['V=4 数据率','6000 × log₂4 = 12000 bit/s','四进制码元'],
+    ['功率比换算','30 dB → 10³ = 1000','先把 dB 转线性'],
+    ['有噪声容量','3000 log₂(1001) ≈ 29901 bit/s','香农公式']
+  ];
+  return <g>
+    {tx(35,29,'奈奎斯特限制码元速率；香农限制有噪声信道容量',13,ink,true)}
+    {rows.map(([name,formula,note],i)=>{
+      const thresholds=[0,1,1,2,4,5];
+      const y=51+i*30,shown=index>=thresholds[i];
+      return <g key={i} opacity={shown?1:0.3}>
+        {shown&&index===i&&rect(32,y-17,690,27,'var(--panel-2)',accent,4)}
+        {tx(39,y,name,12,ink,true)}
+        {tx(246,y,formula,13,shown?accent:quiet,shown)}
+        {tx(571,y,note,11,muted)}
+      </g>;
+    })}
+    {tx(35,247,'实际传输速率还受调制方案、误码率目标、编码与实现开销等约束。',11,muted)}
+  </g>;
+}
+function MultiplexPanel({index}:{index:number}){
+  const kind=index===1?'FDM':index===2||index===3?'TDM':index===4?'STDM':
+    index===5?'WDM':index===6?'CDM':index===7?'解复用':'准备复用';
+  const rows=kind==='FDM'||kind==='WDM'?[
+    ['频带/波长 1','用户 A'],
+    ['频带/波长 2','用户 B'],
+    ['频带/波长 3','其他业务']]:
+    kind==='TDM'||kind==='STDM'?[
+      ['时隙 1','用户 A'],
+      ['时隙 2','用户 B'],
+      ['时隙 3',kind==='STDM'?'按需分配':'用户 A']]:
+    [['码片序列 1','用户 A'],['码片序列 2','用户 B'],['共享载体','按码相关解扩']];
+  return <g>
+    {tx(35,29,'复用的划分维度：'+kind,15,accent,true)}
+    {rows.map(([lane,owner],i)=>{const y=57+i*57;
+      return <g key={i}>
+        {rect(37,y,684,43)}
+        {rect(40,y+3,80,37,'var(--panel-2)',i%2===0?accent:warn,5)}
+        {tx(80,y+27,String(i+1),14,i%2===0?accent:warn,true,'middle')}
+        {tx(148,y+27,lane,13,ink,true)}
+        {tx(477,y+27,owner,13,ink)}
+      </g>;
+    })}
+    {tx(35,247,'FDM：频率　TDM：固定时隙　STDM：动态分配　WDM：光波长　CDM：扩频码。',11,muted)}
+  </g>;
+}
+
 export function NetDetail({scenario,step,index}:{scenario:NetScenario;step:NetStep;index:number}){
   const name=scenario.name;
   let specialized=null;
-  if(name==='net-crc')specialized=<CrcPanel index={index} step={step}/>;
+  if(name==='net-packet-switch')specialized=<PacketPipelinePanel index={index}/>;
+  else if(name==='net-csmacd')specialized=<CsmaPanel index={index}/>;
+  else if(name==='net-delay')specialized=<DelayPanel index={index}/>;
+  else if(name==='net-encapsulation')specialized=<EncapsulationPanel index={index}/>;
+  else if(name==='net-nyquist')specialized=<NyquistPanel index={index}/>;
+  else if(name==='net-multiplex')specialized=<MultiplexPanel index={index}/>;
+  else if(name==='net-crc')specialized=<CrcPanel index={index} step={step}/>;
   else if(name==='net-fragment')specialized=<FragmentPanel index={index}/>;
   else if(name==='net-subnet')specialized=<SubnetPanel index={index}/>;
   else if(name==='net-gbn'||name==='net-sr')specialized=<WindowPanel index={index} kind={name==='net-gbn'?'gbn':'sr'}/>;
