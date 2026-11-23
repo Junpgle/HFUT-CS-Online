@@ -82,6 +82,18 @@ describe('计网动画的协议时序与状态',()=>{
 });
 
 describe('计网计算题的可重复核验结果',()=>{
+  it('IPv4 不需要分片时不能强行按8字节向下取整，非末片才要求8字节对齐',()=>{
+    expect(calculateIpv4Fragments(1481,1501,20)).toEqual([
+      {index:1,payload:1481,total:1501,offset:0,mf:0},
+    ]);
+    const fragments=calculateIpv4Fragments(1482,1501,20);
+    expect(fragments.map(f=>f.payload)).toEqual([1480,2]);
+    expect(fragments.map(f=>f.offset)).toEqual([0,185]);
+    expect(fragments.map(f=>f.mf)).toEqual([1,0]);
+    expect(calculateIpv4Fragments(1479,1500,20)).toHaveLength(1);
+    expect(()=>calculateIpv4Fragments(65516,1500,20)).toThrow();
+    expect(()=>calculateIpv4Fragments(100,1500,21)).toThrow();
+  });
   it('IPv4 8200B 载荷、MTU1500/IP首部20 ⇒ 六片，偏移与 MF 全正确',()=>{
     const f=calculateIpv4Fragments(8200,1500,20);
     expect(f.map(x=>x.payload)).toEqual([1480,1480,1480,1480,1480,800]);

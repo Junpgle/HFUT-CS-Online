@@ -10,7 +10,7 @@ import { netStaticFigures } from '../content/net/net-figures';
 describe('计算机网络可视化覆盖',()=>{
   it('35 个动画有唯一名称、各步有解释且已注册',()=>{
     expect(networkDemoNames).toHaveLength(35);
-    expect(new Set(networkDemoNames).size).toBe(31);
+    expect(new Set(networkDemoNames).size).toBe(35); // 35 个动画名称实际全部唯一，原断言31会导致测试误报
     expect(networkDemoNames.some((name)=>Boolean(registry[name]))).toBe(false);
     expect(netDemoPlacements).toHaveLength(35);
     expect(netStaticFigures).toHaveLength(32);

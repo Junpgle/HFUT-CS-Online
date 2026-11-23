@@ -4,8 +4,16 @@ import type { NetScenario, NetStep } from './net-base';
 export interface Ipv4Fragment { index: number; payload: number; total: number; offset: number; mf: 0|1 }
 export function calculateIpv4Fragments(payload:number,mtu:number,ipHeader:number):Ipv4Fragment[]{
   if(!Number.isInteger(payload)||payload<=0||!Number.isInteger(mtu)||!Number.isInteger(ipHeader)
-    || ipHeader<20||mtu<=ipHeader+7) throw new RangeError('无效的 IPv4 分片参数');
+    ||ipHeader<20||ipHeader>60||ipHeader%4!==0||mtu<=ipHeader||payload+ipHeader>65535){
+    throw new RangeError('无效的 IPv4 分片参数');
+  }
+  // 原始 IP 数据报完整装得下就无需分片，即使 MTU-header 不是 8 的倍数也是如此。
+  if(payload+ipHeader<=mtu){
+    return [{index:1,payload,total:payload+ipHeader,offset:0,mf:0}];
+  }
+  // 分片时，除最后一片外，载荷才必须按 8 字节对齐。
   const max=8*Math.floor((mtu-ipHeader)/8);
+  if(max<8)throw new RangeError('MTU 太小，无法容纳非末片的 8 字节载荷');
   const result:Ipv4Fragment[]=[];
   let sent=0;
   while(sent<payload){

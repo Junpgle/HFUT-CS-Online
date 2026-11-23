@@ -501,9 +501,10 @@ const ch: NetChapter = {
           </div>
 
           <p>
-            根据 OSI/RM 模型，数据链路层应该向网络层提供可靠的传输服务，因此在数据链路层的传输协议中要求有帧编号、确认帧、重传机制等（如 HDLC）。
-            随着通信线路通信质量的提升，特别是光纤媒介的大规模普及，数据链路层协议取消了可靠传输服务，使数据链路层协议变得更加简单——
-            可靠传输和流量控制等任务均交予上层协议（如运输层 TCP 协议）完成。
+            课件以 HDLC 和 PPP 对比链路层的可靠交付机制：部分链路层协议可使用帧序号、确认和重传提供逐跳可靠交付，
+            而基础 PPP 侧重于成帧、透明传输、协议复用和检错，<strong>并不提供基于帧确认与重传的可靠交付保证</strong>。
+            <strong>OSI/RM 不要求所有数据链路层协议必须可靠，也不存在后来所有链路层协议一律取消可靠交付的规则</strong>：
+            是否在链路层采用 ARQ、流量控制由技术条件和具体协议决定，例如 IEEE 802.11 无线 MAC 可使用帧确认与重传。
             点对点协议（Point to Point Protocol，<strong>PPP</strong>）就是一个比 HDLC 协议简单的数据链路层协议：
             一个得到广泛应用的广域网及接入网中的数据链路层协议。课件称其“<strong>面向字符</strong>”，
             对应异步链路采用字节填充的场景；但 PPP 还支持同步链路上的比特填充，不能认为它只支持字符导向的封装；
@@ -533,28 +534,31 @@ const ch: NetChapter = {
             </thead>
             <tbody>
               <tr><td>F（标志）</td><td>1 字节</td><td>0x7E</td><td>标志一个帧的开始或结束。连续 2 个帧之间只需一个标志字段；如果出现连续两个标志字段，表示这是一个空帧</td></tr>
-              <tr><td>A（地址）</td><td>1 字节</td><td>0xFF</td><td>固定不变，没有实际意义</td></tr>
-              <tr><td>C（控制）</td><td>1 字节</td><td>0x03</td><td>固定不变，没有实际意义</td></tr>
+              <tr><td>A（地址）</td><td>默认 1 字节</td><td>0xFF</td><td>典型 HDLC-like PPP 帧的默认地址字段；通过 LCP 地址/控制域压缩（ACFC）可省略 A 与 C 字段</td></tr>
+              <tr><td>C（控制）</td><td>默认 1 字节</td><td>0x03</td><td>典型 HDLC-like PPP 帧的默认控制字段；协商 ACFC 后可与地址字段一并省略</td></tr>
               <tr>
-                <td>协议</td><td>2 字节</td><td>—</td>
+                <td>协议</td><td>默认 2 字节，可压缩为 1 字节</td><td>—</td>
                 <td>0x0021 是 IPv4 数据报；0xC021 是 LCP；0x8021 是 IPCP（NCP 的一种，而非所有 NCP 的统一代码）；0xC023 是 PAP；0xC025 是 LQR；0xC223 是 CHAP</td>
               </tr>
-              <tr><td>信息部分</td><td>≤1500 字节</td><td>—</td><td>不超过 1500 字节，不足 1500 字节时填充</td></tr>
+              <tr><td>信息部分</td><td>0 个或多个字节，默认 MRU 1500 字节</td><td>—</td><td>RFC 1661 定义的信息字段是<strong>变长</strong>的，默认最大接收单元 MRU 为 1500 字节（信息及可选填充合计），协商后可调整；<strong>短帧不需要自动填充至 1500 字节</strong>，不能混用以太网 46 字节最小载荷规则</td></tr>
               <tr><td>FCS</td><td>默认 2 字节，可用 4 字节</td><td>CRC 码</td><td>通常使用 16 位 FCS；RFC 1662 还定义了可协商使用的 32 位 FCS</td></tr>
             </tbody>
           </table>
-          <p class="muted">标准对照：RFC 1662 规定 PPP 默认使用 16 位 FCS，也定义了 32 位 FCS；
-            同步链路与异步链路采用不同的透明传输方式。表中保留的 1500 字节历史表述另见下方 RFC 1661 勘误。</p>
+          <p class="muted">标准对照：PPP 的 16 位 FCS 为默认值，RFC 1662 也定义 32 位 FCS。RFC 1661 的协议字段压缩（PFC）
+            与地址/控制字段压缩（ACFC）均需协商，基础帧格式不等于全部实现都固定携带两个额外字节；
+            1500 字节是默认 MRU 而非固定帧长（不包含协议字段），且不同物理链路的透明传输方式可能不同。</p>
           <p><strong>PPP 协议的透明传输</strong>：</p>
           <ul>
             <li>
-              <strong>同步方式（SONET/SDH 链路）</strong>：采用零比特填充方法（和 HDLC 的做法一样，硬件完成比特填充）——
-              发送端只要发现有 5 个连续的 1，则立即填入一个 0；接收端对帧中的比特流进行扫描，每当发现 5 个连续 1 时，就把这 5 个连续 1 后的一个 0 删除。
+              <strong>比特同步链路上的 HDLC-like PPP（RFC 1662）</strong>：采用零比特填充方法——
+              发送端在帧内容中每出现连续 5 个 1 就插入一个 0；接收端在相应位置删除插入的 0。
+              <strong>但不能把 SONET/SDH 一概归入这一实现方式</strong>：RFC 2615 的 PPP over SONET/SDH
+              视物理传送为八位组同步链路，采用字节填充并进行扰码处理，不等于在比特同步链路上使用零比特填充。
             </li>
             <li>
               <strong>异步方式</strong>：使用一种特殊的<strong>字符填充法</strong>——将信息字段中出现的每个 0x7E 字节转变成 2 字节序列 (0x7D, 0x5E)；
               若信息字段中出现一个 0x7D 的字节，则将其转变成 2 字节序列 (0x7D, 0x5D)；
-              若信息字段中出现 ASCII 码的控制字符（即数值小于 0x20 的字符），则在该字符前面加入一个 0x7D 字节，同时将该字符改为与 0x20 异或后的编码（如 0x04 改为 0x24）。
+              对于 ACCM 指定需要转义的控制字符（缺省 ACCM 中包含 0x00～0x1F），在该字符前面加入 0x7D，并对原字节按位异或 0x20（如 0x04→0x24）；<strong>并非所有链路在协商后都无条件转义全部控制字符</strong>。
             </li>
           </ul>
           ${pppStuffingFigure}
@@ -574,7 +578,7 @@ const ch: NetChapter = {
           <p>
             链路配置报文：<strong>Config-Request</strong>（代码 0x01，启用链路以及配置请求报文，链路两端结点均可根据需要主动发出）、
             <strong>Config-Ack</strong>（0x02，接受请求应答）、<strong>Config-Nak</strong>（0x03，部分拒绝请求应答）、
-            <strong>Config-Reject</strong>（0x04，全部拒绝请求应答）。LCP 的配置选项都是一些 TLV（Type、Length、Value）组，
+            <strong>Config-Reject</strong>（0x04，仅列出无法识别或明确不可协商的选项，不代表拒绝整份请求）。LCP 的配置选项都是一些 TLV（Type、Length、Value）组，
             只要不超过 MTU，一个 LCP 报文可以携带多个 TLV 组。
             LCP 配置选项包括：<strong>最大接收单元 MRU</strong>（通知对方可以接收的最大数据包长度）、
             <strong>异步控制字符映射 ACCM</strong>（通知对方哪些控制字符需要转义）、<strong>认证协议</strong>（协商认证协议，默认不认证）、
@@ -589,7 +593,9 @@ const ch: NetChapter = {
           <p>
             LCP 协商过程：发送 LCP Config-Request 的一方向另一方提出自己需要的选项；接收方根据自身情况选择 Config-Ack
             （能识别并接受全部请求项目）、Config-Nak（能识别全部请求并只接受部分配置参数，发送自己认可的配置参数）、
-            Config-Reject（无法识别所有配置，携带请求报文中全部配置参数）之一进行应答。
+            Config-Reject（只列出请求中不认识或不可协商的选项，保留其他可接受选项）之一进行应答。
+            具体来说，Configure-Ack 需要确认请求中的<strong>全部选项及值</strong>，Configure-Nak 指出可协商但值不接受的选项并建议可接受值，
+            Configure-Reject 仅拒绝无法协商的选项，<strong>都不能把“部分选项不接受”理解成“整份请求全部拒绝”</strong>（RFC 1661 第 5.2—5.4 节）。
           </p>
           ${pppConfigFigure}
           <div class="callout tip">
