@@ -398,6 +398,22 @@ describe('第五轮计网核验：ADSL DMT、运输层与网页访问', () => {
   });
 });
 
+describe('第六轮计网核验：BGP 与 IDRP 路由机制', () => {
+  const chapterHtml = (number: number) => netChapters[number - 1].sections
+    .flatMap((s) => s.blocks).filter((b) => b.type === 'html').map((b) => b.html).join('');
+  it('IDRP 与 BGP 都是路径矢量而不是链路状态', () => {
+    const html = chapterHtml(6);
+    expect(html).toContain('路径矢量（Path Vector）域间路由协议');
+    expect(html).toContain('AS_PATH 主要表示路由通告经过的自治系统序列');
+    expect(html).toContain('收到的 AS_PATH 包含<strong>自身 AS 号</strong>');
+  });
+  it('2024试卷BGP解释与正文一致', () => {
+    const paper = netPapers.find((p) => p.id === 'paper-2024')!;
+    expect(paper.questions.find((q) => q.id === 'p3-s19')?.explanation).toContain('路径矢量（Path Vector）协议');
+    expect(paper.questions.find((q) => q.id === 'p3-e4')?.answer).toContain('利用 AS_PATH 等属性');
+  });
+});
+
 describe('计网试卷离线进度数据健壮性', () => {
   it('localStorage 保存无效 JSON/null/数组时不崩溃，过滤错误的成绩状态', () => {
     const original = localStorage.getItem(NET_PRACTICE_STORE_KEY);

@@ -316,18 +316,21 @@ const ch: NetChapter = {
               也是一种具体的基于距离向量的协议——通过在邻居 AS 之间周期性交换路由信息获得通往其他 AS 的最佳路径，现已被 BGP 协议替代；
             </li>
             <li><strong>边界网关协议 BGP</strong>（Border Gateway Protocol）；</li>
-            <li><strong>域间路由选择协议 IDRP</strong>（Inter-Domain Routing Protocol）：属于 OSI/RM 的基于链路状态的路由选择协议。</li>
+            <li><strong>域间路由选择协议 IDRP</strong>（Inter-Domain Routing Protocol）：属于 ISO/OSI 体系的<strong>路径矢量（Path Vector）域间路由协议</strong>，
+              并非链路状态协议。RFC 1322 将 IDRP 和 BGP 一起列为路径矢量协议的例子。</li>
           </ul>
           <p>
-            <strong>BGP 协议</strong>：一个自治域的外部网关协议，是不同自治域间的路由协议。
-            BGP 采用<strong>改进型的 D-V 算法</strong>，在相邻 AS 间交换网络可达性信息，并据此进行路由回路检测和基于性能优先和策略约束的路由决策。
-            技术特点：路由表中记录到达目的地的<strong>确切路由</strong>而不是「距离」，从而解决无穷计算问题；支持策略路由。
+            <strong>BGP 协议</strong>：自治系统（AS）之间交换网络可达性信息的外部网关协议，属于<strong>路径矢量（Path Vector）协议</strong>。
+            课件所谓“改进型 D-V 算法”可帮助理解它与距离向量协议的历史联系，但 BGP 不按 RIP 式单纯跳数或性能指标求最短路：
+            它交换包含 <strong>AS_PATH、NEXT_HOP</strong> 等属性的路由通告，并根据本地路由策略等条件选择路径。
+            <strong>AS_PATH 主要表示路由通告经过的自治系统序列，不是每一台路由器的精确逐跳转发路径</strong>；
+            检查自身 AS 号是否出现在 AS_PATH 中有助于避免域间路由通告环路（RFC 4271），也不代表数据平面永远不会出现短暂环路。
           </p>
           <p>BGP 协议特点：</p>
           <ul>
             <li>采用面向连接的传输协议作为传输工具，有可靠性保障；BGP 的对等体之间是逻辑上的连通而不一定物理直接邻居；</li>
             <li>路由更新时只发送更新的路由信息，从而大大减少了对带宽的占用，适用于在 Internet 上传播大量的路由信息；</li>
-            <li>基于 D-V 路由协议并进行了优化，在设计上就避免了环路的发生——AS 之间转发时，只有携带的 AS_Path 信息标记与途经的 AS 不同时才允许通过，否则就被丢弃，从而避免了自治域间产生环路；</li>
+            <li>基于路径矢量机制，在传播 UPDATE 路由通告时维护 AS_PATH；当路由器发现收到的 AS_PATH 包含<strong>自身 AS 号</strong>，通常拒绝该路由以抑制 AS 级路由环路。这里说的是<strong>路由通告与选路机制</strong>，不是给每个转发的数据报附加 AS_PATH；</li>
             <li>有丰富的路由策略，能够对路由实现灵活的过滤和选择；</li>
             <li>易于扩展，能够适应网络新的发展（IPv4 单/组播、VPNv4 单/组播等）。</li>
           </ul>

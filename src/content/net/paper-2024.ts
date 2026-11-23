@@ -214,7 +214,7 @@ const questions: PracticeQuestion[] = [
       'BGP 协议只在边界路由器上运行',
     ],
     answer: 'C',
-    explanation: 'BGP 是不同自治域（AS）间的外部网关协议，在相邻 AS 之间交换网络可达性信息（C 对）。BGP 采用<strong>改进型的 D-V 算法</strong>（路径矢量），并非朴素的距离矢量（B 不准确）；它是域间协议而非域内协议（A 错）；BGP 对等体之间是逻辑连通、不一定物理直接相邻（D 错）。',
+    explanation: 'BGP 是不同自治域（AS）间的外部网关协议，在相邻 AS 之间交换网络可达性信息（C 对）。BGP 是<strong>路径矢量（Path Vector）协议</strong>，与距离向量算法有历史联系，但并非 RIP 那样仅依据跳数更新的距离矢量算法（B 不准确）；它是域间协议而非域内协议（A 错）；BGP 对等体之间是逻辑连通、不一定物理直接相邻（D 错）。',
     tags: [{ deck: 5, sec: 'sec-ch5-protocol-h2', text: 'BGP 协议' }],
   },
   {
@@ -302,7 +302,7 @@ const questions: PracticeQuestion[] = [
     <p><strong>控制平面</strong>：负责「怎么建立路由表」——与相邻路由器交换路由信息，运行路由选择协议计算和生成路由表（决定分组从哪个端口转发）。</p>
     <ul>
       <li>域内（内部网关协议 IGP）：<strong>RIP</strong>（D-V 算法，基于跳数、UDP 520 端口）、<strong>OSPF</strong>（链路状态算法，Dijkstra 最短路径）、内部网关协议等；</li>
-      <li>域间（外部网关协议）：<strong>BGP</strong>（改进型 D-V/路径矢量，在 AS 之间交换可达性信息）。</li>
+      <li>域间（外部网关协议）：<strong>BGP</strong>（路径矢量，利用 AS_PATH 等属性交换 AS 之间的网络可达性信息并执行策略路由）。</li>
     </ul>
     <p><strong>数据平面</strong>：负责「怎么转发分组」——对到达的每个 IP 分组，提取目的地址、计算/匹配网络前缀，查路由表执行最长前缀匹配，把分组从对应的最佳输出端口（下一跳）转发出去。</p>
     <p>数据平面使用转发表执行 IPv4 分组转发，包括 TTL 检查、下一跳确定与链路层封装；转发前可能需要利用 ARP 解析下一跳链路层地址。
