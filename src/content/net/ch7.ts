@@ -23,16 +23,22 @@ const ch: NetChapter = {
     { id: 'sec-ch7-dns-h3', text: '域名解析过程', level: 3 },
     { id: 'sec-ch7-dns-h4', text: 'DNS 的报文结构', level: 3 },
     { id: 'sec-ch7-dns-h5', text: 'UDP 还是 TCP', level: 3 },
-    { id: 'sec-ch7-email', text: '3. 电子邮件协议', level: 2 },
+    { id: 'sec-ch7-ftp', text: '3. 文件传送协议 FTP', level: 2 },
+    { id: 'sec-ch7-ftp-h1', text: 'FTP 与 NFS 文件访问模式', level: 3 },
+    { id: 'sec-ch7-ftp-h2', text: '控制连接、数据连接与端口', level: 3 },
+    { id: 'sec-ch7-ftp-h3', text: '主动/被动模式与安全边界', level: 3 },
+    { id: 'sec-ch7-email', text: '4. 电子邮件协议', level: 2 },
     { id: 'sec-ch7-email-h1', text: '电子邮件协议概述', level: 3 },
     { id: 'sec-ch7-email-h2', text: '简单邮件传输协议 SMTP', level: 3 },
     { id: 'sec-ch7-email-h3', text: '邮件读取协议 POP3 与 IMAP', level: 3 },
-    { id: 'sec-ch7-http', text: '4. 万维网和 HTTP 协议', level: 2 },
+    { id: 'sec-ch7-http', text: '5. 万维网和 HTTP 协议', level: 2 },
     { id: 'sec-ch7-http-h1', text: '万维网概述与 URL', level: 3 },
     { id: 'sec-ch7-http-h2', text: '超文本传送协议 HTTP', level: 3 },
     { id: 'sec-ch7-http-h3', text: 'HTTP 的报文结构', level: 3 },
     { id: 'sec-ch7-http-h4', text: '万维网的文档 HTML', level: 3 },
-    { id: 'sec-ch7-http-h5', text: '发展潮流：HTTP/3', level: 3 },
+    { id: 'sec-ch7-http-h6', text: '动态文档、CGI 与活动文档', level: 3 },
+    { id: 'sec-ch7-http-h7', text: '搜索引擎与 PageRank', level: 3 },
+    { id: 'sec-ch7-http-h5', text: '发展潮流：HTTP/3（补充）', level: 3 },
   ],
   sections: [
     {
@@ -132,7 +138,8 @@ const ch: NetChapter = {
           </table>
           <p>
             <strong>TCP 服务</strong>：面向连接的服务（全双工）；可靠的数据传送服务（无差错、按适当顺序交付所有发送的数据）；
-            拥塞控制机制（当发送方和接收方之间的网络出现拥塞时 TCP 会抑制发送进程）；安全套接字层 SSL 提供安全性服务。
+            拥塞控制机制（网络拥塞时抑制发送速率）；在 TCP 之上可使用 <strong>TLS</strong> 对应用数据进行加密与认证，
+            <strong>TLS 不是 TCP 自身提供的安全服务</strong>；SSL 为早期历史称呼，现代安全连接不应部署已弃用的 SSL 版本。
             <strong>UDP 服务</strong>：提供最小服务；无连接；不可靠数据传送服务。在 TCP/IP 的传输层协议中不提供吞吐量和定时服务。
           </p>
           <p>TCP/IP 协议簇提供了一些常用的公共应用层协议：域名解析协议、电子邮件协议、文件传输协议、远程访问协议、超文本传输协议、会话发起协议。</p>
@@ -154,16 +161,18 @@ const ch: NetChapter = {
           </p>
           <h3 id="sec-ch7-dns-h1">域名系统概述</h3>
           <p>
-            <strong>域名及域名结构</strong>：通过采用<strong>层次结构</strong>的命名方法确保域名的唯一性，从而可以唯一地指明某个域名对应的主机的 IP 地址。
+            <strong>域名及域名结构</strong>：DNS 用层次结构组织命名空间，便于管理委派和资源记录查询；<strong>域名与 IP 地址并不是严格的一对一关系</strong>：
+            一个域名可以对应多条 A/AAAA 记录（即多个 IP 地址），一个 IP 地址也可关联多个域名，域名还可对应 MX、TXT 等非地址记录。
             按照层次结构域名分为：顶级域名、二级域名、三级域名、四级域名……
           </p>
           <p>
             每一个域名（英文域名）都是一个<strong>标号序列</strong>（labels），用字母（A-Z、a-z，大小写等价）、数字（0-9）和连接符（-）组成，
-            标号序列总长度不能超过 255 个字符；域名由点号分割成一个个的标号（label），每个标号应该在 63 个字符之内，
+            按照 DNS 报文格式编码后，一个完整域名最多占 <strong>255 个八位组</strong>（含标签长度字段与根标签），单个标号最多 <strong>63 个八位组</strong>；
+            这不能直接等同于“255 个可见字符”，尤其在国际化域名中应区分显示文本和 DNS 编码；域名由点号分割成一个个的标号（label），
             每个标号都是其所在层次的域名，级别最低的域名自左至右逐步上升。
-            以点「.」结尾的域名称为<strong>绝对域名</strong>或完全合格的域名（Full Qualified Domain Name，FQDN），
-            不以点结尾则是不完全的域名——如果不完全的域名右部连接一个局部后缀也认为是完全域名；
-            如果不完全的域名是由两个或两个以上的标号组成则认为是完全域名。
+            DNS 文本表示中，以点「.」结尾明确表示<strong>绝对域名</strong>（根标签在末尾）；课件把它称为完全限定域名（FQDN）。
+            不带末尾点的名字可能被解析器按完整域名处理，也可能依据本地域名搜索后缀补全；
+            <strong>仅凭名称有两个以上标号，并不能保证一定不使用搜索后缀</strong>。
           </p>
           <p>
             域名只是个逻辑概念，并不代表计算机所在的物理地点。变长的域名和使用有助记忆的字符串是为了便于人来使用，
@@ -198,17 +207,18 @@ const ch: NetChapter = {
           <ul>
             <li>
               <strong>根域名服务器</strong>：最高层次的域名服务器，也是最重要的域名服务器——所有的根域名服务器都知道所有的顶级域名服务器的域名和 IP 地址；
-              不管是哪一个本地域名服务器，若要对因特网上任何一个域名进行解析，只要自己无法解析就首先求助于根域名服务器。
+              在没有相关缓存、委派信息或转发器结果的典型迭代解析过程中，递归解析器可以从根域名服务器开始逐级定位权威服务器；
+              <strong>但解析器不必每次都从根开始</strong>，可优先使用有效缓存、已知委派或配置的 DNS 转发器。
               根服务有 A 至 M 共 13 个逻辑标识（a.root-servers.net 至 m.root-servers.net），分别具有 IPv4 和 IPv6 地址；各逻辑标识由不同运营机构维护，并借助任播在世界各地部署大量实例，不存在「1 个主根、12 个辅根」的层级；
               世界上大部分 DNS 域名服务器都能就近找到一个根域名服务器。
             </li>
             <li>
-              <strong>顶级域名服务器</strong>：负责管理在该顶级域名服务器注册的所有二级域名；
-              当收到 DNS 查询请求时就给出相应的回答（可能是最后的结果，也可能是下一步应当找的域名服务器的 IP 地址）。
+              <strong>顶级域名服务器</strong>：维护顶级域名区域中的委派信息，并向查询者提供下一层权威服务器的转介等相关响应；
+              它<strong>不必持有该顶级域名下所有主机的 IP 地址</strong>，普通主机地址通常由下级权威区域维护。
             </li>
             <li>
-              <strong>权限域名服务器</strong>：负责一个区的域名服务器；
-              当一个权限域名服务器还不能给出最后的查询回答时，就会告诉发出查询请求的 DNS 客户下一步应当找哪一个权限域名服务器。
+              <strong>权威域名服务器</strong>：对自己负责的 DNS 区（zone）提供权威回答，也可根据区域中配置的委派记录返回下级权威服务器转介；
+              但<strong>不是所有查询都一定返回 IP 地址</strong>，还可能返回其他记录、否定回答或错误。
             </li>
             <li>
               <strong>本地域名服务器</strong>：对域名系统非常重要——当一个主机发出 DNS 查询请求时，这个查询请求报文就发送给本地域名服务器；
@@ -216,9 +226,10 @@ const ch: NetChapter = {
             </li>
           </ul>
           <p>
-            <strong>域名服务器的可靠性</strong>：DNS 域名服务器都把数据复制到几个域名服务器来保存，其中一个是主域名服务器，其他的是辅助域名服务器——
-            主域名服务器定期把数据复制到辅助域名服务器中，而更改数据只能在主域名服务器中进行，这样就保证了数据的一致性；
-            当主域名服务器出故障时，辅助域名服务器可以保证 DNS 的查询工作不会中断。
+            <strong>域名服务器的可靠性</strong>：DNS 区域可部署多台权威服务器以提高可用性；传统主/从（primary/secondary）配置下，
+            从服务器按 SOA 序列号及刷新参数等从主服务器进行区域同步，而非每次都即时一致。
+            还有隐藏主服务器、DNS 服务商托管等不同部署模式。<strong>多台权威服务器不能保证永远不间断或绝对同步</strong>，
+            对于从服务器是否可继续应答仍需考虑区域有效期、网络与服务故障。
           </p>
           <h3 id="sec-ch7-dns-h3">域名解析过程</h3>
           <p><strong>解析步骤</strong>：</p>
@@ -256,7 +267,8 @@ const ch: NetChapter = {
             Additional records 表示附加区域的数量）。
           </p>
           <p>
-            DNS 报文正文：<strong>Queries 区域</strong>（查询名——长度不固定且不使用填充字节，一般表示需要查询的域名，如果是反向查询则为 IP；
+            DNS 报文正文：<strong>Questions（查询问题）区域</strong>（QNAME 仍是按 DNS 标签编码的域名；反向解析也<strong>不是直接填写原始 IP 地址</strong>：
+            例如 IPv4 地址 192.0.2.1 的 PTR 反查名称为 <code>1.2.0.192.in-addr.arpa</code>，IPv6 反查使用 <code>ip6.arpa</code>；
             查询类型；查询类——通常为 1，表明是 Internet 数据）+ <strong>资源记录 RR 区域</strong>（包括回答区域、授权区域和附加区域，格式完全一样：
             域名、查询类型、查询类、生存时间 TTL——秒为单位表示资源记录的生命周期、资源数据——如 Address 或 CNAME 等）。
           </p>
@@ -272,7 +284,7 @@ const ch: NetChapter = {
               允许返回的响应超过 512 个字节的结果。
             </li>
             <li>
-              <strong>区域传送</strong>：在同时拥有主域名服务器和辅助域名服务器时，辅助服务器将定时（通常是 3 小时）向主服务器进行查询以便了解主服务器数据是否发生变动；
+              <strong>区域传送</strong>：在同时拥有主域名服务器和辅助域名服务器时，辅助服务器会按该区域 SOA 记录中的 REFRESH 等参数安排检查，以判断主服务器区域序列号是否更新；<strong>不存在所有区域统一固定为 3 小时的标准刷新周期</strong>；
               如果有变动则执行一次区域传送——区域传送使用 TCP，因为这里传送的数据远比一个查询或响应多得多。
             </li>
           </ul>
@@ -284,9 +296,68 @@ const ch: NetChapter = {
         },
       ],
     },
+
+    {
+      id: 'sec-ch7-ftp',
+      heading: '3. 文件传送协议 FTP',
+      blocks: [
+        {
+          type: 'html',
+          html: `
+          <p>FTP 采用客户—服务器结构，需要区分<strong>控制连接（传送命令）</strong>与
+            <strong>数据连接（传送文件或目录信息）</strong>；文件传送与远程文件系统访问采用不同的工作模型。</p>
+          <h3 id="sec-ch7-ftp-h1">FTP 与 NFS 文件访问模式</h3>
+          <p><strong>FTP（File Transfer Protocol，文件传送协议）</strong>采用客户—服务器方式，
+            基于 TCP 可靠传输，支持远程目录浏览、用户身份验证、文件上下载和格式选择。
+            设计目的之一是屏蔽不同计算机操作系统、文件命名和存储方式之间的差异。</p>
+          <table class="tbl"><thead><tr><th>对照</th><th>FTP / TFTP 文件传送</th><th>NFS 等在线文件访问</th></tr></thead><tbody>
+            <tr><td>基本方式</td><td>复制整个文件，操作本地副本</td><td>通过远程文件系统协议直接访问远程文件</td></tr>
+            <tr><td>修改流程</td><td>修改副本后再上传，远端文件由本次传送更新</td><td>由文件系统接口和协议协调远程读取、写入</td></tr>
+            <tr><td>实现侧重</td><td>文件传送与副本访问</td><td>文件系统接口和远程访问透明性</td></tr>
+          </tbody></table>
+          <p>FTP、TFTP 与 NFS 的对比属于<strong>文件访问模型</strong>的分类；
+            不能据此认为 FTP 和 TFTP 使用同一种运输层协议：FTP 使用 TCP，TFTP 通常使用 UDP。</p>
+          <h3 id="sec-ch7-ftp-h2">控制连接与数据连接：两条 TCP 连接</h3>
+          <p>FTP 服务器主进程在<strong>TCP 21 端口</strong>等待客户连接。
+            控制进程在控制连接上交换登录、目录、文件传输命令和服务器响应；
+            数据传送进程另行建立数据连接，用于承载文件内容或目录列表。
+            控制连接在整个会话中保持，数据连接按传输任务建立、使用并结束。</p>
+          <h4>FTP 服务器主进程的工作步骤</h4>
+          <ol>
+            <li><strong>打开熟知端口 21：</strong>使客户端可以向服务器建立控制连接。</li>
+            <li><strong>等待连接请求：</strong>主进程在监听状态接收来自客户端的新请求。</li>
+            <li><strong>启动从属进程：</strong>为客户端建立处理请求的从属进程；
+              从属进程在处理过程中可按需创建数据传送进程，处理结束后释放相应资源。</li>
+            <li><strong>继续接受新请求：</strong>主进程返回等待状态，与处理已有会话的从属进程并发工作。</li>
+          </ol>
+          <p>主进程负责监听与分派；控制进程负责会话中的命令与响应，
+            数据传送进程按需建立数据连接并传送文件或目录内容。</p>
+          <table class="tbl"><thead><tr><th>连接</th><th>作用</th><th>端口与生命周期</th></tr></thead><tbody>
+            <tr><td>控制 TCP 连接</td><td>传输 USER、PASS、LIST、RETR、STOR 等命令及响应</td>
+              <td>服务器通常监听 TCP 21，登录与多次传输期间保持</td></tr>
+            <tr><td>数据 TCP 连接</td><td>承载目录列表或文件数据</td>
+              <td>按需建立并关闭；具体端口取决于主动或被动模式</td></tr>
+          </tbody></table>
+          <h3 id="sec-ch7-ftp-h3">主动/被动模式与安全边界</h3>
+          <p><strong>服务器数据端口 20</strong>对应经典<strong>主动（PORT）模式</strong>：
+            服务器从自己的 TCP 20 端口向客户端指定的数据端口发起连接；
+            但不能推导为“任何 FTP 数据连接永远使用服务器 20 端口”。</p>
+          <p><strong>被动（PASV）模式</strong>下，服务器告诉客户端用于数据传输的监听地址和端口，
+            再由<strong>客户端主动连接</strong>该数据端口，通常更适合 NAT 或防火墙环境。
+            主动/被动模式的数据连接方向不同，而<strong>控制连接通常仍到服务器 21 端口</strong>。
+            在 NAT 或防火墙环境下需注意控制通道与数据通道的连接方向及端口差异。</p>
+          <div class="callout tip"><p class="callout-h">考试容易混淆</p>
+            <p><strong>FTP</strong> 明文控制通道并不默认提供内容加密；
+              <strong>FTPS</strong> 是 FTP 加 TLS，
+              <strong>SFTP</strong> 则是基于 SSH 的另一种文件传输协议，不能简单理解为“FTP 换了端口”。</p>
+          </div>
+          `,
+        },
+      ],
+    },
     {
       id: 'sec-ch7-email',
-      heading: '3. 电子邮件协议',
+      heading: '4. 电子邮件协议',
       blocks: [
         {
           type: 'html',
@@ -345,8 +416,9 @@ const ch: NetChapter = {
           </p>
           <p>
             <strong>电子邮件的信息格式</strong>：一个电子邮件分为信封和内容两大部分。
-            RFC 822 只规定了邮件内容中的首部（header）格式，而对邮件的主体（body）部分则让用户自由撰写；
-            用户写好首部后邮件系统将自动地把信封所需的信息提取出来并写在信封上，所以用户不需要填写电子邮件信封上的信息。
+            课件以 RFC 822 说明传统邮件首部结构，现行标准可参见 RFC 5322：它规范邮件的首部与正文格式；
+            SMTP 的<strong>信封 MAIL FROM/RCPT TO（RFC 5321）与邮件头 From:/To:/Cc:/Bcc: 并不是同一组字段</strong>。
+            客户端通常根据用户界面输入组装邮件头和信封，但两者可以不同；尤其 Bcc 隐藏抄送者可以存在于 SMTP 信封中，而不出现在其他收件人收到的可见邮件头。
             邮件内容首部包括一些关键字后面加上冒号，最重要的关键字是 To 和 Subject：
           </p>
           <ul>
@@ -356,9 +428,12 @@ const ch: NetChapter = {
             <li>「From」和「Date」表示发信人的电子邮件地址和发信日期；「Reply-To」是对方回信所用的地址。</li>
           </ul>
           <p>
-            用 telnet 直接操作 SMTP 服务器（telnet smtp.xxx.com 25）的基本流程：helo → auth login（base64 编码的账号验证）→
-            mail from:&lt;发送邮箱账号&gt; → rcpt to:&lt;目的地邮箱账号&gt; → data → from/to/subject 头部 →（空一行）→ 邮件内容 →
-            「.」单独一行表示邮件内容完毕。
+            课件中的明文 SMTP 会话示意可用于理解指令顺序：EHLO → MAIL FROM:&lt;信封发件人&gt; →
+            RCPT TO:&lt;信封收件人&gt; → DATA → From:/To:/Subject: 等邮件头 → 空行 → 正文 → 单独一行「.」表示内容结束。
+            <strong>这只是协议结构演示，不应在普通明文 telnet 会话中输入邮箱账号密码</strong>。
+            AUTH LOGIN 中的 Base64 仅是编码，不是加密；如需身份认证，应先通过 STARTTLS 建立受保护的会话，
+            或通过受 TLS 保护的邮件提交服务（常见端口 587 配合 STARTTLS 或 465 隐式 TLS）进行操作。
+            TCP 25 通常用于邮件服务器间中继，不能把所有发送邮件的客户端都简化为 telnet 25 端口认证。
           </p>
           <h3 id="sec-ch7-email-h3">邮件读取协议 POP3 与 IMAP</h3>
           <p>
@@ -411,12 +486,13 @@ const ch: NetChapter = {
               通过客户端程序或者 Web 在线浏览邮件的到达时间、主题、发件人、大小等信息，同时还可以选择性下载附件。
             </li>
             <li>
-              <strong>采用分布式存储</strong>：IMAP4 的分布式存储机制保证用户本地磁盘上的邮件状态和服务器上的邮件状态的一致——
+              <strong>支持多客户端状态同步</strong>：IMAP4 允许客户端在服务器上维护邮件标志与文件夹，并在联网后同步本地缓存操作；
+              <strong>客户端离线期间不会天然获得实时一致性保证</strong>，发生冲突、服务器或客户端故障时还需要具体实现处理——
               一方面 IMAP4 客户端记录用户在本地的操作，当连上网络后会把这些操作传送给服务器；
               另一方面用户离线期间服务器端发生的事件也会在与客户端连接时通知客户端（如有新邮件到达等），以保持服务器和客户端的同步。
             </li>
             <li>
-              <strong>是一种状态协议</strong>：IMAP4 共有四种状态——未认证状态、认证状态、选中状态和离线状态，
+              <strong>是一种状态协议</strong>：IMAP4 连接共有四种状态——<strong>未认证状态、已认证状态、已选中邮箱状态和注销（Logout）状态</strong>（RFC 3501；新版 IMAP4rev2 见 RFC 9051），<strong>“离线阅读”不是协议连接状态</strong>，
               大部分 IMAP4 命令都只会在特定状态下才有效，如果客户端企图在不恰当的状态下发送命令，服务器将返回协议错误的失败信息（如 BAD 或 NO）。
               未认证状态下大多数命令在得到许可前客户端必须提供认证证书（一个连接开始时即进入未认证状态）；
               认证状态下客户软件必须选择一个邮箱（在认证请求命令得到确认答复后进入）；
@@ -444,7 +520,7 @@ const ch: NetChapter = {
     },
     {
       id: 'sec-ch7-http',
-      heading: '4. 万维网和 HTTP 协议',
+      heading: '5. 万维网和 HTTP 协议',
       blocks: [
         {
           type: 'html',
@@ -509,11 +585,13 @@ const ch: NetChapter = {
           <p><strong>HTTP 的主要特点</strong>：</p>
           <ul>
             <li>HTTP 是面向事务的客户服务器协议；</li>
-            <li>HTTP 1.0 协议是<strong>无状态的</strong>（stateless）；</li>
-            <li>HTTP 协议本身也是无连接的，虽然它使用了面向连接的 TCP 向上提供的服务。</li>
+            <li>HTTP 是<strong>无状态的</strong>（stateless）：单次请求的语义不依赖服务器必须记住此前的请求；实际网站仍可通过 Cookie 或会话管理保持应用状态。</li>
+            <li>课件将 HTTP 称为“无连接”，主要对应 HTTP/1.0 非持续连接的教学场景，不代表它不能保持底层连接。HTTP/1.1 默认采用持续连接，HTTP/2 支持 TCP 连接内多路复用，HTTP/3 通过 QUIC 连接传输。</li>
           </ul>
           <p>
-            请求一个万维网文档所需的时间 = 2×RTT（发起 TCP 连接 + HTTP 请求报文）+ 传输文档的时间。
+            在忽略 DNS、TLS、排队、处理等开销，并采用 HTTP/1.0 非持续 TCP 连接的简化模型时，
+            获取一个万维网文档的时间约为 <strong>2×RTT + 文档传输时间</strong>：建立 TCP 连接约 1 RTT，
+            发出 HTTP 请求至响应首字节到达约 1 RTT。此模型不适合直接套用到 HTTP/1.1 复用连接或 HTTP/2、HTTP/3。
             <strong>持续连接</strong>（persistent connection）：HTTP/1.1 协议使用持续连接——万维网服务器在发送响应后仍然在一段时间内保持这条连接，
             使同一个客户（浏览器）和该服务器可以继续在这条连接上传送后续的 HTTP 请求报文和响应报文；
             这并不局限于传送同一个页面上链接的文档，而是只要这些文档都在同一个服务器上就行。
@@ -601,6 +679,38 @@ const ch: NetChapter = {
   &lt;P&gt;这是第二个段落。&lt;/P&gt;
 &lt;/BODY&gt;                               &lt;!-- 主体结束 --&gt;
 &lt;/HTML&gt;                               &lt;!-- HTML 文档结束 --&gt;</pre>
+
+          <h3 id="sec-ch7-http-h6">动态文档、CGI 与活动文档</h3>
+          <p>网页技术包括 HTML、XML、XHTML、CSS，以及在服务器端生成的动态文档和在客户端运行的活动文档。</p>
+          <p><strong>HTML / XML / CSS</strong> 的分工：
+            HTML 描述网页结构；XML 侧重用可扩展标记表达、交换结构化数据；
+            CSS 主要描述 HTML 等文档的样式和布局。
+            早期一些资料曾预测 XHTML 将逐渐取代 HTML，但这只是历史发展预测，
+            <strong>不应理解为如今 HTML 已被 XHTML 取代</strong>。</p>
+          <table class="tbl"><thead><tr><th>类型</th><th>工作位置与原理</th><th>典型过程</th></tr></thead><tbody>
+            <tr><td>静态文档</td><td>服务器已有现成文件，访问时通常直接交付其内容</td><td>浏览器请求 → 服务器返回已有 HTML</td></tr>
+            <tr><td>动态文档</td><td>服务器收到请求后运行程序，根据输入生成本次响应文档</td><td>浏览器请求 → 后端程序生成文档 → 返回给浏览器</td></tr>
+            <tr><td>活动文档</td><td>服务器传递可在客户端执行的程序，由客户端更新显示</td><td>下载脚本或程序 → 浏览器端运行 → 页面随交互变化</td></tr>
+          </tbody></table>
+          <p><strong>CGI（Common Gateway Interface，通用网关接口）</strong>：
+            它可用于扩充 Web 服务器的动态处理能力。
+            服务器把请求参数交给 CGI 程序，程序生成输出，服务器再把结果作为 HTTP 响应传回客户端。
+            CGI 是一个约定<strong>服务器与外部程序交互方式</strong>的接口规范，
+            <strong>不是一种独立的网络传输层协议</strong>。</p>
+          <p>早期客户端活动文档曾通过 Java applet 等方式实现。
+            这属于早期 Web 技术实例：现代浏览器交互通常由 JavaScript 等 Web 技术实现，
+            <strong>现代浏览器通常不再支持运行 Java applet</strong>。</p>
+          <h3 id="sec-ch7-http-h7">万维网的信息检索与 PageRank</h3>
+          <p><strong>全文检索</strong>：搜索系统通过爬虫（Spider）采集网页，
+            对文档建立索引；用户查询时匹配<strong>已经建立的索引</strong>，
+            并非用户每输入一次关键词就现场遍历整个万维网。</p>
+          <p><strong>分类目录检索</strong>：按主题、行业或分类目录组织收录的网站，
+            早期常由人工审核和维护；传统目录式搜索网站具有历史背景，
+            不能据此判断相应网站今天仍提供相同服务。</p>
+          <p><strong>PageRank</strong>：可用于评价网页重要性——
+            链接可视为从一个网页到另一个网页的引用，来自重要网页的链接具有更高权重。
+            检索结果还需要综合考虑与查询主题的相关程度；
+            <strong>PageRank 并不等于只数入链数目，也不是所有现代搜索引擎完整排序公式</strong>。</p>
           <h3 id="sec-ch7-http-h5">发展潮流：HTTP/3</h3>
           <p>
             2022 年 6 月，IETF 发布了 RFC 9114 正式公布了最新的 HTTP 协议第三版，即 HTTP/3——因其基于 QUIC 协议，
@@ -638,9 +748,11 @@ const ch: NetChapter = {
             <strong>HTTP/2 的缺陷</strong>：最主要的缺陷是 HTTP/2 的下层是 TCP 协议——
             <strong>TCP 的队头阻塞</strong>：HTTP/2 解决了应用层意义上的队头阻塞，但对 TCP 中的队头阻塞无可奈何；
             TCP 是单连接，所有基于 TCP 的数据传输都会变成一个个字节段排队传输，只要有一个段丢失或延迟整个传输过程就会陷入等待
-            （当达到 2% 的丢包率时 HTTP/2 还不如 HTTP/1.1）；
-            <strong>TCP 连接过程延迟</strong>：所有基于 TCP 的应用都无法避免等待连接建立的过程——在真正开始传输数据前需要大约 4-5 个 RTT 时间
-            用于建立 TCP 连接和 TLS 连接（TCP 三次握手通常约需 1 个 RTT 才能开始正常交换应用数据；TLS 1.3 全握手通常再需约 1 个 RTT（会话恢复可进一步减少）；具体开销取决于连接复用、TLS 版本与握手方式），对于短 HTTP 请求性价比极低；
+            。课件所述“丢包率达到 2% 时 HTTP/2 不如 HTTP/1.1”缺少测试条件与统计出处，不能作为各网络环境通用的性能阈值；
+            <strong>TCP/TLS 建连延迟</strong>：在没有可复用连接的传统 HTTPS 场景中，先建立 TCP 连接通常约需 <strong>1 RTT</strong>，
+            再完成 TLS 1.3 的常规全握手通常约需 <strong>1 RTT</strong>，之后才交换应用数据；
+            TLS 1.2、额外往返、会话恢复、提前数据、连接复用等情况会改变总耗时。
+            课件“建连需 4～5 RTT”不适用于所有基于 TCP 的应用，也不是现代 TLS 1.3 的一般定律；
             <strong>连接迁移</strong>：TCP 连接受四元组（源 IP、源端口、目的 IP、目的端口）制约，一旦 IP 地址发生改变连接就会终止，会话也随之终止。
           </p>
           <p>
@@ -650,19 +762,23 @@ const ch: NetChapter = {
             HTTP/3 不是简单的在 QUIC 上运行 HTTP/2，而是一个重新开发的以 QUIC 为传输层协议的 HTTP 协议。
           </p>
           <p>
-            <strong>QUIC 协议</strong>（Quick UDP Internet Connections）：一个基于 <strong>UDP</strong> 的传输层协议，
-            由 Google 开发，2012 年部署上线，2013 年提交 IETF，2021 年 5 月 IETF 正式推出标准版 RFC9000。
+            <strong>QUIC 协议</strong>：一个基于 <strong>UDP</strong> 的安全多路复用传输协议，其前身是 Google QUIC，
+            IETF 于 2021 年将 QUIC v1 标准化为 RFC 9000。
+            “Quick UDP Internet Connections”是早期对名称的习惯性展开，但 <strong>RFC 9000 明确指出 QUIC 是名称而非首字母缩写</strong>。
             报文格式：QUIC 区分长首部与短首部，首部字段随分组类型不同；版本号仅在长首部中出现，Packet Number 等字段也受到头部保护，不能概括为首部全明文。
             加密载荷可携带 STREAM、ACK、PING、PADDING、MAX_DATA、STREAM_DATA_BLOCKED 等不同类型的帧。
           </p>
           <p>QUIC 的核心特性：</p>
           <ul>
             <li><strong>0-RTT 恢复连接</strong>：客户端此前已与服务器建立过连接并保存可用的恢复凭据时，才可能在新握手完成前发送 0-RTT 应用数据；首次连接通常不能使用 0-RTT，且 0-RTT 数据存在重放风险；</li>
-            <li><strong>无队头阻塞的多路复用</strong>：在 HTTP/2 多路复用思想的基础上 HTTP/3 为每个流建立一套滑动窗口，实现无队头阻塞的多路复用；</li>
+            <li><strong>减少跨流队头阻塞</strong>：HTTP/3 将请求响应映射到独立的 QUIC 流，某一流的数据丢失不会因 TCP 字节流的顺序交付而阻塞其他流的数据递交；
+              <strong>单个 QUIC 流内仍然有可靠、有序交付与等待重传的情况</strong>，拥塞控制也仍可能影响各流。</li>
             <li><strong>可靠传输</strong>：通过严格递增的 Packet Number 标识数据包，避免了 TCP 中发生重传后确认报文的歧义，进而 RTT 的测量更为准确、RTO 的估算更为合理，实现了可靠传输；</li>
             <li><strong>与 TCP 类似的流量控制</strong>：分别为连接和流构建了滑动窗口，以此为基础进行流控；</li>
             <li><strong>与 TCP 类似的拥塞控制</strong>：利用拥塞窗口、慢启动、拥塞避免、快重传和快恢复等方法构建了拥塞控制；</li>
-            <li><strong>连接迁移</strong>：QUIC 的连接基于 Connection ID——只要 Connection ID 没有改变，即使切换网络，客户端与服务器之间的连接并不会断开仍然可以正常通信，这在 TCP 中根本无法想象；</li>
+            <li><strong>连接迁移</strong>：QUIC 可以利用非零长度的 Connection ID，在 IP 地址或 UDP 端口变化后仍关联同一逻辑连接；
+              但迁移需要满足握手确认、路径验证、对端支持及网络可达性等条件，<strong>不能保证网络切换后绝对不断线，也不要求始终使用同一个 Connection ID</strong>；
+              连接 ID 还可为隐私和迁移目的轮换（RFC 9000 第 5、9 节）。</li>
             <li><strong>热拔插</strong>：QUIC 运行在用户空间，很多策略的调整用户可以自行调整；</li>
             <li><strong>前向纠错 FEC</strong>（Forward Error Correction）：属于可探索的扩展或实验性机制，不是 RFC 9000 定义的 QUIC v1 必备特性；QUIC v1 的标准恢复机制主要依靠确认、丢包检测和重传数据帧。</li>
           </ul>

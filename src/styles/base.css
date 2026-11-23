@@ -3592,3 +3592,55 @@ pre.code .cl-code:empty + .cl-com {
     display: none;
   }
 }
+
+/* 计算机网络：章末作业与双向知识点导航 */
+/* 计网章末作业复用 PracticeCard / progress / heat，章节只负责锚点和局部版心。 */
+.net-hw-section { margin-top: 3rem; }
+.net-hw-intro { margin: .6rem 0 1.2rem; font-size: .875rem; color: var(--ink-2); }
+.net-hw-progress { margin: 1rem 0 1.35rem; }
+.net-hw-heat { margin: 0; }
+.net-hw-section .pq-question-heading {
+  margin: 0 0 10px;
+  padding: 0;
+  font-size: .9063rem;
+  font-weight: 650;
+  line-height: 1.7;
+  letter-spacing: normal;
+  scroll-margin-top: calc(var(--topbar-h) + 20px);
+}
+.net-hw-section .pq-question-heading::before { display: none; }
+.net-hw-section .quiz-note { margin: 8px 0 0; }
+.net-hw-section .quiz.practice-q { margin-bottom: 24px; }
+.net-hw-context { margin: .3rem 0 2rem; padding: .6rem .9rem; background: var(--panel-2); border-radius: 12px; display: flex; gap: .5rem .8rem; flex-wrap: wrap; font-size: .88rem; align-items: center; }
+.net-hw-context > span { font-weight: 700; color: var(--ink-2); margin-right: .2rem; }
+.net-hw-empty { padding: 1.25rem; border-radius: 16px; }
+.net-hw-context a, .net-hw-empty a { color: var(--deck-accent, var(--net)); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 600px) { .net-hw-progress { padding: 12px; } }
+
+/* 可选简答题自评：和共享题卡的按钮尺寸、信息层级一致。 */
+.pq-review { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 10px 0 0; margin-top: 12px; border-top: 1px dashed var(--hairline-soft); }
+.pq-review > span { color: var(--ink-3); font-size: .7813rem; margin-right: 2px; }
+.pq-review .btn { height: 30px; font-size: .7813rem; border: 1px solid var(--hairline); color: var(--ink-2); background: transparent; }
+.pq-review .btn[aria-pressed='true'] { color: var(--bg); background: var(--ink); border-color: var(--ink); }
+.pq-review .btn[aria-pressed='true']:hover { color: var(--bg); }
+
+/* 计算机网络 2025 PDF 荧光笔：按主题合并，避免逐笔迹长列表 */
+.net-focus { margin: 1.8rem 0 2rem; padding: 1.15rem 1.25rem; background: var(--panel-2); border: 1px solid var(--hairline-soft); border-radius: 18px; }
+.net-focus-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: .5rem 1rem; }
+.net-focus-head h2 { margin: 0; font-size: 1.12rem; line-height: 1.5; }
+.net-focus-head p { margin: .4rem 0 .7rem; font-size: .9rem; color: var(--ink-2); }
+.net-focus-count { padding: .13rem .65rem; border: 1px solid var(--hairline); border-radius: 50px; font-size: .78rem; white-space: nowrap; color: var(--ink-2); }
+.net-focus-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,250px),1fr)); gap: .65rem; }
+.net-focus-item { padding: .85rem 1rem; background: var(--panel-solid); border: 1px solid var(--hairline-soft); border-radius: 12px; }
+.net-focus-topic { display: flex; align-items: baseline; gap: .5rem; font-size: .96rem; font-weight: 650; }
+.net-focus-level { font-size: .72rem; color: var(--deck-accent,var(--net)); white-space: nowrap; }
+.net-focus-topic a, .net-focus-extra a { color: var(--deck-accent,var(--net)); text-decoration: underline; text-underline-offset: 3px; }
+.net-focus-item p { margin: .28rem 0; font-size: .84rem; color: var(--ink-2); }
+.net-focus-item small { display: block; font-size: .75rem; color: var(--ink-3); }
+.net-focus-extra { margin: .8rem 0 0; color: var(--ink-2); font-size: .85rem; }
+.net-focus-extra summary { cursor: pointer; font-weight: 600; }
+.net-focus-extra ul { margin: .3rem 0; padding-left: 1.3rem; }
+.net-focus-extra li { margin: .3rem 0; }
+.net-focus-source { margin: .9rem 0 0; font-size: .77rem; line-height: 1.6; color: var(--ink-3); overflow-wrap: anywhere; }
+.net-focus-none { margin: .5rem 0 0; }
+@media(max-width:600px){ .net-focus { padding: 1rem; } }

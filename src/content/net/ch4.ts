@@ -1,5 +1,6 @@
 /* 计算机网络 · 第4章 数据链路层 —— 依据「课件/PPT-2024/第四章数据链路层（2024）.pptx」整理 */
 import type { NetChapter } from './types';
+import { pppStuffingFigure, pppPhasesFigure, pppLcpFigure, pppConfigFigure, pppAuthFigure, pppNcpFigure } from './ppp-figures';
 
 const ch: NetChapter = {
   id: 'ch4',
@@ -49,11 +50,13 @@ const ch: NetChapter = {
           html: `
           <div class="callout key">
             <p class="callout-h">本章荧光笔重点</p>
-            <p><strong>成帧/透明</strong> · <strong>CRC/FCS</strong> · <strong>停止等待</strong> · <strong>连续 ARQ/滑动窗口</strong> · <strong>PPP</strong> · <strong>网卡/MAC</strong> · <strong>CSMA/CD</strong> · <strong>交换机自学习</strong> · <strong>VLAN</strong></p>
+            <p><strong>本章重点：</strong>成帧与透明传输 · CRC/FCS · 停止等待 · 连续 ARQ / GBN / SR · HDLC 与 PPP。
+            <strong>网卡、MAC、CSMA/CD、交换机自学习与 VLAN</strong> 集中归入<strong>第5章局域网</strong>。</p>
           </div>
           <p>
-            在传输信号时，物理线路可能会有差错。在可能出错的物理线路基础上，构造一个<strong>无差错的逻辑数据链路</strong>，从而为网络层提供高质量服务——
-            数据链路层是整个模型中提供高质量数据通信服务最重要的一层。
+            物理线路可能出现比特差错。数据链路层通过<strong>封装成帧、透明传输、差错检测</strong>等机制，在相邻结点间传输帧；
+            某些链路协议还通过确认与重传提高逐跳可靠性，但<strong>并非所有数据链路层协议都提供无差错、可靠交付保证</strong>。
+            例如基础 PPP 和经典以太网主要提供检错与必要时丢弃，不能把“无差错的逻辑数据链路”理解为这一层的普遍协议承诺。
           </p>
           <h3 id="sec-ch4-basic-h1">基本概念与术语</h3>
           <ul>
@@ -222,10 +225,19 @@ const ch: NetChapter = {
           </div>
           <h3 id="sec-ch4-error-h3">海明码</h3>
           <p>
-            1950 年海明发明海明码（Hamming Code）。海明码是一种<strong>纠错码</strong>，检测 2 位错误并纠正 1 位错误。
+            1950 年海明发明海明码（Hamming Code）。海明码是一种<strong>纠错码</strong>，课件概括其能力为“检测 2 位错误并纠正 1 位错误”。
+            <strong>这一概括须区分两种模式的能力，不能误认为普通海明码可以同时保证纠一检二</strong>。
             海明码是一种分组码，由 m 位信息位和 r 位校验位构成，要求满足：
           </p>
           <p class="formula">2<sup>r</sup> &ge; m + r + 1</p>
+          <div class="callout warn">
+            <p class="callout-h">海明码检错、纠错能力的关键区别</p>
+            <p>上述校验位不等式是单比特纠错海明码的常用设计条件。普通 Hamming(7,4) 的最小码距为 <strong>3</strong>：
+            可以检测不超过 <strong>2 位</strong>错误，或者纠正不超过 <strong>1 位</strong>错误；
+            但单比特纠错译码器遇到双位错误时可能误纠，因此不能同时保证“纠 1 位、检 2 位”。
+            增加一个整体奇偶校验位得到扩展 Hamming(8,4)，最小码距可达 <strong>4</strong>，
+            才能同时实现 SECDED（Single Error Correction, Double Error Detection）。</p>
+          </div>
           <p>
             理论上 r 个校验位可以出现在任意位置上；习惯上校验位通常被安排在 2 的整数次幂的位置上。
             如 4 位信息位 a<sub>1</sub>a<sub>2</sub>a<sub>3</sub>a<sub>4</sub>，校验位至少是 3 位 p<sub>1</sub>p<sub>2</sub>p<sub>3</sub>，
@@ -365,6 +377,13 @@ const ch: NetChapter = {
             发送方设置超时计时器，当超时计时器满且未收到应答，则从最早未获确认的帧开始重发仍未确认的后续帧（不一定恰好 n 帧）。
             优点：仅需一个接收缓冲区；缺点：当信道误码率较高时，会产生大量重发帧。
           </p>
+          <p><strong>连续 ARQ（Go-Back-N）工作要点：</strong>发送端可在窗口内连续发送多个帧，
+            接收端只按序接收；若 DATA2 丢失或出错，后续 DATA3 等帧即便无错也会被丢弃，
+            并重复确认当前已按序收到的最后一帧。确认号采用“期待收到的下一帧序号”的约定时，
+            ACK2 表示 DATA0 与 DATA1 已被确认，接下来期待 DATA2。</p>
+          <p><strong>连续 ARQ 的效率权衡：</strong>连续发送减少等待，链路条件好时吞吐量较高；
+            但某帧发生错误而回退重传时，后续已经传送过的帧也需要重发，错误较多时可能浪费大量带宽，
+            <strong>连续 ARQ 不一定在所有信道条件下都优于停止等待协议</strong>。</p>
           <p>
             <strong>选择重传协议</strong>：若某一帧出错，后面正确到达的帧虽然不能立即送网络层，但接收方可将其保存在接收窗口，
             仅要求发送方重传那个发错的帧。
@@ -491,14 +510,32 @@ const ch: NetChapter = {
           </div>
 
           <p>
-            根据 OSI/RM 模型，数据链路层应该向网络层提供可靠的传输服务，因此在数据链路层的传输协议中要求有帧编号、确认帧、重传机制等（如 HDLC）。
-            随着通信线路通信质量的提升，特别是光纤媒介的大规模普及，数据链路层协议取消了可靠传输服务，使数据链路层协议变得更加简单——
-            可靠传输和流量控制等任务均交予上层协议（如运输层 TCP 协议）完成。
+            课件以 HDLC 和 PPP 对比链路层的可靠交付机制：部分链路层协议可使用帧序号、确认和重传提供逐跳可靠交付，
+            而基础 PPP 侧重于成帧、透明传输、协议复用和检错，<strong>并不提供基于帧确认与重传的可靠交付保证</strong>。
+            <strong>OSI/RM 不要求所有数据链路层协议必须可靠，也不存在后来所有链路层协议一律取消可靠交付的规则</strong>：
+            是否在链路层采用 ARQ、流量控制由技术条件和具体协议决定，例如 IEEE 802.11 无线 MAC 可使用帧确认与重传。
             点对点协议（Point to Point Protocol，<strong>PPP</strong>）就是一个比 HDLC 协议简单的数据链路层协议：
-            一个得到广泛应用的广域网及接入网中主流的数据链路层传输协议，<strong>面向字符</strong>、全双工、按照顺序传递数据包；
+            一个得到广泛应用的广域网及接入网中的数据链路层协议。课件称其“<strong>面向字符</strong>”，
+            对应异步链路采用字节填充的场景；但 PPP 还支持同步链路上的比特填充，不能认为它只支持字符导向的封装；
             目的是通过拨号或专线方式建立点对点的连接和通信，为各种主机、网桥和路由器之间简单连接提供一种共通的标准解决方案。
             应用场合包括拨号方式和专线方式。
           </p>
+          <h4>PPP 应满足的十项需求</h4>
+          <ol>
+            <li><strong>简单：</strong>协议机制尽可能简单。</li>
+            <li><strong>封装成帧：</strong>通过明确的帧定界方法识别帧边界。</li>
+            <li><strong>透明性：</strong>用户数据不应因为出现标志字节或位模式而被误解。</li>
+            <li><strong>支持多种网络层协议：</strong>同一链路可承载不同网络层协议的数据报。</li>
+            <li><strong>支持多种链路类型：</strong>适用于不同物理点对点链路。</li>
+            <li><strong>差错检测：</strong>检测错误帧并将其丢弃。</li>
+            <li><strong>检测连接状态：</strong>能监测链路是否正常工作。</li>
+            <li><strong>最大传送单元：</strong>规定默认 MTU / MRU 并允许必要的协商。</li>
+            <li><strong>网络层地址协商：</strong>为网络层协议协商必要地址配置。</li>
+            <li><strong>数据压缩协商：</strong>能够协商是否及如何使用压缩机制。</li>
+          </ol>
+          <p><strong>PPP 不要求提供的功能：</strong>逐帧纠错、流量控制、数据帧序号、
+            多点线路支持，以及对半双工或单工链路的支持。这里指基础 PPP 的要求，
+            不排除其上层协议或特定扩展实现其他功能。</p>
           <p><strong>PPP 协议组成</strong>：</p>
           <ul>
             <li>
@@ -522,31 +559,38 @@ const ch: NetChapter = {
             </thead>
             <tbody>
               <tr><td>F（标志）</td><td>1 字节</td><td>0x7E</td><td>标志一个帧的开始或结束。连续 2 个帧之间只需一个标志字段；如果出现连续两个标志字段，表示这是一个空帧</td></tr>
-              <tr><td>A（地址）</td><td>1 字节</td><td>0xFF</td><td>固定不变，没有实际意义</td></tr>
-              <tr><td>C（控制）</td><td>1 字节</td><td>0x03</td><td>固定不变，没有实际意义</td></tr>
+              <tr><td>A（地址）</td><td>默认 1 字节</td><td>0xFF</td><td>典型 HDLC-like PPP 帧的默认地址字段；通过 LCP 地址/控制域压缩（ACFC）可省略 A 与 C 字段</td></tr>
+              <tr><td>C（控制）</td><td>默认 1 字节</td><td>0x03</td><td>典型 HDLC-like PPP 帧的默认控制字段；协商 ACFC 后可与地址字段一并省略</td></tr>
               <tr>
-                <td>协议</td><td>2 字节</td><td>—</td>
-                <td>0x0021 信息字段是 IP 数据报；0xC021 是链路控制数据 LCP；0x8021 是网络控制数据 NCP；0xC023 是安全性认证 PAP；0xC025 是链路质量报告 LQR；0xC223 是安全性认证 CHAP</td>
+                <td>协议</td><td>默认 2 字节，可压缩为 1 字节</td><td>—</td>
+                <td>0x0021 是 IPv4 数据报；0xC021 是 LCP；0x8021 是 IPCP（NCP 的一种，而非所有 NCP 的统一代码）；0xC023 是 PAP；0xC025 是 LQR；0xC223 是 CHAP</td>
               </tr>
-              <tr><td>信息部分</td><td>≤1500 字节</td><td>—</td><td>不超过 1500 字节，不足 1500 字节时填充</td></tr>
-              <tr><td>FCS</td><td>2 字节</td><td>CRC 码</td><td>使用 CRC 的帧校验序列</td></tr>
+              <tr><td>信息部分</td><td>0 个或多个字节，默认 MRU 1500 字节</td><td>—</td><td>RFC 1661 定义的信息字段是<strong>变长</strong>的，默认最大接收单元 MRU 为 1500 字节（信息及可选填充合计），协商后可调整；<strong>短帧不需要自动填充至 1500 字节</strong>，不能混用以太网 46 字节最小载荷规则</td></tr>
+              <tr><td>FCS</td><td>默认 2 字节，可用 4 字节</td><td>CRC 码</td><td>通常使用 16 位 FCS；RFC 1662 还定义了可协商使用的 32 位 FCS</td></tr>
             </tbody>
           </table>
+          <p class="muted">标准对照：PPP 的 16 位 FCS 为默认值，RFC 1662 也定义 32 位 FCS。RFC 1661 的协议字段压缩（PFC）
+            与地址/控制字段压缩（ACFC）均需协商，基础帧格式不等于全部实现都固定携带两个额外字节；
+            1500 字节是默认 MRU 而非固定帧长（不包含协议字段），且不同物理链路的透明传输方式可能不同。</p>
           <p><strong>PPP 协议的透明传输</strong>：</p>
           <ul>
             <li>
-              <strong>同步方式（SONET/SDH 链路）</strong>：采用零比特填充方法（和 HDLC 的做法一样，硬件完成比特填充）——
-              发送端只要发现有 5 个连续的 1，则立即填入一个 0；接收端对帧中的比特流进行扫描，每当发现 5 个连续 1 时，就把这 5 个连续 1 后的一个 0 删除。
+              <strong>比特同步链路上的 HDLC-like PPP（RFC 1662）</strong>：采用零比特填充方法——
+              发送端在帧内容中每出现连续 5 个 1 就插入一个 0；接收端在相应位置删除插入的 0。
+              <strong>但不能把 SONET/SDH 一概归入这一实现方式</strong>：RFC 2615 的 PPP over SONET/SDH
+              视物理传送为八位组同步链路，采用字节填充并进行扰码处理，不等于在比特同步链路上使用零比特填充。
             </li>
             <li>
               <strong>异步方式</strong>：使用一种特殊的<strong>字符填充法</strong>——将信息字段中出现的每个 0x7E 字节转变成 2 字节序列 (0x7D, 0x5E)；
               若信息字段中出现一个 0x7D 的字节，则将其转变成 2 字节序列 (0x7D, 0x5D)；
-              若信息字段中出现 ASCII 码的控制字符（即数值小于 0x20 的字符），则在该字符前面加入一个 0x7D 字节，同时将该字符改为与 0x20 异或后的编码（如 0x04 改为 0x24）。
+              对于 ACCM 指定需要转义的控制字符（缺省 ACCM 中包含 0x00～0x1F），在该字符前面加入 0x7D，并对原字节按位异或 0x20（如 0x04→0x24）；<strong>并非所有链路在协商后都无条件转义全部控制字符</strong>。
             </li>
           </ul>
+          ${pppStuffingFigure}
           <p><strong>PPP 协议运行阶段</strong>：链路不可用阶段（初始）→ 链路建立阶段（LCP 协商，包括协商认证方式等）→
             验证阶段（可选，PAP/CHAP 验证）→ 网络层协议阶段（NCP 协商）→ 维持阶段（维持 PPP 会话，传输数据、定时测试链路）→
             网络终止阶段（终止 PPP 会话，回到链路不可用阶段）。即：静止 → 建立 → 认证 → 协商 → 维持 → 终止。</p>
+          ${pppPhasesFigure}
           <p>
             <strong>LCP</strong>：链路控制协议是 PPP 协议的一个子集，用于点对点通信时发送端和接收端协商确定一系列必要的信息。
             针对不同的工作，LCP 协议有三种不同类型的帧：<strong>链路配置报文</strong>（建立和配置一条链路）、
@@ -555,10 +599,11 @@ const ch: NetChapter = {
             Code 标识 LCP 数据报文类型；Ident 为 LCP 报文序列号，用于匹配 Request 和 Reply 报文；Length 为 LCP 报文长度；
             LCP Data 为 LCP 数据报文。
           </p>
+          ${pppLcpFigure}
           <p>
             链路配置报文：<strong>Config-Request</strong>（代码 0x01，启用链路以及配置请求报文，链路两端结点均可根据需要主动发出）、
             <strong>Config-Ack</strong>（0x02，接受请求应答）、<strong>Config-Nak</strong>（0x03，部分拒绝请求应答）、
-            <strong>Config-Reject</strong>（0x04，全部拒绝请求应答）。LCP 的配置选项都是一些 TLV（Type、Length、Value）组，
+            <strong>Config-Reject</strong>（0x04，仅列出无法识别或明确不可协商的选项，不代表拒绝整份请求）。LCP 的配置选项都是一些 TLV（Type、Length、Value）组，
             只要不超过 MTU，一个 LCP 报文可以携带多个 TLV 组。
             LCP 配置选项包括：<strong>最大接收单元 MRU</strong>（通知对方可以接收的最大数据包长度）、
             <strong>异步控制字符映射 ACCM</strong>（通知对方哪些控制字符需要转义）、<strong>认证协议</strong>（协商认证协议，默认不认证）、
@@ -573,8 +618,21 @@ const ch: NetChapter = {
           <p>
             LCP 协商过程：发送 LCP Config-Request 的一方向另一方提出自己需要的选项；接收方根据自身情况选择 Config-Ack
             （能识别并接受全部请求项目）、Config-Nak（能识别全部请求并只接受部分配置参数，发送自己认可的配置参数）、
-            Config-Reject（无法识别所有配置，携带请求报文中全部配置参数）之一进行应答。
+            Config-Reject（只列出请求中不认识或不可协商的选项，保留其他可接受选项）之一进行应答。
+            具体来说，Configure-Ack 需要确认请求中的<strong>全部选项及值</strong>，Configure-Nak 指出可协商但值不接受的选项并建议可接受值，
+            Configure-Reject 仅拒绝无法协商的选项，<strong>都不能把“部分选项不接受”理解成“整份请求全部拒绝”</strong>（RFC 1661 第 5.2—5.4 节）。
           </p>
+          ${pppConfigFigure}
+          <div class="callout tip">
+            <p class="callout-h">标准对照｜LCP 报文名称与选项协商</p>
+            <p><strong>保留上方课件原表述。</strong>按 RFC 1661，LCP 终止请求的确认应为
+            <strong>Terminate-Ack</strong>（而非 Terminate-Reply）；
+            <strong>Configure-Reject</strong> 携带的是被拒绝的配置选项，而不是必然拒绝全部选项；
+            <strong>Configure-Nak</strong> 可用于对可识别的选项提出不同的可接受取值。
+            另外，PPP 信息字段的 <strong>1500 字节是默认 MRU（最大接收单元），不是固定帧长</strong>。
+            RFC 1661 的 Padding 是可选的（MAY），不要求不足 1500 字节的数据必须填充到 1500 字节。
+            下方交互演示按协议标准逐报文展示。</p>
+          </div>
           <p><strong>PPP 协议的认证</strong>（在建立 LCP 连接过程中可以选择认证通信对端），两种认证方式：</p>
           <ul>
             <li>
@@ -587,6 +645,7 @@ const ch: NetChapter = {
               不用传送口令信息，安全性较高。
             </li>
           </ul>
+          ${pppAuthFigure}
           <p>
             <strong>NCP</strong>：网络控制协议实际上是一套协议，每个子协议都是为处理相应网络层协议所需的错综复杂的配置而存在（IP、IPX、AppleTalk 等都拥有各自的 NCP），
             NCP 与 LCP 有相同的协议格式。当链路建立后，LCP 将控制权交给适当的 NCP；在 NCP 成功配置网络层协议之后，PPP 就可以传输相应的网络层协议数据包。
@@ -596,6 +655,7 @@ const ch: NetChapter = {
             IP-Address（协商本地使用的 IP 地址，全 0 的 IP 地址表示要求对方分配一个 IP 地址）、
             Primary/Secondary DNS Server Address（协商远端的主、次 DNS 服务器地址，全 0 表示要求对方提供 DNS 地址）。
           </p>
+          ${pppNcpFigure}
           <h3 id="sec-ch4-p2p-h3">HDLC 与 PPP 的对比</h3>
           <table class="tbl">
             <thead>
@@ -605,7 +665,7 @@ const ch: NetChapter = {
               <tr><td>链路类型</td><td>支持全双工/半双工链路</td><td>支持全双工/半双工链路</td></tr>
               <tr><td>透明传输</td><td>只支持零比特填充</td><td>支持字节填充和零比特填充</td></tr>
               <tr><td>差错控制</td><td>有检错（CRC 冗余校验）无纠错</td><td>有检错（CRC 冗余校验）无纠错</td></tr>
-              <tr><td>传输单位</td><td>面向比特，以比特为单位，数据不一定是整数字节</td><td>面向字节，以字节为单位，每帧都必须是整数个字节</td></tr>
+              <tr><td>传输单位</td><td>比特导向帧封装</td><td>数据按八位组组织；异步链路可使用字节填充，同步链路可使用比特填充，不能只概括为“面向字符”</td></tr>
               <tr><td>协议字段</td><td>有控制字段（1 个字节），功能类似</td><td>有协议字段（2 个字节）</td></tr>
               <tr><td>可靠性</td><td>有帧编号和确认机制，属于可靠传输</td><td>没有帧编号和确认机制，属不可靠传输</td></tr>
             </tbody>
@@ -702,7 +762,7 @@ const ch: NetChapter = {
           </p>
           <div class="callout warn">
             <p class="callout-h">课件勘误｜CSMA/CD 争用期</p>
-            <p><strong>2025 年局域网课件原文</strong>把 2τ 写成「两倍的端到端往返时延」，但同页又将 τ 定义为单程传播时延。这里属于措辞错误：
+            <p>有些教学资料把 2τ 写成「两倍的端到端往返时延」，但同页又将 τ 定义为单程传播时延。这里属于措辞错误：
               <strong>2τ = 两倍单程传播时延 = 一次往返传播时延</strong>，不是「两倍往返时延」。
               课件给出的标准以太网争用期 51.2 μs 无需翻倍。计算题请按 2τ 代入。</p>
           </div>
@@ -799,7 +859,7 @@ const ch: NetChapter = {
           <p>
             因为历史和利益诉求的不同，形成了大致相同略有区别的多种以太网协议（封装格式上有明显体现）：
             <strong>DIX Ethernet II</strong>（Ethernet V2/ARPA，目前的主流）、<strong>IEEE 802.3/802.2 LLC</strong>（将协议类型字段替换为长度字段，
-            加入 802.2 LLC 头用以标志上层协议）、<strong>IEEE 802.3/802.2 SNAP</strong>（在保留 LLC 头的同时新增一个 2 字节的协议类型域）、
+            加入 802.2 LLC 头用以标志上层协议）、<strong>IEEE 802.3/802.2 SNAP</strong>（在 LLC 头后追加 <strong>5 字节 SNAP 协议标识：3 字节 OUI + 2 字节 PID</strong>；当 OUI=00-00-00 时后 2 字节通常可承载 EtherType）、
             <strong>RAW 802.3</strong>（NOVELL Ethernet 802.3，仅支持 IPX/SPX 网络）。
           </p>
           <p><strong>以太网 V2 的 MAC 帧格式</strong>：</p>
@@ -808,10 +868,10 @@ const ch: NetChapter = {
               <tr><th>字段</th><th>长度</th><th>说明</th></tr>
             </thead>
             <tbody>
-              <tr><td>目的地址 / 源地址</td><td>各 6 字节</td><td>48bit MAC 地址，也称为物理地址、硬件地址等。由 IEEE 管理和颁发——前 24 位由 IEEE 确定，后 24 位由硬件厂商确定。在以太网中每个适配器只接受与自身 MAC 相匹配的数据帧：广播帧、多播帧和发给自己的单播帧</td></tr>
+              <tr><td>目的地址 / 源地址</td><td>各 6 字节</td><td>48 bit MAC 地址，也称为链路层地址、硬件地址等。典型的全球管理 EUI-48 单播地址由 IEEE 分配 24 位 OUI、机构管理后 24 位，但还存在不同规模的地址分配及本地管理、随机化 MAC 地址；不能把所有 MAC 都视为固定厂商前缀，也不能将 MAC 绝对视为不可重复的设备身份。网卡通常接收发给自身 MAC 的单播及广播帧，也按已配置的多播组/过滤策略接收相应多播帧；混杂模式等特殊设置可接收其他帧。MAC 地址通常用于链路层转发，不能仅凭一条 MAC 地址断定全球唯一的设备身份</td></tr>
               <tr><td>类型</td><td>2 字节</td><td>指承载的上层协议，即在数据字段里封装着什么样的上层协议报文（IP、ARP、RARP 等）</td></tr>
               <tr><td>数据</td><td>46 ~ 1500 字节</td><td>至少 46 字节，不足则填充补足</td></tr>
-              <tr><td>CRC（FCS）</td><td>4 字节</td><td>采用 CRC-32 的生成多项式 G(x) = x<sup>32</sup> + x<sup>26</sup> + x<sup>23</sup> + x<sup>22</sup> + x<sup>16</sup> + x<sup>12</sup> + x<sup>11</sup> + x<sup>10</sup> + x<sup>8</sup> + x<sup>5</sup> + x<sup>4</sup> + x<sup>2</sup> + x + 1</td></tr>
+              <tr><td>CRC（FCS）</td><td>4 字节</td><td>采用 CRC-32 的生成多项式 G(x) = x<sup>32</sup> + x<sup>26</sup> + x<sup>23</sup> + x<sup>22</sup> + x<sup>16</sup> + x<sup>12</sup> + x<sup>11</sup> + x<sup>10</sup> + x<sup>8</sup> + <strong>x<sup>7</sup></strong> + x<sup>5</sup> + x<sup>4</sup> + x<sup>2</sup> + x + 1（不计最高次 x<sup>32</sup> 时，32 位十六进制表示为 <strong>0x04C11DB7</strong>）</td></tr>
             </tbody>
           </table>
           <p>
@@ -887,8 +947,19 @@ const ch: NetChapter = {
             <strong>VLAN 是一种逻辑分组机制，而不是新的物理局域网标准</strong>；每个 VLAN 构成独立广播域，可限制广播传播。交换机对碰撞域的隔离主要由端口完成，而不是靠 VLAN 标记。
             例如三个虚拟局域网 VLAN1、VLAN2、VLAN3 分布在多个以太网交换机上——当 B1 向 VLAN2 工作组内成员发送数据时，
             工作站 B2 和 B3 将会收到广播的信息，而 A1、A2 和 C1 都不会收到 B1 发出的广播信息。
-            虚拟局域网限制了接收广播信息的结点数，使网络不会因传播过多的广播信息（即「广播风暴」）而引起性能恶化。
+            虚拟局域网限制了广播传播范围，有助于减轻广播负担，但如果某个 VLAN 内存在环路或广播泛洪，仍可能发生广播风暴。
           </p>
+          <h4>VLAN 的主要优点与划分方式</h4>
+          <ol>
+            <li><strong>改善性能：</strong>减少广播域内的无关广播流量。</li>
+            <li><strong>简化管理：</strong>逻辑分组可以不受物理位置限制，便于按部门或应用划分。</li>
+            <li><strong>降低成本：</strong>可复用交换基础设施，减少为逻辑隔离而单独布设物理网络的需求。</li>
+            <li><strong>改善安全性：</strong>不同 VLAN 默认在二层隔离，但跨 VLAN 访问仍需三层网关及访问控制策略。</li>
+          </ol>
+          <p><strong>常见划分方式：</strong>① 按交换机端口划分（配置简单，但用户迁移端口通常要重新配置）；
+            ② 按 MAC 地址划分（允许终端位置变化，但维护 MAC 列表较繁琐）；
+            ③ 按协议类型划分；④ 按 IP 子网划分；⑤ 按高层应用或服务划分。
+            这些是 VLAN 成员分配策略，不意味着所有普通交换机都支持全部方式。</p>
           <p>
             VLAN 协议允许在以太网的帧格式中插入一个 4 字节的标识符，称为 <strong>VLAN 标记</strong>（tag），用来指明发送该帧的结点属于哪一个 VLAN。
             802.1Q 帧格式：目的地址（6）+ 源地址（6）+ 802.1Q 标记（4）+ 长度/类型（2）+ 数据 + FCS。
@@ -918,8 +989,8 @@ const ch: NetChapter = {
             <strong>100BASE-FX</strong> 通常使用 1 对光纤（两根，收发各一根）；<strong>100BASE-T4</strong> 使用 4 对 UTP 3 类线或 5 类线。
           </p>
           <div class="callout warn">
-            <p class="callout-h">课件勘误｜100BASE-FX 光纤数量</p>
-            <p><strong>2025 年局域网课件原文</strong>写「100BASE-FX 使用 2 对光纤」；通常的双纤 100BASE-FX 为<strong>一对、共两根光纤</strong>，分别用于发送与接收。
+            <p class="callout-h">名称勘误｜100BASE-FX 光纤数量</p>
+            <p>100BASE-FX 有时被误写为「使用 2 对光纤」；通常的双纤 100BASE-FX 为<strong>一对、共两根光纤</strong>，分别用于发送与接收。
               这是把「两根」与「两对」混淆。复习时记住 100BASE-TX 为两对双绞线、100BASE-FX 为一对光纤，勿照抄这处数量笔误。</p>
           </div>
           <p>

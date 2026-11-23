@@ -37,7 +37,7 @@ function buildNetIndex(): SearchIndexItem[] {
 
 /**
  * 「计算机网络」课程根组件 —— 挂在 /net/* 下。
- * 布局与算法课完全一致（同一套上游样式），数据为计网七章 + 三套试卷。
+ * 布局与算法课完全一致（同一套上游样式），数据为计网八章 + 三套试卷。
  */
 export default function NetworkCourse() {
   const location = useLocation();
@@ -54,7 +54,7 @@ export default function NetworkCourse() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const currentChapter = useMemo(() => {
-    const m = location.pathname.match(/^\/net\/deck\/(ch[1-7])/);
+    const m = location.pathname.match(/^\/net\/deck\/(ch[1-8])/);
     return m ? m[1] : null;
   }, [location.pathname]);
 
@@ -136,10 +136,10 @@ export default function NetworkCourse() {
   }, [practiceActive, onAtt]);
 
 
-  // 顶栏导航：总目录 + 第1~7章 + 在线练习 + 附件
+  // 顶栏导航：总目录 + 第1~8章 + 在线练习 + 附件
   const tabs = useMemo<CourseTab[]>(
     () => [
-      { to: `${NET_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !practiceActive && !onAtt, key: null, tip: '课程首页 · 七章总览', dot: 'var(--net)' },
+      { to: `${NET_BASE}`, full: '总目录', short: '目录', active: !currentChapter && !practiceActive && !onAtt, key: null, tip: '课程首页 · 八章总览', dot: 'var(--net)' },
       ...netChapters.map((d) => ({
         to: `${NET_BASE}/deck/${d.id}`,
         full: d.no,
@@ -172,7 +172,7 @@ export default function NetworkCourse() {
   // 抽屉导航：首页条目由 SidebarContent 自带，这里只给课程内条目
   const nav = useMemo<NavEntry[]>(
     () => [
-      { to: `${NET_BASE}`, no: '◎', label: '总目录 · 七章总览', active: !currentChapter && !practiceActive && !onAtt },
+      { to: `${NET_BASE}`, no: '◎', label: '总目录 · 八章总览', active: !currentChapter && !practiceActive && !onAtt },
       ...netChapters.map((d) => ({
         to: `${NET_BASE}/deck/${d.id}`,
         no: d.no.replace('第', '').replace('章', ''),

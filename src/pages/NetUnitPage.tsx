@@ -1,7 +1,10 @@
-import { useEffect, useRef } from 'react';
-import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Fragment, useEffect, useRef } from 'react';
+import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { NET_BASE } from '../courses/registry';
 import { netChapters } from '../content/net';
+import { netHomework } from '../content/net/homework';
+import NetHomework from './net/NetHomework';
+import NetHighlights from './net/NetHighlights';
 import { useToc } from '../lib/toc';
 import { decodeEntities } from '../lib/text';
 import HtmlContent from '../components/HtmlContent';
@@ -48,6 +51,21 @@ function NetUnitInner({ chapter }: { chapter: (typeof netChapters)[number] }) {
   useScrollSpy(pageRef, [chapter.id]);
 
   const level2 = chapter.toc.filter((e) => e.level === 2);
+  const chapterNo = Number(chapter.id.slice(2));
+  const questions = netHomework[chapterNo] ?? [];
+  // 与侧栏目录使用相同的 section id；把 h3 知识点归入所在 h2。
+  const questionsForSection = new Map<string, typeof questions>();
+  let parent = '';
+  for (const entry of chapter.toc) {
+    if (entry.level === 2) parent = entry.id;
+    for (const q of questions) {
+      if (q.related !== entry.id) continue;
+      const existing = questionsForSection.get(parent) ?? [];
+      if (!existing.some((item) => item.no === q.no)) {
+        questionsForSection.set(parent, [...existing, q]);
+      }
+    }
+  }
 
   return (
     <div className="page" ref={pageRef} data-deck={chapter.id}>
@@ -55,6 +73,7 @@ function NetUnitInner({ chapter }: { chapter: (typeof netChapters)[number] }) {
       <div className="lede">
         <HtmlContent html={chapter.lede} />
       </div>
+      <NetHighlights chapterNo={chapterNo} />
       {level2.length > 1 && (
         <nav className="topic-map" aria-label="本章知识点导航">
           <span className="topic-map-label">本章脉络</span>
@@ -65,7 +84,22 @@ function NetUnitInner({ chapter }: { chapter: (typeof netChapters)[number] }) {
           ))}
         </nav>
       )}
-      <Sections sections={chapter.sections} />
+      {chapter.sections.map((section) => (
+        <Fragment key={section.id}>
+          <Sections sections={[section]} />
+          {(questionsForSection.get(section.id) ?? []).length > 0 && (
+            <nav className="net-hw-context" aria-label="本节相关课程作业">
+              <span>对应课程作业</span>
+              {(questionsForSection.get(section.id) ?? []).map((question) => (
+                <Link key={question.no} to={`${NET_BASE}/deck/${chapter.id}?s=sec-ch${chapterNo}-hw-${question.no}`}>
+                  题 {question.no}
+                </Link>
+              ))}
+            </nav>
+          )}
+        </Fragment>
+      ))}
+      <NetHomework chapterNo={chapterNo} questions={questions} />
       <SectionCapsule />
     </div>
   );

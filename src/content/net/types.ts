@@ -3,11 +3,11 @@ import type { DeckData } from '../types';
 
 export type { DeckData, Section, TocEntry, Block, QuizData } from '../types';
 
-/** 计算机网络课程的一个章（第1章…第7章） */
+/** 计算机网络课程的一个章（第1章…第8章） */
 export type NetChapter = DeckData;
 
 /**
- * 在线练习题目直接复用算法课题库契约：tags[].deck 存章号 1..7，
+ * 在线练习题目直接复用算法课题库契约：tags[].deck 存章号 1..8，
  * 答题页通过 tagNav 把它映射为 /net/deck/chN?s=sec。
  */
 import type { PracticeQuestion } from '../practice/types';

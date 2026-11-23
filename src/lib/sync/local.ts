@@ -19,6 +19,7 @@ import type {
   ProgressMap,
   ProgressMeta,
   ProgressStamp,
+  ProgressValue,
   RecentMeta,
 } from './types';
 
@@ -108,12 +109,19 @@ function emitDirty(e: DirtyEvent) {
   dirtyListener?.(e);
 }
 
+/** 只接受普通对象：手改/旧版本留下的数组、数字、字符串一律视为损坏数据 */
+function readRecord<T>(key: string): Record<string, T> {
+  const value = readJSON<unknown>(key, {});
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  return value as Record<string, T>;
+}
+
 export function readProgress(key: string): ProgressMap {
-  return readJSON<ProgressMap>(key, {});
+  return readRecord<ProgressValue>(key);
 }
 
 export function readProgressMeta(key: string): ProgressMeta {
-  return readJSON<ProgressMeta>(progressMetaKey(key), {});
+  return readRecord<ProgressStamp>(progressMetaKey(key));
 }
 
 function writeProgressMeta(key: string, meta: ProgressMeta) {

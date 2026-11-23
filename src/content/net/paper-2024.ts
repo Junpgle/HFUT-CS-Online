@@ -128,7 +128,7 @@ const questions: PracticeQuestion[] = [
     question: '如何标识一个网络通信的进程？（　）',
     options: ['IP 地址', 'MAC 地址', 'MAC 地址+端口号', 'IP 地址+端口号'],
     answer: 'D',
-    explanation: '传输层地址（TSAP）= 主机 IP 地址 + 端口号；套接字（IP:port）唯一标识一个网络通信的进程。',
+    explanation: '按本题四个选项，使用 IP 地址与端口号可标识网络通信的本地端点，选 D。但严格说这不能一般性地唯一标识某个操作系统进程：一个进程可持有多个套接字，多个进程也可能借助端口复用机制共享端口；完整 TCP 连接通常由源 IP、源端口、目的 IP、目的端口及协议语境标识。',
     tags: [{ deck: 6, sec: 'sec-ch6-overview-h3', text: '端口与 TSAP' }],
   },
   {
@@ -214,7 +214,7 @@ const questions: PracticeQuestion[] = [
       'BGP 协议只在边界路由器上运行',
     ],
     answer: 'C',
-    explanation: 'BGP 是不同自治域（AS）间的外部网关协议，在相邻 AS 之间交换网络可达性信息（C 对）。BGP 采用<strong>改进型的 D-V 算法</strong>（路径矢量），并非朴素的距离矢量（B 不准确）；它是域间协议而非域内协议（A 错）；BGP 对等体之间是逻辑连通、不一定物理直接相邻（D 错）。',
+    explanation: 'BGP 是不同自治域（AS）间的外部网关协议，在相邻 AS 之间交换网络可达性信息（C 对）。BGP 是<strong>路径矢量（Path Vector）协议</strong>，与距离向量算法有历史联系，但并非 RIP 那样仅依据跳数更新的距离矢量算法（B 不准确）；它是域间协议而非域内协议（A 错）；D 所说“只在边界路由器上运行”不对：AS 内也可在非边界设备上建立 iBGP 会话，BGP 对等体不必物理直连。',
     tags: [{ deck: 5, sec: 'sec-ch5-protocol-h2', text: 'BGP 协议' }],
   },
   {
@@ -302,11 +302,13 @@ const questions: PracticeQuestion[] = [
     <p><strong>控制平面</strong>：负责「怎么建立路由表」——与相邻路由器交换路由信息，运行路由选择协议计算和生成路由表（决定分组从哪个端口转发）。</p>
     <ul>
       <li>域内（内部网关协议 IGP）：<strong>RIP</strong>（D-V 算法，基于跳数、UDP 520 端口）、<strong>OSPF</strong>（链路状态算法，Dijkstra 最短路径）、内部网关协议等；</li>
-      <li>域间（外部网关协议）：<strong>BGP</strong>（改进型 D-V/路径矢量，在 AS 之间交换可达性信息）。</li>
+      <li>域间（外部网关协议）：<strong>BGP</strong>（路径矢量，利用 AS_PATH 等属性交换 AS 之间的网络可达性信息并执行策略路由）。</li>
     </ul>
     <p><strong>数据平面</strong>：负责「怎么转发分组」——对到达的每个 IP 分组，提取目的地址、计算/匹配网络前缀，查路由表执行最长前缀匹配，把分组从对应的最佳输出端口（下一跳）转发出去。</p>
-    <p>数据平面的转发由 IP 协议完成（配合 ARP 地址解析、ICMP 差错报告），其依据正是控制平面生成的路由表；此外路由器还要对超出 MTU 的分组分片、处理 TTL（生存时间）等。</p>`,
-    explanation: `要点：控制平面建路由表（RIP/OSPF/BGP 等路由协议）；数据平面按路由表逐分组查表转发（IP/ARP/ICMP，最长前缀匹配）。`,
+    <p>数据平面使用转发表执行 IPv4 分组转发，包括 TTL 检查、下一跳确定与链路层封装；转发前可能需要利用 ARP 解析下一跳链路层地址。
+    ICMP 用于差错报告或诊断，某些异常分组可能触发 ICMP 报文生成，但 <strong>ICMP 不是通常用来建立路由表的数据平面转发协议</strong>。
+    控制平面主要运行 RIP、OSPF、BGP 等路由协议来获得路由；在教学比较中应区分转发动作、邻居解析以及异常报文生成。</p>`,
+    explanation: `要点：控制平面通过 RIP/OSPF/BGP 等协议构建路由；数据平面负责 IP 分组的查表与转发，ARP 可辅助下一跳解析，ICMP 用于差错诊断，不能将三者都称为路由选择协议。`,
     tags: [
       { deck: 5, sec: 'sec-ch5-protocol', text: '路由协议' },
       { deck: 5, sec: 'sec-ch5-ip-h6', text: 'IP 分组路由' },
@@ -389,7 +391,8 @@ const questions: PracticeQuestion[] = [
     <p>① 单程传播时延 τ = 1km / (2×10<sup>8</sup> m/s) = 1000 / 2×10<sup>8</sup> = 5 μs；</p>
     <p>② 争用期（碰撞窗口）= 2τ = 10 μs；</p>
     <p>③ 最短帧长 = 数据率 × 争用期 = 1 Gb/s × 10 μs = <strong>10000 bit（1250 字节）</strong>。</p>
-    <p>含义：发送一帧的时间不短于 2τ，才能保证发送端在发送完成前一定能检测到可能发生的碰撞；凡长度小于最短帧长的帧都是无效帧。</p>`,
+    <p>含义：在题设的<strong>1 km、1 Gb/s 共享半双工 CSMA/CD 理想模型</strong>下，为在发送结束前发现远端碰撞，发送持续时间至少覆盖往返传播时延，所以得到 10000 bit 的<strong>理论最短发送长度</strong>。
+    但不能将此直接当作真实 IEEE 802.3 以太网 MAC 的最小合法帧长：标准以太网 MAC 帧的最小长度仍为 <strong>64 字节</strong>；经典半双工千兆以太网还采用载波延伸，实际允许的碰撞域长度也受标准约束。因而“凡短于 1250 字节的以太网帧都无效”是错误结论。</p>`,
     explanation: `要点：CD=边发边检、碰撞即停并发 jamming 信号再指数避退；τ=5μs，2τ=10μs，最短帧长=1Gb/s×10μs=10000bit。`,
     tags: [{ deck: 4, sec: 'sec-ch4-broadcast-h2', text: 'CSMA/CD' }],
   },

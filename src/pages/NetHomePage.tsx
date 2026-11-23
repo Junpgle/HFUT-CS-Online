@@ -10,7 +10,7 @@ import { scrollToId } from '../lib/scroll';
 import { useScrollSpy } from '../lib/scrollspy';
 import { decodeEntities } from '../lib/text';
 
-/** 「计算机网络」课程总目录页：七章脉络速查 */
+/** 「计算机网络」课程总目录页：八章脉络速查 */
 export default function NetHomePage() {
   const navigate = useNavigate();
   const toc = useToc();
