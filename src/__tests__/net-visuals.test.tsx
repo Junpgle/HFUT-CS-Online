@@ -8,11 +8,11 @@ import { netDemoPlacements } from '../content/net/enhance';
 import { netStaticFigures } from '../content/net/net-figures';
 
 describe('计算机网络可视化覆盖',()=>{
-  it('31 个动画有唯一名称、各步有解释且已注册',()=>{
-    expect(networkDemoNames).toHaveLength(31);
+  it('35 个动画有唯一名称、各步有解释且已注册',()=>{
+    expect(networkDemoNames).toHaveLength(35);
     expect(new Set(networkDemoNames).size).toBe(31);
     expect(networkDemoNames.some((name)=>Boolean(registry[name]))).toBe(false);
-    expect(netDemoPlacements).toHaveLength(31);
+    expect(netDemoPlacements).toHaveLength(35);
     expect(netStaticFigures).toHaveLength(32);
     for(const scenario of networkScenarios){
       expect(scenario.actors.length).toBeGreaterThanOrEqual(2);
@@ -41,7 +41,7 @@ describe('计算机网络可视化覆盖',()=>{
       }
     }
   });
-  it('八章都有导学图，31 个演示全部落在实际章节，32 幅结构图有 SVG 题注',()=>{
+  it('八章都有导学图，35 个演示全部落在实际章节，32 幅结构图有 SVG 题注',()=>{
     const placed=netChapters.flatMap((c)=>c.sections.flatMap((s)=>s.blocks))
       .filter((block)=>block.type==='demo').map((block)=>block.name)
       .filter((name)=>name.startsWith('net-'));

@@ -189,6 +189,30 @@ export const netDemoPlacements: NetDemoPlacement[] = [
     "anchor": "sec-ch8-email-h1",
     "name": "net-email",
     "title": "电子邮件 SMTP 投递与 IMAP/POP3 读取"
+  },
+  {
+    "chapter": 7,
+    "anchor": "sec-ch7-udp-h2",
+    "name": "net-udp-checksum-2025",
+    "title": "课件原图 · UDP 检验和 TESTING（第24页）"
+  },
+  {
+    "chapter": 8,
+    "anchor": "sec-ch8-dns-h3",
+    "name": "net-dns-full-recursive-2025",
+    "title": "课件原图 · DNS 完全递归查询（第24页）"
+  },
+  {
+    "chapter": 7,
+    "anchor": "sec-ch7-congestion-h2",
+    "name": "net-tcp-cwnd-2025",
+    "title": "课件原图 · TCP 慢开始与拥塞避免（第117–126页）"
+  },
+  {
+    "chapter": 6,
+    "anchor": "sec-ch6-ip-h6",
+    "name": "net-prefix-match-2025",
+    "title": "课件原图 · /22 与 /25 最长前缀匹配"
   }
 ];
 const tagPattern=/\[\[NETDEMO:([a-z0-9-]+)\]\]/g;

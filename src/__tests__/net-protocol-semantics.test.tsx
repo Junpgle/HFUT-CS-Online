@@ -93,21 +93,21 @@ describe('计网计算题的可重复核验结果',()=>{
     expect(f.slice(0,-1).every(x=>x.payload%8===0)).toBe(true);
     expect(()=>calculateIpv4Fragments(50,20,20)).toThrow();
   });
-  it('CRC 发送端余数 1110，接收端逐位除得0000',()=>{
+  it('PPT 2025 第4章第19页 CRC 原题：101001 除以 1101 得 FCS=001',()=>{
     const crc=steps('net-crc');
-    expect(crc.filter(x=>x.tag.startsWith('发送端：'))).toHaveLength(10);
-    expect(crc.filter(x=>x.tag.startsWith('接收端：'))).toHaveLength(10);
+    expect(crc.filter(x=>x.tag.startsWith('发送端 '))).toHaveLength(6);
+    expect(crc.filter(x=>x.tag.startsWith('接收端 '))).toHaveLength(6);
     const div=(word:string,g:string)=>{
       const a=word.split('');
       for(let i=0;i<=a.length-g.length;i++){
-        if(a[i]==='1') for(let j=0;j<g.length;j++)a[i+j]=a[i+j]===g[j]?'0':'1';
+        if(a[i]==='1')for(let j=0;j<g.length;j++)a[i+j]=a[i+j]===g[j]?'0':'1';
       }
       return a.slice(-(g.length-1)).join('');
     };
-    const original='1101011011',divisor='10011';
-    expect(div(original+'0000',divisor)).toBe('1110');
-    expect(div(original+'1110',divisor)).toBe('0000');
-    expect(crc.at(-1)?.cap).toContain('0000');
+    expect(div('101001000','1101')).toBe('001');
+    expect(div('101001001','1101')).toBe('000');
+    expect(crc.some(x=>x.cap.includes('课件第19页'))).toBe(true);
+    expect(crc.at(-1)?.cap).toContain('000');
   });
   it('子网 140.252.20.68/27 的网络号、广播号和可用主机数',()=>{
     const ip=68,mask=224;
@@ -125,8 +125,8 @@ describe('计网计算题的可重复核验结果',()=>{
   });
 });
 describe('全部动画的 SVG 逐帧可渲染性',()=>{
-  it('所有 31 个动画每一帧均能 SSR，不出现 NaN/undefined 或空画面',()=>{
-    expect(networkScenarios).toHaveLength(31);
+  it('所有 35 个动画每一帧均能 SSR，不出现 NaN/undefined 或空画面',()=>{
+    expect(networkScenarios).toHaveLength(35);
     for(const scenario of networkScenarios){
       const demo=networkRegistry[scenario.name];
       const View=demo.View;
@@ -144,8 +144,8 @@ describe('全部动画的 SVG 逐帧可渲染性',()=>{
 });
 
 describe('计网共用时间轴提示布局',()=>{
-  it('全部31个动画的进度提示位于泳道底部，不遮挡参与方名称和消息',()=>{
-    expect(networkScenarios).toHaveLength(31);
+  it('全部35个动画的进度提示位于泳道底部，不遮挡参与方名称和消息',()=>{
+    expect(networkScenarios).toHaveLength(35);
     for(const scenario of networkScenarios){
       const def=networkRegistry[scenario.name];
       const View=def.View;
@@ -158,5 +158,51 @@ describe('计网共用时间轴提示布局',()=>{
       expect(hint,scenario.name+' 的提示位置不正确').toContain('y="309"');
       expect(html,scenario.name+' 的参与方泳道应结束在提示上方').toContain('y2="293"');
     }
+  });
+});
+
+describe('课件 2025 原图的数值和箭头映射',()=>{
+  it('UDP 第7章 P24：TESTING、伪首部、逐字累加得96ED，检验和6912',()=>{
+    const udp=steps('net-udp-checksum-2025');
+    expect(udp.filter(x=>x.tag.startsWith('反码加法'))).toHaveLength(14);
+    const words=[0x9913,0x0868,0xAB03,0x0E0B,0x0011,0x000F,
+      0x043F,0x000D,0x000F,0x0000,0x5445,0x5354,0x494E,0x4700];
+    let sum=0;
+    for(const word of words){sum+=word;sum=(sum&0xFFFF)+(sum>>>16);}
+    expect(sum).toBe(0x96ED);
+    expect((~sum)&0xFFFF).toBe(0x6912);
+    expect(udp.find(x=>x.tag==='取反得到检验和')?.cap).toContain('0x6912');
+    expect(udp.find(x=>x.tag==='写入并发送 UDP 数据报')?.cap).toContain('15字节');
+  });
+  it('交换机第5章 P75-78：接口1的A、接口3的B，未知单播向2/3/4泛洪',()=>{
+    const sw=named('net-switch-learn');
+    expect(sw.actors).toEqual(['A（口1）','交换机 S','C（口2）','B（口3）','D（口4）']);
+    ordered('net-switch-learn',['A 发送给 B','学习源地址 A','查询目的 B',
+      '泛洪到 B','泛洪到 C','泛洪到 D','B 正确接收',
+      'B 回复 A','学习源地址 B','查询目的 A','只向端口1转发']);
+    expect(steps('net-switch-learn').find(x=>x.tag==='学习源地址 B')?.values).toContain('B→3');
+  });
+  it('DNS 第8章 P24：查询和返回严格按原图 1-8 级联方向',()=>{
+    const dns=named('net-dns-full-recursive-2025');
+    expect(dns.actors).toEqual(['客户主机','本地 dns.xyz.com','根 DNS','TLD dns.com','权威 dns.abc.com']);
+    const packets=dns.steps.slice(1,9).map(({from,to})=>[from,to]);
+    expect(packets).toEqual([[0,1],[1,2],[2,3],[3,4],[4,3],[3,2],[2,1],[1,0]]);
+    expect(dns.steps[0].cap).toContain('y.abc.com');
+  });
+  it('TCP 第7章 P117-126：ssthresh 16→12，24超时后窗口回到1',()=>{
+    const cwnd=steps('net-tcp-cwnd-2025');
+    expect(cwnd[0].values).toContain('ssthresh=16');
+    const congested=cwnd.findIndex(x=>x.tag==='网络超时拥塞');
+    expect(cwnd[congested].values).toContain('cwnd=24');
+    expect(cwnd[congested].values).toContain('ssthresh=12');
+    expect(cwnd[congested+1].values).toContain('cwnd=1');
+    expect(cwnd[congested+1].values).toContain('ssthresh=12');
+  });
+  it('网络层 /22 /25：目标206.0.71.130同时匹配两路由，优先/25',()=>{
+    const d=[206,0,71,130],mask22=[255,255,252,0],mask25=[255,255,255,128];
+    const and=(m:number[])=>d.map((v,i)=>v&m[i]).join('.');
+    expect(and(mask22)).toBe('206.0.68.0');
+    expect(and(mask25)).toBe('206.0.71.128');
+    expect(steps('net-prefix-match-2025').some(x=>x.cap.includes('更长、更具体'))).toBe(true);
   });
 });

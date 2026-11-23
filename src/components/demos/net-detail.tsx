@@ -32,27 +32,27 @@ const compact=(str:string,max:number)=>{let width=0,out='';for(const ch of str){
 }return out;};
 
 function CrcPanel({index,step}:{index:number;step:NetStep}){
-  const value=step.bits?.value??'11010110110000';
-  const pos=index>=2&&index<=11?index-2:index>=15&&index<=24?index-15:-1;
-  const before=index===2?'11010110110000':index>2&&index<=11?'发送端第 '+(index-2)+' 轮':index>=15&&index<=24?'接收端第 '+(index-14)+' 轮':null;
+  const value=step.bits?.value??'101001000';
+  const pos=step.bits?.mark!==undefined?Number(step.bits.mark):-1;
   return <g>
-    {tx(35,31,'CRC · 逐位对齐 G=10011（发送端和接收端都完整长除）',13,ink,true)}
-    {tx(35,56,'位下标',11,quiet)}
-    {Array.from({length:14},(_,i)=>{
-      const x=95+i*43,highlight=pos>=0&&i>=pos&&i<pos+5;
+    {tx(35,30,'2025 课件第4章 P19 · M=101001，P=1101，CRC=001',13,ink,true)}
+    {tx(35,52,'下标',11,quiet)}
+    {Array.from({length:9},(_,i)=>{
+      const x=147+i*59,active=pos>=0&&i>=pos&&i<pos+4;
       return <g key={i}>
-        {rect(x,64,39,39,highlight?'var(--panel-2)':soft,highlight?accent:line,4)}
-        {tx(x+19.5,89,value.length===14?value[i]:String(value[i]??'·'),16,
-          highlight?accent:ink,true,'middle')}
-        {tx(x+19.5,120,String(i),10,quiet,false,'middle')}
+        {rect(x,62,53,48,active?'var(--panel-2)':soft,active?accent:line,5)}
+        {tx(x+26,91,String(value[i]??'·'),21,active?accent:ink,true,'middle')}
+        {tx(x+26,127,String(i),11,quiet,false,'middle')}
       </g>;
     })}
-    {rect(34,135,692,39)}
-    {tx(46,159,pos>=0?'本轮除数对齐于位 '+pos+'～'+(pos+4)+'；运算后该位='+(value[pos]??'?'):
-      index<=1?'发送端准备原始数据并补足 CRC 位':'计算已收敛：检查末 4 位',12,ink,true)}
-    {tx(35,195,pos>=0?'模 2 除法：当前位为 1 时异或 10011；为 0 时写商位 0 并跳过':
-      '生成多项式 G(x)=x⁴+x+1，二进制除数 10011；接收端以同一多项式复核。',12,muted)}
-    {tx(35,223,step.event+'   '+(before??''),11,accent)}
+    {tx(35,163,pos>=0?'除数1101对齐位置：'+pos+'~'+(pos+3):'准备运算或查看最终余数',14,accent,true)}
+    {pos>=0&&<g>
+      <line x1={147+pos*59} y1={138} x2={147+(pos+3)*59+53} y2={138}
+        stroke={accent} strokeWidth={3} strokeLinecap="round"/>
+      {tx(35,190,'蓝色框内4位与1101异或（或高位0直接跳过）',12,ink)}
+    </g>}
+    {tx(35,220,'发送端 101001000 ÷1101 → 001；接收端 101001001 ÷1101 → 000',12,muted)}
+    {tx(35,243,'本帧 '+(index+1)+'：'+compact(step.event,34),11,quiet)}
   </g>;
 }
 function FragmentPanel({index}:{index:number}){
@@ -184,23 +184,33 @@ function OspfPanel({index}:{index:number}){
   </g>;
 }
 function SwitchPanel({index}:{index:number}){
-  const macs=[['A','1',index>=1],['B','2',index>=4],['C','3',index>=6]];
+  const a=index>=2,b=index>=9;
+  const ports=[['A','1'],['C','2'],['B','3'],['D','4']];
+  const focus=index>=8&&index<=11?'B':index>=1&&index<=3?'A':index===5?'C':index===6?'D':'';
   return <g>
-    {tx(35,30,'二层交换机：从源 MAC 学习端口，再查目的 MAC 转发',13,ink,true)}
-    {tx(36,65,'MAC',12,muted,true)}
-    {tx(182,65,'学习端口',12,muted,true)}
-    {tx(338,65,'状态',12,muted,true)}
-    {macs.map(([name,port,visible],i)=><g key={String(name)}>
-      {rect(32,78+i*41,450,34,visible?'var(--panel-2)':soft,line)}
-      {tx(42,101,String(name),14,ink,true)}
-      {tx(195,101,visible?String(port):'?',14,visible?accent:quiet,true)}
-      {tx(345,101,visible?'已学习':'尚未学习',12,visible?ok:quiet)}
-    </g>)}
-    {tx(511,87,index<2?'空表→学习 A':index<4?'未知目的 B→泛洪':index<6?'已知 A→端口1':
-      index<8?'目的 B→端口2':index===8?'入/出端口相同→过滤':'MAC 表项可老化',13,accent,true)}
-    {tx(511,116,'交换机按每个 VLAN 维护',11,muted)}
-    {tx(511,136,'自己的转发表；',11,muted)}
-    {tx(511,156,'不是根据目的 MAC 学习。',11,muted)}
+    {tx(35,29,'2025 局域网 P75–78 · 四端口交换机自学习',14,ink,true)}
+    {tx(35,58,'动态 MAC 表（只从源地址学习）',12,muted,true)}
+    {tx(42,84,'MAC',12,quiet,true)}
+    {tx(180,84,'接口',12,quiet,true)}
+    {[[ 'A','1',a ],[ 'B','3',b ]].map(([host,port,seen],i)=>{
+      const y=94+i*49;
+      return <g key={String(host)}>
+        {rect(35,y,280,41,seen?'var(--panel-2)':soft,seen?accent:line)}
+        {tx(50,y+27,String(host),16,seen?accent:quiet,true)}
+        {tx(192,y+27,seen?String(port):'未学习',14,seen?accent:quiet,true)}
+      </g>;
+    })}
+    {tx(389,59,'交换机 S',14,ink,true)}
+    {ports.map(([name,port],i)=>{
+      const y=77+i*43,hot=name===focus;
+      return <g key={name}>
+        <line x1={411} y1={y+14} x2={494} y2={y+14} stroke={hot?accent:line} strokeWidth={hot?4:2}/>
+        {rect(504,y,182,32,hot?'var(--panel-2)':soft,hot?accent:line)}
+        {tx(515,y+22,'口'+port+'  →  主机 '+name,12,hot?accent:ink,hot)}
+      </g>;
+    })}
+    {tx(35,221,index<2?'先接收 A 的帧，尚未有任何源地址记录':index<9?'学到 A→1，目的 B 未知则向2/3/4泛洪':index<12?'收到 B 回复，学到 B→3，已知 A→1 定向转发':'动态表项到期会自动老化',11,muted)}
+    {tx(35,244,'课件原图：端口1=A，端口2=C，端口3=B，端口4=D。',11,quiet)}
   </g>;
 }
 function CwndPanel({index}:{index:number}){
@@ -382,10 +392,119 @@ function MultiplexPanel({index}:{index:number}){
   </g>;
 }
 
+
+/** 课件第7章 P24：UDP 伪首部 + UDP 首部 + TESTING，逐个16位字反码加法。 */
+function UdpChecksumPanel({index,step}:{index:number;step:NetStep}){
+  const words=[
+    ['源 IP ①','9913'],['源 IP ②','0868'],['目的 IP ①','AB03'],['目的 IP ②','0E0B'],
+    ['0 + 协议17','0011'],['伪首部长度15','000F'],['源端口1087','043F'],['目标端口13','000D'],
+    ['UDP长度15','000F'],['校验和暂填0','0000'],['ASCII TE','5445'],['ASCII ST','5354'],
+    ['ASCII IN','494E'],['ASCII G + 00','4700'],
+  ];
+  const active=index>=4&&index<=17?index-4:-1;
+  const running=step.bits?.value??'—';
+  return <g>
+    {tx(35,28,'2025 第7章 P24：UDP 反码检验和计算',14,ink,true)}
+    {tx(35,50,'12B伪首部（不发送） + 8B UDP头 + 7B数据（补0仅供计算）',11,muted)}
+    {words.map(([label,word],i)=>{
+      const col=Math.floor(i/7),row=i%7,x=35+col*351,y=63+row*23,hot=active===i;
+      return <g key={i} opacity={i>active&&active>=0?0.57:1}>
+        {hot&&rect(x-4,y-15,338,22,'var(--panel-2)',accent,4)}
+        {tx(x,y,String(i+1).padStart(2,'0'),11,quiet)}
+        {tx(x+34,y,label,11,hot?accent:muted,hot)}
+        {tx(x+249,y,word,13,hot?accent:ink,true)}
+      </g>;
+    })}
+    {tx(35,237,index>=18?'累计反码和 96ED → 按位取反得到检验和 6912':
+      active>=0?'第 '+(active+1)+' 个16位字后：累计和 '+running:
+      '先准备伪首部、UDP 头与 7 字节 TESTING 数据',12,accent,true)}
+    {tx(35,252,'检验和 0x6912；接收端包含检验和的反码和应为 FFFF。',10,quiet)}
+  </g>;
+}
+/** 第8章P24：与常见本地递归+上游迭代不同，教材此图为服务器间完全递归。 */
+function DnsFullRecursivePanel({index,step}:{index:number;step:NetStep}){
+  const labels=['客户','本地 dns.xyz.com','根 DNS','TLD dns.com','权威 dns.abc.com'],xs=[83,229,375,521,667];
+  const from=step.from,to=step.to;
+  const isMessage=index>=1&&index<=8&&from!==to;
+  const first=from<to;
+  const xa=xs[from]+(first?56:-56),xb=xs[to]+(first?-56:56),ya=127;
+  return <g>
+    {tx(35,30,'2025 应用层 P24 · 完全递归 DNS：查询 y.abc.com',14,ink,true)}
+    {tx(35,55,'图中每层服务器都代下层继续查询；应答再沿原路层层返回（教材标注较少用）',11,muted)}
+    {labels.map((label,i)=><g key={i}>
+      {rect(xs[i]-61,78,122,49,'var(--panel-2)',i===from||i===to?accent:line,7)}
+      {tx(xs[i],96,String(i+1),10,quiet,false,'middle')}
+      {tx(xs[i],115,compact(label,12),11,ink,true,'middle')}
+    </g>)}
+    {isMessage&&<g>
+      <line x1={xa} y1={155} x2={xb} y2={155} stroke={accent} strokeWidth={4}/>
+      <polygon points={first?
+        (xb+','+(155)+' '+(xb-10)+','+(149)+' '+(xb-10)+','+(161)):
+        (xb+','+(155)+' '+(xb+10)+','+(149)+' '+(xb+10)+','+(161))}
+        fill={accent}/>
+      {tx(376,182,index<=4?'向右：递归查询请求':'向左：解析结果逐级返回',13,accent,true,'middle')}
+    </g>}
+    {tx(35,220,'当前：'+compact(step.event,42),12,ink,true)}
+    {tx(35,244,'课件图中的箭头 ①—⑧；不虚构课件未给出的目标 IPv4 数值。',11,quiet)}
+  </g>;
+}
+/** 第7章P117–126：单独复现慢开始门限16，拥塞时24减半为12的教学曲线。 */
+function PptCwndPanel({scenario,index}:{scenario:NetScenario;index:number}){
+  const values=scenario.steps.map(s=>{
+    const found=s.values?.find(v=>v.startsWith('cwnd='));
+    return Number(found?.split('=')[1]??1);
+  });
+  const x=(i:number)=>48+i*33.8,y=(v:number)=>211-v*6.25;
+  const points=values.slice(0,index+1);
+  const threshold=index>=13?12:16;
+  return <g>
+    {tx(35,28,'2025 第7章 P117–126 · ssthresh=16 → 12，超时再慢开始',13,ink,true)}
+    {[0,4,8,12,16,20,24].map(v=><g key={v}>
+      <line x1={47} y1={y(v)} x2={716} y2={y(v)} stroke={line} strokeDasharray="3 5"/>
+      {tx(20,y(v)+4,String(v),10,quiet)}
+    </g>)}
+    <line x1={48} y1={y(threshold)} x2={714} y2={y(threshold)}
+      stroke={warn} strokeWidth={2} strokeDasharray="8 5"/>
+    <path d={points.map((v,i)=>(i?'L':'M')+x(i)+' '+y(v)).join(' ')}
+      fill="none" stroke={accent} strokeWidth={3} strokeLinejoin="round"/>
+    {points.map((v,i)=><g key={i}>
+      <circle cx={x(i)} cy={y(v)} r={i===index?6:3.2} fill={i===index?accent:muted}/>
+      {i===index&&tx(Math.min(699,x(i)+9),y(v)-10,String(v)+' MSS',12,accent,true)}
+    </g>)}
+    {tx(35,236,'当前窗口 cwnd='+values[index]+' MSS；门限 ssthresh='+threshold+' MSS。',12,ink,true)}
+    {tx(35,253,'课件原例：超时 cwnd=24 → ssthresh=12，cwnd 重置为1。',10,quiet)}
+  </g>;
+}
+function PptPrefixPanel({index}:{index:number}){
+  const rows=[
+    ['/22: 255.255.252.0','71 AND 252 = 68','206.0.68.0/22'],
+    ['/25: 255.255.255.128','130 AND 128 = 128','206.0.71.128/25'],
+  ];
+  return <g>
+    {tx(35,29,'2025 第6章最长前缀图 · 两条重叠路由',14,ink,true)}
+    {tx(35,54,'示例目标 D = 206.0.71.130（用于展开课件图中的 /22 与 /25 掩码）',11,muted)}
+    {rows.map(([mask,calc,matched],i)=>{
+      const show=index>=(i?5:3),chosen=i===1&&index>=6,y=70+i*79;
+      return <g key={i}>
+        {rect(35,y,685,67,chosen?'var(--panel-2)':soft,chosen?accent:line,7)}
+        {tx(49,y+23,mask,13,ink,true)}
+        {tx(49,y+47,calc,12,muted)}
+        {tx(452,y+43,show?matched:'等待逐位与…',13,show?accent:quiet,true)}
+      </g>;
+    })}
+    {tx(35,238,index>=6?'同时命中 → 优先选择更长的 /25 前缀，依其下一跳转发':
+      '逐位与运算决定是否匹配；先不要按表项顺序决定路由。',12,accent,true)}
+  </g>;
+}
+
 export function NetDetail({scenario,step,index}:{scenario:NetScenario;step:NetStep;index:number}){
   const name=scenario.name;
   let specialized=null;
-  if(name==='net-packet-switch')specialized=<PacketPipelinePanel index={index}/>;
+  if(name==='net-udp-checksum-2025')specialized=<UdpChecksumPanel index={index} step={step}/>;
+  else if(name==='net-dns-full-recursive-2025')specialized=<DnsFullRecursivePanel index={index} step={step}/>;
+  else if(name==='net-tcp-cwnd-2025')specialized=<PptCwndPanel scenario={scenario} index={index}/>;
+  else if(name==='net-prefix-match-2025')specialized=<PptPrefixPanel index={index}/>;
+  else if(name==='net-packet-switch')specialized=<PacketPipelinePanel index={index}/>;
   else if(name==='net-csmacd')specialized=<CsmaPanel index={index}/>;
   else if(name==='net-delay')specialized=<DelayPanel index={index}/>;
   else if(name==='net-encapsulation')specialized=<EncapsulationPanel index={index}/>;

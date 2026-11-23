@@ -1,12 +1,13 @@
-/** 31 个计网分步协议演示共享一套播放器，保留算法课原有 24 个动画不变。 */
+/** 35 个计网分步协议演示共享一套播放器，保留算法课原有 24 个动画不变。 */
 import type { DemoDef } from './types';
 import { makeNetDemo } from './net-base';
 import { netScenariosA } from './net-scenarios-a';
 import { netCrcScenario } from './net-crc';
 import { netScenariosB } from './net-scenarios-b';
 import { netScenariosC } from './net-scenarios-c';
+import { netPpt2025Scenarios } from './net-ppt-2025';
 
-const all = [...netScenariosA, netCrcScenario, ...netScenariosB, ...netScenariosC];
+const all = [...netScenariosA, netCrcScenario, ...netScenariosB, ...netScenariosC, ...netPpt2025Scenarios];
 export const networkDemoNames: string[] = all.map((item) => item.name);
 export const networkRegistry: Record<string, DemoDef<any>> = Object.fromEntries(
   all.map((scenario) => [scenario.name, makeNetDemo(scenario)]),
