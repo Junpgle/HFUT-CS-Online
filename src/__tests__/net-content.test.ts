@@ -223,3 +223,22 @@ describe('PDF 文字转录字符完整性', () => {
     }
   });
 });
+
+describe('PPP 配图完整性', () => {
+  it('第 4 章 PPP 在原文不变的基础上插入六幅 SVG 图版', () => {
+    const ppp = netChapters.find((chapter) => chapter.id === 'ch4');
+    expect(ppp).toBeDefined();
+    const section = ppp!.sections.find((item) => item.id === 'sec-ch4-p2p');
+    const html = section?.blocks.filter((block) => block.type === 'html').map((block) => block.html).join('') ?? '';
+    const figures = html.match(/<svg class="fig ppp-figure"/g) ?? [];
+    const captions = html.match(/class="fig-cap"/g) ?? [];
+    expect(figures).toHaveLength(6);
+    expect(captions).toHaveLength(6);
+    for (const word of ['透明传输', 'PPP 会话生命周期', 'Code', 'Configure-Ack', 'PAP', 'CHAP', 'IPCP']) {
+      expect(html).toContain(word);
+    }
+    for (const name of ['ppp-stuffing', 'ppp-phases', 'ppp-lcp', 'ppp-config', 'ppp-auth', 'ppp-ncp']) {
+      expect(html).toContain(`id="${name}-title"`);
+    }
+  });
+});

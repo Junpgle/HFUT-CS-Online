@@ -1,5 +1,6 @@
 /* 计算机网络 · 第4章 数据链路层 —— 依据「课件/PPT-2024/第四章数据链路层（2024）.pptx」整理 */
 import type { NetChapter } from './types';
+import { pppStuffingFigure, pppPhasesFigure, pppLcpFigure, pppConfigFigure, pppAuthFigure, pppNcpFigure } from './ppp-figures';
 
 const ch: NetChapter = {
   id: 'ch4',
@@ -544,9 +545,11 @@ const ch: NetChapter = {
               若信息字段中出现 ASCII 码的控制字符（即数值小于 0x20 的字符），则在该字符前面加入一个 0x7D 字节，同时将该字符改为与 0x20 异或后的编码（如 0x04 改为 0x24）。
             </li>
           </ul>
+          ${pppStuffingFigure}
           <p><strong>PPP 协议运行阶段</strong>：链路不可用阶段（初始）→ 链路建立阶段（LCP 协商，包括协商认证方式等）→
             验证阶段（可选，PAP/CHAP 验证）→ 网络层协议阶段（NCP 协商）→ 维持阶段（维持 PPP 会话，传输数据、定时测试链路）→
             网络终止阶段（终止 PPP 会话，回到链路不可用阶段）。即：静止 → 建立 → 认证 → 协商 → 维持 → 终止。</p>
+          ${pppPhasesFigure}
           <p>
             <strong>LCP</strong>：链路控制协议是 PPP 协议的一个子集，用于点对点通信时发送端和接收端协商确定一系列必要的信息。
             针对不同的工作，LCP 协议有三种不同类型的帧：<strong>链路配置报文</strong>（建立和配置一条链路）、
@@ -555,6 +558,7 @@ const ch: NetChapter = {
             Code 标识 LCP 数据报文类型；Ident 为 LCP 报文序列号，用于匹配 Request 和 Reply 报文；Length 为 LCP 报文长度；
             LCP Data 为 LCP 数据报文。
           </p>
+          ${pppLcpFigure}
           <p>
             链路配置报文：<strong>Config-Request</strong>（代码 0x01，启用链路以及配置请求报文，链路两端结点均可根据需要主动发出）、
             <strong>Config-Ack</strong>（0x02，接受请求应答）、<strong>Config-Nak</strong>（0x03，部分拒绝请求应答）、
@@ -575,6 +579,7 @@ const ch: NetChapter = {
             （能识别并接受全部请求项目）、Config-Nak（能识别全部请求并只接受部分配置参数，发送自己认可的配置参数）、
             Config-Reject（无法识别所有配置，携带请求报文中全部配置参数）之一进行应答。
           </p>
+          ${pppConfigFigure}
           <p><strong>PPP 协议的认证</strong>（在建立 LCP 连接过程中可以选择认证通信对端），两种认证方式：</p>
           <ul>
             <li>
@@ -587,6 +592,7 @@ const ch: NetChapter = {
               不用传送口令信息，安全性较高。
             </li>
           </ul>
+          ${pppAuthFigure}
           <p>
             <strong>NCP</strong>：网络控制协议实际上是一套协议，每个子协议都是为处理相应网络层协议所需的错综复杂的配置而存在（IP、IPX、AppleTalk 等都拥有各自的 NCP），
             NCP 与 LCP 有相同的协议格式。当链路建立后，LCP 将控制权交给适当的 NCP；在 NCP 成功配置网络层协议之后，PPP 就可以传输相应的网络层协议数据包。
@@ -596,6 +602,7 @@ const ch: NetChapter = {
             IP-Address（协商本地使用的 IP 地址，全 0 的 IP 地址表示要求对方分配一个 IP 地址）、
             Primary/Secondary DNS Server Address（协商远端的主、次 DNS 服务器地址，全 0 表示要求对方提供 DNS 地址）。
           </p>
+          ${pppNcpFigure}
           <h3 id="sec-ch4-p2p-h3">HDLC 与 PPP 的对比</h3>
           <table class="tbl">
             <thead>
