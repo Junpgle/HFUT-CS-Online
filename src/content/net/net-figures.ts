@@ -20,8 +20,22 @@ function svgDiagram(id:string,title:string,items:[string,string][],mode:string,c
     parts.push('<rect x="'+x+'" y="'+y+'" width="'+w+'" height="88" rx="12" stroke="'+edge+'" fill="'+panel+'"/>');
     parts.push('<rect x="'+(x+11)+'" y="'+(y+13)+'" width="25" height="25" rx="8" fill="'+accent+'" fill-opacity=".13" stroke="'+accent+'" stroke-opacity=".25"/>');
     parts.push('<text x="'+(x+23.5)+'" y="'+(y+31)+'" text-anchor="middle" fill="'+accent+'" font-size="12" font-weight="700" font-family="var(--font)">'+(i+1)+'</text>');
-    parts.push('<text x="'+(x+44)+'" y="'+(y+32)+'" fill="'+ink+'" font-size="'+(heading.length>16?12:14)+'" font-weight="700" font-family="var(--font)">'+escapeXml(heading)+'</text>');
-    parts.push('<text x="'+(x+13)+'" y="'+(y+64)+'" fill="'+muted+'" font-size="'+(body.length>25?11:12)+'" font-family="var(--font)">'+escapeXml(body)+'</text>');
+    // UTF-8 汉字占完整字宽，英文通常不足一字宽；按可视宽度分行防止窄卡片溢出。
+    const measure=(value:string)=>Array.from(value).reduce((sum,ch)=>sum+(/[\x00-\x7f]/.test(ch)?0.56:1),0);
+    const fit=(value:string,max:number)=>{
+      const lines:string[]=[];let current='';let length=0;
+      for(const ch of value){
+        const width=/[\x00-\x7f]/.test(ch)?0.56:1;
+        if(current && length+width>max){lines.push(current);current='';length=0;}
+        current+=ch;length+=width;
+      }
+      if(current)lines.push(current);
+      return lines.slice(0,2).map((line,i)=>i===1&&lines.length>2?line.slice(0,-1)+'…':line);
+    };
+    const headingFont=measure(heading)>13?11:13;
+    parts.push('<text x="'+(x+44)+'" y="'+(y+32)+'" fill="'+ink+'" font-size="'+headingFont+'" font-weight="700" font-family="var(--font)">'+escapeXml(heading)+'</text>');
+    const bodyLines=fit(body,16.1);
+    bodyLines.forEach((line,i)=>parts.push('<text x="'+(x+13)+'" y="'+(y+59+i*17)+'" fill="'+muted+'" font-size="12" font-family="var(--font)">'+escapeXml(line)+'</text>'));
     if(mode==='sequence' && col<2 && i+1<items.length && Math.floor((i+1)/3)===row){
       parts.push('<path d="M '+(x+w+2)+' '+(y+45)+' h 10 m -4 -4 l 4 4 l -4 4" fill="none" stroke="'+accent+'" stroke-width="1.5"/>');
     }
@@ -36,5 +50,5 @@ export const chapterGuideFigures: Record<number,string> = Object.fromEntries(
   }),
 );
 export const netStaticFigures=figures.map((f,i)=>({
-  ...f, html:svgDiagram('net-fig-'+f.ch+'-'+i,f.title,f.items,f.mode,'图 '+f.ch+'-示意'+String(i+1)+'　'+f.title),
+  ...f, html:svgDiagram('net-fig-'+f.ch+'-'+i,f.title,f.items,f.mode,'图 '+f.ch+'-示意'+String(figures.slice(0,i+1).filter((item)=>item.ch===f.ch).length)+'　'+f.title),
 }));
