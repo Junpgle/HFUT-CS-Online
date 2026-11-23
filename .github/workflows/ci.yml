@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+# 只读检出：本工作流不需要写仓库，锁死 GITHUB_TOKEN 权限
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
