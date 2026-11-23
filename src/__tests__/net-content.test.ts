@@ -430,6 +430,94 @@ describe('第七轮计网核验：HTTP/2、QUIC 的标准限定', () => {
   });
 });
 
+describe('第八轮协议准确性与波形可核验性', () => {
+  const chapterHtml = (n: number) => netChapters[n - 1].sections
+    .flatMap((s) => s.blocks).filter((b) => b.type === 'html').map((b) => b.html).join('');
+  const getAnswer = (id: string) =>
+    netPapers.flatMap((paper) => paper.questions).find((q) => q.id === id)?.answer ?? '';
+
+  it('Ethernet CRC-32 生成多项式必须包含 x7 且对应 0x04C11DB7', () => {
+    const html = chapterHtml(4);
+    expect(html).toContain('x<sup>8</sup> + <strong>x<sup>7</sup></strong> + x<sup>5</sup>');
+    expect(html).toContain('0x04C11DB7');
+  });
+  it('IPv4 最大总长度 65535，Identification 并非全局唯一', () => {
+    const html = chapterHtml(6);
+    expect(html).toContain('总长度最大为 65535 字节');
+    expect(html).toContain('不是全网唯一的数据报计数器');
+    expect(html).toContain('RFC 6864');
+  });
+  it('DNS 支持多资源记录，QNAME 反向解析需要 PTR 域名格式', () => {
+    const html = chapterHtml(8);
+    expect(html).toContain('域名与 IP 地址并不是严格的一对一关系');
+    expect(html).toContain('最多占 <strong>255 个八位组</strong>');
+    expect(html).toContain('1.2.0.192.in-addr.arpa');
+    expect(html).toContain('不存在所有区域统一固定为 3 小时');
+  });
+  it('IMAP 第四连接状态为 Logout，SMTP 信封与邮件头分开且认证不能明文发送', () => {
+    const html = chapterHtml(8);
+    expect(html).toContain('注销（Logout）状态');
+    expect(html).toContain('“离线阅读”不是协议连接状态');
+    expect(html).toContain('SMTP 的<strong>信封 MAIL FROM/RCPT TO');
+    expect(html).toContain('Base64 仅是编码，不是加密');
+  });
+
+  // 各段 SVG 路径均由 M/H/V 命令构成：在每位前后半部的水平线采样。
+  function levels(path: string) {
+    const tokens = path.match(/[MHV]|-?[0-9]+/g) ?? [];
+    const segments: { left: number; right: number; y: number }[] = [];
+    let x = 0, y = 0, initial = 0;
+    for (let i = 0; i < tokens.length;) {
+      const cmd = tokens[i++];
+      if (cmd === 'M') { x = Number(tokens[i++]); y = Number(tokens[i++]); initial = y; }
+      else if (cmd === 'H') {
+        const end = Number(tokens[i++]);
+        segments.push({ left: x, right: end, y });
+        x = end;
+      } else if (cmd === 'V') { y = Number(tokens[i++]); }
+      else throw new Error('无法解析 SVG 路径命令：' + cmd);
+    }
+    return {
+      initial,
+      at(pos: number) {
+        const hit = segments.find((seg) => seg.left <= pos && pos < seg.right);
+        if (!hit) throw new Error('SVG 波形缺少位置 ' + pos);
+        return hit.y;
+      },
+    };
+  }
+  const svgPaths = (answer: string) =>
+    [...answer.matchAll(/<path[^>]*d="([^"]+)"/g)].map((m) => m[1]);
+  const manchester = (path: string, start: number, n: number) => {
+    const s = levels(path);
+    return Array.from({ length: n }, (_, i) =>
+      s.at(start + 40 * i + 10) > s.at(start + 40 * i + 30) ? '1' : '0').join('');
+  };
+  it('2021 NRZ/曼彻斯特/差分曼彻斯特波形逐位解码与题目一致', () => {
+    const [nrz, man, diff] = svgPaths(getAnswer('p1-e11'));
+    expect(nrz && man && diff).toBeTruthy();
+    const s = levels(nrz);
+    expect(Array.from({ length: 8 }, (_, i) => s.at(74 + 40 * i + 10) < 43 ? '1' : '0').join(''))
+      .toBe('01001101');
+    expect(manchester(man, 74, 8)).toBe('01001101');
+    const d = levels(diff);
+    let previous = d.initial;
+    let decoded = '';
+    for (let i = 0; i < 8; i++) {
+      const first = d.at(74 + 40 * i + 10);
+      const second = d.at(74 + 40 * i + 30);
+      decoded += first === previous ? '1' : '0';
+      previous = second;
+    }
+    expect(decoded).toBe('01001101');
+  });
+  it('2024 曼彻斯特波形逐位解码为 100101101', () => {
+    const path = svgPaths(getAnswer('p3-e2'))[0];
+    expect(path).toBeTruthy();
+    expect(manchester(path, 30, 9)).toBe('100101101');
+  });
+});
+
 describe('计网试卷离线进度数据健壮性', () => {
   it('localStorage 保存无效 JSON/null/数组时不崩溃，过滤错误的成绩状态', () => {
     const original = localStorage.getItem(NET_PRACTICE_STORE_KEY);

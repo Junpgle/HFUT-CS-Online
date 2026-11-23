@@ -357,7 +357,7 @@ const ch: NetChapter = {
 
           <p>
             IP 协议是 Internet 体系结构的核心协议，已成为连接异构网络的工业标准。
-            IP 提供<strong>无连接的数据报服务</strong>：每个 IP 分组长度 ≤ 64K 字节，不能保证分组可靠的、按序到达，这些留给高层协议解决。
+            IP 提供<strong>无连接的数据报服务</strong>：IPv4 数据报<strong>总长度最大为 65535 字节</strong>（16 位总长度字段，包括首部和载荷），不能保证分组可靠的、按序到达，这些留给高层协议解决。
             与 IPv4 配套的协议包括用于地址解析的 ARP、用于网络控制与差错报告的 ICMP、用于 IPv4 组播成员管理的 IGMP；历史上还有 RARP。
             <strong>这些都不是路由选择协议</strong>，应当与 RIP、OSPF、BGP 等路由协议区分。
           </p>
@@ -371,7 +371,7 @@ const ch: NetChapter = {
               <tr><td>首部长度</td><td>4 位</td><td>表示 IP 包首部长度，最短 20 字节，最长 60 字节</td></tr>
               <tr><td>区分服务</td><td>8 位</td><td>原字段称服务类型（ToS），现在通常按 DS 字段解释：高 6 位为区分服务代码点 DSCP，低 2 位为显式拥塞通知 ECN；DSCP 可用于差异化服务与 QoS，并非从未投入使用</td></tr>
               <tr><td>总长度</td><td>16 位</td><td>包括首部长度和数据长度，最长为 65535 个字节</td></tr>
-              <tr><td>标识</td><td>16 位</td><td>数据报计数器，用于区分数据报的唯一标识符。在数据报被分为多个片段时，每个片段都有相同的标识符</td></tr>
+              <tr><td>标识 Identification</td><td>16 位</td><td>主要配合源 IPv4、目的 IPv4 与协议号标识属于同一原始数据报的分片，以供目的端重组；同一原始数据报的各片采用相同的 ID，<strong>不是全网唯一的数据报计数器</strong>。RFC 6864 对允许或已经发生分片的非原子数据报规定了相应的 ID 唯一性条件；无需分片的原子数据报不要求这种唯一性</td></tr>
               <tr><td>标志</td><td>3 位</td><td>最高位保留；中间位是<strong>不分片 DF</strong>（Don't Fragment）标志，DF=1 则不允许分片；最低位是<strong>有更多分片 MF</strong>（More Fragment）标志，除最后一个分片 MF=0 以外其余都是 MF=1</td></tr>
               <tr><td>片偏移</td><td>13 位</td><td>表示分片后该片在原分组中的相对位置，以 8 个字节为偏移单位</td></tr>
               <tr><td>生存时间</td><td>8 位</td><td>一般记为 TTL（Time To Live），表示数据报在网络中可通过的路由器数的最大值；当 TTL 减为 0 时丢弃该数据报，通常返回 ICMP「时间超过」（类型 11、代码 0）</td></tr>

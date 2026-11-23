@@ -840,7 +840,7 @@ const ch: NetChapter = {
               <tr><td>目的地址 / 源地址</td><td>各 6 字节</td><td>48bit MAC 地址，也称为物理地址、硬件地址等。由 IEEE 管理和颁发——前 24 位由 IEEE 确定，后 24 位由硬件厂商确定。在以太网中每个适配器只接受与自身 MAC 相匹配的数据帧：广播帧、多播帧和发给自己的单播帧</td></tr>
               <tr><td>类型</td><td>2 字节</td><td>指承载的上层协议，即在数据字段里封装着什么样的上层协议报文（IP、ARP、RARP 等）</td></tr>
               <tr><td>数据</td><td>46 ~ 1500 字节</td><td>至少 46 字节，不足则填充补足</td></tr>
-              <tr><td>CRC（FCS）</td><td>4 字节</td><td>采用 CRC-32 的生成多项式 G(x) = x<sup>32</sup> + x<sup>26</sup> + x<sup>23</sup> + x<sup>22</sup> + x<sup>16</sup> + x<sup>12</sup> + x<sup>11</sup> + x<sup>10</sup> + x<sup>8</sup> + x<sup>5</sup> + x<sup>4</sup> + x<sup>2</sup> + x + 1</td></tr>
+              <tr><td>CRC（FCS）</td><td>4 字节</td><td>采用 CRC-32 的生成多项式 G(x) = x<sup>32</sup> + x<sup>26</sup> + x<sup>23</sup> + x<sup>22</sup> + x<sup>16</sup> + x<sup>12</sup> + x<sup>11</sup> + x<sup>10</sup> + x<sup>8</sup> + <strong>x<sup>7</sup></strong> + x<sup>5</sup> + x<sup>4</sup> + x<sup>2</sup> + x + 1（不计最高次 x<sup>32</sup> 时，32 位十六进制表示为 <strong>0x04C11DB7</strong>）</td></tr>
             </tbody>
           </table>
           <p>
