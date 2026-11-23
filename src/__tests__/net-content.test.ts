@@ -566,6 +566,51 @@ describe('第九轮：协议注册语义与试卷历史考法区别', () => {
   });
 });
 
+describe('全量专项复核：协议定义、分层模型与窗口边界', () => {
+  const chapterHtml = (n:number) => netChapters[n-1].sections.flatMap(s=>s.blocks)
+    .filter(b=>b.type==='html').map(b=>b.html).join('');
+  it('第1章：报文交换不默认通知发送端错误，IP 尽力交付不等于可靠送达',()=>{
+    expect(chapterHtml(1)).toContain('是否逐跳检错、出现错误后通知发送方');
+    expect(chapterHtml(1)).toContain('普通 IP 数据报本身不保证可靠送达');
+  });
+  it('第2章：OSI 网络层不被等同于 ARP 的 MAC 地址解析',()=>{
+    expect(chapterHtml(2)).toContain('不能概括为 OSI 网络层必须自行把网络地址直接翻译为物理地址');
+  });
+  it('第4章：PPP 基础帧为变长字段，按具体物理链路确定填充方式',()=>{
+    const html=chapterHtml(4);
+    expect(html).toContain('短帧不需要自动填充至 1500 字节');
+    expect(html).toContain('默认最大接收单元 MRU 为 1500 字节');
+    expect(html).toContain('通过 LCP 地址/控制域压缩（ACFC）');
+    expect(html).toContain('协议字段压缩（PFC）');
+    expect(html).toContain('SONET/SDH');
+    expect(html).toContain('RFC 2615');
+    expect(html).toContain('Configure-Reject 仅拒绝无法协商的选项');
+    expect(html).toContain('并不提供基于帧确认与重传的可靠交付保证');
+  });
+  it('第6章：CIDR 仍可划分子网，不把所有 MAC 都解释为固定 OUI 厂商地址',()=>{
+    const html=chapterHtml(6);
+    expect(html).toContain('无分类编址并不等于不能再划分子网');
+    expect(html).toContain('本地管理、随机化的 MAC 地址');
+    expect(html).toContain('低层绝不可能读取更高层字段');
+  });
+  it('第7章：GBN 与 SR 循环序号规则、理想利用率不能超过100%',()=>{
+    const html=chapterHtml(7);
+    expect(html).toContain('U = min{1, n·T<sub>D</sub>');
+    expect(html).toContain('W<sub>T</sub> ≤ 2<sup>m</sup>−1');
+    expect(html).toContain('W<sub>T</sub>+W<sub>R</sub> ≤ 2<sup>m</sup>');
+    expect(html).toContain('这不是所有现代 TCP 实现都采用的初始 cwnd');
+    expect(html).toContain('保活（keepalive）是可选机制');
+    expect(html).toContain('UDP 不提供这种可靠交付');
+  });
+  it('第8章：DNS 缓存可跳过根查询，TLS 不属于 TCP 内建机制',()=>{
+    const html=chapterHtml(8);
+    expect(html).toContain('TLS 不是 TCP 自身提供的安全服务');
+    expect(html).toContain('解析器不必每次都从根开始');
+    expect(html).toContain('不必持有该顶级域名下所有主机的 IP 地址');
+    expect(html).toContain('客户端离线期间不会天然获得实时一致性保证');
+  });
+});
+
 describe('计网试卷离线进度数据健壮性', () => {
   it('localStorage 保存无效 JSON/null/数组时不崩溃，过滤错误的成绩状态', () => {
     const original = localStorage.getItem(NET_PRACTICE_STORE_KEY);
