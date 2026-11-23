@@ -34,6 +34,21 @@ const EXPECT_PAPER_COUNT: Record<string, number> = {
   'paper-2024': 29,
 };
 
+describe('2025 第1章远程联机系统的局限性', () => {
+  it('保留课件第21页的两项主要问题，并区分第19页线路利用率及第二阶段特点', () => {
+    const history = netChapters[0].sections.find((section) => section.id === 'sec-ch1-history');
+    const html = history?.blocks.filter((block) => block.type === 'html')
+      .map((block) => block.html).join('') ?? '';
+    expect(html).toContain('第 21 页｜远程联机系统存在的主要问题');
+    expect(html).toContain('主计算机负荷重，响应时间可能过长');
+    expect(html).toContain('单机系统的可靠性较低，主机故障可能导致整个系统瘫痪');
+    expect(html).toContain('关联课件第 19 页');
+    expect(html).toContain('线路利用率低');
+    expect(html).toContain('过渡到第二阶段');
+    expect(html).toContain('具有独立处理能力的多台计算机互联');
+  });
+});
+
 describe('2025 第1章订票系统术语勘误', () => {
   it('保留 2025 课件 SABRAI 原文并明确指出正确名称 SABRE', () => {
     const history = netChapters[0].sections.find((section) => section.id === 'sec-ch1-history');
