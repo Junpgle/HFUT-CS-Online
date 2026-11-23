@@ -186,8 +186,8 @@ const ch: NetChapter = {
           </p>
           <h3 id="sec-ch5-routing-h3">距离向量算法与无穷计数问题</h3>
           <div class="callout warn">
-            <p class="callout-h">2025 版网络层-2 · 第30页勘误</p>
-            <p>课件把 RIP 距离向量算法的理论基础写成“Bellman-Ford 算法（或 Ford-Fulkerson 算法）”，
+            <p class="callout-h">算法名称勘误｜Bellman–Ford 与 Ford–Fulkerson</p>
+            <p>一些资料把 RIP 距离向量算法的理论基础写成“Bellman-Ford 算法（或 Ford-Fulkerson 算法）”，
               这两者<strong>不能作为同一种算法</strong>：
               <strong>Bellman–Ford</strong>解决带权图的单源最短路径问题，距离向量路由更新使用其最优性关系；
               <strong>Ford–Fulkerson</strong>用于网络最大流问题，不是 RIP 的最短路径更新算法。
@@ -285,6 +285,16 @@ const ch: NetChapter = {
             为了解决无穷计算问题，RIP 选择 16 作为 ∞；为了加快收敛速度，RIP 采用水平分割技术；
             RIP 消息通过 UDP 协议传输，端口号为 520。
           </p>
+          <h4>RIP 的三个特点与优缺点</h4>
+          <ol>
+            <li><strong>仅与相邻路由器交换路由信息</strong>，不直接向全网所有路由器通告。</li>
+            <li>交换的是<strong>当前路由表中的全部路由信息</strong>，包含已知的目的网络、距离与下一跳。</li>
+            <li>通常<strong>每隔约 30 秒周期性交换</strong>路由信息；网络变化时也可以触发更新。</li>
+          </ol>
+          <p><strong>RIP 的优点：</strong>实现简单，协议开销较小，适合规模有限的自治系统。</p>
+          <p><strong>RIP 的缺点：</strong>最大有效距离为 <strong>15 跳</strong>，<strong>16 表示不可达</strong>；
+            周期性发送完整路由表会占用链路带宽；发生路由故障时容易出现<strong>坏消息传播得慢</strong>、
+            计数到无穷与收敛迟缓等问题。</p>
           <p>
             <strong>开放式最短路径优先 OSPF</strong>（Open Shortest Path First）：一个基于链路状态算法的动态路由协议，是当前最主流的内部网关协议。特点包括：
           </p>
@@ -295,6 +305,21 @@ const ch: NetChapter = {
             <li><strong>收敛后的无环最短路径树</strong>：链路状态数据库同步并完成最短路径计算后可形成无环的最短路径树；路由尚未收敛时仍可能短暂出现转发环路，不能说 OSPF 在所有时刻绝对无环；</li>
             <li><strong>可认证</strong>：支持认证服务，防止非法向路由器发送假路由信息来愚弄路由。</li>
           </ul>
+          <h4>OSPF 链路状态协议的三个主要特点</h4>
+          <ol>
+            <li><strong>洪泛（flooding）更新：</strong>在本区域等规定的泛洪范围内传播链路状态通告，使相关路由器获得一致的拓扑信息；
+              并非把整个自治系统的详细拓扑都无条件广播给每个区域内路由器。</li>
+            <li><strong>通告与自身相邻结点的链路状态：</strong>包括相邻路由器和链路度量值（metric），而非像 RIP 那样周期性交换整张路由表。</li>
+            <li><strong>链路变化时触发更新，并定期刷新链路状态：</strong>数据库同步后，各路由器依据链路状态数据库运行
+              Dijkstra 最短路径算法（SPF）计算路由。</li>
+          </ol>
+          <p><strong>OSPF 区域划分：</strong>可将自治系统划分为普通区域与<strong>主干区域 Area 0（0.0.0.0）</strong>；
+            区域边界路由器 ABR 连接不同区域，自治系统边界路由器 ASBR 用于引入外部路由信息。
+            分层划分区域能够<strong>减少区域内路由更新通信量及单台路由器需要维护的状态</strong>，
+            但增加了信息类型和路由管理复杂度。</p>
+          <p><strong>OSPF 工作过程：</strong>通过 Hello 分组发现和维护邻居，
+            同步链路状态数据库，使用链路状态更新分组发布变化并由确认机制保障更新传播。
+            OSPF 的常见分组类型包括 Hello、数据库描述、链路状态请求、链路状态更新、链路状态确认。</p>
           <h3 id="sec-ch5-protocol-h2">自治域与域间路由协议 BGP</h3>
           <div class="callout tip">
             <p class="callout-h">重点 B｜IGP、EGP 与自治系统</p>
@@ -623,7 +648,7 @@ const ch: NetChapter = {
             </tbody>
           </table>
           <div class="callout warn">
-            <p class="callout-h">2025 版网络层-2 · 第6页 ICMP 时间戳勘误</p>
+            <p class="callout-h">单位勘误｜ICMP 时间戳</p>
             <p>课件把时间戳（Timestamp Request/Reply，类型 13/14）的 32 位字段
               解释为“从 1900 年 1 月 1 日起经过的秒数”，<strong>这是错误的单位与起点</strong>。
               按 RFC 792，ICMP 时间戳字段通常用<strong>从 UTC 当日午夜起经过的毫秒数</strong>表示；

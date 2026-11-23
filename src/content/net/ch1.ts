@@ -20,6 +20,7 @@ const ch: NetChapter = {
     { id: 'sec-ch1-history-standard', text: '第三阶段：标准化网络', level: 3 },
     { id: 'sec-ch1-history-fast', text: '第四阶段：互联与高速网络', level: 3 },
     { id: 'sec-ch1-definition', text: '2. 计算机网络的定义', level: 2 },
+    { id: 'sec-ch1-definition-functions', text: '计算机网络的主要功能', level: 3 },
     { id: 'sec-ch1-classify', text: '3. 计算机网络的分类', level: 2 },
     { id: 'sec-ch1-classify-h1', text: '★ 按地理范围分类', level: 3 },
     { id: 'sec-ch1-classify-h2', text: '★ 按拓扑结构分类', level: 3 },
@@ -214,6 +215,16 @@ const ch: NetChapter = {
             <li><strong>数据交换</strong>是网络的最基本功能，各种资源共享都是建立在数据交换的基础上的。</li>
             <li><strong>资源共享</strong>是网络最终目的。</li>
           </ul>
+          <h3 id="sec-ch1-definition-functions">计算机网络的主要功能</h3>
+          <ol>
+            <li><strong>网络通信：</strong>支持不同主机与应用程序之间的数据交换。</li>
+            <li><strong>资源共享：</strong>共享硬件、软件、数据和通信信道资源，如打印机、数据库、文档、线路等。</li>
+            <li><strong>分布式处理：</strong>将任务分配到多台计算机协同完成，而非全部集中在一台主机上。</li>
+            <li><strong>集中管理：</strong>对分散在各地的组织、终端和业务进行统一管理。</li>
+            <li><strong>均衡负荷：</strong>当某台计算机负担过重时，由应用及管理机制分配部分工作给其他计算机。</li>
+          </ol>
+          <p>网络系统既有主机、通信控制设备、传输介质、信号转换设备等<strong>硬件</strong>，
+            也有网络操作系统、通信协议、应用软件及网络管理软件等<strong>软件</strong>。</p>
           `,
         },
       ],
@@ -251,36 +262,22 @@ const ch: NetChapter = {
             通过结点与线段间的几何关系表示网络结构，反映网络中各实体的结构关系。
           </p>
           <table class="tbl">
-            <thead>
-              <tr><th>拓扑</th><th>连接方式</th><th>可靠性特点</th></tr>
-            </thead>
+            <thead><tr><th>拓扑</th><th>结构与优点</th><th>缺点与故障风险</th></tr></thead>
             <tbody>
-              <tr>
-                <td><strong>星型网</strong></td>
-                <td>传输介质从一个中央结点向外辐射连接其他节点；任何两个结点之间的信息交换必须经过中央结点转发</td>
-                <td>中央结点的可靠性十分重要，一旦中央结点发生故障，会引起整个网络瘫痪</td>
-              </tr>
-              <tr>
-                <td><strong>环形网</strong></td>
-                <td>所有结点通过传输介质连接成一个闭环，任何两个结点的数据交换必须沿环进行</td>
-                <td>一旦结点或链路发生故障，则环路断开，导致网络瘫痪</td>
-              </tr>
-              <tr>
-                <td><strong>总线网络</strong></td>
-                <td>一条总线连接所有的结点，任何一个结点发送数据，其他节点都能收到；特点是<strong>共享信道</strong></td>
-                <td>任何结点故障都不会影响整个网络正常运行</td>
-              </tr>
-              <tr>
-                <td><strong>不规则型网</strong></td>
-                <td>每个结点至少要和其他两个结点连接；布线灵活，几乎不受任何拓扑结构的约束</td>
-                <td>任何一个结点或一条链路发生故障都不会影响网络的连通性</td>
-              </tr>
+              <tr><td><strong>总线型</strong></td><td>所有站点共享传输总线；结构简单、成本低、安装方便</td>
+                <td>故障诊断与隔离困难；主干线故障可能影响整个网络</td></tr>
+              <tr><td><strong>星型</strong></td><td>各外围结点分别连接中心结点；增加或维护站点、故障隔离比较容易</td>
+                <td>依赖中心设备，中心结点故障会影响整体通信；布线与设备成本较高</td></tr>
+              <tr><td><strong>树型</strong></td><td>星型的层次化扩展，由根结点和分支结点构成；扩展较灵活</td>
+                <td>上级结点或链路故障会影响下级分支，对根结点依赖较大</td></tr>
+              <tr><td><strong>环型</strong></td><td>每个结点与两个相邻结点相连形成闭环，传统单向环的传输顺序明确</td>
+                <td>传统单环断链可能造成通信中断；结点加入退出较复杂，节点较多时效率受影响</td></tr>
+              <tr><td><strong>网状型</strong></td><td>结点按需要形成多条互连路径，具备冗余路径时可靠性较高</td>
+                <td>线路、路由控制和管理复杂，费用较高；是否能承受单点故障取决于冗余程度</td></tr>
             </tbody>
           </table>
-          <div class="callout tip">
-            <p class="callout-h">小结</p>
-            <p>局域网：总线型、星型、环型；广域网：不规则型。点—点通信（独占信道）：星型、不规则型；多点通信（共享信道）：总线型、环型。</p>
-          </div>
+          <p>按拓扑形状分类与按通信方式分类是两个不同维度；
+            是否共享信道、能否抵御故障还取决于所采用的介质、协议与冗余配置。</p>
           `,
         },
       ],

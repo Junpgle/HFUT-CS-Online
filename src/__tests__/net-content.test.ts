@@ -107,6 +107,75 @@ describe('第1章：计算机网络发展的四个阶段', () => {
   });
 });
 
+
+/**
+ * 各章课件中的明确枚举、优缺点和步骤不得被概括性文字代替。
+ * 这里检查学习内容覆盖，不要求前台出现编辑用的课件版本或页码。
+ */
+describe('计算机网络各章课件条目完整性', () => {
+  const chapterHtml = (chapterNo: number) => netChapters[chapterNo - 1].sections
+    .flatMap((section) => section.blocks)
+    .filter((block) => block.type === 'html')
+    .map((block) => block.html).join('');
+
+  const containsAll = (chapterNo: number, terms: string[]) => {
+    const html = chapterHtml(chapterNo);
+    for (const term of terms) expect(html, `第${chapterNo}章遗漏：${term}`).toContain(term);
+  };
+
+  it('第1章：主要功能五项，拓扑形式五类及其利弊', () => {
+    containsAll(1, ['网络通信', '资源共享', '分布式处理', '集中管理', '均衡负荷',
+      '总线型', '星型', '树型', '环型', '网状型', '主干线故障']);
+    expect(netChapters[0].toc.some((entry) => entry.id === 'sec-ch1-definition-functions')).toBe(true);
+  });
+
+  it('第2章：分层五个优点、重复开销与五种典型层间功能', () => {
+    containsAll(2, ['各层相对独立', '灵活性好', '结构上可分割',
+      '易于实现和维护', '促进标准化', '分层的缺点',
+      '差错控制', '流量控制', '分段和重装', '复用和分用', '连接建立和释放']);
+  });
+
+  it('第3章：T1/E1 的时隙数、帧周期，PDH 与 SONET/SDH', () => {
+    containsAll(3, ['193 bit/帧', '256 bit/帧', '125 μs',
+      '准同步（PDH）', 'SONET', 'STS-1 / OC-1', '51.84 Mbit/s',
+      'SDH', 'STM-1', '155.52 Mbit/s']);
+  });
+
+  it('第4章：连续 ARQ 退回重传和效率权衡、PPP 十项需求与五类不必提供的能力', () => {
+    containsAll(4, ['连续 ARQ（Go-Back-N）', 'DATA2', '重复确认',
+      '连续 ARQ 不一定在所有信道条件下都优于停止等待协议',
+      'PPP 应满足的十项需求', 'PPP 不要求提供的功能',
+      '网络层地址协商', '数据压缩协商', '多点线路支持']);
+  });
+
+  it('第5章：局域网特点与优点、静态和动态接入、VLAN 优点与成员划分方式', () => {
+    containsAll(5, ['局域网的特点与主要优点', '广播功能', '扩展和演变方便',
+      '可靠性、可用性和生存性', '静态划分信道', '受控接入',
+      'VLAN 的主要优点与划分方式', '改善性能', '简化管理',
+      '降低成本', '改善安全性', '按交换机端口划分', '按 MAC 地址划分']);
+  });
+
+  it('第6章：RIP 三特点和优缺点、OSPF 三特点和区域划分', () => {
+    containsAll(6, ['仅与相邻路由器交换路由信息', '当前路由表中的全部路由信息',
+      '30 秒', '16 表示不可达', '坏消息传播得慢',
+      'OSPF 链路状态协议的三个主要特点', '洪泛（flooding）更新',
+      '链路变化时触发更新', '主干区域 Area 0',
+      '减少区域内路由更新通信量', '路由管理复杂度']);
+  });
+
+  it('第7章：端到端通信、TCP/UDP 与传输层可靠性边界', () => {
+    containsAll(7, ['端到端', '复用', '分用', 'TCP', 'UDP',
+      '可靠、有序交付是特定运输层协议', '端口号']);
+  });
+
+  it('第8章：FTP 主进程四步骤与控制/数据连接、HTTP、CGI、搜索', () => {
+    containsAll(8, ['FTP 服务器主进程的工作步骤', '打开熟知端口 21',
+      '等待连接请求', '启动从属进程', '继续接受新请求',
+      '控制连接', '数据连接', '被动（PASV）模式',
+      '动态文档、CGI 与活动文档', 'PageRank']);
+  });
+});
+
 describe('计算机网络课件内容', () => {
   it('共 8 个章，id/no 符合约定', () => {
     expect(netChapters.length).toBe(8);

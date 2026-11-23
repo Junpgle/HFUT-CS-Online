@@ -495,11 +495,11 @@ const ch: NetChapter = {
             集中的时隙只分配给有数据要发送的用户（如 4 个用户的数据 a、b、c、d 集中到 STDM 帧中按序复用）。
           </p>
           <div class="callout tip">
-            <p class="callout-h">2025 版课件数值核对｜T1 / E1 时分复用帧</p>
+            <p class="callout-h">T1 / E1 帧长与周期</p>
             <p><strong>T1：</strong>24 路各 8 bit 的 PCM 时隙共 192 bit，加 1 bit 帧定位位，合计
               <strong>193 bit/帧</strong>。按每秒 8000 帧，传输速率为
               <strong>193 × 8000 = 1.544 Mbit/s</strong>，每帧持续
-              <strong>1/8000 s = 125 μs</strong>。2025 数据通信课件的 T1 页写为“125 毫秒”，
+              <strong>1/8000 s = 125 μs</strong>。某些资料将帧周期误写为“125 毫秒”，
               与给出的速率矛盾，正确单位应为<strong>微秒（μs）</strong>。</p>
             <p><strong>E1：</strong>32 个时隙每隙 8 bit，合计
               <strong>256 bit/帧</strong>，同样每秒 8000 帧，
@@ -507,6 +507,15 @@ const ch: NetChapter = {
               32 是时隙总数，典型 PCM30/32 中 TS0 用于帧同步、TS16 用于信令，
               常规承载话音的是<strong>30 路</strong>，不能直接把全部 32 个时隙都算作话音信道。</p>
           </div>
+          <h4>准同步数字传输的局限与 SONET / SDH</h4>
+          <p><strong>早期数字传输系统的局限：</strong>北美、日本使用的 T1（1.544 Mbit/s）与欧洲的 E1（2.048 Mbit/s）
+            速率体系并不兼容；不少系统采用<strong>准同步（PDH）</strong>方式，
+            不同支路的时钟频率存在偏差，给复用、分用及跨系统互通造成困难。</p>
+          <p><strong>同步光纤网 SONET</strong>（Synchronous Optical Network）采用同步时钟体系，
+            其基本线路速率等级 <strong>STS-1 / OC-1 为 51.84 Mbit/s</strong>。
+            <strong>同步数字系列 SDH</strong>（Synchronous Digital Hierarchy）是相关国际同步传输标准，
+            基本等级 <strong>STM-1 为 155.52 Mbit/s</strong>，与 SONET 的 OC-3 / STS-3 线路速率相对应。
+            两者均通过标准化同步传输等级改善大容量数字信号的复用与跨网传输。</p>
           <h3 id="sec-ch3-mux-h3">码分复用 CDM 与波分复用 WDM</h3>
           <p>
             <strong>码分复用</strong>：将每个比特时间都划分为 m 个短时间片，称为<strong>码片</strong>（chip）。

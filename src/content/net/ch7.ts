@@ -23,11 +23,11 @@ const ch: NetChapter = {
     { id: 'sec-ch7-dns-h3', text: '域名解析过程', level: 3 },
     { id: 'sec-ch7-dns-h4', text: 'DNS 的报文结构', level: 3 },
     { id: 'sec-ch7-dns-h5', text: 'UDP 还是 TCP', level: 3 },
-    { id: 'sec-ch7-ftp', text: '3. 文件传送协议 FTP（2025课件）', level: 2 },
+    { id: 'sec-ch7-ftp', text: '3. 文件传送协议 FTP', level: 2 },
     { id: 'sec-ch7-ftp-h1', text: 'FTP 与 NFS 文件访问模式', level: 3 },
     { id: 'sec-ch7-ftp-h2', text: '控制连接、数据连接与端口', level: 3 },
     { id: 'sec-ch7-ftp-h3', text: '主动/被动模式与安全边界', level: 3 },
-    { id: 'sec-ch7-email', text: '4. 电子邮件协议（原有拓展）', level: 2 },
+    { id: 'sec-ch7-email', text: '4. 电子邮件协议', level: 2 },
     { id: 'sec-ch7-email-h1', text: '电子邮件协议概述', level: 3 },
     { id: 'sec-ch7-email-h2', text: '简单邮件传输协议 SMTP', level: 3 },
     { id: 'sec-ch7-email-h3', text: '邮件读取协议 POP3 与 IMAP', level: 3 },
@@ -36,8 +36,8 @@ const ch: NetChapter = {
     { id: 'sec-ch7-http-h2', text: '超文本传送协议 HTTP', level: 3 },
     { id: 'sec-ch7-http-h3', text: 'HTTP 的报文结构', level: 3 },
     { id: 'sec-ch7-http-h4', text: '万维网的文档 HTML', level: 3 },
-    { id: 'sec-ch7-http-h6', text: '2025课件补充：动态文档、CGI 与活动文档', level: 3 },
-    { id: 'sec-ch7-http-h7', text: '2025课件补充：搜索引擎与 PageRank', level: 3 },
+    { id: 'sec-ch7-http-h6', text: '动态文档、CGI 与活动文档', level: 3 },
+    { id: 'sec-ch7-http-h7', text: '搜索引擎与 PageRank', level: 3 },
     { id: 'sec-ch7-http-h5', text: '发展潮流：HTTP/3（补充）', level: 3 },
   ],
   sections: [
@@ -299,16 +299,13 @@ const ch: NetChapter = {
 
     {
       id: 'sec-ch7-ftp',
-      heading: '3. 文件传送协议 FTP（2025 课件）',
+      heading: '3. 文件传送协议 FTP',
       blocks: [
         {
           type: 'html',
           html: `
-          <div class="callout key"><p class="callout-h">2025 版第8章 · 第26—32页</p>
-            <p>FTP 的核心不是简单记住 20、21 两个端口，而是区分
-              <strong>控制连接（发命令）</strong>和<strong>数据连接（传文件）</strong>，
-              以及“文件副本访问”和“远程文件透明访问”两种模型。</p>
-          </div>
+          <p>FTP 采用客户—服务器结构，需要区分<strong>控制连接（传送命令）</strong>与
+            <strong>数据连接（传送文件或目录信息）</strong>；文件传送与远程文件系统访问采用不同的工作模型。</p>
           <h3 id="sec-ch7-ftp-h1">FTP 与 NFS 文件访问模式</h3>
           <p><strong>FTP（File Transfer Protocol，文件传送协议）</strong>采用客户—服务器方式，
             基于 TCP 可靠传输，支持远程目录浏览、用户身份验证、文件上下载和格式选择。
@@ -316,15 +313,25 @@ const ch: NetChapter = {
           <table class="tbl"><thead><tr><th>对照</th><th>FTP / TFTP 文件传送</th><th>NFS 等在线文件访问</th></tr></thead><tbody>
             <tr><td>基本方式</td><td>复制整个文件，操作本地副本</td><td>通过远程文件系统协议直接访问远程文件</td></tr>
             <tr><td>修改流程</td><td>修改副本后再上传，远端文件由本次传送更新</td><td>由文件系统接口和协议协调远程读取、写入</td></tr>
-            <tr><td>课件强调</td><td>文件传送协议和副本访问</td><td>联机访问协议及文件系统透明性</td></tr>
+            <tr><td>实现侧重</td><td>文件传送与副本访问</td><td>文件系统接口和远程访问透明性</td></tr>
           </tbody></table>
-          <p>2025 课件第27页将 FTP、TFTP 与 NFS 对照，是按<strong>文件访问模型</strong>分类；
+          <p>FTP、TFTP 与 NFS 的对比属于<strong>文件访问模型</strong>的分类；
             不能据此认为 FTP 和 TFTP 使用同一种运输层协议：FTP 使用 TCP，TFTP 通常使用 UDP。</p>
           <h3 id="sec-ch7-ftp-h2">控制连接与数据连接：两条 TCP 连接</h3>
           <p>FTP 服务器主进程在<strong>TCP 21 端口</strong>等待客户连接。
             控制进程在控制连接上交换登录、目录、文件传输命令和服务器响应；
             数据传送进程另行建立数据连接，用于承载文件内容或目录列表。
-            课件第31页特别指出：控制连接在整个会话中保持，数据连接按传输任务建立、使用并结束。</p>
+            控制连接在整个会话中保持，数据连接按传输任务建立、使用并结束。</p>
+          <h4>FTP 服务器主进程的工作步骤</h4>
+          <ol>
+            <li><strong>打开熟知端口 21：</strong>使客户端可以向服务器建立控制连接。</li>
+            <li><strong>等待连接请求：</strong>主进程在监听状态接收来自客户端的新请求。</li>
+            <li><strong>启动从属进程：</strong>为客户端建立处理请求的从属进程；
+              从属进程在处理过程中可按需创建数据传送进程，处理结束后释放相应资源。</li>
+            <li><strong>继续接受新请求：</strong>主进程返回等待状态，与处理已有会话的从属进程并发工作。</li>
+          </ol>
+          <p>主进程负责监听与分派；控制进程负责会话中的命令与响应，
+            数据传送进程按需建立数据连接并传送文件或目录内容。</p>
           <table class="tbl"><thead><tr><th>连接</th><th>作用</th><th>端口与生命周期</th></tr></thead><tbody>
             <tr><td>控制 TCP 连接</td><td>传输 USER、PASS、LIST、RETR、STOR 等命令及响应</td>
               <td>服务器通常监听 TCP 21，登录与多次传输期间保持</td></tr>
@@ -332,13 +339,13 @@ const ch: NetChapter = {
               <td>按需建立并关闭；具体端口取决于主动或被动模式</td></tr>
           </tbody></table>
           <h3 id="sec-ch7-ftp-h3">主动/被动模式与安全边界</h3>
-          <p><strong>课件第32页的“数据端口 20”</strong>对应经典<strong>主动（PORT）模式</strong>：
+          <p><strong>服务器数据端口 20</strong>对应经典<strong>主动（PORT）模式</strong>：
             服务器从自己的 TCP 20 端口向客户端指定的数据端口发起连接；
             但不能推导为“任何 FTP 数据连接永远使用服务器 20 端口”。</p>
           <p><strong>被动（PASV）模式</strong>下，服务器告诉客户端用于数据传输的监听地址和端口，
             再由<strong>客户端主动连接</strong>该数据端口，通常更适合 NAT 或防火墙环境。
             主动/被动模式的数据连接方向不同，而<strong>控制连接通常仍到服务器 21 端口</strong>。
-            此处是依据 RFC 959 和 RFC 1579 对课件图示适用条件的补充，不是原幻灯片的新增图示。</p>
+            在 NAT 或防火墙环境下需注意控制通道与数据通道的连接方向及端口差异。</p>
           <div class="callout tip"><p class="callout-h">考试容易混淆</p>
             <p><strong>FTP</strong> 明文控制通道并不默认提供内容加密；
               <strong>FTPS</strong> 是 FTP 加 TLS，
@@ -350,7 +357,7 @@ const ch: NetChapter = {
     },
     {
       id: 'sec-ch7-email',
-      heading: '4. 电子邮件协议（原有拓展）',
+      heading: '4. 电子邮件协议',
       blocks: [
         {
           type: 'html',
@@ -673,36 +680,34 @@ const ch: NetChapter = {
 &lt;/BODY&gt;                               &lt;!-- 主体结束 --&gt;
 &lt;/HTML&gt;                               &lt;!-- HTML 文档结束 --&gt;</pre>
 
-          <h3 id="sec-ch7-http-h6">动态文档、CGI 与活动文档（2025 课件）</h3>
-          <p class="quiz-note">对照来源：2025 版第8章《应用层》PDF 第88—98页。
-            这些页面先讲 HTML、XML、XHTML、CSS，再区分服务器生成的动态文档和客户端执行的活动文档。</p>
+          <h3 id="sec-ch7-http-h6">动态文档、CGI 与活动文档</h3>
+          <p>网页技术包括 HTML、XML、XHTML、CSS，以及在服务器端生成的动态文档和在客户端运行的活动文档。</p>
           <p><strong>HTML / XML / CSS</strong> 的分工：
             HTML 描述网页结构；XML 侧重用可扩展标记表达、交换结构化数据；
             CSS 主要描述 HTML 等文档的样式和布局。
-            课件第89页所说“XHTML 将逐渐取代 HTML”属于当时的技术发展预测，
+            早期一些资料曾预测 XHTML 将逐渐取代 HTML，但这只是历史发展预测，
             <strong>不应理解为如今 HTML 已被 XHTML 取代</strong>。</p>
-          <table class="tbl"><thead><tr><th>类型</th><th>课件定义与工作位置</th><th>典型过程</th></tr></thead><tbody>
+          <table class="tbl"><thead><tr><th>类型</th><th>工作位置与原理</th><th>典型过程</th></tr></thead><tbody>
             <tr><td>静态文档</td><td>服务器已有现成文件，访问时通常直接交付其内容</td><td>浏览器请求 → 服务器返回已有 HTML</td></tr>
             <tr><td>动态文档</td><td>服务器收到请求后运行程序，根据输入生成本次响应文档</td><td>浏览器请求 → 后端程序生成文档 → 返回给浏览器</td></tr>
             <tr><td>活动文档</td><td>服务器传递可在客户端执行的程序，由客户端更新显示</td><td>下载脚本或程序 → 浏览器端运行 → 页面随交互变化</td></tr>
           </tbody></table>
           <p><strong>CGI（Common Gateway Interface，通用网关接口）</strong>：
-            2025 课件第92—95页用它说明如何扩充 Web 服务器。
+            它可用于扩充 Web 服务器的动态处理能力。
             服务器把请求参数交给 CGI 程序，程序生成输出，服务器再把结果作为 HTTP 响应传回客户端。
             CGI 是一个约定<strong>服务器与外部程序交互方式</strong>的接口规范，
             <strong>不是一种独立的网络传输层协议</strong>。</p>
-          <p>第96—98页用 Java applet 演示历史上的客户端活动文档。
+          <p>早期客户端活动文档曾通过 Java applet 等方式实现。
             这属于早期 Web 技术实例：现代浏览器交互通常由 JavaScript 等 Web 技术实现，
-            <strong>不应按课件历史示例要求现代浏览器运行 applet</strong>。</p>
-          <h3 id="sec-ch7-http-h7">万维网的信息检索与 PageRank（2025 课件）</h3>
-          <p class="quiz-note">对照来源：2025 版第8章第99—103页。</p>
+            <strong>现代浏览器通常不再支持运行 Java applet</strong>。</p>
+          <h3 id="sec-ch7-http-h7">万维网的信息检索与 PageRank</h3>
           <p><strong>全文检索</strong>：搜索系统通过爬虫（Spider）采集网页，
             对文档建立索引；用户查询时匹配<strong>已经建立的索引</strong>，
             并非用户每输入一次关键词就现场遍历整个万维网。</p>
           <p><strong>分类目录检索</strong>：按主题、行业或分类目录组织收录的网站，
-            早期常由人工审核和维护；课件中的目录网站名单带有历史背景，
+            早期常由人工审核和维护；传统目录式搜索网站具有历史背景，
             不能据此判断相应网站今天仍提供相同服务。</p>
-          <p><strong>PageRank</strong>：课件第103页用它解释网页重要性评价——
+          <p><strong>PageRank</strong>：可用于评价网页重要性——
             链接可视为从一个网页到另一个网页的引用，来自重要网页的链接具有更高权重。
             检索结果还需要综合考虑与查询主题的相关程度；
             <strong>PageRank 并不等于只数入链数目，也不是所有现代搜索引擎完整排序公式</strong>。</p>
