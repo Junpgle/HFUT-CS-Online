@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ComponentType, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { registry } from './demos/registry';
+import { networkRegistry } from './demos/network-registry';
 import { decodeEntities } from '../lib/text';
 import { IconExpand, IconNext, IconPause, IconPlay, IconPrev, IconReset } from './icons';
 
@@ -19,7 +20,7 @@ interface Props {
 export default function DemoPlayer({ name, title: rawTitle }: Props) {
   const title = decodeEntities(rawTitle);
   const reduced = useReducedMotion();
-  const def = registry[name];
+  const def = registry[name] ?? networkRegistry[name];
   const frames = useMemo(() => (def ? (def.build() as never[]) : []), [def]);
   const total = frames.length;
   const [step, setStep] = useState(0);

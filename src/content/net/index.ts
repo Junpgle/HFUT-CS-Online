@@ -10,6 +10,7 @@ import oldCh5 from './ch5';
 import oldCh6 from './ch6';
 import oldCh7 from './ch7';
 import { netHomework } from './homework';
+import { enrichNetworkChapter } from './enhance';
 import paper2021 from './paper-2021';
 import paper2022 from './paper-2022';
 import paper2024 from './paper-2024';
@@ -55,10 +56,11 @@ const chapterMaterial: DeckData[] = [
 export const netChapters: DeckData[] = chapterMaterial.map((chapter, index) => {
   const chapterNo = index + 1;
   const questions = netHomework[chapterNo] ?? [];
+  const enriched = enrichNetworkChapter(chapter, chapterNo);
   return {
-    ...chapter,
+    ...enriched,
     toc: [
-      ...chapter.toc,
+      ...enriched.toc,
       { id: `sec-ch${chapterNo}-homework`, text: `本章作业（${questions.length}题）`, level: 2 },
       ...questions.map((q) => ({
         id: `sec-ch${chapterNo}-hw-${q.no}`,
