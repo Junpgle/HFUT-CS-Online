@@ -206,15 +206,19 @@ const ch: NetChapter = {
           <div class="callout key">
             <p class="callout-h">定义</p>
             <p>
-              将若干台具有<strong>独立功能</strong>的计算机系统，用某种或多种通信介质连接起来，通过完善的<strong>网络协议</strong>，
-              在<strong>数据交换</strong>的基础上，实现<strong>网络资源共享</strong>的系统称为计算机网络。
+              计算机网络是把<strong>分布在不同地点，并具有独立功能</strong>的多个计算机系统通过
+              <strong>通信设备和线路</strong>连接起来，在功能完善的<strong>网络软件和协议</strong>的管理下，
+              以实现<strong>网络中资源共享</strong>为目标的系统。
             </p>
           </div>
-          <ul>
-            <li>「<strong>独立</strong>」的含义：每台计算机都可运行各自独立的操作系统，各计算机系统之间的地位平等，无主从之分，任何一台计算机不能干预或强行控制其他计算机的正常运行。</li>
-            <li><strong>数据交换</strong>是网络的最基本功能，各种资源共享都是建立在数据交换的基础上的。</li>
-            <li><strong>资源共享</strong>是网络最终目的。</li>
-          </ul>
+          <p>这个定义包含三个方面的基本含义：</p>
+          <ol>
+            <li><strong>独立计算机互联：</strong>两台或两台以上具有独立功能的计算机系统相互连接，以共享资源为目的。</li>
+            <li><strong>存在通信通道：</strong>计算机之间通信交换信息需要物理通信通道，可通过铜线、光纤、微波、卫星等传输介质实现。</li>
+            <li><strong>遵循通信规则：</strong>计算机系统之间交换信息必须遵守相应的协议、约定和规则。</li>
+          </ol>
+          <p>这里的<strong>不同地点</strong>并不要求相距很远，同一教室、机房或建筑中的多台计算机也可以互联组网。
+            每台计算机具有独立处理能力；<strong>数据交换</strong>是实现<strong>资源共享</strong>的基础。</p>
           <h3 id="sec-ch1-definition-functions">计算机网络的主要功能</h3>
           <ol>
             <li><strong>网络通信：</strong>支持不同主机与应用程序之间的数据交换。</li>
