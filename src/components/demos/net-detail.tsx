@@ -435,7 +435,7 @@ function DnsFullRecursivePanel({index,step}:{index:number;step:NetStep}){
   const from=step.from,to=step.to;
   const isMessage=index>=1&&index<=8&&from!==to;
   const first=from<to;
-  const xa=xs[from]+(first?56:-56),xb=xs[to]+(first?-56:56),ya=127;
+  const xa=xs[from]+(first?56:-56),xb=xs[to]+(first?-56:56);
   return <g>
     {tx(35,30,'2025 应用层 P24 · 完全递归 DNS：查询 y.abc.com',14,ink,true)}
     {tx(35,55,'图中每层服务器都代下层继续查询；应答再沿原路层层返回（教材标注较少用）',11,muted)}
