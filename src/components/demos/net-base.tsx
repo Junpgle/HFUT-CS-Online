@@ -50,14 +50,14 @@ function View({frame:f}:{frame:Frame}){
     <defs><marker id={marker} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill={accent}/></marker></defs>
     <rect x={12} y={12} width={736} height={302} rx={12} fill={wash} fillOpacity={0.32} stroke={line}/>
-    {label(29,56,'消息时序 · 最近最多 6 步（拖动下方进度条可查看全部）',{size:10,color:subtle})}
+    {label(29,309,'消息时序 · 仅显示最近 6 步（拖动下方进度条可查看全部）',{size:10,color:subtle})}
     {label(29,35,here.tag,{size:16,bold:true,color:accent})}
     {label(731,35,'步骤 '+(f.index+1)+' / '+steps.length,{size:12,color:subtle,anchor:'end'})}
     {actors.map((name,i)=><g key={i}>
       <rect x={xs[i]-Math.min(68,252/actors.length)} y={49} width={Math.min(136,504/actors.length)} height={37} rx={8}
         fill={i===here.from||i===here.to?wash:panel} stroke={i===here.from||i===here.to?accent:line}/>
       {label(xs[i],72,compact(name,actors.length>=5?8:actors.length===4?13:20),{size:actors.length>=5?11:13,bold:i===here.from||i===here.to,anchor:'middle'})}
-      <line x1={xs[i]} y1={92} x2={xs[i]} y2={299} stroke={line} strokeDasharray="5 5"/>
+      <line x1={xs[i]} y1={92} x2={xs[i]} y2={293} stroke={line} strokeDasharray="5 5"/>
     </g>)}
     {shown.map((step,j)=>{
       const index=start+j, y=109+j*36, isCurrent=index===f.index;
