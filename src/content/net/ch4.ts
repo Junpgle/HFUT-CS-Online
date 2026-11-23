@@ -586,6 +586,8 @@ const ch: NetChapter = {
             <strong>Terminate-Ack</strong>（而非 Terminate-Reply）；
             <strong>Configure-Reject</strong> 携带的是被拒绝的配置选项，而不是必然拒绝全部选项；
             <strong>Configure-Nak</strong> 可用于对可识别的选项提出不同的可接受取值。
+            另外，PPP 信息字段的 <strong>1500 字节是默认 MRU（最大接收单元），不是固定帧长</strong>。
+            RFC 1661 的 Padding 是可选的（MAY），不要求不足 1500 字节的数据必须填充到 1500 字节。
             下方交互演示按协议标准逐报文展示。</p>
           </div>
           <p><strong>PPP 协议的认证</strong>（在建立 LCP 连接过程中可以选择认证通信对端），两种认证方式：</p>

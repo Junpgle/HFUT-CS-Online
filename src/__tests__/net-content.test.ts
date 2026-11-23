@@ -10,6 +10,7 @@ import Sections from '../components/Sections';
 import { netChapters, netPapers, netAllQuestions } from '../content/net';
 import { netHomework } from '../content/net/homework';
 import { netHighlights } from '../content/net/highlights';
+import { loadNetResults, NET_PRACTICE_STORE_KEY } from '../pages/net/NetPracticeListPage';
 import type { PracticeKind } from '../content/practice/types';
 
 const ENTITY_RE = /&(#x?[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/;
@@ -239,6 +240,47 @@ describe('PPP 配图完整性', () => {
     }
     for (const name of ['ppp-stuffing', 'ppp-phases', 'ppp-lcp', 'ppp-config', 'ppp-auth', 'ppp-ncp']) {
       expect(html).toContain(`id="${name}-title"`);
+    }
+  });
+});
+
+describe('2025 课件数值笔误与标准对照', () => {
+  it('T1 193bit × 8000帧/s、E1 256bit × 8000帧/s；帧长都是125微秒', () => {
+    expect(193 * 8000).toBe(1_544_000);
+    expect(256 * 8000).toBe(2_048_000);
+    expect(1 / 8000).toBe(0.000125);
+    const physical = netChapters[2].sections.flatMap((section) => section.blocks)
+      .filter((block) => block.type === 'html').map((block) => block.html).join('');
+    expect(physical).toContain('193 × 8000 = 1.544 Mbit/s');
+    expect(physical).toContain('256 × 8000 = 2.048 Mbit/s');
+    expect(physical).toContain('125 μs');
+    expect(physical).toContain('微秒（μs）');
+  });
+  it('保留 PPP 原课件文本，另注明 RFC 1661 MRU 不是固定帧长及 Padding 可选', () => {
+    const link = netChapters[3].sections.flatMap((section) => section.blocks)
+      .filter((block) => block.type === 'html').map((block) => block.html).join('');
+    expect(link).toContain('不足 1500 字节时填充');
+    expect(link).toContain('1500 字节是默认 MRU');
+    expect(link).toContain('Padding 是可选的');
+    expect(link).toContain('Terminate-Ack');
+  });
+});
+describe('计网试卷离线进度数据健壮性', () => {
+  it('localStorage 保存无效 JSON/null/数组时不崩溃，过滤错误的成绩状态', () => {
+    const original = localStorage.getItem(NET_PRACTICE_STORE_KEY);
+    try {
+      for (const bad of ['{bad json', 'null', '[]', '42', '"oops"']) {
+        localStorage.setItem(NET_PRACTICE_STORE_KEY, bad);
+        expect(loadNetResults(), bad).toEqual({});
+      }
+      localStorage.setItem(NET_PRACTICE_STORE_KEY,
+        JSON.stringify({ 'paper-2021:p1-s1':'right', 'paper-2021:p1-s2':'revealed', 'bad':'other', '':'wrong' }));
+      expect(loadNetResults()).toEqual({
+        'paper-2021:p1-s1':'right', 'paper-2021:p1-s2':'revealed',
+      });
+    } finally {
+      if (original === null) localStorage.removeItem(NET_PRACTICE_STORE_KEY);
+      else localStorage.setItem(NET_PRACTICE_STORE_KEY, original);
     }
   });
 });

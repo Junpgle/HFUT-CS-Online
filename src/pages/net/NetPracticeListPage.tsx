@@ -11,8 +11,13 @@ export type NetResult = 'right' | 'wrong' | 'revealed';
 
 export function loadNetResults(): Record<string, NetResult> {
   try {
-    const raw = localStorage.getItem(NET_PRACTICE_STORE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, NetResult>) : {};
+    const saved: unknown = JSON.parse(localStorage.getItem(NET_PRACTICE_STORE_KEY) ?? 'null');
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return {};
+    return Object.fromEntries(
+      Object.entries(saved).filter(([key, value]) =>
+        key.length > 0 && (value === 'right' || value === 'wrong' || value === 'revealed'),
+      ),
+    ) as Record<string, NetResult>;
   } catch {
     return {};
   }

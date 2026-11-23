@@ -489,6 +489,19 @@ const ch: NetChapter = {
             用户对分配到的子信道的利用率一般都不高。STDM 按需动态分配时隙——每个时隙之前的短时隙（白色）用于存放用户地址信息，
             集中的时隙只分配给有数据要发送的用户（如 4 个用户的数据 a、b、c、d 集中到 STDM 帧中按序复用）。
           </p>
+          <div class="callout tip">
+            <p class="callout-h">2025 版课件数值核对｜T1 / E1 时分复用帧</p>
+            <p><strong>T1：</strong>24 路各 8 bit 的 PCM 时隙共 192 bit，加 1 bit 帧定位位，合计
+              <strong>193 bit/帧</strong>。按每秒 8000 帧，传输速率为
+              <strong>193 × 8000 = 1.544 Mbit/s</strong>，每帧持续
+              <strong>1/8000 s = 125 μs</strong>。2025 数据通信课件的 T1 页写为“125 毫秒”，
+              与给出的速率矛盾，正确单位应为<strong>微秒（μs）</strong>。</p>
+            <p><strong>E1：</strong>32 个时隙每隙 8 bit，合计
+              <strong>256 bit/帧</strong>，同样每秒 8000 帧，
+              <strong>256 × 8000 = 2.048 Mbit/s</strong>，帧周期为 <strong>125 μs</strong>。
+              32 是时隙总数，典型 PCM30/32 中 TS0 用于帧同步、TS16 用于信令，
+              常规承载话音的是<strong>30 路</strong>，不能直接把全部 32 个时隙都算作话音信道。</p>
+          </div>
           <h3 id="sec-ch3-mux-h3">码分复用 CDM 与波分复用 WDM</h3>
           <p>
             <strong>码分复用</strong>：将每个比特时间都划分为 m 个短时间片，称为<strong>码片</strong>（chip）。
