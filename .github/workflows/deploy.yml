@@ -2,10 +2,11 @@ name: Deploy (main + branch previews)
 
 # 一次运行产出一个完整站点：根目录永远是 origin/main，分支预览挂在 /preview/<slug>/ 下。
 # 主站与预览同属一个 Pages 产物，所以任何触发都不会把对方刷掉；PR 内容只在预览子目录里。
+# 只由 push / 手动触发：PR 事件构建出的是 refs/pull/N/merge，Pages 环境保护拒绝它部署，
+# 而同一个 pages 并发组里它会取消掉真正能发布的 push 运行——结果是主站静默停更。
+# PR 的类型检查与测试由 CI 工作流负责；预览内容随分支 push 刷新。
 on:
   push:
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
 
 permissions:
@@ -25,8 +26,6 @@ env:
 
 jobs:
   build:
-    # fork 的 PR 没有 Pages 写权限，也取不到 head 分支，交给 CI 工作流检查即可
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     # Supabase 连接信息（Publishable Key，可公开）；未配置时站点自动退回纯本地模式
     env:
@@ -42,7 +41,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      # PR 触发时工作区是 PR 的合并提交；主站一律从 origin/main 构建
+      # 主站一律从 origin/main 构建：分支 push 与手动 dispatch 都先切过去
       - name: 切到 main
         run: git checkout -f -B main origin/main
 
@@ -79,7 +78,6 @@ jobs:
 
   deploy:
     needs: build
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     environment:
       name: github-pages
