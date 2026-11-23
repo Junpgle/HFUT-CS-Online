@@ -178,7 +178,8 @@ function OspfPanel({index}:{index:number}){
       {tx(x,y+5,n,15,ink,true,'middle')}
     </g>)}
     {tx(498,50,'当前最短距离',12,ink,true)}
-    {dist.map(([name,val],i)=>tx(504,86+i*33,name+'：'+(Number.isFinite(val)?val:'∞'),14,i<Math.min(4,Math.max(1,index-3))?accent:ink,true))}
+    {dist.map(([name,val],i)=>tx(504,86+i*33,name+'：'+(index<4?'未初始化':Number.isFinite(val)?val:'∞'),14,
+      index>=4&&i<Math.min(4,Math.max(1,index-3))?accent:index<4?quiet:ink,true))}
     {tx(37,231,'边代价：AB=1、AC=4、BC=2、BD=5、CD=1；到 D 最短代价=4',11,muted)}
   </g>;
 }
