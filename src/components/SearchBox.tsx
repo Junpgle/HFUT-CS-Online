@@ -99,6 +99,7 @@ export default function SearchBox({ index, linkTo, suggestions = ALGO_SUGGESTION
   const navigate = useNavigate();
   const reduced = useReducedMotion();
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const boxRef = useRef<HTMLDivElement>(null);
@@ -133,11 +134,15 @@ export default function SearchBox({ index, linkTo, suggestions = ALGO_SUGGESTION
     return hits.sort((a, b) => a.score - b.score).slice(0, 12).map((h) => h.item);
   }, [query, index]);
 
-  // 点击容器外部关闭
+  // 点击容器外部收起：输入框回到圆形图标胶囊
   useEffect(() => {
     if (!open) return;
     const onDown = (e: globalThis.MouseEvent) => {
-      if (!boxRef.current?.contains(e.target as Node)) setOpen(false);
+      if (!boxRef.current?.contains(e.target as Node)) {
+        setOpen(false);
+        setExpanded(false);
+        inputRef.current?.blur();
+      }
     };
     document.addEventListener('mousedown', onDown);
     return () => document.removeEventListener('mousedown', onDown);
@@ -147,6 +152,8 @@ export default function SearchBox({ index, linkTo, suggestions = ALGO_SUGGESTION
 
   const select = (item: SearchIndexItem) => {
     setOpen(false);
+    setExpanded(false);
+    inputRef.current?.blur();
     navigate(linkTo(item));
   };
 
@@ -161,19 +168,27 @@ export default function SearchBox({ index, linkTo, suggestions = ALGO_SUGGESTION
       if (results[active]) select(results[active]);
     } else if (e.key === 'Escape') {
       setOpen(false);
+      setExpanded(false);
+      inputRef.current?.blur();
     }
   };
 
   return (
-    <div className="search-box" ref={boxRef}>
+    <div className={`search-box${expanded ? ' expanded' : ''}`} ref={boxRef}>
       <input
         ref={inputRef}
         className="search-input"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={onKeyDown}
-        onFocus={() => setOpen(true)}
-        onClick={() => setOpen(true)}
+        onFocus={() => {
+          setExpanded(true);
+          setOpen(true);
+        }}
+        onClick={() => {
+          setExpanded(true);
+          setOpen(true);
+        }}
         placeholder="搜索"
         aria-label="搜索关键词"
         aria-haspopup="listbox"

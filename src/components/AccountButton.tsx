@@ -70,7 +70,6 @@ export default function AccountButton() {
   if (!sync.enabled) return null;
 
   const user = sync.user;
-  const label = user?.email ? user.email.split('@')[0] : '账号';
 
   const openAuth = (next: AuthMode) => {
     setMode(next);
@@ -123,11 +122,12 @@ export default function AccountButton() {
           className="account-btn"
           aria-haspopup={user ? 'menu' : 'dialog'}
           aria-expanded={user ? menuOpen : undefined}
+          aria-label={user ? `${user.email ?? '账号'}，${syncStatusText || '已登录'}` : '登录账号'}
           title={user?.email ?? '登录账号'}
           onClick={() => (user ? setMenuOpen((v) => !v) : openAuth('signin'))}
         >
           <IconUser size={17} />
-          <span className="account-label">{user ? label : '登录'}</span>
+          {!user && <span className="account-label">登录</span>}
           {user && <span className={`account-dot ${sync.status}`} aria-hidden="true" />}
         </button>
 

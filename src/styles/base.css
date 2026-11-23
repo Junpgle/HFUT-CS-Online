@@ -405,41 +405,64 @@ button {
 }
 .search-icon {
   position: absolute;
-  left: 12px;
+  left: 50%;
+  transform: translateX(-50%);
   display: inline-flex;
   color: var(--ink-3);
   pointer-events: none;
+  transition: left 180ms var(--press-ease), transform 180ms var(--press-ease);
 }
-/* 搜索框已置于右胶囊内：自身透明，避免胶囊套胶囊 */
+/* 默认收成圆形胶囊（只留搜索图标），点按 / 聚焦后再展开输入框 */
 .search-input {
   height: 34px;
-  width: 190px;
-  padding: 0 32px 0 34px; /* 右侧留给清除钮 */
+  width: 34px;
+  padding: 0;
   border-radius: 999px;
   font-size: 0.8438rem;
   color: var(--ink);
   border: none;
   background: transparent;
   outline: none;
-  transition: background-color 140ms var(--press-ease);
+  cursor: pointer;
+  transition: width 180ms var(--press-ease), padding 180ms var(--press-ease),
+    background-color 140ms var(--press-ease);
 }
-.search-box:focus-within .search-input {
+.search-box.expanded .search-input {
+  width: 190px;
+  padding: 0 32px 0 34px; /* 右侧留给清除钮 */
   background: var(--pressed);
+  cursor: text;
 }
-/* 紧凑桌面（1021~1280）：tab 缩写「1讲」后中栏吃紧，搜索先让 60px（须在 ≤1020 折叠规则之前） */
+/* 收起态锁定圆形尺寸：外部若按「常驻展开」改写过 .search-input 宽度也不能撑开胶囊；
+   已有搜索词时只显示图标（文字透明），点开后再显示内容 */
+.search-box:not(.expanded) .search-input {
+  width: 34px;
+  padding: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+}
+.search-box.expanded .search-icon {
+  left: 12px;
+  transform: none;
+}
+/* 紧凑桌面（1021~1280）：tab 缩写「1讲」后中栏吃紧，展开宽度略收 */
 @media (min-width: 1021px) and (max-width: 1279px) {
-  .search-input {
+  .search-box.expanded .search-input {
     width: 200px;
   }
 }
 .search-input::placeholder {
+  color: transparent;
+}
+.search-box.expanded .search-input::placeholder {
   color: var(--ink-3);
 }
 /* 清空搜索词：仅在有输入时渲染，右缘小圆钮 */
 .search-clear {
   position: absolute;
   right: 6px;
-  display: inline-flex;
+  display: none;
   align-items: center;
   justify-content: center;
   width: 24px;
@@ -448,9 +471,18 @@ button {
   color: var(--ink-3);
   transition: color 140ms, background 140ms;
 }
+.search-box.expanded .search-clear {
+  display: inline-flex;
+}
 .search-clear:hover {
   color: var(--ink);
   background: var(--pressed);
+}
+@media (prefers-reduced-motion: reduce) {
+  .search-input,
+  .search-icon {
+    transition-duration: 0s;
+  }
 }
 /* 命中片段：主题色加重，不铺底色（与全站去填充约束一致） */
 .pi-mark {
@@ -458,37 +490,18 @@ button {
   color: var(--deck-accent);
   font-weight: 600;
 }
-/* 窄屏顶栏（tabs 隐藏的 ≤1020px）：搜索折叠成图标（点按展开），
-   课程名占满剩余空间截断——必须在 .search-input 基础规则之后声明才能覆盖 260px 宽 */
+/* 窄屏顶栏（tabs 隐藏的 ≤1020px）：搜索展开宽度按视口收窄，
+   课程名占满剩余空间截断 */
 @media (max-width: 1020px) {
-  .search-input {
-    width: 34px;
-    padding: 0;
-    border-color: transparent;
-    background: transparent;
-  }
-  .search-input::placeholder {
-    color: transparent;
-  }
-  /* 折叠成图标时清除钮藏起，展开后再出现（给输入文字让位） */
-  .search-clear {
-    display: none;
-  }
-  .search-box:focus-within .search-clear {
-    display: inline-flex;
-  }
-  .search-box:focus-within {
+  .search-box.expanded {
     position: relative;
     z-index: 65;
   }
-  .search-box:focus-within .search-input {
+  .search-box.expanded .search-input {
     width: min(240px, 52vw);
     padding: 0 34px 0 36px;
-    border-color: var(--hairline);
+    border: 1px solid var(--hairline);
     background: var(--panel-solid);
-  }
-  .search-box:focus-within .search-input::placeholder {
-    color: var(--ink-3);
   }
   /* 讲次条 display:none 不生成盒子，右栏会掉进中间 auto 列挤瘪左栏——窄屏改两列网格 */
   .topbar {
@@ -3407,9 +3420,9 @@ pre.code .cl-code:empty + .cl-com {
 .account-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   height: 34px;
-  padding: 0 10px;
+  padding: 0 8px;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -3566,6 +3579,12 @@ pre.code .cl-code:empty + .cl-com {
 @media (max-width: 1180px) {
   .topbar .account-label {
     display: none;
+  }
+}
+/* 游客态「登录」只有两个字；搜索已收成圆形后右组有余量，不必像旧版那样提前隐藏 */
+@media (min-width: 1181px) {
+  .topbar .account-wrap .account-label {
+    display: inline;
   }
 }
 @media (max-width: 420px) {
