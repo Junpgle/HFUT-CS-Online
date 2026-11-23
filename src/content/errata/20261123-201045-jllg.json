@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "id": "20261123-201045-jllg",
+  "createdAt": "2026-11-23T12:10:52.186Z",
+  "changes": [
+    {
+      "page": "/net/deck/ch1",
+      "old": "计算机网络的发展经历了三个阶段：",
+      "new": "计算机网络的发展经历了四个阶段：",
+      "occurrence": 0,
+      "anchor": "1 计算机网络的产生和发展"
+    },
+    {
+      "page": "/net/deck/ch1",
+      "old": "五十年代中期—六十年代中期",
+      "new": "20世纪60年代初期",
+      "occurrence": 0,
+      "anchor": "1 计算机网络的产生和发展"
+    },
+    {
+      "page": "/net/deck/ch1",
+      "old": "六十年代末—七十年代末",
+      "new": "60年代",
+      "occurrence": 0,
+      "anchor": "1 计算机网络的产生和发展"
+    }
+  ],
+  "pageTitle": "概论",
+  "note": "2025版本修改"
+}
