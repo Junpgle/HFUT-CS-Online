@@ -34,6 +34,18 @@ const EXPECT_PAPER_COUNT: Record<string, number> = {
   'paper-2024': 29,
 };
 
+describe('2025 第1章订票系统术语勘误', () => {
+  it('保留 2025 课件 SABRAI 原文并明确指出正确名称 SABRE', () => {
+    const history = netChapters[0].sections.find((section) => section.id === 'sec-ch1-history');
+    const html = history?.blocks.filter((block) => block.type === 'html')
+      .map((block) => block.html).join('') ?? '';
+    expect(html).toContain('课件勘误｜美国航空公司订票系统');
+    expect(html).toContain('SABRAI');
+    expect(html).toContain('正确英文名称应为 <strong>SABRE</strong>');
+    expect(html).toContain('Semi-Automated Business Research Environment');
+  });
+});
+
 describe('2025 第1章网络发展阶段：四阶段归纳', () => {
   it('第1章导语、历史表与阶段详述均使用课件第10页四阶段', () => {
     const ch = netChapters[0];

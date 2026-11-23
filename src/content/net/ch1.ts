@@ -75,6 +75,12 @@ const ch: NetChapter = {
           </p>
           <p>典型应用：美国通用公司的 <strong>GE 网络</strong>（当时世界上最大的面向终端网络，覆盖美国本土、欧洲大部分、加拿大、日本及澳大利亚）；
             美国航空公司的飞机票预定系统 <strong>SABRE</strong>（由一台中心计算机和 2000 多个终端组成）。</p>
+          <div class="callout tip">
+            <p class="callout-h">2025 版课件勘误｜美国航空公司订票系统</p>
+            <p>第 1 章第 20 页将美国航空公司与 IBM 合作开发的订票系统拼为 <strong>SABRAI</strong>；
+            正确英文名称应为 <strong>SABRE</strong>（Semi-Automated Business Research Environment）。
+            这里保留课件原写法作为勘误对照，复习和作答时应使用 SABRE。</p>
+          </div>
           <p>
             <strong>多机互联网络阶段（旧版称计算机—计算机网络）</strong>：逻辑功能上网络划分为——
             <strong>通信子网</strong>由路由器和通信链路组成，完成网络通信任务（链路提供物理信道；路由器是一种专用计算机，具有存储转发、路由选择、差错控制、流量控制等功能）；
