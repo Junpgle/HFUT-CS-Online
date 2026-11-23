@@ -1,7 +1,9 @@
-/* 扫描 data/ 生成两份生成物：
+/* 扫描 data/ 与 补充资料/ 生成两份生成物：
  * ① src/content/catalog.ts —— 课程目录数据（课程页与首页共用）；
  * ② public/attachments/<学期>__<课程>.json —— 各课程附件清单（附件页左目录树 / 右预览用）。
  * 目录结构契约见 data/整理说明.md：<学期>/<课程>/{课件,试题,附件}/**。
+ * data/ 是 4 个上游仓库的整理产物（仅本地、不入库）；补充资料/ 是本站自有补充资料（入库、可下载）。
+ * 两者按同一门课合并：目录按相对路径对齐，同名文件保留两份（补充资料一侧加后缀）。
  * 只读目录名、文件名与文件大小，不读取文件内容。生成物随提交入库，运行时零 IO。 */
 import { readdirSync, statSync, writeFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -11,6 +13,14 @@ import { dirname, join, relative } from 'node:path';
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(ROOT, '..');
 const MATERIALS = join(REPO_ROOT, 'data');
+/* 本站自有补充资料：目录契约与 data/ 相同，但随本仓库入库，可直接从本仓库 raw 下载。
+ * 用途是给 4 个上游仓库没有覆盖到的课件 / 试卷 / 实验材料提供落点。 */
+const SUPPLEMENT = join(REPO_ROOT, '补充资料');
+/* 两个资料根：root 为物理目录，key 为仓库内路径前缀（附件清单溯源 sp 用）。 */
+const SOURCES = [
+  { root: MATERIALS, key: 'data' },
+  { root: SUPPLEMENT, key: '补充资料' },
+];
 const OUT = join(REPO_ROOT, 'src', 'content', 'catalog.ts');
 const ATTACH_DIR = join(REPO_ROOT, 'public', 'attachments');
 
@@ -71,8 +81,9 @@ function resolveGitAuthor(name, email) {
   return email?.split('@')[0]?.trim() || '';
 }
 
-/* 通过本地 git log 一次性扫描 data/ 下所有已入库文件的首次上传者：
+/* 通过本地 git log 一次性扫描 data/ 与 补充资料/ 下所有已入库文件的首次上传者：
  * 返回 Map<仓库内 POSIX 路径 (如 data/大三上/...), 上传者名称>。
+ * 启用重命名检测：资料在 data/ 与 补充资料/ 之间搬动时，新路径沿用原上传者（不把搬动者算成上传者）。
  * 浅克隆或非 git 环境失败时返回空 Map，不影响构建。 */
 function loadGitUploaders() {
   const map = new Map();
@@ -83,13 +94,13 @@ function loadGitUploaders() {
         '-c',
         'core.quotepath=false',
         'log',
-        '--diff-filter=A',
-        '--no-renames',
         '--reverse',
+        '-M',
         '--format=__COMMIT__\t%an\t%ae',
-        '--name-only',
+        '--name-status',
         '--',
         'data',
+        '补充资料',
       ],
       { cwd: REPO_ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, stdio: ['ignore', 'pipe', 'ignore'] },
     );
@@ -102,8 +113,13 @@ function loadGitUploaders() {
         currentAuthor = resolveGitAuthor(name, email);
         continue;
       }
-      if (currentAuthor && !map.has(line)) {
-        map.set(line, currentAuthor);
+      if (!currentAuthor) continue;
+      const [status, p1, p2] = line.split('\t');
+      if (status.startsWith('A')) {
+        if (p1 && !map.has(p1)) map.set(p1, currentAuthor);
+      } else if (status.startsWith('R')) {
+        // 重命名：新路径继承旧路径的上传者；旧路径从未入库时退回本次提交作者
+        if (p2 && !map.has(p2)) map.set(p2, map.get(p1) ?? currentAuthor);
       }
     }
   } catch {
@@ -181,13 +197,15 @@ function listSorted(d) {
 }
 
 /* 递归构建课程附件树。节点：目录 { n, p, c }，文件 { n, p, s }（p 为相对课程目录的 POSIX 路径）。
- * 顶层第一段目录名是类别（课件/试题/附件）则独立成组，其余全部归入「附件」。 */
-function buildCourseTree(dir, provKey) {
+ * 顶层第一段目录名是类别（课件/试题/附件）则独立成组，其余全部归入「附件」。
+ * rootKey 是资料根在仓库内的路径前缀（data / 补充资料），用于溯源键。 */
+function buildCourseTree(dir, provKey, rootKey) {
   const roots = { 课件: [], 试题: [], 附件: [] };
   const fileNode = (name, rel, size) => {
     const node = { n: name, p: rel, s: size };
-    const prov = PROVENANCE.get(`${provKey}/${rel}`);
-    const selfPath = `data/${provKey}/${rel}`;
+    // 文件清单.csv 只记录上游整理产物，补充资料一律按本仓库（self）溯源
+    const prov = rootKey === 'data' ? PROVENANCE.get(`${provKey}/${rel}`) : undefined;
+    const selfPath = `${rootKey}/${provKey}/${rel}`;
     if (prov) {
       node.r = prov.repo;
       node.sp = prov.src;
@@ -252,36 +270,121 @@ function buildCourseTree(dir, provKey) {
   return roots;
 }
 
-if (!existsSync(MATERIALS)) {
+/** 给节点（含全部后代）改名并在名字中加标记，用于同名文件/目录冲突时区分两份资料。 */
+function renameNode(node, mark) {
+  const oldP = node.p;
+  const slash = oldP.lastIndexOf('/');
+  const parentP = slash >= 0 ? oldP.slice(0, slash + 1) : '';
+  const dot = node.n.lastIndexOf('.');
+  const newName = dot > 0 ? `${node.n.slice(0, dot)}${mark}${node.n.slice(dot)}` : `${node.n}${mark}`;
+  const newP = parentP + newName;
+  const rewrite = (x) => {
+    x.p = newP + x.p.slice(oldP.length);
+    if (x.c) x.c.forEach(rewrite);
+  };
+  node.n = newName;
+  rewrite(node);
+}
+
+/** 把补充资料树并入上游整理树：目录按相对路径对齐，同一文件名的两份都保留（补充资料加后缀）。 */
+function mergeTree(baseNodes, extraNodes) {
+  for (const extra of extraNodes) {
+    const hit = baseNodes.find((x) => x.p === extra.p);
+    if (!hit) {
+      baseNodes.push(extra);
+      continue;
+    }
+    if (hit.c && extra.c) {
+      mergeTree(hit.c, extra.c);
+    } else {
+      renameNode(extra, '（本站补充）');
+      baseNodes.push(extra);
+    }
+  }
+}
+
+/** 合并后重算目录节点的来源（单一来源才带 r/sp）与上传者标记，并恢复「目录在前、中文序」排序。 */
+const sortNodes = (a, b) => (!!a.c !== !!b.c ? (a.c ? -1 : 1) : a.n.localeCompare(b.n, 'zh-Hans-CN'));
+
+function restampTree(nodes) {
+  for (const node of nodes) {
+    if (!node.c) continue;
+    restampTree(node.c);
+    node.c.sort(sortNodes);
+    const repos = new Set();
+    const uploaders = new Set();
+    const collect = (x) => {
+      if (x.c) return x.c.forEach(collect);
+      repos.add(x.r ?? null);
+      uploaders.add(x.u ?? null);
+    };
+    node.c.forEach(collect);
+    if (repos.size === 1 && !repos.has(null)) {
+      const first = node.c.find((x) => !x.c && x.sp);
+      if (first) {
+        node.r = first.r;
+        const i = first.sp.lastIndexOf('/');
+        node.sp = i > 0 ? first.sp.slice(0, i) : '';
+      }
+    } else {
+      delete node.r;
+      delete node.sp;
+    }
+    if (uploaders.size === 1 && !uploaders.has(null)) {
+      node.u = [...uploaders][0];
+    } else {
+      delete node.u;
+    }
+  }
+}
+
+/** 某学期下两个资料根里的课程并集（目录名去重、中文序）。 */
+function listCourses(sem) {
+  const names = new Set();
+  for (const src of SOURCES) {
+    const d = join(src.root, sem);
+    if (!existsSync(d)) continue;
+    for (const name of readdirSync(d)) {
+      if (statSync(join(d, name)).isDirectory()) names.add(name);
+    }
+  }
+  return [...names].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'));
+}
+
+if (!existsSync(MATERIALS) && !existsSync(SUPPLEMENT)) {
   syncExistingManifestUploaders();
-  console.warn(`[build-catalog] 未找到资料目录 ${MATERIALS}，跳过（保留现有 catalog.ts）`);
+  console.warn('[build-catalog] 未找到资料目录（data/ 与 补充资料/），跳过（保留现有 catalog.ts）');
   process.exit(0);
 }
 
-const found = readdirSync(MATERIALS).filter((d) => statSync(join(MATERIALS, d)).isDirectory());
-// 只扫 9 个学期组；data/ 下的四个上游仓库子模块不属于学期目录，跳过
-const semesters = SEMESTER_ORDER.filter((s) => found.includes(s));
-const skipped = found.filter((s) => !SEMESTER_ORDER.includes(s)).sort();
+const found = new Set();
+for (const src of SOURCES) {
+  if (!existsSync(src.root)) continue;
+  for (const d of readdirSync(src.root)) {
+    if (statSync(join(src.root, d)).isDirectory()) found.add(d);
+  }
+}
+// 只扫 8 个学期组；资料根下的四个上游仓库子模块等不属于学期目录，跳过
+const semesters = SEMESTER_ORDER.filter((s) => found.has(s));
+const skipped = [...found].filter((s) => !SEMESTER_ORDER.includes(s)).sort();
 if (skipped.length) console.log(`[build-catalog] 跳过非学期目录（子模块等）: ${skipped.join(', ')}`);
 
-// CI 上 data/ 目录存在但只有入库的说明文件（课件本体被 gitignore）——此时不能生成空目录，保留已提交的 catalog.ts
+// CI 上资料目录只有入库的说明文件 / 少量本站补充资料——此时不能生成空目录，保留已提交的 catalog.ts
 if (semesters.length === 0) {
   if (existsSync(OUT)) {
     syncExistingManifestUploaders();
-    console.warn('[build-catalog] data/ 下无学期目录（CI 环境），跳过（保留现有 catalog.ts）');
+    console.warn('[build-catalog] 资料目录下无学期目录（CI 环境），跳过（保留现有 catalog.ts）');
     process.exit(0);
   }
-  console.error('[build-catalog] data/ 下无学期目录且无现有 catalog.ts，中止');
+  console.error('[build-catalog] 资料目录下无学期目录且无现有 catalog.ts，中止');
   process.exit(1);
 }
 
-// 只检出部分资料时（例如仓库仅跟踪新增 2025 课件），不能用不完整 data/ 覆盖全站索引。
+// 只检出部分资料时（例如仓库仅跟踪本站补充资料），不能用不完整目录覆盖全站索引。
 // 完整资料目录仍可正常扫描、生成新的课程总表与附件清单。
 const existingCatalog = existsSync(OUT) ? readFileSync(OUT, 'utf8') : '';
 const knownCourses = (existingCatalog.match(/^\s*\{\s*semester:\s*"/gm) ?? []).length;
-const presentCourses = semesters.reduce((count, sem) => count +
-  readdirSync(join(MATERIALS, sem))
-    .filter((course) => statSync(join(MATERIALS, sem, course)).isDirectory()).length, 0);
+const presentCourses = semesters.reduce((count, sem) => count + listCourses(sem).length, 0);
 if (knownCourses > presentCourses) {
   syncExistingManifestUploaders();
   console.warn(`[build-catalog] 仅发现 ${presentCourses}/${knownCourses} 门课程资料，保留已跟踪的静态索引`);
@@ -292,19 +395,27 @@ const lines = [];
 let totalFiles = 0;
 const manifests = [];
 for (const sem of semesters) {
-  const courses = readdirSync(join(MATERIALS, sem))
-    .filter((c) => statSync(join(MATERIALS, sem, c)).isDirectory())
-    .sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'));
-  for (const course of courses) {
-    const base = join(MATERIALS, sem, course);
-    const counts = countCourse(base);
+  for (const course of listCourses(sem)) {
+    const counts = { 课件: 0, 试题: 0, 附件: 0 };
+    const trees = { 课件: [], 试题: [], 附件: [] };
+    for (const src of SOURCES) {
+      const dir = join(src.root, sem, course);
+      if (!existsSync(dir)) continue;
+      const c = countCourse(dir);
+      for (const k of CATS) counts[k] += c[k];
+      const t = buildCourseTree(dir, `${sem}/${course}`, src.key);
+      for (const k of CATS) mergeTree(trees[k], t[k]);
+    }
+    for (const k of CATS) {
+      restampTree(trees[k]);
+      trees[k].sort(sortNodes);
+    }
     const total = counts.课件 + counts.试题 + counts.附件;
     totalFiles += total;
-    const tree = buildCourseTree(base, `${sem}/${course}`);
     manifests.push({
       semester: sem,
       course,
-      cats: ['课件', '试题', '附件'].map((name) => ({ name, tree: tree[name] })),
+      cats: CATS.map((name) => ({ name, tree: trees[name] })),
       total,
     });
     lines.push(
@@ -313,7 +424,7 @@ for (const sem of semesters) {
   }
 }
 
-const ts = `/* 【自动生成】由 scripts/build-catalog.mjs 扫描 data/ 生成，请勿手改。
+const ts = `/* 【自动生成】由 scripts/build-catalog.mjs 扫描 data/ 与 补充资料/ 生成，请勿手改。
  * 共 ${lines.length} 门课程 / ${totalFiles} 份文件；增删资料后 npm run catalog 刷新。 */
 
 export interface CatalogCourse {
@@ -335,9 +446,10 @@ ${lines.join('\n')}
 
 /* 防误伤：data/ 里只要有零星课件（如 PR 误提交了某门课的几个 PDF），扫描结果就会只剩这一门课，
  * 直接覆盖会把已入库的完整目录缩成 1 门，附件清单也跟着只剩 1 份（CI 上就是这么把线上刷坏的）。
- * 因此「扫描到的课程数比现有 catalog.ts 少」一律跳过写入，确需缩小用 npm run catalog -- --force。 */
+ * 因此「扫描到的课程数比现有 catalog.ts 少」一律跳过写入，确需缩小用 npm run catalog -- --force。
+ * 只数课程条目行，不数接口里的 `semester: string`（否则现有数永远多 1，正常缩小也会被拦下）。 */
 if (!process.argv.includes('--force') && existsSync(OUT)) {
-  const existing = (readFileSync(OUT, 'utf8').match(/semester:/g) ?? []).length;
+  const existing = (readFileSync(OUT, 'utf8').match(/^\s*\{\s*semester:\s*"/gm) ?? []).length;
   if (existing > lines.length) {
     console.warn(
       `[build-catalog] 扫描到 ${lines.length} 门课，少于已入库的 ${existing} 门，跳过写入（data/ 可能不完整；确需缩小请加 --force）`,

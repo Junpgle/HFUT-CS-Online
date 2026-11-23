@@ -18,3 +18,8 @@
 - [Tuning-Luna/HFUT_XC_Study_Things](https://github.com/Tuning-Luna/HFUT_XC_Study_Things)
 
 > 以上仓库仅作资料溯源，未以子模块形式挂在本仓库：本仓库可以直接 `git clone`，约 50MB，克隆与构建都不需要它们。
+
+## 📂 资料结构
+
+- `data/`：4 个上游仓库整理出的课程资料（课件 / 试题 / 附件），仅本地、不入库。
+- `补充资料/`：本站自有的补充资料（上游没有的新课课件、近年试卷等），随本仓库入库，附件页可直接下载；收录细则见 [补充资料/README.md](补充资料/README.md)。

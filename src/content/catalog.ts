@@ -1,4 +1,4 @@
-/* 【自动生成】由 scripts/build-catalog.mjs 扫描 data/ 生成，请勿手改。
+/* 【自动生成】由 scripts/build-catalog.mjs 扫描 data/ 与 补充资料/ 生成，请勿手改。
  * 共 57 门课程 / 7901 份文件；增删资料后 npm run catalog 刷新。 */
 
 export interface CatalogCourse {

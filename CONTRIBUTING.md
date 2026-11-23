@@ -42,7 +42,8 @@ src/
 ├── pages/              # 页面（HomePage / PracticePage / CourseHubPage …）
 ├── styles/base.css     # 全站样式（含设计变量，见 tokens.css）
 └── __tests__/          # 测试：content / demos / practice 契约
-data/                   # 课程资料库（课件/试题/附件），目录契约见 data/整理说明.md
+data/                   # 课程资料库（4 个上游仓库的整理产物，仅本地、不入库），契约见 data/整理说明.md
+补充资料/               # 本站自有补充资料（入库，随本仓库分发），契约同 data/，说明见其中 README.md
 scripts/                # 目录构建、内容迁移脚本
 ```
 
@@ -77,7 +78,10 @@ scripts/                # 目录构建、内容迁移脚本
 
 ### 课程资料（PDF / 试卷等）
 
-直接放入 `data/` 对应的 `<学期>/<课程>/{课件,试题,附件}/` 目录（契约见 `data/整理说明.md`），然后跑 `npm run catalog` 并一并提交生成的 `catalog.ts`。
+- 4 个上游仓库已有的资料放 `data/` 对应的 `<学期>/<课程>/{课件,试题,附件}/`（契约见 `data/整理说明.md`）。
+- 上游没有的新资料放 `补充资料/` 的同一套目录结构（说明见 `补充资料/README.md`）。该目录随本仓库入库，附件页直接从本仓库 raw 下载；课程名须与 `data/` 中同名课程完全一致。
+
+放好后跑 `npm run catalog`，并把重新生成的 `src/content/catalog.ts` 与 `public/attachments/*.json` 一并提交。
 
 ## 样式与交互约定
 
