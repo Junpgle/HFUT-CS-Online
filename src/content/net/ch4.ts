@@ -580,6 +580,14 @@ const ch: NetChapter = {
             Config-Reject（无法识别所有配置，携带请求报文中全部配置参数）之一进行应答。
           </p>
           ${pppConfigFigure}
+          <div class="callout tip">
+            <p class="callout-h">标准对照｜LCP 报文名称与选项协商</p>
+            <p><strong>保留上方课件原表述。</strong>按 RFC 1661，LCP 终止请求的确认应为
+            <strong>Terminate-Ack</strong>（而非 Terminate-Reply）；
+            <strong>Configure-Reject</strong> 携带的是被拒绝的配置选项，而不是必然拒绝全部选项；
+            <strong>Configure-Nak</strong> 可用于对可识别的选项提出不同的可接受取值。
+            下方交互演示按协议标准逐报文展示。</p>
+          </div>
           <p><strong>PPP 协议的认证</strong>（在建立 LCP 连接过程中可以选择认证通信对端），两种认证方式：</p>
           <ul>
             <li>
