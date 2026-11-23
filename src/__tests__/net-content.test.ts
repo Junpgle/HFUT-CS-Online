@@ -436,8 +436,8 @@ describe('第八轮协议准确性与波形可核验性', () => {
   const getAnswer = (id: string) =>
     netPapers.flatMap((paper) => paper.questions).find((q) => q.id === id)?.answer ?? '';
 
-  it('Ethernet CRC-32 生成多项式必须包含 x7 且对应 0x04C11DB7', () => {
-    const html = chapterHtml(4);
+  it('Ethernet CRC-32 生成多项式必须包含 x7 且对应 0x04C11DB7（运行时第5章）', () => {
+    const html = chapterHtml(5);
     expect(html).toContain('x<sup>8</sup> + <strong>x<sup>7</sup></strong> + x<sup>5</sup>');
     expect(html).toContain('0x04C11DB7');
   });
@@ -522,8 +522,8 @@ describe('第九轮：协议注册语义与试卷历史考法区别', () => {
   const chapterHtml = (number: number) => netChapters[number - 1].sections
     .flatMap((s) => s.blocks).filter((b) => b.type === 'html').map((b) => b.html).join('');
 
-  it('IEEE 802.2 SNAP 的 OUI 与 PID 共占 5 字节，MAC 多播接收取决于过滤配置', () => {
-    const html = chapterHtml(4);
+  it('IEEE 802.2 SNAP 的 OUI 与 PID 共占 5 字节，MAC 多播接收取决于过滤配置（运行时第5章）', () => {
+    const html = chapterHtml(5);
     expect(html).toContain('5 字节 SNAP 协议标识：3 字节 OUI + 2 字节 PID');
     expect(html).toContain('按已配置的多播组/过滤策略接收');
     expect(html).not.toContain('新增一个 2 字节的协议类型域');
@@ -563,6 +563,21 @@ describe('第九轮：协议注册语义与试卷历史考法区别', () => {
       .questions.find((x) => x.id === 'p3-s19')!;
     expect(q.answer).toBe('C');
     expect(q.explanation).toContain('非边界设备上建立 iBGP 会话');
+  });
+});
+
+describe('末轮交叉核验：迁移前源码与迁移后网站的章节对应', () => {
+  const html = (n: number) => netChapters[n - 1].sections
+    .flatMap((section) => section.blocks)
+    .filter((block) => block.type === 'html').map((block) => block.html).join('');
+  it('旧 ch4 广播/以太网在运行时属于第5章，而 PPP 留在第4章', () => {
+    expect(html(4)).not.toContain('0x04C11DB7');
+    expect(html(5)).toContain('0x04C11DB7');
+    expect(html(5)).toContain('5 字节 SNAP 协议标识：3 字节 OUI + 2 字节 PID');
+    expect(netChapters[4].toc.some((entry) => entry.id === 'sec-ch5-broadcast-h4')).toBe(true);
+    expect(html(4)).toContain('并非所有数据链路层协议都提供无差错、可靠交付保证');
+    expect(html(4)).toContain('归入<strong>第5章局域网</strong>');
+    expect(html(5)).toContain('本地管理、随机化 MAC 地址');
   });
 });
 

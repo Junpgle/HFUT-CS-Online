@@ -50,11 +50,13 @@ const ch: NetChapter = {
           html: `
           <div class="callout key">
             <p class="callout-h">本章荧光笔重点</p>
-            <p><strong>成帧/透明</strong> · <strong>CRC/FCS</strong> · <strong>停止等待</strong> · <strong>连续 ARQ/滑动窗口</strong> · <strong>PPP</strong> · <strong>网卡/MAC</strong> · <strong>CSMA/CD</strong> · <strong>交换机自学习</strong> · <strong>VLAN</strong></p>
+            <p><strong>本章重点：</strong>成帧与透明传输 · CRC/FCS · 停止等待 · 连续 ARQ / GBN / SR · HDLC 与 PPP。
+            <strong>网卡、MAC、CSMA/CD、交换机自学习与 VLAN</strong> 已按 2025 版课件编排归入<strong>第5章局域网</strong>，避免旧版提纲与本网站章节错位。</p>
           </div>
           <p>
-            在传输信号时，物理线路可能会有差错。在可能出错的物理线路基础上，构造一个<strong>无差错的逻辑数据链路</strong>，从而为网络层提供高质量服务——
-            数据链路层是整个模型中提供高质量数据通信服务最重要的一层。
+            物理线路可能出现比特差错。数据链路层通过<strong>封装成帧、透明传输、差错检测</strong>等机制，在相邻结点间传输帧；
+            某些链路协议还通过确认与重传提高逐跳可靠性，但<strong>并非所有数据链路层协议都提供无差错、可靠交付保证</strong>。
+            例如基础 PPP 和经典以太网主要提供检错与必要时丢弃，不能把“无差错的逻辑数据链路”理解为这一层的普遍协议承诺。
           </p>
           <h3 id="sec-ch4-basic-h1">基本概念与术语</h3>
           <ul>
@@ -843,7 +845,7 @@ const ch: NetChapter = {
               <tr><th>字段</th><th>长度</th><th>说明</th></tr>
             </thead>
             <tbody>
-              <tr><td>目的地址 / 源地址</td><td>各 6 字节</td><td>48bit MAC 地址，也称为物理地址、硬件地址等。由 IEEE 管理和颁发——前 24 位由 IEEE 确定，后 24 位由硬件厂商确定。网卡通常接收发给自身 MAC 的单播及广播帧，也按已配置的多播组/过滤策略接收相应多播帧；混杂模式等特殊设置可接收其他帧。MAC 地址通常用于链路层转发，不能仅凭一条 MAC 地址断定全球唯一的设备身份</td></tr>
+              <tr><td>目的地址 / 源地址</td><td>各 6 字节</td><td>48 bit MAC 地址，也称为链路层地址、硬件地址等。典型的全球管理 EUI-48 单播地址由 IEEE 分配 24 位 OUI、机构管理后 24 位，但还存在不同规模的地址分配及本地管理、随机化 MAC 地址；不能把所有 MAC 都视为固定厂商前缀，也不能将 MAC 绝对视为不可重复的设备身份。网卡通常接收发给自身 MAC 的单播及广播帧，也按已配置的多播组/过滤策略接收相应多播帧；混杂模式等特殊设置可接收其他帧。MAC 地址通常用于链路层转发，不能仅凭一条 MAC 地址断定全球唯一的设备身份</td></tr>
               <tr><td>类型</td><td>2 字节</td><td>指承载的上层协议，即在数据字段里封装着什么样的上层协议报文（IP、ARP、RARP 等）</td></tr>
               <tr><td>数据</td><td>46 ~ 1500 字节</td><td>至少 46 字节，不足则填充补足</td></tr>
               <tr><td>CRC（FCS）</td><td>4 字节</td><td>采用 CRC-32 的生成多项式 G(x) = x<sup>32</sup> + x<sup>26</sup> + x<sup>23</sup> + x<sup>22</sup> + x<sup>16</sup> + x<sup>12</sup> + x<sup>11</sup> + x<sup>10</sup> + x<sup>8</sup> + <strong>x<sup>7</sup></strong> + x<sup>5</sup> + x<sup>4</sup> + x<sup>2</sup> + x + 1（不计最高次 x<sup>32</sup> 时，32 位十六进制表示为 <strong>0x04C11DB7</strong>）</td></tr>
