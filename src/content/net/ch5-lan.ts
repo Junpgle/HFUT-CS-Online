@@ -36,6 +36,7 @@ const ch: NetChapter = {
     { id: 'sec-ch5-lan-basic', text: '1. 局域网概述与 IEEE 802', level: 2 },
     ...oldToc,
     { id: 'sec-ch5-lan-current', text: '4. 课件语境与现行网络实践', level: 2 },
+    { id: 'sec-ch5-lan-current-h1', text: '2025课件补充：利用率与半双工千兆兼容机制', level: 3 },
   ],
   sections: [
     {
@@ -77,6 +78,23 @@ const ch: NetChapter = {
           <strong>补充：</strong>目的 MAC 未知时通常在所在 VLAN 内向除入端口外的其他端口泛洪；
           已知目的地址与入端口相同则过滤。转发表项目会老化，不能把学习理解为永久登记。</p>
           </div>
+          <h3 id="sec-ch5-lan-current-h1">2025 课件对照：利用率、载波延伸与分组突发</h3>
+          <p class="quiz-note">来源：2025 第5章《局域网》PDF 第37—41页、第111—115页。
+            以下描述<strong>经典半双工共享式以太网的教学模型</strong>，不能套到当前常见的全双工交换式千兆以太网上。</p>
+          <p><strong>信道利用率参数 a</strong>：单程端到端传播时延记为 τ，一帧的发送时延为 T<sub>0</sub> = L/C，
+            则 a = τ/T<sub>0</sub>。在课件给出的理想化计算中，不计碰撞、退避、处理及帧间隔等开销，
+            成功传完一帧的占用时间约为 T<sub>0</sub> + τ，因此上界为：</p>
+          <p class="formula">S<sub>max</sub> = T<sub>0</sub> / (T<sub>0</sub> + τ) = 1 / (1 + a)</p>
+          <p>a 越大，传播时延相对发送时延所占的比重越高；实际共享介质还有碰撞和退避，
+            信道利用率通常比这个理想上界低。不能将 1/(1+a) 当成一切以太网的精确吞吐量公式。</p>
+          <p><strong>千兆以太网的历史性半双工兼容机制</strong>：
+            2025 课件中的载波延伸（carrier extension）将争用时隙扩展为
+            <strong>4096 bit times，即 512 字节时间</strong>；当 MAC 帧不足 512 字节时间时，
+            在帧之后添加特殊扩展符号，以满足碰撞检测所需的最短发送时长。
+            <strong>以太网 MAC 帧的最短合法长度仍是 64 字节</strong>，不要误记成最短 MAC 帧变为 512 字节。</p>
+          <p><strong>分组突发（packet bursting）</strong>：为避免多个短帧各自重复承担载波延伸开销，
+            半双工千兆以太网可以在第一次扩展后接续发送多个短帧并保持载波占用。
+            这是课件说明历史共享式千兆以太网效率问题的技术，不表示全双工千兆以太网仍使用 CSMA/CD。</p>
         `,
       }],
     },

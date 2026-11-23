@@ -238,6 +238,15 @@ const ch: NetChapter = {
             <strong>计算 UDP 检验和的例子</strong>：伪首部（153.19.8.104 → 171.3.14.11）+ UDP 首部（0 和 17、15、1087、13）+ 数据（7 字节 + 1 字节填充 0），
             按二进制反码运算求和得出结果，再将得出的结果求反码得到检验和。
           </p>
+          <div class="callout warn">
+            <p class="callout-h">2025 版传输层课件第12—13页 · UDP 应用表勘误</p>
+            <p>课件将<strong>“多播：IGMP → UDP”</strong>列入 UDP 应用举例，
+              但<strong>IGMP 并不封装在 UDP 中</strong>。
+              IGMP 是管理 IPv4 组播成员关系的协议，IGMP 报文直接封装在 IPv4 数据报内，
+              IP 首部的 <strong>Protocol = 2</strong>（由 IANA 分配）。
+              作为对照，UDP 的 IPv4 协议号是 <strong>17</strong>；
+              DNS、TFTP、RIP、DHCP 等常见场景可使用 UDP，但不可把 IGMP 当成 UDP 应用。</p>
+          </div>
           <h3 id="sec-ch6-udp-h3">UDP 协议的典型应用：RPC</h3>
           <p>
             <strong>RPC</strong>（远程过程调用）将网络中的请求-应答交互表示成过程调用形式——RPC 是将远程服务操作封装为过程调用的通信模式，有些 RPC 实现可以基于 UDP，也有些基于 TCP；DNS 和 DHCP 虽然也可用 UDP 完成请求—响应交互，却不因此自动成为 RPC 协议。RPC 对程序员屏蔽了部分网络通信细节。

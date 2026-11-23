@@ -185,6 +185,14 @@ const ch: NetChapter = {
             （集中路由选择：每个结点根据整个网络的链路状态数据计算路由。）
           </p>
           <h3 id="sec-ch5-routing-h3">距离向量算法与无穷计数问题</h3>
+          <div class="callout warn">
+            <p class="callout-h">2025 版网络层-2 · 第30页勘误</p>
+            <p>课件把 RIP 距离向量算法的理论基础写成“Bellman-Ford 算法（或 Ford-Fulkerson 算法）”，
+              这两者<strong>不能作为同一种算法</strong>：
+              <strong>Bellman–Ford</strong>解决带权图的单源最短路径问题，距离向量路由更新使用其最优性关系；
+              <strong>Ford–Fulkerson</strong>用于网络最大流问题，不是 RIP 的最短路径更新算法。
+              复习 RIP 路由表更新时应记住 Bellman–Ford 与邻居距离加一。</p>
+          </div>
           <div class="callout key">
             <p class="callout-h">重点 A｜RIP 的交换与更新</p>
             <p>RIP 仅和相邻路由器交换信息，通常周期性交换（典型 30 秒），距离 16 表示不可达。</p>
@@ -610,6 +618,14 @@ const ch: NetChapter = {
               <tr><td>17 / 18</td><td>地址掩码请求 / 地址掩码回答</td><td>查询</td></tr>
             </tbody>
           </table>
+          <div class="callout warn">
+            <p class="callout-h">2025 版网络层-2 · 第6页 ICMP 时间戳勘误</p>
+            <p>课件把时间戳（Timestamp Request/Reply，类型 13/14）的 32 位字段
+              解释为“从 1900 年 1 月 1 日起经过的秒数”，<strong>这是错误的单位与起点</strong>。
+              按 RFC 792，ICMP 时间戳字段通常用<strong>从 UTC 当日午夜起经过的毫秒数</strong>表示；
+              不应与 NTP 以 1900 年为纪元的时间戳混同。
+              ICMP 时间戳属于较早期的诊断机制，现代网络中可能被屏蔽或很少使用。</p>
+          </div>
           <p><strong>ICMP 的应用举例</strong>：</p>
           <ul>
             <li>

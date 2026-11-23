@@ -24,7 +24,7 @@ const EXPECT_SECTIONS: Record<string, number> = {
   ch5: 4,
   ch6: 7,
   ch7: 7,
-  ch8: 4,
+  ch8: 5,
 };
 
 /** 试卷题量契约（与原始卷对齐） */
@@ -282,5 +282,66 @@ describe('计网试卷离线进度数据健壮性', () => {
       if (original === null) localStorage.removeItem(NET_PRACTICE_STORE_KEY);
       else localStorage.setItem(NET_PRACTICE_STORE_KEY, original);
     }
+  });
+});
+
+describe('2025 原课件逐项对照：跨章节补遗与勘误', () => {
+  const chapterHtml = (number: number) => netChapters[number - 1].sections
+    .flatMap((section) => section.blocks)
+    .filter((block) => block.type === 'html')
+    .map((block) => block.html).join('');
+
+  it('第1章：丢包率、时延带宽积、RTT 对照原 PPT 第86—91页，计算单位正确', () => {
+    const html = chapterHtml(1);
+    expect(html).toContain('sec-ch1-performance-loss');
+    expect(html).toContain('分组丢失率 = 丢失的分组数');
+    expect(html).toContain('带宽（bit/s）× 单程传播时延（s）');
+    expect(100_000_000 * 0.020).toBe(2_000_000);
+    expect(netChapters[0].toc.some((entry) => entry.id === 'sec-ch1-performance-loss')).toBe(true);
+  });
+
+  it('第5章：经典千兆半双工 carrier extension 与 MAC 64字节最短帧不混淆', () => {
+    const html = chapterHtml(5);
+    expect(html).toContain('sec-ch5-lan-current-h1');
+    expect(html).toContain('4096 bit times，即 512 字节时间');
+    expect(html).toContain('最短合法长度仍是 64 字节');
+    expect(html).toContain('S<sub>max</sub>');
+    expect(netChapters[4].toc.some((entry) => entry.id === 'sec-ch5-lan-current-h1')).toBe(true);
+  });
+
+  it('第6章：RIP 与 ICMP 时间戳原课件错误已明确区分标准算法与字段定义', () => {
+    const html = chapterHtml(6);
+    expect(html).toContain('Bellman–Ford');
+    expect(html).toContain('Ford–Fulkerson');
+    expect(html).toContain('不是 RIP 的最短路径更新算法');
+    expect(html).toContain('从 UTC 当日午夜起经过的毫秒数');
+    expect(html).toContain('RFC 792');
+  });
+
+  it('第7章：IGMP 不是 UDP 应用层协议；IP Protocol 2 与 UDP 17 分清', () => {
+    const html = chapterHtml(7);
+    expect(html).toContain('IGMP 并不封装在 UDP 中');
+    expect(html).toContain('Protocol = 2');
+    expect(html).toContain('协议号是 <strong>17</strong>');
+  });
+
+  it('第8章：补齐 FTP、动态文档与搜索引擎，全部可通过目录锚点定位', () => {
+    const chapter = netChapters[7],html = chapterHtml(8);
+    const ids = ['sec-ch8-ftp','sec-ch8-ftp-h1','sec-ch8-ftp-h2','sec-ch8-ftp-h3',
+      'sec-ch8-http-h6','sec-ch8-http-h7'];
+    for (const id of ids) {
+      expect(chapter.toc.some((entry) => entry.id === id), id + ' 目录不存在').toBe(true);
+      if (id !== 'sec-ch8-ftp') expect(html).toContain('id="' + id + '"');
+      else expect(chapter.sections.some((section) => section.id === id)).toBe(true);
+    }
+    expect(html).toContain('TCP 21');
+    expect(html).toContain('主动（PORT）模式');
+    expect(html).toContain('被动（PASV）模式');
+    expect(html).toContain('CGI（Common Gateway Interface');
+    expect(html).toContain('PageRank');
+    expect(html).toContain('XHTML 将逐渐取代 HTML');
+    expect(chapter.sections.length).toBe(5);
+    // 2024 旧稿的邮件协议保留，而非误称来自 2025 第8章课件
+    expect(chapter.sections.some((section) => section.id === 'sec-ch8-email')).toBe(true);
   });
 });

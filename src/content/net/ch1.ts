@@ -24,6 +24,7 @@ const ch: NetChapter = {
     { id: 'sec-ch1-performance', text: '5. 计算机网络的性能指标', level: 2 },
     { id: 'sec-ch1-performance-h1', text: '★ 速率、带宽与吞吐量', level: 3 },
     { id: 'sec-ch1-performance-h2', text: '★ 时延', level: 3 },
+    { id: 'sec-ch1-performance-loss', text: '2025课件补充：丢包率、时延带宽积与 RTT', level: 3 },
     { id: 'sec-ch1-performance-h3', text: '★ 利用率', level: 3 },
     { id: 'sec-ch1-internet', text: '6. 因特网概述', level: 2 },
     { id: 'sec-ch1-trend', text: '7. 计算机网络的发展趋势', level: 2 },
@@ -370,6 +371,28 @@ const ch: NetChapter = {
             <p>对于高速网络链路，我们提高的仅仅是数据的<strong>发送速率</strong>而不是比特在链路上的<strong>传播速率</strong>。
               提高链路带宽只能减小数据的发送时延，并不能提高传播速率。</p>
           </div>
+
+          <h3 id="sec-ch1-performance-loss">分组丢失率、时延带宽积与 RTT（2025 课件）</h3>
+          <div class="callout key">
+            <p class="callout-h">2025 年第1章 · PPT 第86—91页补充</p>
+            <p>丢包率反映传输途中丢弃的分组比例；时延带宽积表示链路上正在传播的比特容量；
+            RTT 是往返时间。三者分别度量可靠到达比例、链路在途数据量与往返响应时间，不能混为“网速”。</p>
+          </div>
+          <p><strong>丢包率（分组丢失率）</strong>：一定测量时间内，丢失分组数占发送分组总数的比率；
+            可按接口、结点、链路、路径或网络分别统计。2025 课件指出网络拥塞是丢包的重要原因，
+            但物理错误、设备故障、策略性丢弃等也可能造成丢包；丢包率为零并不等于时延必然很小。</p>
+          <p class="formula">分组丢失率 = 丢失的分组数 / 发送的分组总数 × 100%</p>
+          <p><strong>时延带宽积（Bandwidth-Delay Product, BDP）</strong>：
+            按课件定义为<strong>带宽 × 单程传播时延</strong>，单位是 bit。
+            直观理解：在发送端连续注入比特且最先发出的比特刚好到达接收端时，链路中同时“在途”的比特数。
+            它不是链路的速率，也不是单个分组的发送时延。</p>
+          <p class="formula">时延带宽积（bit）= 链路带宽（bit/s）× 单程传播时延（s）</p>
+          <p>推导举例（不是课件原题）：带宽 100 Mbit/s，单程传播时延 20 ms，则
+            BDP = 100 × 10<sup>6</sup> × 0.020 = <strong>2 × 10<sup>6</sup> bit = 250 kB</strong>。</p>
+          <p><strong>往返时间 RTT</strong>：数据从发送方发出、到相应确认或响应返回所经历的时间。
+            RTT 可能包含两个方向的传播、处理、排队与发送时延；只有在两端路径对称且忽略其他时延时，
+            才可近似写成 RTT ≈ 2 × 单程传播时延。
+            因此，BDP 中使用的单程传播时延不应在未经说明时直接换成 RTT。</p>
           <h3 id="sec-ch1-performance-h3">利用率</h3>
           <div class="callout tip">
             <p class="callout-h">重点 B｜RTT 与性能</p>
