@@ -39,10 +39,11 @@ describe('2025 第1章远程联机系统的局限性', () => {
     const history = netChapters[0].sections.find((section) => section.id === 'sec-ch1-history');
     const html = history?.blocks.filter((block) => block.type === 'html')
       .map((block) => block.html).join('') ?? '';
-    expect(html).toContain('第 21 页｜远程联机系统存在的主要问题');
+    expect(html).toContain('<h3 id="sec-ch1-history-remote-issues">远程联机系统存在的主要问题</h3>');
+    expect(html).toContain('2025 版课件第 21 页指出');
     expect(html).toContain('主计算机负荷重，响应时间可能过长');
     expect(html).toContain('单机系统的可靠性较低，主机故障可能导致整个系统瘫痪');
-    expect(html).toContain('关联课件第 19 页');
+    expect(html).toContain('相关特点（课件第 19 页）');
     expect(html).toContain('线路利用率低');
     expect(html).toContain('过渡到第二阶段');
     expect(html).toContain('具有独立处理能力的多台计算机互联');
@@ -67,6 +68,7 @@ describe('2025 第1章网络发展阶段：四阶段归纳', () => {
     const html = ch.sections.find((section) => section.id === 'sec-ch1-history')?.blocks
       .filter((block) => block.type === 'html').map((block) => block.html).join('') ?? '';
     expect(ch.lede).toContain('四个发展阶段');
+    expect(html).toContain('<h3 id="sec-ch1-history-phases">计算机网络发展的四个阶段</h3>');
     expect(html).toContain('2025 版课件第 10 页');
     for (const phase of [
       '第一阶段：远程联机阶段', '第二阶段：多机互联网络阶段',
