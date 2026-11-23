@@ -142,3 +142,21 @@ describe('全部动画的 SVG 逐帧可渲染性',()=>{
     }
   });
 });
+
+describe('计网共用时间轴提示布局',()=>{
+  it('全部31个动画的进度提示位于泳道底部，不遮挡参与方名称和消息',()=>{
+    expect(networkScenarios).toHaveLength(31);
+    for(const scenario of networkScenarios){
+      const def=networkRegistry[scenario.name];
+      const View=def.View;
+      const frames=def.build();
+      const html=renderToStaticMarkup(<svg viewBox={'0 0 '+def.w+' '+def.h}>
+        <View frame={frames[frames.length-1]}/>
+      </svg>);
+      const hint=html.match(/<text\b[^>]*>消息时序 · 仅显示最近 6 步[^<]*<\/text>/)?.[0];
+      expect(hint,scenario.name+' 缺少时间轴底部提示').toBeDefined();
+      expect(hint,scenario.name+' 的提示位置不正确').toContain('y="309"');
+      expect(html,scenario.name+' 的参与方泳道应结束在提示上方').toContain('y2="293"');
+    }
+  });
+});
