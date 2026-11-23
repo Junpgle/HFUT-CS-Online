@@ -203,11 +203,11 @@ export default function TopBar({
             <SearchBox index={searchIndex} linkTo={searchLinkTo} suggestions={suggestions} />
           </div>
         )}
-        <div className="topbar-ctl nav-pill errata-slot errata-slot-right">
-          <ErrataButton />
-        </div>
         <div className="topbar-ctl nav-pill">
           <ThemeToggle />
+        </div>
+        <div className="topbar-ctl nav-pill errata-slot errata-slot-right">
+          <ErrataButton />
         </div>
         <AccountButton />
       </div>
