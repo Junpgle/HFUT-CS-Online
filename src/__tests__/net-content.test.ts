@@ -40,12 +40,12 @@ describe('2025 第1章远程联机系统的局限性', () => {
     const html = history?.blocks.filter((block) => block.type === 'html')
       .map((block) => block.html).join('') ?? '';
     expect(html).toContain('<h3 id="sec-ch1-history-remote-issues">远程联机系统存在的主要问题</h3>');
-    expect(html).toContain('2025 版课件第 21 页指出');
+    expect(html).toContain('远程联机系统主要存在以下两个问题');
     expect(html).toContain('主计算机负荷重，响应时间可能过长');
     expect(html).toContain('单机系统的可靠性较低，主机故障可能导致整个系统瘫痪');
-    expect(html).toContain('相关特点（课件第 19 页）');
+    expect(html).toContain('线路利用率低、费用较高');
     expect(html).toContain('线路利用率低');
-    expect(html).toContain('过渡到第二阶段');
+    expect(html).toContain('向多机互联发展');
     expect(html).toContain('具有独立处理能力的多台计算机互联');
   });
 });
@@ -55,9 +55,9 @@ describe('2025 第1章订票系统术语勘误', () => {
     const history = netChapters[0].sections.find((section) => section.id === 'sec-ch1-history');
     const html = history?.blocks.filter((block) => block.type === 'html')
       .map((block) => block.html).join('') ?? '';
-    expect(html).toContain('课件勘误｜美国航空公司订票系统');
+    expect(html).toContain('名称勘误｜SABRE 订票系统');
     expect(html).toContain('SABRAI');
-    expect(html).toContain('正确英文名称应为 <strong>SABRE</strong>');
+    expect(html).toContain('正确英文名称是 <strong>SABRE</strong>');
     expect(html).toContain('Semi-Automated Business Research Environment');
   });
 });
@@ -69,13 +69,18 @@ describe('2025 第1章网络发展阶段：四阶段归纳', () => {
       .filter((block) => block.type === 'html').map((block) => block.html).join('') ?? '';
     expect(ch.lede).toContain('四个发展阶段');
     expect(html).toContain('<h3 id="sec-ch1-history-phases">计算机网络发展的四个阶段</h3>');
-    expect(html).toContain('2025 版课件第 10 页');
+    expect(html).toContain('计算机网络的发展可以归纳为');
     for (const phase of [
       '第一阶段：远程联机阶段', '第二阶段：多机互联网络阶段',
       '第三阶段：标准化网络阶段', '第四阶段：互联与高速网络阶段',
     ]) expect(html).toContain(phase);
-    expect(html).toContain('本课程复习以 2025 版课件的四阶段为准');
+    expect(html).toContain('各阶段的时间范围可能交叠');
     expect(html).not.toContain('计算机网络的发展经历了三个阶段');
+    // 编辑用的课件页码和版本标识不应出现在面向读者的复习正文中。
+    const visible = [ch.lede, ...ch.toc.map((item) => item.text),
+      ...ch.sections.flatMap((section) => section.blocks)
+        .filter((block) => block.type === 'html').map((block) => block.html)].join('\n');
+    expect(visible).not.toMatch(/2025\s*版?课件|课件第\s*\d+|PPT\s*第\s*\d+|旧版网站|不是课件原题/);
   });
 });
 
