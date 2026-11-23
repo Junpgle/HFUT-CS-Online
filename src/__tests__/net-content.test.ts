@@ -363,6 +363,41 @@ describe('第四轮勘误：码距、地址块与微波频段', () => {
   });
 });
 
+describe('第五轮计网核验：ADSL DMT、运输层与网页访问', () => {
+  const chapterHtml = (number: number) => netChapters[number - 1].sections
+    .flatMap((section) => section.blocks)
+    .filter((block) => block.type === 'html').map((block) => block.html).join('');
+
+  it('DMT 子载波间距为 4.3125 kHz，上行频谱不被误写为 40 kHz 以下', () => {
+    const html = chapterHtml(3);
+    expect(html).toContain('中心频率间隔为 4.3125 kHz');
+    expect(html).toContain('0.3125 kHz 不是 DMT 子载波的独立保护频带');
+    expect(html).toContain('25～138 kHz');
+    expect(html).toContain('138～1104 kHz');
+    expect(html).not.toContain('约 40kHz 以下为上行信道');
+  });
+
+  it('信道容量是理论上限，不保证实际传输速率可以达到', () => {
+    const html = chapterHtml(3);
+    expect(html).toContain('理论速率上限');
+    expect(html).not.toContain('最大信息传输速率等于信道容量');
+  });
+
+  it('OSI 运输层不能把 TCP 的可靠性误当作 UDP 也具备', () => {
+    const html = chapterHtml(2);
+    expect(html).toContain('不能把可靠性视为所有运输层协议的共同保证');
+    expect(html).toContain('UDP 提供无连接');
+  });
+
+  it('2021 试卷浏览网页题保留经典流程并说明 HTTPS 与 QUIC', () => {
+    const q = netPapers.find((paper) => paper.id === 'paper-2021')
+      ?.questions.find((question) => question.id === 'p1-e10');
+    expect(q?.answer).toContain('QUIC/UDP');
+    expect(q?.answer).toContain('TLS');
+    expect(q?.answer).toContain('DNS 结果与 ARP 邻居表可能命中缓存');
+  });
+});
+
 describe('计网试卷离线进度数据健壮性', () => {
   it('localStorage 保存无效 JSON/null/数组时不崩溃，过滤错误的成绩状态', () => {
     const original = localStorage.getItem(NET_PRACTICE_STORE_KEY);

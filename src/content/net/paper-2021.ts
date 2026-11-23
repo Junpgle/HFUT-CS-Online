@@ -262,11 +262,14 @@ const questions: PracticeQuestion[] = [
     <ol>
       <li><strong>DNS</strong>——浏览器先向 DNS 请求解析主页服务器的域名，得到 IP 地址（DNS 查询本身使用 UDP，必要时用 TCP）；</li>
       <li><strong>ARP</strong>——在本网段内由 IP 地址解析出网关/服务器的 MAC 地址，以便封装以太帧；</li>
-      <li><strong>TCP</strong>——浏览器与服务器通过三次握手建立 TCP 连接（HTTP 的默认端口 80）；</li>
+      <li><strong>TCP</strong>——在课件的经典 HTTP/1.x 示例中，浏览器与服务器通过三次握手建立 TCP 连接（明文 HTTP 默认端口 80）；</li>
       <li><strong>HTTP</strong>——浏览器发出 GET 请求报文，服务器返回响应报文把文档发给浏览器；</li>
       <li>底层由 <strong>IP</strong> 完成寻址与转发，传输媒体上由以太网等协议传送帧。</li>
-    </ol>`,
-    explanation: `要点：DNS（解析域名）→ ARP（解析 MAC）→ TCP（建立连接）→ HTTP（请求与响应），底层为 IP/以太网。`,
+    </ol>
+    <p><strong>现行协议补充</strong>：以上是本卷要求的典型 HTTP/TCP 流程，不是打开所有网页都必经的固定步骤。
+    今天常见的 HTTPS 在 TCP 上增加 TLS（默认端口 443）；HTTP/3 则运行在 QUIC/UDP 之上，不经过 TCP 三次握手。
+    DNS 结果与 ARP 邻居表可能命中缓存，因而不是每次访问都需要重新发出 DNS、ARP 请求；IPv6 链路使用 NDP 而非 IPv4 ARP。</p>`,
+    explanation: `按经典 HTTP/1.x 题目模型：DNS → ARP（必要时）→ TCP → HTTP，由 IP 与链路层承载；现代 HTTPS 还有 TLS，HTTP/3 使用 QUIC/UDP，缓存命中时不必重新查询 DNS/ARP。`,
     tags: [
       { deck: 7, sec: 'sec-ch7-http-h2', text: 'HTTP 操作过程' },
       { deck: 7, sec: 'sec-ch7-dns-h3', text: '域名解析过程' },
