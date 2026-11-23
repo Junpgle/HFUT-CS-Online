@@ -1,0 +1,339 @@
+/* ---------------------------------------------------------------- 勘误
+   顶栏入口 + 编辑态正文标记 + 底部进度胶囊 + 审阅弹窗。
+   复用 base.css 的 .btn / .account-btn / .icon-btn 与 hub.css 的 .hub-modal。 */
+
+/* 紧凑桌面（1021–1279）：顶栏多了勘误入口，搜索再收窄，避免右组挤压账号图标 */
+@media (min-width: 1021px) and (max-width: 1279px) {
+  .topbar .search-input {
+    width: 170px;
+  }
+}
+
+/* 顶栏多了勘误入口后，右组要为搜索留余量：中窄屏账号只留图标（完整邮箱仍在账号菜单里） */
+@media (max-width: 1700px) {
+  .topbar .account-label {
+    display: none;
+  }
+}
+
+/* 紧凑桌面（1021–1500）右组已满：勘误入口挪到课程名胶囊旁，更宽屏再回到右组 */
+.topbar-ctl.errata-slot {
+  flex: none;
+}
+.topbar-ctl.errata-slot-left {
+  display: none;
+}
+@media (min-width: 1021px) and (max-width: 1500px) {
+  .topbar-ctl.errata-slot-left {
+    display: inline-flex;
+  }
+  .topbar-ctl.errata-slot-right {
+    display: none;
+  }
+}
+
+/* 顶栏入口：与账号入口同尺寸的文字按钮，编辑态用当前讲次主题色 */
+.errata-trigger.active {
+  color: var(--deck-accent);
+}
+.errata-trigger.active:hover {
+  color: var(--deck-accent);
+}
+.errata-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--deck-accent);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.errata-label {
+  white-space: nowrap;
+}
+/* 1418px 实测：顶栏右组已接近满宽，勘误只留铅笔 + 数字，给搜索让出位置 */
+@media (max-width: 1500px) {
+  .errata-label {
+    display: none;
+  }
+}
+
+/* 编辑态：每个可改单元只有悬停/聚焦时才显出虚线，避免整页花掉 */
+html.errata-on .page [data-errata-edit] {
+  cursor: text;
+  border-radius: 4px;
+  outline: 1px dashed transparent;
+  outline-offset: 3px;
+  transition: outline-color 120ms var(--press-ease), background-color 120ms var(--press-ease);
+}
+html.errata-on .page [data-errata-edit]:hover {
+  outline-color: color-mix(in srgb, var(--deck-accent) 42%, transparent);
+}
+html.errata-on .page [data-errata-edit]:focus {
+  outline: 2px solid color-mix(in srgb, var(--deck-accent) 62%, transparent);
+  background: color-mix(in srgb, var(--deck-accent) 5%, transparent);
+}
+
+/* 底部进度胶囊：居中避开右侧「章节导航」「置顶」两个固定件 */
+.errata-dock {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 58;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px 7px 16px;
+  border-radius: 999px;
+  background: var(--panel-strong);
+  border: 1px solid var(--hairline-soft);
+  box-shadow: var(--shadow-2);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(18px) saturate(180%);
+  max-width: calc(100vw - 24px);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .errata-dock {
+    background: var(--panel-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+.errata-dock-state {
+  font-size: 0.7813rem;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.errata-dock-state b {
+  color: var(--deck-accent);
+  font-variant-numeric: tabular-nums;
+}
+.errata-dock .btn {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 0.7813rem;
+}
+@media (max-width: 640px) {
+  .errata-dock {
+    bottom: 12px;
+    gap: 6px;
+    padding-left: 12px;
+  }
+  .errata-dock-state {
+    font-size: 0.75rem;
+  }
+}
+@media (max-width: 380px) {
+  .errata-dock-state {
+    display: none;
+  }
+}
+
+/* 审阅弹窗：比默认 hub-modal 宽，列表区独立滚动，操作区固定在底部 */
+.hub-modal.errata-modal {
+  width: min(760px, 100%);
+  max-height: min(86vh, 900px);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 22px 18px;
+}
+.errata-meta {
+  margin: 6px 0 0;
+  font-size: 0.7813rem;
+  color: var(--ink-3);
+}
+.errata-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0 2px 0 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.errata-item {
+  padding: 11px 13px;
+  border-radius: var(--r-m);
+  background: var(--panel-2);
+  border: 1px solid var(--hairline-soft);
+}
+.errata-item + .errata-item {
+  margin-top: 8px;
+}
+.errata-item-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.errata-loc {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+}
+.errata-item-actions {
+  display: inline-flex;
+  flex: none;
+  gap: 10px;
+}
+.errata-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: color 140ms;
+}
+.errata-link:hover {
+  color: var(--deck-accent);
+}
+.errata-diff {
+  margin: 6px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+  word-break: break-word;
+}
+.errata-diff del,
+.errata-diff ins {
+  border-radius: 3px;
+  padding: 0 1px;
+}
+.errata-diff del {
+  color: var(--hot);
+  background: color-mix(in srgb, var(--hot) 8%, transparent);
+  text-decoration: line-through;
+}
+.errata-diff ins {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 10%, transparent);
+  text-decoration: none;
+}
+.errata-empty {
+  color: var(--ink-3);
+  font-size: 0.75rem;
+}
+.errata-note {
+  display: block;
+  flex: none;
+  margin: 12px 0 0;
+}
+.errata-note > span {
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+}
+.errata-note textarea,
+.errata-token input,
+.errata-json {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--hairline-soft);
+  background: var(--panel-2);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.8125rem;
+  resize: vertical;
+}
+.errata-note textarea:focus,
+.errata-token input:focus,
+.errata-json:focus {
+  outline: 2px solid color-mix(in srgb, var(--deck-accent) 42%, transparent);
+  outline-offset: 1px;
+}
+.errata-token {
+  flex: none;
+  margin-top: 10px;
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+}
+.errata-token summary {
+  cursor: pointer;
+  user-select: none;
+  transition: color 140ms;
+}
+.errata-token summary:hover {
+  color: var(--ink);
+}
+.errata-token p {
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+.errata-json {
+  min-height: 84px;
+  margin-top: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+}
+.errata-msg {
+  margin: 10px 0 0;
+  font-size: 0.7813rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.errata-msg.error {
+  color: var(--hot);
+}
+.errata-msg.ok {
+  color: var(--ok);
+}
+.errata-result {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  margin-top: 10px;
+  font-size: 0.8438rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.errata-result-line {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 600;
+}
+.errata-result-url {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+.errata-result-url a {
+  color: var(--deck-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+@media (max-width: 640px) {
+  .hub-modal.errata-modal {
+    max-height: 88vh;
+    padding: 16px 14px 14px;
+  }
+  .errata-json {
+    min-height: 64px;
+  }
+}
+
+@media print {
+  .errata-dock,
+  .errata-trigger,
+  .errata-scrim {
+    display: none !important;
+  }
+  html.errata-on .page [data-errata-edit] {
+    outline: none;
+    background: none;
+  }
+}

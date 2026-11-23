@@ -76,6 +76,15 @@ scripts/                # 目录构建、内容迁移脚本
 
 各讲自测题遵循 `QuizData` 契约；交互动画（demo block）按 `name` 注册到对应组件，新增动画需同时补 `demos.test.tsx` 可渲染的用例。
 
+### 读者勘误
+
+站点顶栏的铅笔入口可进入原地编辑模式：读者直接改正文 → 底部胶囊「提交勘误」→ 生成 `src/content/errata/<id>.json` 并开 PR。默认走 GitHub「新建文件」预填页（无需任何配置，GitHub 会自动 fork）；在提交弹窗里填入个人令牌则直接调用 API 建分支 / 开 PR。
+
+- 每个 PR 只新增一个 JSON，格式见 `src/content/errata/README.md`。
+- 合并后由 `src/content/errata.ts` 在渲染时套用（按 `page` + `anchor` + 原文定位，匹配不到就静默跳过），不修改 `deckN.ts` 原文。
+- 若希望落回内容源：按 JSON 手工改对应段落，再删掉该文件；两者同时存在不会重复生效。
+- 改 schema 时同步更新 `src/__tests__/errata.test.ts` 的契约校验。
+
 ### 课程资料（PDF / 试卷等）
 
 - 4 个上游仓库已有的资料放 `data/` 对应的 `<学期>/<课程>/{课件,试题,附件}/`（契约见 `data/整理说明.md`）。

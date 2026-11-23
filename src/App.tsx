@@ -3,6 +3,7 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import CourseHubPage from './pages/CourseHubPage';
 import CourseStubPage from './pages/CourseStubPage';
 import { ALGO_BASE, OS_BASE, NET_BASE, PAT_BASE, AI_BASE, SA_BASE, PHYS_BASE, CA_BASE, MATH_BASE, PD_BASE, NCD_BASE, NAP_BASE, HD_BASE, MC_BASE, NLU_BASE, OSCD_BASE, CPD_BASE, NTR_BASE, CV_BASE, SPM_BASE, BD_BASE, CAP_BASE, AIE_BASE, SEC_BASE, DB_BASE, SE_BASE, ST_BASE, DP_BASE, SWT_BASE, DSD_BASE, IP_BASE } from './courses/registry';
+import { ErrataProvider } from './lib/errata/context';
 
 /** 课程按需加载：首屏只载首页，进入课程时再拉取课程包 */
 const AlgorithmCourse = lazy(() => import('./courses/AlgorithmCourse'));
@@ -53,6 +54,7 @@ export default function App() {
       {/* 双色光晕背景：全站最底层，首页/课程页共用（CSS 在 base.css） */}
       <div className="bg-aura" aria-hidden="true" />
       <Suspense fallback={null}>
+      <ErrataProvider>
       <Routes>
         <Route path="/" element={<CourseHubPage />} />
         <Route path={`${ALGO_BASE}/*`} element={<AlgorithmCourse />} />
@@ -91,6 +93,7 @@ export default function App() {
         <Route path="/practice" element={<Navigate to={`${ALGO_BASE}/practice`} replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </ErrataProvider>
       </Suspense>
     </>
   );

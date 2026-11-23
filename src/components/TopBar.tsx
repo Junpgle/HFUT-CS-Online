@@ -5,6 +5,7 @@ import { IconArrowLeft, IconMenu } from './icons';
 import ThemeToggle from './ThemeToggle';
 import SearchBox, { type SearchIndexItem } from './SearchBox';
 import AccountButton from './AccountButton';
+import ErrataButton from './ErrataButton';
 
 /** 分组菜单中的一讲/一章 */
 export interface CourseTabMenuItem {
@@ -189,6 +190,10 @@ export default function TopBar({
         <Link to={courseBase} className="topbar-ctl nav-pill topbar-title" title={courseTip}>
           {courseName}
         </Link>
+        {/* 紧凑桌面（1021–1500）：右组放不下，勘误挪到课程名旁边 */}
+        <div className="topbar-ctl nav-pill errata-slot errata-slot-left">
+          <ErrataButton />
+        </div>
       </div>
       <SiteTabs tabs={tabs} />
       <div className="topbar-right">
@@ -198,6 +203,9 @@ export default function TopBar({
             <SearchBox index={searchIndex} linkTo={searchLinkTo} suggestions={suggestions} />
           </div>
         )}
+        <div className="topbar-ctl nav-pill errata-slot errata-slot-right">
+          <ErrataButton />
+        </div>
         <div className="topbar-ctl nav-pill">
           <ThemeToggle />
         </div>

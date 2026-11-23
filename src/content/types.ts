@@ -46,3 +46,30 @@ export interface DeckData {
   toc: TocEntry[];
   sections: Section[];
 }
+
+/**
+ * 一条读者勘误：把某页面里的一段文字 old 改成 new。
+ * page 为 HashRouter 路由（如 /os/chapter/ch1）；anchor 是最近的章节标题，
+ * 用于在页面里定位同文重复出现的位置；occurrence 是同锚点下第几次出现。
+ */
+export interface ErrataChange {
+  page: string;
+  anchor?: string;
+  old: string;
+  new: string;
+  occurrence?: number;
+}
+
+/** src/content/errata/*.json 的契约；合并后由站点在渲染时套用 */
+export interface ErrataPatch {
+  version: 1;
+  /** 文件名（不含扩展名），如 20261123-091011-a1b2 */
+  id: string;
+  /** ISO 时间戳 */
+  createdAt: string;
+  /** 提交页标题，便于 PR 标题阅读 */
+  pageTitle?: string;
+  /** 读者备注 */
+  note?: string;
+  changes: ErrataChange[];
+}

@@ -181,3 +181,11 @@ export const IconUser = (p: P) => (
     <path d="M4.8 20c.6-3.6 3.5-5.6 7.2-5.6s6.6 2 7.2 5.6" />
   </svg>
 );
+
+/** 铅笔（勘误 / 编辑） */
+export const IconPencil = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M4 20h4L18.4 9.6a2.1 2.1 0 0 0-3-3L5 17v3Z" />
+    <path d="m13.9 7.1 3 3" />
+  </svg>
+);
