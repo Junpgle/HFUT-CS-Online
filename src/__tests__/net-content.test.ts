@@ -337,6 +337,32 @@ describe('计网第三轮审查：计算条件与考试解释', () => {
   });
 });
 
+describe('第四轮勘误：码距、地址块与微波频段', () => {
+  const chapterHtml = (n: number) => netChapters[n - 1].sections.flatMap((s) => s.blocks)
+    .filter((b) => b.type === 'html').map((b) => b.html).join('');
+
+  it('普通海明码码距3不能同时保证纠1检2，扩展海明码码距4才支持SECDED', () => {
+    const html = chapterHtml(4);
+    expect(html).toContain('Hamming(7,4)');
+    expect(html).toContain('Hamming(8,4)');
+    expect(html).toContain('SECDED');
+    expect(html).toContain('不能同时保证');
+  });
+
+  it('A/D/E类分类范围完整且E类标志前四位1111', () => {
+    const html = chapterHtml(6);
+    for (const s of ['224.0.0.0/4','239.255.255.255','240.0.0.0/4','255.255.255.255','前四位固定为 1111','1～126']) {
+      expect(html).toContain(s);
+    }
+  });
+
+  it('微波频段中厘米波仅为一部分', () => {
+    const html = chapterHtml(3);
+    expect(html).toContain('不能将整个微波频段都称为厘米波');
+    expect(html).toContain('3～30 GHz');
+  });
+});
+
 describe('计网试卷离线进度数据健壮性', () => {
   it('localStorage 保存无效 JSON/null/数组时不崩溃，过滤错误的成绩状态', () => {
     const original = localStorage.getItem(NET_PRACTICE_STORE_KEY);

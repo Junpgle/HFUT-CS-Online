@@ -223,10 +223,19 @@ const ch: NetChapter = {
           </div>
           <h3 id="sec-ch4-error-h3">海明码</h3>
           <p>
-            1950 年海明发明海明码（Hamming Code）。海明码是一种<strong>纠错码</strong>，检测 2 位错误并纠正 1 位错误。
+            1950 年海明发明海明码（Hamming Code）。海明码是一种<strong>纠错码</strong>，课件概括其能力为“检测 2 位错误并纠正 1 位错误”。
+            <strong>这一概括须区分两种模式的能力，不能误认为普通海明码可以同时保证纠一检二</strong>。
             海明码是一种分组码，由 m 位信息位和 r 位校验位构成，要求满足：
           </p>
           <p class="formula">2<sup>r</sup> &ge; m + r + 1</p>
+          <div class="callout warn">
+            <p class="callout-h">海明码检错、纠错能力的关键区别</p>
+            <p>上述校验位不等式是单比特纠错海明码的常用设计条件。普通 Hamming(7,4) 的最小码距为 <strong>3</strong>：
+            可以检测不超过 <strong>2 位</strong>错误，或者纠正不超过 <strong>1 位</strong>错误；
+            但单比特纠错译码器遇到双位错误时可能误纠，因此不能同时保证“纠 1 位、检 2 位”。
+            增加一个整体奇偶校验位得到扩展 Hamming(8,4)，最小码距可达 <strong>4</strong>，
+            才能同时实现 SECDED（Single Error Correction, Double Error Detection）。</p>
+          </div>
           <p>
             理论上 r 个校验位可以出现在任意位置上；习惯上校验位通常被安排在 2 的整数次幂的位置上。
             如 4 位信息位 a<sub>1</sub>a<sub>2</sub>a<sub>3</sub>a<sub>4</sub>，校验位至少是 3 位 p<sub>1</sub>p<sub>2</sub>p<sub>3</sub>，
