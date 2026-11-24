@@ -8,6 +8,8 @@ name: Release Please
 on:
   push:
     branches: [main]
+  # 改完发布配置或仓库设置后，可在 Actions 页手动跑一次，不必等下一次 push
+  workflow_dispatch:
 
 permissions:
   contents: write
