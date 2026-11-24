@@ -2263,6 +2263,73 @@ pre.code .cl-code:empty + .cl-com {
   }
 }
 
+/* --------------------------------------------- 阅读进度指示标（上次读到） */
+.reading-mark {
+  position: fixed;
+  right: 18px;
+  bottom: 74px; /* 让开右下角的「回到顶部」胶囊 */
+  z-index: 56;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 13px 0 11px;
+  border-radius: 999px;
+  background: var(--panel-strong);
+  border: 1px solid var(--hairline-soft);
+  box-shadow: var(--shadow-1);
+  color: var(--ink-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  animation: reading-mark-in 200ms var(--press-ease);
+  transition: transform 140ms var(--press-ease), box-shadow 140ms var(--press-ease);
+}
+.reading-mark svg {
+  flex: none;
+  color: var(--deck-accent);
+}
+.reading-mark:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-2);
+}
+.reading-mark:active {
+  transform: scale(0.96);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .reading-mark {
+    background: var(--panel-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-mark {
+    animation: none;
+    transition: none;
+  }
+}
+@media (max-width: 640px) {
+  .reading-mark {
+    right: 10px;
+    bottom: 62px;
+  }
+}
+@media print {
+  .reading-mark {
+    display: none !important;
+  }
+}
+@keyframes reading-mark-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
 /* ------------------------------------------------- 4d. 打印 */
 @media print {
   /* 强制亮色调色板：暗色模式下打印不再带深底（变量级覆盖，全站生效） */

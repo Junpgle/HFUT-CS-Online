@@ -44,6 +44,7 @@ export function progressStoreOf(key: string): ProgressStore | undefined {
 
 export const FAVORITES_KEY = 'hb-favorite-courses';
 export const RECENT_KEY = 'hb-recent-courses';
+export const READING_KEY = 'hb-reading-v1';
 export const DEVICE_KEY = 'hb-device-id';
 
 /** 进度时间戳（与数据分开存，不改动页面已有的数据格式） */

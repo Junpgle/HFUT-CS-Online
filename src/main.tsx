@@ -5,6 +5,7 @@ import { ThemeProvider } from './lib/theme';
 import { TocProvider } from './lib/toc';
 import { syncManager } from './lib/sync';
 import App from './App';
+import ReadingMark from './components/ReadingMark';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/hub.css';
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')!).render(
       <TocProvider>
         <HashRouter>
           <App />
+          <ReadingMark />
         </HashRouter>
       </TocProvider>
     </ThemeProvider>
