@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   site:
+    # timeout 写在 deploy-site.yml 的各个 job 上：可复用工作流的调用 job 不接受 timeout-minutes
     uses: ./.github/workflows/deploy-site.yml
-    timeout-minutes: 40
     with:
       main-ref: ${{ github.event.release.tag_name || inputs.ref || '' }}

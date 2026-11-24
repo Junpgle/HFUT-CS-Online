@@ -35,5 +35,5 @@ jobs:
   site:
     # 删除分支也会触发 push 事件；那只是下线预览，下一次运行自然带上
     if: github.event_name != 'push' || (!github.event.deleted && !startsWith(github.ref_name, 'release-please--'))
+    # timeout 写在 deploy-site.yml 的各个 job 上：可复用工作流的调用 job 不接受 timeout-minutes
     uses: ./.github/workflows/deploy-site.yml
-    timeout-minutes: 40
