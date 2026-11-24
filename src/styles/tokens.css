@@ -83,6 +83,20 @@
   --java: #39397f;               /* Java技术 · 深靛紫 */
   --dl: #5e3147;                 /* 数字逻辑 · 暗酒紫 */
   --robot: #286749;              /* 机器人技术 · 松绿 */
+  /* 大二下批次（12 门）：46 课占满色相环后按「对全站 base 最小 ΔE ≥11、新课两两 ≥15」选色
+   * （选色脚本 _tools/pick_colors_d2x.py，硬池含并行批次已落地的 15 课） */
+  --comp: #264f73;               /* 编译原理 · 深靛蓝（编译工具链的冷色调） */
+  --co: #a17936;                 /* 计算机组成原理 · 赭褐（硬件板卡的暖赭） */
+  --emb: #53874f;                /* 嵌入式系统原理 · 草绿（开发板正绿） */
+  --ml: #56a136;                 /* 机器学习 · 亮草绿（与嵌入式草绿拉开明度） */
+  --ste: #58562d;                /* 软件工具与环境 · 橄榄暗綠 */
+  --comb: #61487a;               /* 组合数学 · 暗紫（介于软件工程的灰蓝与自然语言理解的蓝紫之间） */
+  --cg: #73266e;                 /* 计算机图形学 · 紫红（介于人工智能品红与系统硬件玫红之间） */
+  --sma: #4f876f;                /* 软件建模与分析 · 灰青绿 */
+  --dmt: #369da1;                /* 数字媒体技术 · 湖青（比网络课深青更亮更青） */
+  --np: #3644a1;                 /* 网络程序设计 · 宝蓝（比大数据靛蓝更亮更纯） */
+  --micro: #7a5048;              /* 微机原理与接口技术 · 陶褐灰 */
+  --het: #a13656;                /* 硬件工程师综合训练 · 暗玫红 */
 
   /* ---- 章节配色：各课程导航到的每一章/讲一色（与算法课 deck1..8 同机制）。
    * 序数为该课章节列表中的序号；课程首页与在线练习仍用上方课程基础色。
@@ -138,6 +152,13 @@
   --java1: #a05a2c;  --java2: #2e7d5b;  --java3: #b5485e;  --java4: #8f741c;  --java5: #31708e;  --java6: #7d5ba6;
   --dl1: #31708e;  --dl2: #a05a2c;  --dl3: #2e7d5b;  --dl4: #8f741c;  --dl5: #4a5aa8;  --dl6: #22767c;
   --robot1: #31708e;  --robot2: #a05a2c;  --robot3: #b5485e;  --robot4: #8f741c;
+  /* 大二下批次章色（共享 12 色板，按导航顺序取色：总目录 → 各章 → 练习/附件 相邻 ΔE 均 ≥22） */
+  --comp1: #a05a2c;  --comp2: #4a5aa8;  --comp3: #2e7d5b;  --comp4: #9c4a72;  --comp5: #6b7a2f;  --comp6: #7d5ba6;  --comp7: #8f741c;
+  --co1: #22767c;  --co2: #a05a2c;  --co3: #4a5aa8;  --co4: #6b7a2f;  --co5: #7d5ba6;  --co6: #2e7d5b;  --co7: #b5485e;  --co8: #31708e;  --co9: #8f741c;
+  --emb1: #9c4a72;  --emb2: #2e7d5b;  --emb3: #b5485e;  --emb4: #22767c;  --emb5: #a05a2c;  --emb6: #4a5aa8;
+  --ml1: #a05a2c;  --ml2: #4a5aa8;  --ml3: #6b7a2f;  --ml4: #7d5ba6;  --ml5: #8f741c;
+  --ste1: #2e7d5b;  --ste2: #b5485e;  --ste3: #22767c;  --ste4: #a05a2c;  --ste5: #4a5aa8;  --ste6: #8f741c;
+  --comb1: #b5485e;  --comb2: #22767c;  --comb3: #a05a2c;  --comb4: #2e7d5b;
 
 
   /* ---- 在线练习 / 附件页专属色：每课与总目录、各章均不同色（选色见 _tools/pick_colors3.py，
@@ -188,6 +209,19 @@
   --java-att: #37505f;
   --dl-att: #56698f;
   --robot-att: #335b47;
+  /* 大二下批次：练习 / 附件专属色（att 跨课复用既有色对；课内与 base、章色相邻 ΔE 均 ≥22） */
+  --comp-practice: #8d34c9;  --comp-att: #8d495d;
+  --co-practice: #8d34c9;    --co-att: #5d6321;
+  --emb-practice: #8d34c9;   --emb-att: #632321;
+  --ml-att: #a1363d;
+  --ste-att: #346563;
+  --comb-att: #8f36a1;
+  --cg-att: #632133;
+  --sma-att: #4d3154;
+  --dmt-att: #313b54;
+  --np-att: #a1363d;
+  --micro-att: #a1363d;
+  --het-att: #71874f;
 
   --deck-accent: var(--accent);  /* 当前讲次色（无讲次时回落全局色） */
 
@@ -309,6 +343,10 @@
   /* 大二上批次（暗色同色相提亮变体） */
   --py: #e1a78e;  --dm: #e59ec4;  --cm: #cbe18e;  --prob: #ae77c5;  --asm: #a9d0da;
   --eda: #66d675;  --res: #afa6de;  --physlab: #9cdd92;  --java: #7280cb;  --dl: #c577b0;  --robot: #77c5a6;
+  /* 大二下批次（暗色提亮变体） */
+  --comp: #6c60dc;  --co: #dbaf76;  --emb: #b8d666;  --ml: #81dc60;  --ste: #e0c671;
+  --comb: #d176db;  --cg: #dc60bb;  --sma: #60dc96;  --dmt: #aae4c1;  --np: #82c6e3;
+  --micro: #dc6060; --het: #dc607d;
   /* 章节配色（暗色提亮变体，与上方亮色一一对应） */
   --os1: #74b3d2;  --os2: #e0975f;  --os3: #7cc9a3;  --os4: #b39be0;
   --os5: #ec8ea0;  --os6: #d4b95a;  --os7: #6cc4c9;  --os8: #d69ab8;
@@ -347,6 +385,13 @@
   --java1: #e0975f;  --java2: #7cc9a3;  --java3: #ec8ea0;  --java4: #d4b95a;  --java5: #74b3d2;  --java6: #b39be0;
   --dl1: #74b3d2;  --dl2: #e0975f;  --dl3: #7cc9a3;  --dl4: #d4b95a;  --dl5: #8f9ce0;  --dl6: #6cc4c9;
   --robot1: #74b3d2;  --robot2: #e0975f;  --robot3: #ec8ea0;  --robot4: #d4b95a;
+  /* 大二下批次章色（暗色变体，与亮色同序） */
+  --comp1: #e0975f;  --comp2: #8f9ce0;  --comp3: #7cc9a3;  --comp4: #d69ab8;  --comp5: #b3c26e;  --comp6: #b39be0;  --comp7: #d4b95a;
+  --co1: #6cc4c9;  --co2: #e0975f;  --co3: #8f9ce0;  --co4: #b3c26e;  --co5: #b39be0;  --co6: #7cc9a3;  --co7: #ec8ea0;  --co8: #74b3d2;  --co9: #d4b95a;
+  --emb1: #d69ab8;  --emb2: #7cc9a3;  --emb3: #ec8ea0;  --emb4: #6cc4c9;  --emb5: #e0975f;  --emb6: #8f9ce0;
+  --ml1: #e0975f;  --ml2: #8f9ce0;  --ml3: #b3c26e;  --ml4: #b39be0;  --ml5: #d4b95a;
+  --ste1: #7cc9a3;  --ste2: #ec8ea0;  --ste3: #6cc4c9;  --ste4: #e0975f;  --ste5: #8f9ce0;  --ste6: #d4b95a;
+  --comb1: #ec8ea0;  --comb2: #6cc4c9;  --comb3: #e0975f;  --comb4: #7cc9a3;
 
   --deck-practice: #cfdeaf;
   --os-practice: #bf5af2;  --os-att: #da6cc8;
@@ -394,6 +439,19 @@
   --java-att: #93b3c9;
   --dl-att: #9db0d6;
   --robot-att: #afdec5;
+  /* 大二下批次：练习 / 附件专属色（暗色） */
+  --comp-practice: #bf5af2;  --comp-att: #ddb9b0;
+  --co-practice: #bf5af2;    --co-att: #ddd7b0;
+  --emb-practice: #bf5af2;   --emb-att: #e7cb92;
+  --ml-att: #e4aabb;
+  --ste-att: #7799c5;
+  --comb-att: #b760dc;
+  --cg-att: #db8a76;
+  --sma-att: #9f82e3;
+  --dmt-att: #8691cb;
+  --np-att: #e4aabb;
+  --micro-att: #e4aabb;
+  --het-att: #b2e4aa;
 
   --key-bg: rgba(10, 132, 255, 0.14);
   --warn-bg: rgba(255, 159, 10, 0.14);
@@ -550,6 +608,19 @@
 :root[data-deck='java'] { --deck-accent: var(--java); }
 :root[data-deck='dl'] { --deck-accent: var(--dl); }
 :root[data-deck='robot'] { --deck-accent: var(--robot); }
+/* --------------------- 大二下批次课程主题 */
+:root[data-deck='comp'] { --deck-accent: var(--comp); }
+:root[data-deck='co'] { --deck-accent: var(--co); }
+:root[data-deck='emb'] { --deck-accent: var(--emb); }
+:root[data-deck='ml'] { --deck-accent: var(--ml); }
+:root[data-deck='ste'] { --deck-accent: var(--ste); }
+:root[data-deck='comb'] { --deck-accent: var(--comb); }
+:root[data-deck='cg'] { --deck-accent: var(--cg); }
+:root[data-deck='sma'] { --deck-accent: var(--sma); }
+:root[data-deck='dmt'] { --deck-accent: var(--dmt); }
+:root[data-deck='np'] { --deck-accent: var(--np); }
+:root[data-deck='micro'] { --deck-accent: var(--micro); }
+:root[data-deck='het'] { --deck-accent: var(--het); }
 
 /* --------- 各章一色：章节页写 html[data-ch='序数']，覆盖课程基础色；
  * 首页/在线练习不带 data-ch，仍用课程基础色（与算法课 deck1..8 同机制） --------- */
@@ -663,6 +734,22 @@
 :root[data-deck='java'][data-pg='att'] { --deck-accent: var(--java-att); }
 :root[data-deck='dl'][data-pg='att'] { --deck-accent: var(--dl-att); }
 :root[data-deck='robot'][data-pg='att'] { --deck-accent: var(--robot-att); }
+/* 大二下批次练习 / 附件页专属色 */
+:root[data-deck='comp'][data-pg='practice'] { --deck-accent: var(--comp-practice); }
+:root[data-deck='comp'][data-pg='att'] { --deck-accent: var(--comp-att); }
+:root[data-deck='co'][data-pg='practice'] { --deck-accent: var(--co-practice); }
+:root[data-deck='co'][data-pg='att'] { --deck-accent: var(--co-att); }
+:root[data-deck='emb'][data-pg='practice'] { --deck-accent: var(--emb-practice); }
+:root[data-deck='emb'][data-pg='att'] { --deck-accent: var(--emb-att); }
+:root[data-deck='ml'][data-pg='att'] { --deck-accent: var(--ml-att); }
+:root[data-deck='ste'][data-pg='att'] { --deck-accent: var(--ste-att); }
+:root[data-deck='comb'][data-pg='att'] { --deck-accent: var(--comb-att); }
+:root[data-deck='cg'][data-pg='att'] { --deck-accent: var(--cg-att); }
+:root[data-deck='sma'][data-pg='att'] { --deck-accent: var(--sma-att); }
+:root[data-deck='dmt'][data-pg='att'] { --deck-accent: var(--dmt-att); }
+:root[data-deck='np'][data-pg='att'] { --deck-accent: var(--np-att); }
+:root[data-deck='micro'][data-pg='att'] { --deck-accent: var(--micro-att); }
+:root[data-deck='het'][data-pg='att'] { --deck-accent: var(--het-att); }
 :root[data-deck='db'][data-pg='practice'] { --deck-accent: var(--db-practice); }
 :root[data-deck='se'][data-pg='practice'] { --deck-accent: var(--se-practice); }
 :root[data-deck='st'][data-pg='practice'] { --deck-accent: var(--st-practice); }
@@ -799,6 +886,44 @@
 :root[data-deck='robot'][data-ch='2'] { --deck-accent: var(--robot2); }
 :root[data-deck='robot'][data-ch='3'] { --deck-accent: var(--robot3); }
 :root[data-deck='robot'][data-ch='4'] { --deck-accent: var(--robot4); }
+/* ---- 大二下批次：章节序号 → 章色（章号有缺号时按列表序取色） ---- */
+:root[data-deck='comp'][data-ch='1'] { --deck-accent: var(--comp1); }
+:root[data-deck='comp'][data-ch='2'] { --deck-accent: var(--comp2); }
+:root[data-deck='comp'][data-ch='3'] { --deck-accent: var(--comp3); }
+:root[data-deck='comp'][data-ch='4'] { --deck-accent: var(--comp4); }
+:root[data-deck='comp'][data-ch='5'] { --deck-accent: var(--comp5); }
+:root[data-deck='comp'][data-ch='6'] { --deck-accent: var(--comp6); }
+:root[data-deck='comp'][data-ch='7'] { --deck-accent: var(--comp7); }
+:root[data-deck='co'][data-ch='1'] { --deck-accent: var(--co1); }
+:root[data-deck='co'][data-ch='3'] { --deck-accent: var(--co2); }
+:root[data-deck='co'][data-ch='4'] { --deck-accent: var(--co3); }
+:root[data-deck='co'][data-ch='5'] { --deck-accent: var(--co4); }
+:root[data-deck='co'][data-ch='6'] { --deck-accent: var(--co5); }
+:root[data-deck='co'][data-ch='7'] { --deck-accent: var(--co6); }
+:root[data-deck='co'][data-ch='8'] { --deck-accent: var(--co7); }
+:root[data-deck='co'][data-ch='9'] { --deck-accent: var(--co8); }
+:root[data-deck='co'][data-ch='10'] { --deck-accent: var(--co9); }
+:root[data-deck='emb'][data-ch='1'] { --deck-accent: var(--emb1); }
+:root[data-deck='emb'][data-ch='2'] { --deck-accent: var(--emb2); }
+:root[data-deck='emb'][data-ch='3'] { --deck-accent: var(--emb3); }
+:root[data-deck='emb'][data-ch='4'] { --deck-accent: var(--emb4); }
+:root[data-deck='emb'][data-ch='5'] { --deck-accent: var(--emb5); }
+:root[data-deck='emb'][data-ch='6'] { --deck-accent: var(--emb6); }
+:root[data-deck='ml'][data-ch='1'] { --deck-accent: var(--ml1); }
+:root[data-deck='ml'][data-ch='2'] { --deck-accent: var(--ml2); }
+:root[data-deck='ml'][data-ch='3'] { --deck-accent: var(--ml3); }
+:root[data-deck='ml'][data-ch='4'] { --deck-accent: var(--ml4); }
+:root[data-deck='ml'][data-ch='5'] { --deck-accent: var(--ml5); }
+:root[data-deck='ste'][data-ch='1'] { --deck-accent: var(--ste1); }
+:root[data-deck='ste'][data-ch='2'] { --deck-accent: var(--ste2); }
+:root[data-deck='ste'][data-ch='3'] { --deck-accent: var(--ste3); }
+:root[data-deck='ste'][data-ch='4'] { --deck-accent: var(--ste4); }
+:root[data-deck='ste'][data-ch='5'] { --deck-accent: var(--ste5); }
+:root[data-deck='ste'][data-ch='6'] { --deck-accent: var(--ste6); }
+:root[data-deck='comb'][data-ch='1'] { --deck-accent: var(--comb1); }
+:root[data-deck='comb'][data-ch='2'] { --deck-accent: var(--comb2); }
+:root[data-deck='comb'][data-ch='3'] { --deck-accent: var(--comb3); }
+:root[data-deck='comb'][data-ch='4'] { --deck-accent: var(--comb4); }
 
 
 /* ============ 大一上/下补全批次：数据结构 / 数据结构课程设计 / 线性代数 / 电路与电子技术基础 ============ */

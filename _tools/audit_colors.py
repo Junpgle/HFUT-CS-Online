@@ -70,6 +70,19 @@ COURSES = {
     'java': ('java', 'java', 6, ('att',)),
     'dl':   ('dl', 'dl', 6, ('att',)),
     'robot': ('robot', 'robot', 4, ('att',)),
+    # 大二下批次
+    'comp': ('comp', 'comp', 7, ('practice', 'att')),
+    'co':   ('co', 'co', 9, ('practice', 'att')),
+    'emb':  ('emb', 'emb', 6, ('practice', 'att')),
+    'ml':   ('ml', 'ml', 5, ('att',)),
+    'ste':  ('ste', 'ste', 6, ('att',)),
+    'comb': ('comb', 'comb', 4, ('att',)),
+    'cg':   ('cg', None, 0, ('att',)),
+    'sma':  ('sma', None, 0, ('att',)),
+    'dmt':  ('dmt', None, 0, ('att',)),
+    'np':   ('np', None, 0, ('att',)),
+    'micro':('micro', None, 0, ('att',)),
+    'het':  ('het', None, 0, ('att',)),
 }
 
 report = {}

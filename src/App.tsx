@@ -52,6 +52,8 @@ const DsCourse = lazy(() => import('./courses/DsCourse'));
 const DscdCourse = lazy(() => import('./courses/DscdCourse'));
 const LaCourse = lazy(() => import('./courses/LaCourse'));
 const EeCourse = lazy(() => import('./courses/EeCourse'));
+/** 大二下 12 门课共用入口：再按课程前缀加载各自的数据包 */
+const D2XCourse = lazy(() => import('./courses/D2XCourse'));
 
 /** 旧版单课程链接 → /algo/*（历史收藏与外链不失效） */
 function LegacyDeckRedirect() {
@@ -118,6 +120,8 @@ export default function App() {
         <Route path={`${JAVA_BASE}/*`} element={<JavaCourse />} />
         <Route path={`${DL_BASE}/*`} element={<DlCourse />} />
         <Route path={`${ROBOT_BASE}/*`} element={<RobotCourse />} />
+        {/* 大二下 12 门课：按 URL 首段分发到同一套课程外壳（数据各自按需加载） */}
+        <Route path="/:courseKey/*" element={<D2XCourse />} />
         <Route path="/course/:name/*" element={<CourseStubPage />} />
         <Route path="/deck/:deckId" element={<LegacyDeckRedirect />} />
         <Route path="/practice" element={<Navigate to={`${ALGO_BASE}/practice`} replace />} />
