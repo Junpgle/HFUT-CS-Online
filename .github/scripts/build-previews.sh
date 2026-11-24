@@ -22,6 +22,8 @@ for (const t of JSON.parse(readFileSync(process.argv[1], "utf8"))) {
 }' "$targets_json")
 
 # 当前 node_modules 是否对应 main 的依赖声明；分支之间依赖不一致时来回切换要重装
+# 当前 node_modules 是否对应 main 的依赖声明；分支之间依赖不一致时来回切换要重装
+# 调用方需保证进入本脚本时 node_modules 已对应 origin/main（这里以它为“已安装”基线）
 deps_state="main"
 
 for row in "${rows[@]}"; do

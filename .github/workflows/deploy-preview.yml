@@ -1,0 +1,28 @@
+name: Deploy previews (push)
+
+# 每次 push 只刷新分支预览；主站仍停在最近一次 Release 的 tag。
+# 这样 main 上待发布的改动只出现在 /preview/ 里，线上主站随发版更新（见 deploy-release.yml）。
+# 主站与预览同属一个 Pages 产物，所以这里仍要重建主站，只是主站版本取最近一次 Release。
+
+on:
+  push:
+    # 只跟分支：tag 的部署由 Release 事件负责
+    branches: ['**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  pull-requests: read
+
+# 与 deploy-release.yml 共用 pages 组，两次发布的产物不会互相覆盖
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  site:
+    # release-please 更新发布 PR 只改版本号与 CHANGELOG，不值得跑一次完整构建
+    if: github.event_name != 'push' || !startsWith(github.ref_name, 'release-please--')
+    uses: ./.github/workflows/deploy-site.yml

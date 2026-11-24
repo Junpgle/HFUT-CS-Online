@@ -1,0 +1,31 @@
+name: Deploy main site (release)
+
+# 主站只在发版时更新：发布 GitHub Release → 构建该 tag 并部署。
+# 手动运行可指定 tag 回滚到旧版本，或填 main 重新部署 main 的最新提交。
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 要部署的 tag / 分支（留空 = 最近一次 Release）
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  pull-requests: read
+
+# 与 deploy-preview.yml 共用 pages 组，两次发布的产物不会互相覆盖
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  site:
+    uses: ./.github/workflows/deploy-site.yml
+    with:
+      main-ref: ${{ github.event.release.tag_name || inputs.ref || '' }}
