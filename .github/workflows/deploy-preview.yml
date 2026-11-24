@@ -32,8 +32,8 @@ concurrency:
 
 jobs:
   site:
-    # 删除分支也会触发 push 事件；那只是下线预览，下一次运行自然带上
-    if: github.event_name != 'push' || (!github.event.deleted && !startsWith(github.ref_name, 'release-please--'))
+    # 删除分支也触发 push：重建一次才能把它的预览从索引里摘掉
+    if: github.event_name != 'push' || !startsWith(github.ref_name, 'release-please--')
     uses: ./.github/workflows/deploy-site.yml
     with:
       publish: false

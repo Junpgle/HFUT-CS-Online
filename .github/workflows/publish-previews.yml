@@ -46,6 +46,11 @@ jobs:
           path: dist
           retention-days: 1
 
+      - name: 版本探针（临时）
+        env:
+          GITHUB_SHA: test-override
+        run: echo "GITHUB_SHA=$GITHUB_SHA"
+
       - id: deployment
         uses: actions/deploy-pages@v5
 
