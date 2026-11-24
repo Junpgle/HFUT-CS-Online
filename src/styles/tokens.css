@@ -72,17 +72,18 @@
   --dsd: #88a136;                /* 领域方向综合设计 · 苹果绿（黄绿亮相位，比操作系统课橄榄绿更亮更黄） */
   --ip: #36a18f;                 /* 创新实践 · 青绿（青绿相位，比网络课深青更亮更绿，与数据库课橄榄金拉开色相） */
   /* 大二上批次（11 门）：色相空间已近饱和，按「对全站 base 最小 ΔE ≥14、新课两两 ≥14」选取 */
-  --py: #764a2e;                 /* Python 程序设计 · 陶褐 */
-  --dm: #843339;                 /* 离散数学 · 暗枣红 */
-  --cm: #817d4b;                 /* 计算方法 · 橄榄卡其 */
-  --prob: #632c5b;               /* 概率论与数理统计 · 深梅紫 */
-  --asm: #395493;                /* 汇编语言程序设计 · 靛蓝 */
-  --eda: #286728;                /* EDA实训 · 深草绿 */
-  --res: #723993;                /* 科研训练 · 紫罗兰 */
-  --physlab: #668d3f;            /* 大学物理实验 · 苔绿 */
-  --java: #39397f;               /* Java技术 · 深靛紫 */
-  --dl: #5e3147;                 /* 数字逻辑 · 暗酒紫 */
-  --robot: #286749;              /* 机器人技术 · 松绿 */
+  --py: #764a2e;                 /* Python 程序设计 · 陶褐（暖棕相位，与灰褐/砖红均拉开明度与饱和） */
+  --dm: #843339;                 /* 离散数学 · 暗枣红（深红相位，比砖红更沉更紫） */
+  --cm: #817d4b;                 /* 计算方法 · 橄榄卡其（黄绿相位，低饱和） */
+  --prob: #632c5b;               /* 概率论与数理统计 · 深梅紫（紫红暗相位） */
+  --asm: #395493;                /* 汇编语言程序设计 · 靛蓝（比大数据靛蓝更亮更灰） */
+  --eda: #286728;                /* EDA实训 · 深草绿（正绿暗相位） */
+  --res: #723993;                /* 科研训练 · 紫罗兰（亮于分布式深紫、暗于自然语言蓝紫） */
+  --physlab: #668d3f;            /* 大学物理实验 · 苔绿（亮于高数苔藓绿、与操作系统橄榄绿拉开） */
+  --java: #39397f;               /* Java技术 · 深靛紫（藏青偏紫） */
+  --dl: #5e3147;                 /* 数字逻辑 · 暗酒紫（酒红暗相位） */
+  --robot: #286749;              /* 机器人技术 · 松绿（青绿暗相位） */
+
   /* 大二下批次（12 门）：46 课占满色相环后按「对全站 base 最小 ΔE ≥11、新课两两 ≥15」选色
    * （选色脚本 _tools/pick_colors_d2x.py，硬池含并行批次已落地的 15 课） */
   --comp: #264f73;               /* 编译原理 · 深靛蓝（编译工具链的冷色调） */
@@ -197,7 +198,7 @@
   --db-practice: #8d34c9;
   --se-practice: #8d34c9;
   --st-practice: #8d34c9;
-  /* 大二上批次：练习 / 附件专属色 */
+  /* 大二上批次：练习 / 附件专属色（att 跨课复用既有色对，课内与 base、章色均拉开） */
   --py-att: #8d34c9;
   --dm-practice: #8d34c9;  --dm-att: #36a136;
   --cm-att: #b53aad;
@@ -608,6 +609,7 @@
 :root[data-deck='java'] { --deck-accent: var(--java); }
 :root[data-deck='dl'] { --deck-accent: var(--dl); }
 :root[data-deck='robot'] { --deck-accent: var(--robot); }
+
 /* --------------------- 大二下批次课程主题 */
 :root[data-deck='comp'] { --deck-accent: var(--comp); }
 :root[data-deck='co'] { --deck-accent: var(--co); }
@@ -716,7 +718,6 @@
 :root[data-deck='swt'][data-pg='att'] { --deck-accent: var(--swt-att); }
 :root[data-deck='dsd'][data-pg='att'] { --deck-accent: var(--dsd-att); }
 :root[data-deck='ip'][data-pg='att'] { --deck-accent: var(--ip-att); }
-
 /* 大二上批次练习 / 附件页专属色 */
 :root[data-deck='py'][data-pg='att'] { --deck-accent: var(--py-att); }
 :root[data-deck='dm'][data-pg='practice'] { --deck-accent: var(--dm-practice); }
@@ -734,6 +735,9 @@
 :root[data-deck='java'][data-pg='att'] { --deck-accent: var(--java-att); }
 :root[data-deck='dl'][data-pg='att'] { --deck-accent: var(--dl-att); }
 :root[data-deck='robot'][data-pg='att'] { --deck-accent: var(--robot-att); }
+:root[data-deck='db'][data-pg='practice'] { --deck-accent: var(--db-practice); }
+:root[data-deck='se'][data-pg='practice'] { --deck-accent: var(--se-practice); }
+:root[data-deck='st'][data-pg='practice'] { --deck-accent: var(--st-practice); }
 /* 大二下批次练习 / 附件页专属色 */
 :root[data-deck='comp'][data-pg='practice'] { --deck-accent: var(--comp-practice); }
 :root[data-deck='comp'][data-pg='att'] { --deck-accent: var(--comp-att); }
@@ -750,9 +754,6 @@
 :root[data-deck='np'][data-pg='att'] { --deck-accent: var(--np-att); }
 :root[data-deck='micro'][data-pg='att'] { --deck-accent: var(--micro-att); }
 :root[data-deck='het'][data-pg='att'] { --deck-accent: var(--het-att); }
-:root[data-deck='db'][data-pg='practice'] { --deck-accent: var(--db-practice); }
-:root[data-deck='se'][data-pg='practice'] { --deck-accent: var(--se-practice); }
-:root[data-deck='st'][data-pg='practice'] { --deck-accent: var(--st-practice); }
 
 :root[data-deck='math'][data-ch='1'] { --deck-accent: var(--math1); }
 :root[data-deck='math'][data-ch='2'] { --deck-accent: var(--math2); }
@@ -886,6 +887,7 @@
 :root[data-deck='robot'][data-ch='2'] { --deck-accent: var(--robot2); }
 :root[data-deck='robot'][data-ch='3'] { --deck-accent: var(--robot3); }
 :root[data-deck='robot'][data-ch='4'] { --deck-accent: var(--robot4); }
+
 /* ---- 大二下批次：章节序号 → 章色（章号有缺号时按列表序取色） ---- */
 :root[data-deck='comp'][data-ch='1'] { --deck-accent: var(--comp1); }
 :root[data-deck='comp'][data-ch='2'] { --deck-accent: var(--comp2); }
@@ -924,6 +926,7 @@
 :root[data-deck='comb'][data-ch='2'] { --deck-accent: var(--comb2); }
 :root[data-deck='comb'][data-ch='3'] { --deck-accent: var(--comb3); }
 :root[data-deck='comb'][data-ch='4'] { --deck-accent: var(--comb4); }
+
 
 
 /* ============ 大一上/下补全批次：数据结构 / 数据结构课程设计 / 线性代数 / 电路与电子技术基础 ============ */

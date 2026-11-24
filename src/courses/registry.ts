@@ -265,38 +265,6 @@ export const courses: readonly CourseEntry[] = [
     source: '创新实践结课报告 · 课件与试题未收录',
   },
   {
-    id: 'data-structures',
-    name: '数据结构',
-    semester: '大一下',
-    base: '/ds',
-    ready: true,
-    source: '八章课件精讲 · 5 份模拟/期末试卷在线练习',
-  },
-  {
-    id: 'data-structures-course-design',
-    name: '数据结构课程设计',
-    semester: '大一下',
-    base: '/dscd',
-    ready: true,
-    source: '课程设计报告与代码 · 课件与试题未收录',
-  },
-  {
-    id: 'linear-algebra',
-    name: '线性代数',
-    semester: '大一上',
-    base: '/la',
-    ready: true,
-    source: '六章课件精讲 · 4 份习题/期中试卷在线练习',
-  },
-  {
-    id: 'circuits-and-electronics',
-    name: '电路与电子技术基础',
-    semester: '大一下',
-    base: '/ee',
-    ready: true,
-    source: '十五章课件精讲（电路 6 章 + 模电 9 章）· 1 份期末试卷在线练习',
-  },
-  {
     id: 'python-programming',
     name: 'Python程序设计',
     semester: '大二上',
@@ -310,7 +278,7 @@ export const courses: readonly CourseEntry[] = [
     semester: '大二上',
     base: '/dm',
     ready: true,
-    source: '六章课件精讲（命题逻辑 / 谓词逻辑 / 集合与关系 / 函数 / 代数系统 / 环与格）· 1 份期末试卷在线练习',
+    source: '六章课件精讲（命题逻辑 / 谓词逻辑 / 集合与计数 / 图论 / 关系 / 特殊关系）· 1 份期末试卷在线练习',
   },
   {
     id: 'computational-methods',
@@ -383,6 +351,38 @@ export const courses: readonly CourseEntry[] = [
     base: '/robot',
     ready: true,
     source: 'RoboCup 2D 实验与项目资料 · 课件目录为空（PPT 在附件中），无成套试卷',
+  },
+  {
+    id: 'data-structures',
+    name: '数据结构',
+    semester: '大一下',
+    base: '/ds',
+    ready: true,
+    source: '八章课件精讲 · 5 份模拟/期末试卷在线练习',
+  },
+  {
+    id: 'data-structures-course-design',
+    name: '数据结构课程设计',
+    semester: '大一下',
+    base: '/dscd',
+    ready: true,
+    source: '课程设计报告与代码 · 课件与试题未收录',
+  },
+  {
+    id: 'linear-algebra',
+    name: '线性代数',
+    semester: '大一上',
+    base: '/la',
+    ready: true,
+    source: '六章课件精讲 · 4 份习题/期中试卷在线练习',
+  },
+  {
+    id: 'circuits-and-electronics',
+    name: '电路与电子技术基础',
+    semester: '大一下',
+    base: '/ee',
+    ready: true,
+    source: '十五章课件精讲（电路 6 章 + 模电 9 章）· 1 份期末试卷在线练习',
   },
   /* ---- 大二下批次（12 门）：base 同时是 html[data-deck] 与 D2XCourse 的 URL 首段 ---- */
   {
@@ -580,25 +580,24 @@ export const DSD_BASE = courses[29].base;
 /** 创新实践课路由前缀（同上约定） */
 export const IP_BASE = courses[30].base;
 
+/** 大二上批次路由前缀（同上约定） */
+export const PY_BASE = courses[31].base;
+export const DM_BASE = courses[32].base;
+export const CM_BASE = courses[33].base;
+export const PROB_BASE = courses[34].base;
+export const ASM_BASE = courses[35].base;
+export const EDA_BASE = courses[36].base;
+export const RES_BASE = courses[37].base;
+export const PHYS_LAB_BASE = courses[38].base;
+export const JAVA_BASE = courses[39].base;
+export const DL_BASE = courses[40].base;
+export const ROBOT_BASE = courses[41].base;
 
 /** 大一上/下补全批次路由前缀（独立字面量：不受其它批次课程条目增删影响） */
 export const DS_BASE = '/ds';
 export const DSCD_BASE = '/dscd';
 export const LA_BASE = '/la';
 export const EE_BASE = '/ee';
-
-/** 大二上批次路由前缀（同上约定） */
-export const PY_BASE = courses[35].base;
-export const DM_BASE = courses[36].base;
-export const CM_BASE = courses[37].base;
-export const PROB_BASE = courses[38].base;
-export const ASM_BASE = courses[39].base;
-export const EDA_BASE = courses[40].base;
-export const RES_BASE = courses[41].base;
-export const PHYS_LAB_BASE = courses[42].base;
-export const JAVA_BASE = courses[43].base;
-export const DL_BASE = courses[44].base;
-export const ROBOT_BASE = courses[45].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);

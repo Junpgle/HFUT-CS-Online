@@ -105,10 +105,6 @@ export default function App() {
         <Route path={`${SWT_BASE}/*`} element={<SwtCourse />} />
         <Route path={`${DSD_BASE}/*`} element={<DsdCourse />} />
         <Route path={`${IP_BASE}/*`} element={<IpCourse />} />
-        <Route path={`${DS_BASE}/*`} element={<DsCourse />} />
-        <Route path={`${DSCD_BASE}/*`} element={<DscdCourse />} />
-        <Route path={`${LA_BASE}/*`} element={<LaCourse />} />
-        <Route path={`${EE_BASE}/*`} element={<EeCourse />} />
         <Route path={`${PY_BASE}/*`} element={<PyCourse />} />
         <Route path={`${DM_BASE}/*`} element={<DmCourse />} />
         <Route path={`${CM_BASE}/*`} element={<CmCourse />} />
@@ -120,6 +116,10 @@ export default function App() {
         <Route path={`${JAVA_BASE}/*`} element={<JavaCourse />} />
         <Route path={`${DL_BASE}/*`} element={<DlCourse />} />
         <Route path={`${ROBOT_BASE}/*`} element={<RobotCourse />} />
+        <Route path={`${DS_BASE}/*`} element={<DsCourse />} />
+        <Route path={`${DSCD_BASE}/*`} element={<DscdCourse />} />
+        <Route path={`${LA_BASE}/*`} element={<LaCourse />} />
+        <Route path={`${EE_BASE}/*`} element={<EeCourse />} />
         {/* 大二下 12 门课：按 URL 首段分发到同一套课程外壳（数据各自按需加载） */}
         <Route path="/:courseKey/*" element={<D2XCourse />} />
         <Route path="/course/:name/*" element={<CourseStubPage />} />
