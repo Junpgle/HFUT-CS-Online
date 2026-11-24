@@ -27,6 +27,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # release-please 更新发布 PR 时也会 push 分支；那只是改版本号与 CHANGELOG，
+    # 主站与预览列表都不变，不值得跑一次全量部署，直接跳过。
+    if: github.event_name != 'push' || !startsWith(github.ref_name, 'release-please--')
     # Supabase 连接信息（Publishable Key，可公开）；未配置时站点自动退回纯本地模式
     env:
       VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
