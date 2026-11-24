@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Navigate, Route, Routes, useLocation, useNavigationType, useParams } from 'react-router-dom';
+import { useScrollMemory } from '../../lib/scrollMemory';
 import type { CourseConfig } from '../../content/course-types';
 import { findCourseByBase } from '../../courses/registry';
 import TopBar, { type CourseTab, type CourseTabMenuItem } from '../TopBar';
@@ -14,9 +15,6 @@ import CoursePaperView from './CoursePaperView';
 import CourseAttachmentsPage from '../../pages/CourseAttachmentsPage';
 import { recordCourseView } from '../../lib/recentCourses';
 import { decodeEntities } from '../../lib/text';
-
-/** 各路由的滚动记忆（POP 导航时恢复） */
-const scrollPositions = new Map<string, number>();
 
 /**
  * 课程外壳：顶栏 + 侧栏 + 四个页面（总目录 / 章节 / 在线练习 / 附件）。
@@ -86,22 +84,7 @@ export default function CourseShell({ config }: { config: CourseConfig }) {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // 滚动记忆：离开时保存；POP 恢复；新导航回顶部
-  useEffect(() => {
-    const key = location.key;
-    return () => {
-      scrollPositions.set(key, window.scrollY);
-    };
-  }, [location.key]);
-
-  useEffect(() => {
-    if (navType === 'POP') {
-      const y = scrollPositions.get(location.key) ?? 0;
-      requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'auto' }));
-    } else if (!location.search) {
-      window.scrollTo({ top: 0, behavior: 'auto' });
-    }
-  }, [location.key, navType, location.search]);
+  useScrollMemory(location, navType);
 
   useEffect(() => setDrawerOpen(false), [location.pathname]);
 

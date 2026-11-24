@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
+import { useScrollMemory } from '../../lib/scrollMemory';
 import TopBar, { type CourseTab } from '../TopBar';
 import Sidebar, { SidebarContent, type NavEntry } from '../Sidebar';
 import MobileDrawer from '../MobileDrawer';
@@ -8,9 +9,6 @@ import type { SearchIndexItem } from '../SearchBox';
 import CourseAttachmentsPage from '../../pages/CourseAttachmentsPage';
 import { findCourseByBase } from '../../courses/registry';
 import { recordCourseView } from '../../lib/recentCourses';
-
-/** 各路由的滚动记忆（POP 导航时恢复） */
-const scrollPositions = new Map<string, number>();
 
 /**
  * 纯附件课程外壳：课件目录为空（或仅有扫描件 / 上机代码），全课只含附件资料。
@@ -52,21 +50,7 @@ export default function AttachmentCourse({ base, tip }: { base: string; tip: str
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  useEffect(() => {
-    const key = location.key;
-    return () => {
-      scrollPositions.set(key, window.scrollY);
-    };
-  }, [location.key]);
-
-  useEffect(() => {
-    if (navType === 'POP') {
-      const y = scrollPositions.get(location.key) ?? 0;
-      requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'auto' }));
-    } else {
-      window.scrollTo({ top: 0, behavior: 'auto' });
-    }
-  }, [location.key, navType]);
+  useScrollMemory(location, navType);
 
   useEffect(() => setDrawerOpen(false), [location.pathname]);
 
