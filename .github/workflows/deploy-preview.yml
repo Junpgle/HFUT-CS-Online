@@ -1,9 +1,9 @@
 name: Deploy previews (push)
 
 # 每次 push 只刷新分支预览；主站仍停在最近一次 Release 的 tag。
-# 本工作流只负责构建，产物由 publish-previews.yml 在默认分支上下文里发布：
-# github-pages 环境的部署分支策略匹配不到带斜杠的分支名（fix/x、dependabot/x/y）。
 # 主站与预览同属一个 Pages 产物，所以这里仍要重建主站，只是主站版本取最近一次 Release。
+# 部署 ref 就是被 push 的分支；github-pages 环境按分支名逐段匹配（* / */* / */*/*），
+# 所以 fix/x、dependabot/x/y 这类名字都能落到策略里（见 CONTRIBUTING「部署」）。
 
 on:
   push:
@@ -23,11 +23,13 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
   pull-requests: read
 
-# 同一分支连推时取消旧构建；发布由 publish-previews 串行处理
+# 与 deploy-release.yml 共用 pages 组
 concurrency:
-  group: build-previews-${{ github.ref }}
+  group: pages
   cancel-in-progress: true
 
 jobs:
@@ -35,5 +37,3 @@ jobs:
     # 删除分支也触发 push：重建一次才能把它的预览从索引里摘掉
     if: github.event_name != 'push' || !startsWith(github.ref_name, 'release-please--')
     uses: ./.github/workflows/deploy-site.yml
-    with:
-      publish: false
