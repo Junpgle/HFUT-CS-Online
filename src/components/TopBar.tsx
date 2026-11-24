@@ -171,8 +171,13 @@ export default function TopBar({
   return (
     <header className="topbar">
       <div className="topbar-left">
-        {/* 独立返回胶囊：左箭头回站点首页 */}
-        <Link to="/" className="topbar-ctl nav-pill" aria-label="返回课程资料库首页" title="返回课程资料库首页">
+        {/* 独立返回胶囊：左箭头回站点首页（手机上收进抽屉，把顶栏宽度让给课程名） */}
+        <Link
+          to="/"
+          className="topbar-ctl nav-pill topbar-home"
+          aria-label="返回课程资料库首页"
+          title="返回课程资料库首页"
+        >
           <span className="icon-btn">
             <IconArrowLeft size={18} />
           </span>

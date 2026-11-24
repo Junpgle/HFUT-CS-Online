@@ -528,9 +528,10 @@ button {
     border-color: transparent;
   }
   .topbar-left {
-    /* 占满左列，让课程名用剩余空间截断（fit-content 会把它压到只剩 1 字） */
-    width: 100%;
-    max-width: none;
+    /* 贴内容收窄（平板 / 横屏时不会拉成一整条空白胶囊）；
+       手机端右组已收成纯图标，剩余空间足够课程名完整显示 */
+    width: fit-content;
+    max-width: 100%;
   }
   .topbar-title,
   .topbar-ctl.topbar-title {
@@ -3460,6 +3461,19 @@ pre.code .cl-code:empty + .cl-com {
   .att-dl {
     margin-left: auto;
   }
+  /* 目录行：仓名独占第一行，文件数/来源折到第二行，320px 下不再只剩一个字 */
+  .att-dir-btn {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+  .att-dir-btn .att-row-name {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .att-dir-btn .att-row-path {
+    flex: 1 1 100%;
+    padding-left: 20px;
+  }
 }
 /* --------------------- 练习列表：每卷卡内独立进度条（替代整课总进度条） --------------------- */
 .ext-card-progress {
@@ -3727,3 +3741,92 @@ pre.code .cl-code:empty + .cl-com {
 .net-focus-source { margin: .9rem 0 0; font-size: .77rem; line-height: 1.6; color: var(--ink-3); overflow-wrap: anywhere; }
 .net-focus-none { margin: .5rem 0 0; }
 @media(max-width:600px){ .net-focus { padding: 1rem; } }
+
+/* ============================================================================
+   手机竖屏（≤640px）专项
+   目标：常见手机宽度（320 / 360 / 375 / 390 / 430）下顶栏不再把课程名挤成细条，
+   展开搜索时不再与其它控件互相遮挡；悬浮件之间保持安全间距。
+   ========================================================================== */
+@media (max-width: 640px) {
+  .topbar {
+    padding: 12px 14px;
+    column-gap: 8px;
+  }
+  /* 返回资料库收进抽屉（抽屉首项即「课程资料库 · 首页」），顶栏只留抽屉 + 课程名 */
+  .topbar-left > .topbar-ctl.topbar-home {
+    display: none;
+  }
+  .topbar-left,
+  .topbar-right {
+    padding: 3px;
+    gap: 2px;
+  }
+  .topbar-left > .topbar-ctl.nav-pill,
+  .topbar-right > .topbar-ctl.nav-pill {
+    padding: 0;
+  }
+  .topbar-title,
+  .topbar-ctl.topbar-title {
+    font-size: 0.9375rem;
+    padding: 0 6px;
+  }
+
+  /* 搜索聚焦后独占整行：其余顶栏控件暂时让位，收起即恢复，
+     避免展开的输入框把左侧胶囊压到 10px、控件互相叠压 */
+  .topbar:has(.search-box.expanded) .topbar-left {
+    display: none;
+  }
+  .topbar:has(.search-box.expanded) .topbar-right {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .topbar:has(.search-box.expanded) .topbar-right > *:not(:first-child) {
+    display: none;
+  }
+  .topbar:has(.search-box.expanded) .topbar-right > .topbar-ctl:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .topbar:has(.search-box.expanded) .search-box {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .topbar:has(.search-box.expanded) .search-input {
+    width: 100%;
+    min-width: 0;
+  }
+  /* 下拉结果与整行搜索框同宽，贴住左右边距，不再向左溢出视口；
+     小屏改用实底：半透明毛玻璃会让正文标题透出来，干扰结果阅读 */
+  .topbar:has(.search-box.expanded) .search-drop {
+    left: 0;
+    right: 0;
+    width: auto;
+    background: var(--panel-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* 跨节提示条：小屏收进视口，超长省略 */
+  .sec-flash {
+    right: 14px;
+    max-width: calc(100vw - 28px);
+  }
+
+  /* 勘误胶囊出现时，阅读指示标再上移一档，避免两颗药丸贴在一起 */
+  body:has(.errata-dock) .reading-mark {
+    bottom: 72px;
+  }
+
+  /* 练习页：给右下角「回到顶部」让出最后一屏，末端内容不被压住 */
+  .practice-page {
+    padding-bottom: 76px;
+  }
+
+  /* 弹窗按钮行：小屏允许换行，按钮内文字不折成两行（勘误弹窗的三个按钮） */
+  .hub-modal-actions {
+    flex-wrap: wrap;
+  }
+  .hub-modal-actions .btn {
+    white-space: nowrap;
+  }
+}
