@@ -19,7 +19,7 @@
 ![Vite](https://img.shields.io/badge/Vite-8-a259ff?logo=vite&logoColor=white)
 [![GitHub stars](https://img.shields.io/github/stars/SaltGardenia/HFUT-CS-Online?style=social)](https://github.com/SaltGardenia/HFUT-CS-Online/stargazers)
 
-<p>站点索引 8 个学期、57 门课程、7901 份文件，并为其中 31 门课程做了独立页面：有讲义的按章精讲，只有资料的就整理成可检索、可下载的附件页。</p>
+<p>站点索引 8 个学期、57 门课程、7901 份文件，并为 58 门课程提供独立页面：有讲义的按章精讲，只有资料的就整理成可检索、可下载的附件页。</p>
 
 <p><strong>纯静态站点，打开即用，不需要注册。</strong><br />
 游客模式下收藏、最近查看与答题进度保存在浏览器本地；需要跨设备同步时再登录。</p>
@@ -87,20 +87,20 @@ npm test
 
 ## 课程目录
 
-站点使用 HashRouter，课程地址形如 `https://saltgardenia.github.io/HFUT-CS-Online/#/algo`。31 门已上线课程按学期排列：
+站点使用 HashRouter，课程地址形如 `https://saltgardenia.github.io/HFUT-CS-Online/#/algo`。58 门已上线课程按学期排列：
 
 | 学期 | 已上线课程 |
 | --- | --- |
-| 大一上 | [程序设计基础](https://saltgardenia.github.io/HFUT-CS-Online/#/pd) · [高等数学](https://saltgardenia.github.io/HFUT-CS-Online/#/math) |
-| 大一下 | —（资料已整理，页面待做） |
-| 大二上 | [程序设计艺术与方法](https://saltgardenia.github.io/HFUT-CS-Online/#/pat) · [大学物理](https://saltgardenia.github.io/HFUT-CS-Online/#/phys) |
-| 大二下 | —（资料已整理，页面待做） |
+| 大一上 | [高等数学](https://saltgardenia.github.io/HFUT-CS-Online/#/math) · [程序设计基础](https://saltgardenia.github.io/HFUT-CS-Online/#/pd) · [线性代数](https://saltgardenia.github.io/HFUT-CS-Online/#/la) |
+| 大一下 | [数据结构](https://saltgardenia.github.io/HFUT-CS-Online/#/ds) · [数据结构课程设计](https://saltgardenia.github.io/HFUT-CS-Online/#/dscd) · [电路与电子技术基础](https://saltgardenia.github.io/HFUT-CS-Online/#/ee) |
+| 大二上 | [程序设计艺术与方法](https://saltgardenia.github.io/HFUT-CS-Online/#/pat) · [大学物理](https://saltgardenia.github.io/HFUT-CS-Online/#/phys) · [Python程序设计](https://saltgardenia.github.io/HFUT-CS-Online/#/py) · [离散数学](https://saltgardenia.github.io/HFUT-CS-Online/#/dm) · [计算方法](https://saltgardenia.github.io/HFUT-CS-Online/#/cm) · [概率论与数理统计](https://saltgardenia.github.io/HFUT-CS-Online/#/prob) · [汇编语言程序设计](https://saltgardenia.github.io/HFUT-CS-Online/#/asm) · [EDA实训](https://saltgardenia.github.io/HFUT-CS-Online/#/eda) · [科研训练](https://saltgardenia.github.io/HFUT-CS-Online/#/res) · [大学物理实验](https://saltgardenia.github.io/HFUT-CS-Online/#/physlab) · [Java技术](https://saltgardenia.github.io/HFUT-CS-Online/#/java) · [数字逻辑](https://saltgardenia.github.io/HFUT-CS-Online/#/dl) · [机器人技术](https://saltgardenia.github.io/HFUT-CS-Online/#/robot) |
+| 大二下 | [编译原理](https://saltgardenia.github.io/HFUT-CS-Online/#/comp) · [计算机组成原理](https://saltgardenia.github.io/HFUT-CS-Online/#/co) · [嵌入式系统原理](https://saltgardenia.github.io/HFUT-CS-Online/#/emb) · [机器学习](https://saltgardenia.github.io/HFUT-CS-Online/#/ml) · [软件工具与环境](https://saltgardenia.github.io/HFUT-CS-Online/#/ste) · [组合数学](https://saltgardenia.github.io/HFUT-CS-Online/#/comb) · [计算机图形学](https://saltgardenia.github.io/HFUT-CS-Online/#/cg) · [软件建模与分析](https://saltgardenia.github.io/HFUT-CS-Online/#/sma) · [数字媒体技术](https://saltgardenia.github.io/HFUT-CS-Online/#/dmt) · [网络程序设计](https://saltgardenia.github.io/HFUT-CS-Online/#/np) · [微机原理与接口技术](https://saltgardenia.github.io/HFUT-CS-Online/#/micro) · [硬件工程师综合训练](https://saltgardenia.github.io/HFUT-CS-Online/#/het) |
 | 大三上 | [算法设计与分析](https://saltgardenia.github.io/HFUT-CS-Online/#/algo) · [操作系统](https://saltgardenia.github.io/HFUT-CS-Online/#/os) · [计算机网络](https://saltgardenia.github.io/HFUT-CS-Online/#/net) · [人工智能原理](https://saltgardenia.github.io/HFUT-CS-Online/#/ai) · [软件体系结构](https://saltgardenia.github.io/HFUT-CS-Online/#/sa) · [计算机体系结构](https://saltgardenia.github.io/HFUT-CS-Online/#/ca) · [计算机网络课程设计](https://saltgardenia.github.io/HFUT-CS-Online/#/ncd) · [网络攻防实践](https://saltgardenia.github.io/HFUT-CS-Online/#/nap) · [系统硬件综合设计](https://saltgardenia.github.io/HFUT-CS-Online/#/hd) · [移动计算与应用开发](https://saltgardenia.github.io/HFUT-CS-Online/#/mc) · [自然语言理解](https://saltgardenia.github.io/HFUT-CS-Online/#/nlu) · [操作系统课程设计](https://saltgardenia.github.io/HFUT-CS-Online/#/oscd) · [计算机视觉与深度学习](https://saltgardenia.github.io/HFUT-CS-Online/#/cv) |
 | 大三下 | [编译原理课程设计](https://saltgardenia.github.io/HFUT-CS-Online/#/cpd) · [网络工程师综合实训](https://saltgardenia.github.io/HFUT-CS-Online/#/ntr) · [软件项目管理](https://saltgardenia.github.io/HFUT-CS-Online/#/spm) · [大数据处理技术](https://saltgardenia.github.io/HFUT-CS-Online/#/bd) · [计算机应用项目实训](https://saltgardenia.github.io/HFUT-CS-Online/#/cap) · [人工智能经济学](https://saltgardenia.github.io/HFUT-CS-Online/#/aie) · [信息安全技术](https://saltgardenia.github.io/HFUT-CS-Online/#/sec) · [数据库系统](https://saltgardenia.github.io/HFUT-CS-Online/#/db) · [软件工程](https://saltgardenia.github.io/HFUT-CS-Online/#/se) · [软件测试](https://saltgardenia.github.io/HFUT-CS-Online/#/st) |
 | 大四上 | [分布式程序设计](https://saltgardenia.github.io/HFUT-CS-Online/#/dp) · [软件工程师综合训练](https://saltgardenia.github.io/HFUT-CS-Online/#/swt) · [领域方向综合设计](https://saltgardenia.github.io/HFUT-CS-Online/#/dsd) |
 | 大四下 | [创新实践](https://saltgardenia.github.io/HFUT-CS-Online/#/ip) |
 
-> 数据结构、编译原理、计算机组成原理等课程的资料已经在目录里，只是还没有做页面；首页仍能看到它们的文件统计与占位入口。
+> 58 门课程都有独立页面；`src/content/catalog.ts` 里的 57 门是资料目录的统计（算法课为本站自写内容，不占资料目录）。
 
 ## 站点如何工作
 
@@ -169,7 +169,7 @@ scripts/build-catalog.mjs    # 扫描 data/ 与 补充资料/ → catalog.ts + �
 
 - **2026-11 · 读者勘误**：顶栏原地编辑 → 一键开 PR；合并后由 `src/content/errata.ts` 在渲染时套用，不改原文。
 - **2026-11 · 账号同步**：Supabase 可选接入，游客优先；收藏、最近查看与逐题进度按本地时间戳与云端墓碑合并。
-- **2026-11 · 31 门课程上线**：首页按 8 个学期索引全部 57 门课程资料，其中 31 门有独立页面。
+- **2026-11 · 58 门课程上线**：首页按 8 个学期索引全部 57 门课程资料，58 门有独立页面。
 - **2026-11 · 计网按 2025 版课件校准**：十份课件逐章复核，补回缺失的协议语义与课后习题。
 
 ## 参与贡献
