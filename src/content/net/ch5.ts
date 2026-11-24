@@ -91,6 +91,13 @@ const ch: NetChapter = {
           html: `
           <p>分组交换技术的两种实现方式：<strong>虚电路</strong>与<strong>数据报</strong>。</p>
           <h3 id="sec-ch5-vc-h1">虚电路</h3>
+          <div class="callout tip">
+            <p class="callout-h">网络层为什么有虚电路与数据报两种思路？</p>
+            <p><strong>虚电路：</strong>先建立逻辑连接，再让属于该连接的分组沿预先确定的路径转发。
+              <strong>数据报：</strong>不先建立网络层连接，各个 IP 数据报独立路由、尽最大努力交付。
+              虚电路是<strong>逻辑路径，不是专门拉一条物理线</strong>；IP 的尽力而为不承诺每个分组都按时、无差错、按序到达。</p>
+          </div>
+          
           <p>
             主机 HA 要和 HC 进行数据交换：首先 HA 向 HC 发一<strong>虚呼叫</strong>（虚电路连接请求），该虚呼叫选择一条适当的路径传送到 HC，
             记下沿途所经过的路程作为虚电路（如 HA-A-E-B-C-HC），并给其赋一个虚电路号 VC1；如果 HC 准备就绪，则发一响应给 HA，
@@ -346,7 +353,7 @@ const ch: NetChapter = {
           </ul>
           <p>
             <strong>BGP 协议</strong>：自治系统（AS）之间交换网络可达性信息的外部网关协议，属于<strong>路径矢量（Path Vector）协议</strong>。
-            课件所谓“改进型 D-V 算法”可帮助理解它与距离向量协议的历史联系，但 BGP 不按 RIP 式单纯跳数或性能指标求最短路：
+            “改进型 D-V 算法”体现了与距离向量协议的历史联系，但 BGP 不按 RIP 式单纯跳数或性能指标求最短路：
             它交换包含 <strong>AS_PATH、NEXT_HOP</strong> 等属性的路由通告，并根据本地路由策略等条件选择路径。
             <strong>AS_PATH 主要表示路由通告经过的自治系统序列，不是每一台路由器的精确逐跳转发路径</strong>；
             检查自身 AS 号是否出现在 AS_PATH 中有助于避免域间路由通告环路（RFC 4271），也不代表数据平面永远不会出现短暂环路。
@@ -410,6 +417,23 @@ const ch: NetChapter = {
           <p><strong>IP 报头校验和的计算</strong>：校验和字段置 0 → 对 IP 头部按每 16bit 分割成不同单元 → 将所有单元相加，结果分为进位单元和本体单元 →
             若进位单元非零则将进位单元与本体单元相加并再次分割，如此循环直至进位单元为零 → 将本体单元的值取反并存入校验和字段。
             <strong>检验</strong>：接收 IP 包时按同样算法计算，若最终本体单元的结果取反后为零，则认为收到的 IP 头正确，否则有错。</p>
+                    <h4>IPv4 分片例题：MTU、片偏移与 MF</h4>
+          <p>假设原始 IPv4 数据报<strong>总长度 4000 B</strong>，固定首部 <strong>20 B</strong>，
+            因而数据部分为 3980 B；要通过 MTU = 1500 B 的链路，且允许分片（DF = 0）。
+            每个非最后分片可携带的最大数据量为
+            <strong>floor((1500 − 20) ÷ 8) × 8 = 1480 B</strong>。</p>
+          <table class="tbl">
+            <thead><tr><th>分片</th><th>数据部分</th><th>总长度（含首部）</th><th>片偏移（8 B 为单位）</th><th>MF</th></tr></thead>
+            <tbody>
+              <tr><td>第 1 片</td><td>1480 B</td><td>1500 B</td><td>0</td><td>1</td></tr>
+              <tr><td>第 2 片</td><td>1480 B</td><td>1500 B</td><td>185</td><td>1</td></tr>
+              <tr><td>第 3 片</td><td>1020 B</td><td>1040 B</td><td>370</td><td>0</td></tr>
+            </tbody>
+          </table>
+          <p><strong>为什么是 185？</strong>第 2 片之前已有 1480 B 数据，因此偏移是 1480 ÷ 8 = 185；
+            第 3 片之前已有 2960 B 数据，因此偏移是 2960 ÷ 8 = 370。
+            所有分片的<strong>标识字段相同</strong>；MF = 0 表示最后一片。
+            <strong>记忆：</strong>先减首部，再按 8 B 对齐，最后算偏移。</p>
           <h3 id="sec-ch5-ip-h2">分类 IP 地址</h3>
           <div class="callout key">
             <p class="callout-h">重点 A｜A/B/C 类地址与主机数</p>
@@ -462,7 +486,7 @@ const ch: NetChapter = {
           </div>
           <div class="callout key">
             <p class="callout-h">重点 A｜IP 地址与子网掩码逐位 AND</p>
-            <p>先根据掩码确定网络位，再逐位相与求网络地址；可以用 /20、255.255.192.0 等课件例子自测。</p>
+            <p>先根据掩码确定网络位，再逐位相与求网络地址；可以用 /20、255.255.192.0 等数值例子自测。</p>
           </div>
 
           <p>
@@ -560,6 +584,19 @@ const ch: NetChapter = {
             </tbody>
           </table>
           <h3 id="sec-ch5-ip-h6">IP 分组路由与最长前缀匹配</h3>
+          <h4>最长前缀匹配：同一地址命中两条路由</h4>
+          <p><strong>例：</strong>目的 IP 为 <strong>206.0.71.128</strong>，路由表同时存在
+            <strong>206.0.68.0/22</strong> 和 <strong>206.0.71.128/25</strong>。
+            前者覆盖 206.0.68.0～206.0.71.255，后者覆盖 206.0.71.128～206.0.71.255。
+            两条路由都能匹配，最终选择前缀更长、更具体的 <strong>/25</strong> 路由。</p>
+          <ol>
+            <li>把目的 IP 与每条路由的<strong>子网掩码逐位 AND</strong>，判断是否属于对应地址块。</li>
+            <li>若有多条匹配，比较前缀长度，选择<strong>前缀最长</strong>的项。</li>
+            <li>从所选路由记录中获得<strong>下一跳或出接口</strong>，然后转发；不是简单挑数值更大的网络地址。</li>
+          </ol>
+          <p><strong>速记：</strong>先判断“是否覆盖”，再选“范围最小的那条”。<strong>/25 比 /22 更具体</strong>，
+            但前提是它也必须匹配目的地址。</p>
+          
           <div class="callout key">
             <p class="callout-h">重点 A｜直接交付、下一跳及默认路由</p>
             <p>区分直连网络、特定主机路由、网络路由和默认路由；无匹配项时不能继续正常转发。</p>
@@ -649,8 +686,8 @@ const ch: NetChapter = {
           </table>
           <div class="callout warn">
             <p class="callout-h">单位勘误｜ICMP 时间戳</p>
-            <p>课件把时间戳（Timestamp Request/Reply，类型 13/14）的 32 位字段
-              解释为“从 1900 年 1 月 1 日起经过的秒数”，<strong>这是错误的单位与起点</strong>。
+            <p>ICMP 时间戳（Timestamp Request/Reply，类型 13/14）的 32 位字段不应
+              解释为“从 1900 年 1 月 1 日起经过的秒数”。
               按 RFC 792，ICMP 时间戳字段通常用<strong>从 UTC 当日午夜起经过的毫秒数</strong>表示；
               不应与 NTP 以 1900 年为纪元的时间戳混同。
               ICMP 时间戳属于较早期的诊断机制，现代网络中可能被屏蔽或很少使用。</p>

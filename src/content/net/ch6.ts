@@ -212,6 +212,20 @@ const ch: NetChapter = {
             UDP 只在 IP 的数据报服务之上增加了很少一点的功能，即<strong>端口的功能和差错检测的功能</strong>。
           </p>
           <h3 id="sec-ch6-udp-h1">UDP 的主要特点与面向报文</h3>
+          <h4>TCP 与 UDP 怎么选？先辨认服务需求</h4>
+          <table class="tbl">
+            <thead><tr><th>问题</th><th>TCP</th><th>UDP</th></tr></thead>
+            <tbody>
+              <tr><td>是否建连接</td><td>先建立连接</td><td>不建立连接</td></tr>
+              <tr><td>数据单位</td><td>面向连续字节流，不保留应用写入边界</td><td>面向报文，保留数据报边界</td></tr>
+              <tr><td>可靠性</td><td>按序、可靠字节流（借助确认与重传）</td><td>尽力交付，不保证到达或顺序</td></tr>
+              <tr><td>首部长度</td><td>基本首部至少 20 B</td><td>固定 8 B</td></tr>
+              <tr><td>主要权衡</td><td>可靠、有序，但控制和维护开销较多</td><td>简单、开销小；需要可靠性时由应用自行设计</td></tr>
+            </tbody>
+          </table>
+          <p><strong>理解：</strong>不能把“UDP 无连接”误解为“完全没有校验”，也不能把“TCP 可靠”理解为 IP 网络本身保证不会丢包。
+            DNS、语音等应用可能选择 UDP；FTP、传统 HTTP 主要使用 TCP。具体应用也可使用新传输方案，如基于 UDP 的 QUIC。</p>
+          
           <ul>
             <li>UDP 是<strong>无连接</strong>协议，在发送数据之前不需要建立连接；</li>
             <li>UDP 使用<strong>尽最大努力交付</strong>，不保证可靠交付，同时也不使用拥塞控制；</li>
@@ -241,8 +255,8 @@ const ch: NetChapter = {
             按二进制反码运算求和得出结果，再将得出的结果求反码得到检验和。
           </p>
           <div class="callout warn">
-            <p class="callout-h">2025 版传输层课件第12—13页 · UDP 应用表勘误</p>
-            <p>课件将<strong>“多播：IGMP → UDP”</strong>列入 UDP 应用举例，
+            <p class="callout-h">注意｜UDP 与 IGMP</p>
+            <p>“多播：IGMP → UDP”是容易误解的简化示意，
               但<strong>IGMP 并不封装在 UDP 中</strong>。
               IGMP 是管理 IPv4 组播成员关系的协议，IGMP 报文直接封装在 IPv4 数据报内，
               IP 首部的 <strong>Protocol = 2</strong>（由 IANA 分配）。
@@ -264,7 +278,7 @@ const ch: NetChapter = {
           <p>
             RPC 的应用：RPC 是远程调用的交互机制，常用于客户机/服务器式分布式计算；具体框架可基于 UDP、TCP 等传输，
             <strong>RPC 并非必然采用无连接对话</strong>，其超时、重试、去重等机制也由具体实现决定。
-            RPC 使客户端能传送参数、调用远端过程并取得结果。课件按照 OSI 的会话层功能介绍 RPC；
+            RPC 使客户端能传送参数、调用远端过程并取得结果。RPC 可以与 OSI 的会话层功能相联系；
             实际的 RPC 框架通常实现于应用层，不能将其绝对地归入某一个 OSI 层。
           </p>
           `,
@@ -299,6 +313,15 @@ const ch: NetChapter = {
             <strong>被动等待连接建立的应用进程称为服务器</strong>（server）。
           </p>
           <h3 id="sec-ch6-tcp-h2">TCP 报文段的首部结构</h3>
+          <div class="callout tip">
+            <p class="callout-h">TCP 序号与确认号：字节编号例题</p>
+            <p>如果某 TCP 数据段的首个数据字节序号为 <strong>1000</strong>，连续携带 <strong>200 B</strong>，
+              则字节序号覆盖 <strong>1000～1199</strong>；
+              接收方全部按序收到后可返回确认号 <strong>ack = 1200</strong>。
+              <strong>确认号指下一个期望收到的字节</strong>，不是最后一个已收到字节。
+              SYN 和 FIN 也会占用一个序号，不能将它们当作零长度数据字节流直接忽略。</p>
+          </div>
+          
           <div class="callout key">
             <p class="callout-h">重点 A｜字节编号与累计确认</p>
             <p>TCP 为字节编号：ACK 确认号通常表示下一个期望收到的字节序号，而不是已收最后一个字节序号。</p>
@@ -519,7 +542,7 @@ const ch: NetChapter = {
           <p class="formula">理想化信道利用率 U = min{1, n·T<sub>D</sub> / (T<sub>D</sub> + RTT + T<sub>A</sub>)}</p>
           <p>
             其中 n 是<strong>允许连续发送而未确认的最大帧数（本例按窗口上限计算）</strong>。
-            分母沿用课件假设：单帧发送时间 T<sub>D</sub>，往返传播时延 RTT，确认帧发送时间 T<sub>A</sub>；
+            分母采用以下计算假设：单帧发送时间 T<sub>D</sub>，往返传播时延 RTT，确认帧发送时间 T<sub>A</sub>；
             假设帧等长、处理和排队时延忽略、没有丢帧及碰撞、确认及时返回。
             <strong>利用率不可能超过 100%</strong>，当 n 足以填满链路时只能达到这一理想上界，
             不得把原来的 n·T<sub>D</sub>/(T<sub>D</sub>+RTT+T<sub>A</sub>) 数值超过 1 当作实际利用率。
@@ -705,6 +728,16 @@ const ch: NetChapter = {
             <strong>流量控制</strong>（flow control）就是让发送方的发送速率不要太快——既要让接收方来得及接收，也不要使网络发生拥塞。
           </p>
           <h3 id="sec-ch6-flow-h1">利用滑动窗口实现流量控制</h3>
+          <h4>流量控制与拥塞控制：最容易混淆的两个窗口</h4>
+          <p><strong>接收窗口 rwnd</strong> 由接收方通告，表示接收方目前还能接收多少数据，解决<strong>接收端来不及处理</strong>的问题；
+            <strong>拥塞窗口 cwnd</strong> 由发送端根据网络状况维护，解决<strong>网络中间结点和链路过载</strong>的问题。</p>
+          <p class="formula">可用发送窗口上界 = min(rwnd, cwnd)</p>
+          <p><strong>例：</strong>接收方通告 rwnd = 12 KB，但网络拥塞控制只允许 cwnd = 4 KB，
+            则在忽略其他约束并按窗口上界理解时，发送窗口受 <strong>4 KB</strong> 限制；
+            若 rwnd 降到 2 KB，则窗口受 <strong>2 KB</strong> 限制。</p>
+          <p><strong>速记：</strong><strong>rwnd 防止“收不下”；cwnd 防止“网堵住”</strong>。
+            两者约束的是未确认的在途数据量，不等于每个报文段的固定大小；实际还能发送多少取决于已发送但未确认的数据。</p>
+          
           <p>利用滑动窗口机制可以很方便地在 TCP 连接上实现流量控制。</p>
           <p>
             <strong>示例</strong>：A 向 B 发送数据。在连接建立时 B 告诉 A：「我的接收窗口 rwnd = 400（字节）」——
@@ -807,7 +840,7 @@ const ch: NetChapter = {
             但只要网络出现拥塞，拥塞窗口就减小一些，以减少注入到网络中的字节数。
           </p>
           <p>
-            <strong>慢开始算法的课堂模型</strong>：课件从 cwnd = 1 MSS 起步，以便清晰演示窗口指数增长；<strong>这不是所有现代 TCP 实现都采用的初始 cwnd</strong>。
+            <strong>慢开始算法的简化模型</strong>：以 cwnd = 1 MSS 为初始值，以便清晰演示窗口指数增长；<strong>这不是所有现代 TCP 实现都采用的初始 cwnd</strong>。
             RFC 5681 对初始窗口有随 SMSS 变化的上限规定，RFC 6928 还讨论了 10 个报文段的更大初始窗口试验。
             在本节后续 1→2→4→8 的演示中仍约定从 1 MSS 开始；
             在每收到一个对新的报文段的确认后，将拥塞窗口加 1（即增加一个 MSS 的数值）；
@@ -821,7 +854,7 @@ const ch: NetChapter = {
           <p>
             <strong>门限状态变量 ssthresh</strong>：用于决定进入慢开始还是拥塞避免阶段，<strong>没有统一固定为 65535 的初始值</strong>。
             旧版 RFC 2001 曾采用 65535 字节的示例，RFC 5681 则建议将初始值设得足够高、拥塞后再降低。
-            下文 ssthresh = 16 MSS 是课堂计算的指定示例，不是所有 TCP 连接都必须采用的初值。
+            下文 ssthresh = 16 MSS 是此处计算的指定示例，不是所有 TCP 连接都必须采用的初值。
             当 cwnd &lt; ssthresh 时，使用慢开始算法；当 cwnd &gt; ssthresh 时，停止使用慢开始算法而改用<strong>拥塞避免算法</strong>；
             当 cwnd = ssthresh 时，既可使用慢开始算法，也可使用拥塞避免算法。
             拥塞避免算法的思路是让拥塞窗口 cwnd <strong>缓慢地增大</strong>——即每经过一个往返时间 RTT 就把发送方的拥塞窗口 cwnd 加 1 而不是加倍，
@@ -862,10 +895,10 @@ const ch: NetChapter = {
             </li>
           </ul>
           <div class="callout warn">
-            <p class="callout-h">课件表述提示｜快恢复只减半一次</p>
-            <p>2025 年传输层课件第 132 页的文字含「把慢开始门限减半」与「拥塞窗口设置为慢开始门限减半后的数值」，
-              容易误看成连续两次减半。按本课程图示与简化算法：<strong>新 ssthresh = 原 cwnd / 2，新 cwnd = 新 ssthresh</strong>。
-              例如原 cwnd = 24 KB，则快恢复后按该课堂模型取 12 KB；这与某些 TCP Reno 实现进入快恢复时的短暂窗口膨胀表示法不同。</p>
+            <p class="callout-h">注意｜快恢复只减半一次</p>
+            <p>“把慢开始门限减半”与“拥塞窗口设置为减半后的慢开始门限”是同一次减半，
+              容易误看成连续两次减半。在这一简化算法中：<strong>新 ssthresh = 原 cwnd / 2，新 cwnd = 新 ssthresh</strong>。
+              例如原 cwnd = 24 KB，则快恢复后按此计算规则取 12 KB；这与某些 TCP Reno 实现进入快恢复时的短暂窗口膨胀表示法不同。</p>
           </div>
           <div class="callout tip">
             <p class="callout-h">本章小结</p>

@@ -160,6 +160,22 @@ const ch: NetChapter = {
             而只要记住更加接近人类理解特性的域名即可——因此互联网用户对 DNS 有极强的依赖性。
           </p>
           <h3 id="sec-ch7-dns-h1">域名系统概述</h3>
+          <h4>域名、区与 IP 地址的关系</h4>
+          <p><strong>域名</strong>采用层次树状命名方式，标号用点分隔，例如 <strong>www.example.com</strong>，
+            从左到右依次可以看成主机或更低层名字、二级域、顶级域。
+            <strong>域名是逻辑名称，不表示主机的物理位置，也不等同于 IP 地址中的子网。</strong></p>
+          <p><strong>域（domain）</strong>是名字空间的层次划分；
+            <strong>区（zone）</strong>是由特定权威 DNS 服务器负责管理的一组 DNS 数据。
+            一个域可以由一个区管理，也可以把子域委派出去形成多个区，
+            因此<strong>区不一定等于域</strong>。</p>
+          <p><strong>例：</strong>管理 example.com 的服务器可以直接管理 www.example.com 的记录；
+            如果将 lab.example.com 委派给另一组权威服务器，则需要区分父域的管理范围与子域对应的独立区。</p>
+          <div class="callout tip">
+            <p class="callout-h">记忆顺序</p>
+            <p><strong>域名是名字 → DNS 查找资源记录 → 区确定谁对记录具有管理权 → 解析器获取回答。</strong>
+              域名与地址不要求一对一：同一域名可以解析到多个 IP，一个 IP 也可能承载多个域名。</p>
+          </div>
+          
           <p>
             <strong>域名及域名结构</strong>：DNS 用层次结构组织命名空间，便于管理委派和资源记录查询；<strong>域名与 IP 地址并不是严格的一对一关系</strong>：
             一个域名可以对应多条 A/AAAA 记录（即多个 IP 地址），一个 IP 地址也可关联多个域名，域名还可对应 MX、TXT 等非地址记录。
@@ -170,7 +186,7 @@ const ch: NetChapter = {
             按照 DNS 报文格式编码后，一个完整域名最多占 <strong>255 个八位组</strong>（含标签长度字段与根标签），单个标号最多 <strong>63 个八位组</strong>；
             这不能直接等同于“255 个可见字符”，尤其在国际化域名中应区分显示文本和 DNS 编码；域名由点号分割成一个个的标号（label），
             每个标号都是其所在层次的域名，级别最低的域名自左至右逐步上升。
-            DNS 文本表示中，以点「.」结尾明确表示<strong>绝对域名</strong>（根标签在末尾）；课件把它称为完全限定域名（FQDN）。
+            DNS 文本表示中，以点「.」结尾明确表示<strong>绝对域名</strong>（根标签在末尾）；它也称为完全限定域名（FQDN）。
             不带末尾点的名字可能被解析器按完整域名处理，也可能依据本地域名搜索后缀补全；
             <strong>仅凭名称有两个以上标号，并不能保证一定不使用搜索后缀</strong>。
           </p>
@@ -416,7 +432,7 @@ const ch: NetChapter = {
           </p>
           <p>
             <strong>电子邮件的信息格式</strong>：一个电子邮件分为信封和内容两大部分。
-            课件以 RFC 822 说明传统邮件首部结构，现行标准可参见 RFC 5322：它规范邮件的首部与正文格式；
+            传统邮件首部结构曾由 RFC 822 规范，现行标准可参见 RFC 5322：它规范邮件的首部与正文格式；
             SMTP 的<strong>信封 MAIL FROM/RCPT TO（RFC 5321）与邮件头 From:/To:/Cc:/Bcc: 并不是同一组字段</strong>。
             客户端通常根据用户界面输入组装邮件头和信封，但两者可以不同；尤其 Bcc 隐藏抄送者可以存在于 SMTP 信封中，而不出现在其他收件人收到的可见邮件头。
             邮件内容首部包括一些关键字后面加上冒号，最重要的关键字是 To 和 Subject：
@@ -428,7 +444,7 @@ const ch: NetChapter = {
             <li>「From」和「Date」表示发信人的电子邮件地址和发信日期；「Reply-To」是对方回信所用的地址。</li>
           </ul>
           <p>
-            课件中的明文 SMTP 会话示意可用于理解指令顺序：EHLO → MAIL FROM:&lt;信封发件人&gt; →
+            明文 SMTP 会话的指令顺序为：EHLO → MAIL FROM:&lt;信封发件人&gt; →
             RCPT TO:&lt;信封收件人&gt; → DATA → From:/To:/Subject: 等邮件头 → 空行 → 正文 → 单独一行「.」表示内容结束。
             <strong>这只是协议结构演示，不应在普通明文 telnet 会话中输入邮箱账号密码</strong>。
             AUTH LOGIN 中的 Base64 仅是编码，不是加密；如需身份认证，应先通过 STARTTLS 建立受保护的会话，
@@ -566,6 +582,18 @@ const ch: NetChapter = {
             使用 HTTP 的 URL 的一般形式：http://&lt;主机&gt;:&lt;端口&gt;/&lt;路径&gt;，冒号和两个斜线是规定的格式。
           </p>
           <h3 id="sec-ch7-http-h2">超文本传送协议 HTTP</h3>
+          <h4>打开网页的一次请求：URL、DNS、连接、HTTP</h4>
+          <ol>
+            <li><strong>解析 URL：</strong>浏览器确定协议、主机名、端口和资源路径。</li>
+            <li><strong>查找地址：</strong>使用缓存或 DNS 把域名解析为可连接的服务器地址。</li>
+            <li><strong>建立传输：</strong>传统 HTTP/1.1 可使用 TCP，HTTPS 通常还需要 TLS；HTTP/3 通常使用 QUIC。</li>
+            <li><strong>发送请求并接收响应：</strong>客户端发送方法、路径、首部等；服务器返回状态码、首部与响应内容。</li>
+            <li><strong>继续获取资源：</strong>浏览器可能还要请求样式表、脚本、图片等；并按缓存规则复用已有资源。</li>
+          </ol>
+          <p><strong>易错：</strong>DNS 负责解析名字，不负责传输网页正文；HTTP 负责应用层请求和响应，
+            不应把 HTTP 的报文格式与 TCP 的可靠传输功能混为一谈。
+            HTTP 的“无状态”是指协议本身不要求服务器记住前一次请求，并不排斥 Cookie 或应用会话。</p>
+          
           <p>
             为了使超文本的链接能够高效率地完成，需要用 HTTP 协议来传送一切必须的信息。
             从层次的角度看，HTTP 是<strong>面向事务的</strong>（transaction-oriented）应用层协议，它是万维网上能够可靠地交换文件
@@ -586,7 +614,7 @@ const ch: NetChapter = {
           <ul>
             <li>HTTP 是面向事务的客户服务器协议；</li>
             <li>HTTP 是<strong>无状态的</strong>（stateless）：单次请求的语义不依赖服务器必须记住此前的请求；实际网站仍可通过 Cookie 或会话管理保持应用状态。</li>
-            <li>课件将 HTTP 称为“无连接”，主要对应 HTTP/1.0 非持续连接的教学场景，不代表它不能保持底层连接。HTTP/1.1 默认采用持续连接，HTTP/2 支持 TCP 连接内多路复用，HTTP/3 通过 QUIC 连接传输。</li>
+            <li>“HTTP 无连接”的简化说法主要适用于 HTTP/1.0 非持续连接场景，不代表它不能保持底层连接。HTTP/1.1 默认采用持续连接，HTTP/2 支持 TCP 连接内多路复用，HTTP/3 通过 QUIC 连接传输。</li>
           </ul>
           <p>
             在忽略 DNS、TLS、排队、处理等开销，并采用 HTTP/1.0 非持续 TCP 连接的简化模型时，
@@ -748,11 +776,11 @@ const ch: NetChapter = {
             <strong>HTTP/2 的缺陷</strong>：最主要的缺陷是 HTTP/2 的下层是 TCP 协议——
             <strong>TCP 的队头阻塞</strong>：HTTP/2 解决了应用层意义上的队头阻塞，但对 TCP 中的队头阻塞无可奈何；
             TCP 是单连接，所有基于 TCP 的数据传输都会变成一个个字节段排队传输，只要有一个段丢失或延迟整个传输过程就会陷入等待
-            。课件所述“丢包率达到 2% 时 HTTP/2 不如 HTTP/1.1”缺少测试条件与统计出处，不能作为各网络环境通用的性能阈值；
+            。“丢包率达到 2% 时 HTTP/2 不如 HTTP/1.1”缺少测试条件与统计出处，不能作为各网络环境通用的性能阈值；
             <strong>TCP/TLS 建连延迟</strong>：在没有可复用连接的传统 HTTPS 场景中，先建立 TCP 连接通常约需 <strong>1 RTT</strong>，
             再完成 TLS 1.3 的常规全握手通常约需 <strong>1 RTT</strong>，之后才交换应用数据；
             TLS 1.2、额外往返、会话恢复、提前数据、连接复用等情况会改变总耗时。
-            课件“建连需 4～5 RTT”不适用于所有基于 TCP 的应用，也不是现代 TLS 1.3 的一般定律；
+            “建连需 4～5 RTT”不适用于所有基于 TCP 的应用，也不是现代 TLS 1.3 的一般定律；
             <strong>连接迁移</strong>：TCP 连接受四元组（源 IP、源端口、目的 IP、目的端口）制约，一旦 IP 地址发生改变连接就会终止，会话也随之终止。
           </p>
           <p>

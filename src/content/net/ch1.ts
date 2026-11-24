@@ -22,17 +22,24 @@ const ch: NetChapter = {
     { id: 'sec-ch1-definition', text: '2. 计算机网络的定义', level: 2 },
     { id: 'sec-ch1-definition-functions', text: '计算机网络的主要功能', level: 3 },
     { id: 'sec-ch1-classify', text: '3. 计算机网络的分类', level: 2 },
-    { id: 'sec-ch1-classify-h1', text: '★ 按地理范围分类', level: 3 },
+    { id: 'sec-ch1-classify-h1', text: '★ 按覆盖范围分类', level: 3 },
+    { id: 'sec-ch1-classify-lan', text: '局域网 LAN', level: 3 },
+    { id: 'sec-ch1-classify-man', text: '城域网 MAN', level: 3 },
+    { id: 'sec-ch1-classify-wan', text: '广域网 WAN', level: 3 },
+    { id: 'sec-ch1-classify-an', text: '接入网 AN', level: 3 },
     { id: 'sec-ch1-classify-h2', text: '★ 按拓扑结构分类', level: 3 },
     { id: 'sec-ch1-work', text: '4. 计算机网络的运行过程', level: 2 },
     { id: 'sec-ch1-work-h1', text: '网络边缘的主机系统：C/S 与 P2P', level: 3 },
-    { id: 'sec-ch1-work-h2', text: '网络核心中的路由器与数据交换', level: 3 },
+    { id: 'sec-ch1-work-h2', text: '网络核心中的路由器与分组交换', level: 3 },
     { id: 'sec-ch1-work-h3', text: '★ 电路交换、报文交换与分组交换', level: 3 },
     { id: 'sec-ch1-performance', text: '5. 计算机网络的性能指标', level: 2 },
-    { id: 'sec-ch1-performance-h1', text: '★ 速率、带宽与吞吐量', level: 3 },
-    { id: 'sec-ch1-performance-h2', text: '★ 时延', level: 3 },
-    { id: 'sec-ch1-performance-loss', text: '分组丢失率、时延带宽积与 RTT', level: 3 },
-    { id: 'sec-ch1-performance-h3', text: '★ 利用率', level: 3 },
+    { id: 'sec-ch1-performance-h1', text: '★ 速率与带宽', level: 3 },
+    { id: 'sec-ch1-performance-throughput', text: '★ 吞吐量：实际通过多少数据', level: 3 },
+    { id: 'sec-ch1-performance-h2', text: '★ 时延：四种时延及其区别', level: 3 },
+    { id: 'sec-ch1-performance-loss', text: '★ 丢包率（分组丢失率）', level: 3 },
+    { id: 'sec-ch1-performance-bdp', text: '★ 时延带宽积', level: 3 },
+    { id: 'sec-ch1-performance-rtt', text: '往返时间 RTT', level: 3 },
+    { id: 'sec-ch1-performance-h3', text: '★ 利用率与时延', level: 3 },
     { id: 'sec-ch1-internet', text: '6. 因特网概述', level: 2 },
     { id: 'sec-ch1-trend', text: '7. 计算机网络的发展趋势', level: 2 },
   ],
@@ -242,31 +249,136 @@ const ch: NetChapter = {
         {
           type: 'html',
           html: `
-          <h3 id="sec-ch1-classify-h1">按地理范围分类</h3>
+          <h3 id="sec-ch1-classify-h1">按覆盖范围分类</h3>
           <div class="callout tip">
-            <p class="callout-h">重点 B｜LAN、MAN、WAN</p>
-            <p>按覆盖范围区分局域网、城域网、广域网，熟悉典型应用及网络互连。</p>
+            <p class="callout-h">局域网 LAN、城域网 MAN、广域网 WAN</p>
+            <p>重点：覆盖范围、组成与功能、主要特点，以及接入网 AN 的作用。</p>
           </div>
+          <h4 id="sec-ch1-classify-lan">局域网 LAN（Local Area Network）</h4>
+          <p><strong>作用范围：</strong>一般为<strong>几百米到几千米</strong>，通常在一座建筑或相对独立的建筑群内，常用于组建<strong>企业网、校园网</strong>。</p>
+          <p><strong>局域网的主要特点：</strong></p>
+          <ol>
+            <li><strong>覆盖范围小：</strong>通常只在一座或集中的建筑群等较小区域内。</li>
+            <li><strong>数据传输速率高：</strong>典型速率示例为 <strong>10 Mb/s～10 Gb/s</strong>。</li>
+            <li><strong>通信时延短，可靠性较高。</strong></li>
+            <li><strong>支持多种传输介质：</strong>如双绞线、光纤等，也可以采用无线传输。</li>
+            <li><strong>拓扑结构：</strong>传统局域网常采用<strong>总线型和环型</strong>；现代交换式以太网则广泛采用星型或层次化星型。</li>
+          </ol>
+          <p><strong>图 1-11（局域网连接示意图）：</strong>服务器、工作站、打印机等设备在局部范围内互连，共享数据与设备资源。</p>
+          <div class="callout tip">
+            <p class="callout-h">注意</p>
+            <p>10 Mb/s～10 Gb/s 是典型速率示例，不是局域网必须满足的速率范围；通信速率、可靠性和拓扑结构会随着技术和部署方式变化。</p>
+          </div>
+
+          <h4 id="sec-ch1-classify-man">城域网 MAN（Metropolitan Area Network）</h4>
+          <p><strong>定义与用途：</strong><strong>城域网是局域网的延伸，用于不同局域网之间的连接</strong>，网络规模通常局限在<strong>一座城市</strong>范围内。</p>
+          <p><strong>覆盖范围：</strong>通常为<strong>几十公里至几百公里</strong>，能够连接同一城市内不同区域的局域网和通信设施。</p>
+          <p><strong>图 1-12（城域网连接示意图）：</strong>计算机与路由器通过城域网络互连，体现城市范围内的网络连接。</p>
+
+          <h4 id="sec-ch1-classify-wan">广域网 WAN（Wide Area Network）</h4>
+          <p><strong>定义：</strong>广域网又称<strong>远程网</strong>，覆盖大范围地区，跨度从<strong>数百公里到数千公里，甚至上万公里</strong>。</p>
+          <p><strong>组成：</strong>广域网可以连接分布在不同地区的<strong>多个局域网</strong>和<strong>城域网</strong>；大型广域网还可以连接不同大洲的网络。</p>
+          <p><strong>实例：</strong><strong>Internet（互联网）</strong>由全球大量不同规模的网络互联形成，是理解大范围网络互连的重要实例；它并不等同于某一张单独的广域网。</p>
+          <p><strong>图 1-13（广域网连接示意图）：</strong>不同地区的 MAN、LAN 经公用交换网互连。</p>
+
+          <h4 id="sec-ch1-classify-an">接入网 AN（Access Network）</h4>
+          <p><strong>作用：</strong>接入网将<strong>家庭、校园、企业等用户侧网络接入运营商网络</strong>，是用户通往城域承载网络和互联网的重要连接部分。</p>
+          <p><strong>网络层次示意：</strong><strong>局域网／校园网／企业网 → 接入网 AN → 城域网 MAN → 广域网 WAN</strong>。这是一种典型的连接关系，实际网络不一定依次经过所有层次。</p>
+          <p><strong>常见实现：</strong>光纤接入（如 FTTH）、以太网接入、DSL、移动无线接入等。</p>
+          <p><strong>注意：</strong>LAN、MAN、WAN 主要按照<strong>覆盖范围</strong>区分，而 AN 强调<strong>接入功能</strong>，二者不是完全相同的分类维度。</p>
+
+          <h4>按覆盖范围分类速览</h4>
           <table class="tbl">
-            <thead>
-              <tr><th>类别</th><th>覆盖范围</th><th>典型场景</th></tr>
-            </thead>
+            <thead><tr><th>网络类型</th><th>典型覆盖范围</th><th>作用与示例</th></tr></thead>
             <tbody>
-              <tr><td>局域网 LAN（Local Area Network）</td><td>一般不超过数公里</td><td>通常安装在一幢大楼内、大学校园内或厂区内</td></tr>
-              <tr><td>城域网 MAN（Metropolitan Area Network）</td><td>一个大城市，大约数十公里到上百公里</td><td>城市范围</td></tr>
-              <tr><td>广域网 WAN（Wide Area Network）</td><td>一般在数百公里以上</td><td>Internet 就是目前最大的广域网</td></tr>
+              <tr><td><strong>局域网 LAN</strong></td><td>几百米到几千米</td><td>企业网、校园网；传输速率较高、时延较短</td></tr>
+              <tr><td><strong>城域网 MAN</strong></td><td>几十公里至几百公里</td><td>连接城市内的不同局域网</td></tr>
+              <tr><td><strong>广域网 WAN</strong></td><td>数百公里至上万公里</td><td>互连不同地区的局域网和城域网</td></tr>
             </tbody>
           </table>
-          <h3 id="sec-ch1-classify-h2">按拓扑结构分类</h3>
+          <p><strong>范围划分不是绝对界限：</strong>局域网、城域网、广域网的覆盖范围只是相对划分；随着网络技术的发展，三者的界限逐渐模糊。</p>
+                    <h3 id="sec-ch1-classify-h2">按拓扑结构分类</h3>
           <div class="callout tip">
             <p class="callout-h">重点 B｜总线与星形拓扑</p>
             <p>总线型共享传输介质、故障隔离困难；星形便于维护与扩展，但依赖中心设备。</p>
           </div>
           <p>
-            拓扑学（Topology）是数学中的一个重要分支，研究的几何图形或空间在连续改变形状后还能保持不变的一些性质，
-            最著名的例子是欧拉提出的「哥尼斯堡七桥问题」。<strong>计算机网络拓扑</strong>是指通信子网节点间连接结构的拓扑形式，
-            通过结点与线段间的几何关系表示网络结构，反映网络中各实体的结构关系。
+            拓扑学是几何学的一个分支。拓扑学首先把实体抽象成与其大小、形状无关的<strong>点</strong>，
+            将连接实体的线路抽象成<strong>线</strong>，进而研究点、线、面之间的关系，即<strong>拓扑结构</strong>（Topology Structure）。
           </p>
+          <p>
+            在计算机网络中，抛开网络中的具体设备，把<strong>服务器、工作站等网络单元抽象为“点”</strong>，
+            把<strong>电缆、双绞线等传输介质抽象为“线”</strong>。
+          </p>
+          <p>
+            <strong>计算机网络的拓扑结构</strong>就是指计算机网络中的通信线路和结点相互连接的几何排列方法和模式。
+            拓扑结构影响着整个网络的设计、功能、可靠性和通信费用等许多方面，是决定局域网性能优劣的重要因素之一。
+          </p>
+
+          <h4>总线型拓扑结构</h4>
+          <p>
+            <strong>结构：</strong>所有结点<strong>共享一根传输总线</strong>，所有站点都通过硬件接口连接在这根传输线上。
+            图 1-6 以服务器、工作站、打印机等设备连接同一总线为例，两端设有终接器。
+          </p>
+          <p>
+            <strong>优点：</strong>结构简单，价格低廉，安装和使用方便。
+            <strong>缺点：</strong>故障诊断和隔离比较困难；若公共总线发生故障，可能影响整条总线上的通信。
+          </p>
+
+          <h4>星型拓扑结构</h4>
+          <p>
+            <strong>结构：</strong>以<strong>中央结点</strong>为中心，把若干外围结点分别连接起来，形成辐射式互连结构。
+            图 1-7 展示了多台工作站、服务器通过中心集线器连接的方式。
+          </p>
+          <p>
+            <strong>优点：</strong>外围结点或其单独接入线路发生故障时，通常不会影响其他结点；
+            结构较简单，增删结点及维护管理容易，故障隔离和检测也较容易。在设备与业务条件合适时，通信时延较短。
+            <strong>缺点：</strong>布线与中心设备带来较高成本，网络性能过于依赖中央结点；
+            一旦中央结点发生故障，其连接的结点可能全部无法通信。资源利用率也取决于具体设备、协议与业务负载。
+          </p>
+
+          <h4>树型拓扑结构</h4>
+          <p>
+            <strong>结构：</strong>树型结构是<strong>星型结构的扩展</strong>，
+            由根结点和各级分支结点构成，形成层次化的连接方式，见图 1-8。
+          </p>
+          <p>
+            <strong>优点：</strong>结构比较简单，成本较低，扩充结点方便、灵活，适合按层次扩展网络。
+            <strong>缺点：</strong>对根结点的依赖性大；上级结点或骨干链路出现故障，可能导致其下属分支无法通信。
+          </p>
+
+          <h4>环型拓扑结构</h4>
+          <p>
+            <strong>结构：</strong>每个结点与<strong>两个相邻结点</strong>相连，
+            所有结点通过点到点通信线路连接成<strong>闭合环路</strong>。
+            图 1-9 描述的传统单向环中，数据沿一个方向逐站传送，各结点地位与作用相同，并可按所采用的控制机制获得发送权。
+          </p>
+          <p>
+            <strong>优点：</strong>简化路径选择控制；在采用确定性访问控制的环网中，传输时延可能较为可预测。
+            在确定性访问控制与冗余设计下，可获得可预测的传输时延、较好的实时性与可靠性；并非所有环网都具备这些特性。
+            <strong>缺点：</strong>结点过多时可能影响传输效率；传统无冗余的单环一旦某处断开，可能导致整个环的通信中断；
+            结点加入和退出的过程较复杂。
+          </p>
+
+          <h4>网状型拓扑结构</h4>
+          <p>
+            <strong>结构：</strong>结点之间的连接可根据需要灵活设置，不局限于总线、星型或单环结构；
+            图 1-10 以多个路由器与工作站之间的互连为例。广域网中常见采用部分或较丰富的网状连接。
+          </p>
+          <p>
+            <strong>优点：</strong>可靠性较高；<strong>当存在足够的冗余结点和线路</strong>时，
+            某条线路或某个结点发生故障后，其他路径仍可维持网络通信。
+            <strong>缺点：</strong>结构复杂，需要路由选择和流量控制功能；
+            网络控制软件复杂、硬件成本较高，也不易管理和维护。
+          </p>
+
+          <div class="callout tip">
+            <p class="callout-h">注意｜拓扑与协议</p>
+            <p><strong>星型表示物理连接形态，不限定使用令牌协议</strong>；
+              现代交换式以太网也常采用星型连接。外围结点或其独立线路的单点故障通常不会影响其他结点，
+              <strong>不包括中心结点故障</strong>。环网的可靠性和时延、网状网的容错能力同样取决于协议与冗余条件。</p>
+          </div>
+          <h4>五种拓扑结构对照速览</h4>
           <table class="tbl">
             <thead><tr><th>拓扑</th><th>结构与优点</th><th>缺点与故障风险</th></tr></thead>
             <tbody>
@@ -331,12 +443,12 @@ const ch: NetChapter = {
             对等连接方式从本质上看<strong>仍然是使用客户服务器方式</strong>，只是对等连接中的每一个主机<strong>既是客户又同时是服务器</strong>：
             例如主机 C 请求 D 的服务时，C 是客户，D 是服务器；但如果 C 又同时向 F 提供服务，那么 C 又同时起着服务器的作用。
           </p>
-          <h3 id="sec-ch1-work-h2">网络核心中的路由器与数据交换</h3>
+          <h3 id="sec-ch1-work-h2">网络核心中的路由器与分组交换</h3>
           <p>
             网络核心是计算机网络（特别是因特网）中最复杂的部分，要向网络边缘中的大量主机提供连通性，
-            使边缘部分中的任何一个主机都能够与其他主机通信。<strong>路由器</strong>（Router）是网络核心中最主要的设备，
-            其主要功能是<strong>数据交换</strong>——接收来自源主机系统的数据，并向目的主机系统转发。
-            在计算机网络中，路由器转发的数据称为<strong>数据分组</strong>（Packet Switching）。
+            使边缘部分中的任何一个主机都能够与其他主机通信。<strong>路由器</strong>（Router）是实现<strong>分组交换</strong>（packet switching）的关键构件，
+            其任务是<strong>转发收到的分组</strong>，这是网络核心部分最重要的功能。
+            路由器转发的数据单位称为<strong>分组</strong>（packet）。
           </p>
           <p>
             常见的数据交换方式可以分为两大类：<strong>电路（线路）交换方式</strong>（Circuit Switching）和
@@ -355,9 +467,9 @@ const ch: NetChapter = {
           </p>
           <p>电路交换的特点：</p>
           <ul>
-            <li><strong>面向连接</strong>的通信方式，有明确的通信「三阶段」：<strong>建立连接 → 数据交换 → 释放连接</strong>；</li>
+            <li><strong>面向连接</strong>的通信方式。以电话通信为例，分为三个阶段：<strong>建立连接（占用通信资源） → 通话（一直占用通信资源） → 释放连接（归还通信资源）</strong>。这里的“通话”是电话场景中的数据传送阶段；</li>
             <li>通信期间<strong>独占</strong>构成连接的整个信道；</li>
-            <li>电路两端需要<strong>可互通的速率、编码与接口参数</strong>，必要时可通过适配/转换设备解决差异；“通信双方所有传输参数必须完全一致”只是课堂简化，并非普遍限制；</li>
+            <li>电路两端需要<strong>可互通的速率、编码与接口参数</strong>，必要时可通过适配/转换设备解决差异；通信双方不必在所有参数上完全一致；</li>
             <li>传输时延短，且时延稳定，<strong>实时性强</strong>；</li>
             <li><strong>信道利用率低</strong>。</li>
           </ul>
@@ -378,17 +490,45 @@ const ch: NetChapter = {
             <li>时延大，不适合实时和交互式通信；</li>
             <li>报文过大或缓存不足时会丢弃报文。</li>
           </ul>
+
+          <h4>计算机数据传输的特点</h4>
+          <ul>
+            <li><strong>突发性：</strong>计算机数据是突发性地出现在传输线路上，其余大部分时间通信线路上是空闲的。</li>
+            <li><strong>复杂性：</strong>可能是一对一通信，但也可能是一对多通信（不能独占资源）。</li>
+          </ul>
           <p>
-            <strong>分组交换</strong>：在发送端，先把较长的报文划分成较短的数据段（有长度上限，但不同分组不必等长），每一个数据段前面添加上<strong>首部</strong>构成<strong>分组</strong>
-            （请注意：左边是「前面」）。分组交换网以「分组」作为数据传输单元，依次把各分组发送到接收端。
-            每一个分组的首部都含有<strong>地址等控制信息</strong>，分组交换网中的结点交换机根据收到的分组首部中的地址信息，把分组转发到下一个结点交换机，
-            用这样的存储转发方式，最后分组就能到达最终目的地。接收端收到分组后剥去首部还原成报文，最后在接收端把收到的数据恢复成为原来的报文
-            （这里假定分组在传输过程中没有出现差错，在转发时也没有被丢弃）。
+            <strong>为什么采用分组交换：</strong>对于典型的突发式计算机数据通信，不宜采用<strong>电路交换</strong>，
+            否则资源利用率很低；也不适合采用<strong>报文交换</strong>。
+            因此，<strong>计算机网络使用分组交换技术</strong>。
           </p>
           <p>
-            <strong>分组的存储转发过程</strong>：主机是为用户进行信息处理的，并向网络发送分组，从网络接收分组；路由器对分组进行存储转发，
-            最后把分组交付目的主机。在路由器中的输入和输出端口之间没有直接连线，路由器处理分组的过程是：
-            把收到的分组先放入<strong>缓存</strong>（暂时存储）→ 查找<strong>路由表</strong>，找出到某个目的地址应从哪个端口转发 → 把分组送到适当的端口转发出去。
+            <strong>注意：</strong>上述结论针对典型计算机数据通信的特点。
+            不同应用对时延、带宽和资源利用率的要求不同，不能据此认为电路交换或报文交换在所有场景中都不可采用。
+          </p>
+          <h4>分组交换技术：三个核心思想</h4>
+          <p>分组交换的<strong>核心思想是：分组、存储转发、资源共享</strong>。</p>
+          <ol>
+            <li>
+              <strong>分组：</strong>将较大的文件或报文划分为多个较小的数据单元。
+              具体来说，发送端将较长的报文划分为若干较短的数据段，在每段前加上包含地址等控制信息的<strong>首部</strong>，
+              构成<strong>分组（packet）</strong>，作为网络传输和转发的数据单位。
+              
+            </li>
+            <li>
+              <strong>存储转发：</strong><strong>分组交换机（路由器）收到分组后，先存储到缓存中，
+              然后排队等待处理，最后选择输出链路转发出去。</strong>
+              具体转发时根据分组首部中的地址信息查询转发表，选定下一跳或输出端口，逐跳送往目的地。
+            </li>
+            <li>
+              <strong>资源共享：</strong><strong>多个用户可以共享一段链路。</strong>
+              一般的链路都是串行传输的，<strong>一个时刻只能一个用户占有链路，因此资源共享是宏观的</strong>。
+              即对这种单条串行共享链路，不同用户的分组在不同时间使用该链路，而不是始终为某个用户独占。
+            </li>
+          </ol>
+          <p>
+            <strong>收发过程补充：</strong>源主机发送各个分组，中间路由器负责逐跳转发；
+            目的主机接收分组后，由相应协议按需要重组数据。分组在网络中也可能发生丢失或乱序，
+            因而分组交换本身并不保证所有分组都能可靠、按序到达。
           </p>
           <div class="callout key">
             <p class="callout-h">分组交换的优点与问题</p>
@@ -432,15 +572,62 @@ const ch: NetChapter = {
         {
           type: 'html',
           html: `
-          <h3 id="sec-ch1-performance-h1">速率、带宽与吞吐量</h3>
+          <h3 id="sec-ch1-performance-h1">速率与带宽</h3>
           <div class="callout key">
             <p class="callout-h">重点 A｜速率、带宽与单位</p>
-            <p>网络速率以 bit/s 计；k、M、G 通常按 10³、10⁶、10⁹ 换算，存储容量的 K、M、G 常按 2¹⁰、2²⁰、2³⁰ 换算。</p>
+            <p><strong>通信速率用 bit/s，k/M/G/T 按 10³/10⁶/10⁹/10¹² 换算；存储容量用 B，二进制 Ki/Mi/Gi/Ti 按 2¹⁰/2²⁰/2³⁰/2⁴⁰ 换算。</strong>特别注意 b 与 B 相差 8 倍。</p>
           </div>
           <p>
             <strong>速率</strong>：比特（bit）是计算机中数据量的单位，也是信息论中使用的信息量的单位，来源于 binary digit，
             一个比特就是二进制数字中的一个 1 或 0。速率即数据率（data rate）或比特率（bit rate），是计算机网络中最重要的一个性能指标，
-            单位是 b/s，或 kb/s、Mb/s、Gb/s 等。速率往往是指<strong>额定速率或标称速率</strong>。
+            单位是 b/s，或 kb/s、Mb/s、Gb/s 等。速率往往是指<strong>额定速率或标称速率</strong>，不等于实际吞吐量。
+          </p>
+          <h4>通信领域：速率使用十进制单位</h4>
+          <p>
+            <strong>网络通信速率</strong>用<strong>比特每秒（bit/s，也写作 b/s）</strong>表示。
+            这里的 k、M、G、T 依次表示 <strong>10<sup>3</sup>、10<sup>6</sup>、10<sup>9</sup>、10<sup>12</sup></strong>，
+            每升高一级按 <strong>1000 倍</strong>换算，而不是 1024 倍。
+          </p>
+          <table class="tbl">
+            <thead><tr><th>通信速率单位</th><th>换算（十进制）</th></tr></thead>
+            <tbody>
+              <tr><td>1 kbit/s（kb/s）</td><td>10<sup>3</sup> bit/s = 1 000 bit/s</td></tr>
+              <tr><td>1 Mbit/s（Mb/s）</td><td>10<sup>6</sup> bit/s = 1 000 000 bit/s</td></tr>
+              <tr><td>1 Gbit/s（Gb/s）</td><td>10<sup>9</sup> bit/s</td></tr>
+              <tr><td>1 Tbit/s（Tb/s）</td><td>10<sup>12</sup> bit/s</td></tr>
+            </tbody>
+          </table>
+          <p><strong>例：</strong>4 × 10<sup>10</sup> bit/s = <strong>40 Gbit/s</strong>。</p>
+
+          <h4>计算机领域：存储容量常使用二进制单位</h4>
+          <p>
+            计算机文件大小、内存等存储容量通常以<strong>字节 B（Byte）</strong>表示；
+            <strong>1 B = 8 bit</strong>。在传统计算机存储容量的二进制换算中，
+            K、M、G、T 对应 <strong>2<sup>10</sup>、2<sup>20</sup>、2<sup>30</sup>、2<sup>40</sup></strong>。
+            为避免与通信领域的十进制前缀混淆，二进制单位可明确写成 KiB、MiB、GiB、TiB。
+          </p>
+          <table class="tbl">
+            <thead><tr><th>存储容量单位</th><th>换算（二进制）</th></tr></thead>
+            <tbody>
+              <tr><td>1 KiB</td><td>2<sup>10</sup> B = 1 024 B</td></tr>
+              <tr><td>1 MiB</td><td>2<sup>20</sup> B = 1 048 576 B</td></tr>
+              <tr><td>1 GiB</td><td>2<sup>30</sup> B</td></tr>
+              <tr><td>1 TiB</td><td>2<sup>40</sup> B</td></tr>
+            </tbody>
+          </table>
+          <div class="callout warn">
+            <p class="callout-h">易混淆：Mb/s、MB/s 与 MiB/s</p>
+            <p><strong>小写 b 是 bit（比特），大写 B 是 Byte（字节）。</strong>
+              通信速率 100 Mb/s = 100 × 10<sup>6</sup> bit/s，
+              ÷ 8 后为 <strong>12.5 MB/s</strong>（十进制字节每秒），
+              约为 <strong>11.92 MiB/s</strong>（二进制字节每秒），
+              不是 100 MB/s。以上为忽略协议开销等因素的理论换算。</p>
+          </div>
+          <p>
+            <strong>单位书写注意：</strong>通信速率中的 k、M、G、T 按十进制换算。
+            有些传统计算机教材用 KB、MB、GB、TB 表示 1024 的幂；
+            严格区分时应使用 KiB、MiB、GiB、TiB。
+            单独出现 MB 或 GB 时，需要根据上下文判断采用哪种单位约定。
           </p>
           <p>
             <strong>带宽</strong>（bandwidth）：本来是指信号具有的频带宽度，单位是赫（或千赫、兆赫、吉赫等）；
@@ -449,72 +636,264 @@ const ch: NetChapter = {
             太比每秒 Tb/s（10<sup>12</sup> b/s）。在时间轴上信号的宽度随带宽的增大而变窄——带宽为 1 Mb/s 时每秒 10<sup>6</sup> 个比特，
             带宽为 4 Mb/s 时每秒 4×10<sup>6</sup> 个比特。
           </p>
-          <p>
-            <strong>吞吐量</strong>（throughput）：表示在单位时间内通过某个网络（或信道、接口）的数据量。
-            吞吐量更经常地用于对现实世界中的网络的一种测量，了解实际上到底有多少数据量能够通过网络；
-            吞吐量受网络的带宽或网络的额定速率的限制。
-          </p>
-          <h3 id="sec-ch1-performance-h2">时延</h3>
+          <h3 id="sec-ch1-performance-throughput">吞吐量（throughput）</h3>
           <div class="callout key">
-            <p class="callout-h">重点 A｜发送时延 ≠ 传播时延</p>
-            <p>发送时延 = 分组比特数 ÷ 发送速率；传播时延 = 链路长度 ÷ 传播速度。分辨速率、带宽、RTT 的物理意义再计算。</p>
+            <p class="callout-h">记忆重点｜实际通过的数据量</p>
+            <p><strong>速率看标称能力，吞吐量看实际结果。</strong>吞吐量越低，不一定意味着信号传播速度越慢。</p>
           </div>
-
           <p>
-            <strong>发送时延</strong>（传输时延）：是发送数据时，数据块从结点进入到传输介质所需要的时间，
-            也就是从发送数据块的第一个比特算起，到该块的最后一个比特发送完毕所需的时间。
+            <strong>定义：</strong>吞吐量是<strong>单位时间内通过某个网络（或信道、接口）的实际数据量</strong>，
+            用于衡量网络真实运行时能传送多少数据，而不是设备标注的最大能力。
+          </p>
+          <p class="formula">吞吐量 = 实际通过的数据量 ÷ 测量时间</p>
+          <ul>
+            <li><strong>受什么限制：</strong>受网络的带宽或相应接口的额定速率限制。对于一条传输路径，端到端吞吐量也受瓶颈链路、设备处理能力和协议开销等限制。</li>
+            <li><strong>与额定速率的关系：</strong>在同一接口和相同计量口径下，额定速率是吞吐量的理论上限；实际吞吐量<strong>可能远小于额定速率，甚至下降到零</strong>。</li>
+            <li><strong>常用单位：</strong>bit/s、kbit/s、Mbit/s 等；也可以用<strong>每秒传送的字节数（B/s）或帧数（帧/s）</strong>表示，换算时注意每帧大小可能不同。</li>
+          </ul>
+          <h4>为什么实际吞吐量达不到标称速率？</h4>
+          <p>
+            多个用户共享链路时需要分配传输机会；分组首部和协议控制信息也占用带宽；
+            路由器的排队与处理、无线信道干扰、丢包重传、接收方或服务器处理能力，都可能降低实际有效数据率。
+            <strong>额定速率高，不代表任何时刻都有同样高的吞吐量。</strong>
+          </p>
+          <h4>计算例题：100 Mbit/s 链路</h4>
+          <p>
+            某接口标称速率为 <strong>100 Mbit/s</strong>，实际 2 s 内传输了 <strong>16 MB</strong> 数据（这里 MB 按十进制计）。
+            数据量为 16 × 8 = 128 Mbit，实际吞吐量为
+            <strong>128 ÷ 2 = 64 Mbit/s = 8 MB/s</strong>，并不是 100 Mbit/s。
+          </p>
+          <p><strong>速记：</strong>额定速率回答“理论上能传多快”，吞吐量回答“实际传了多少”。</p>
+          <h3 id="sec-ch1-performance-h2">时延（delay / latency）</h3>
+          <div class="callout key">
+            <p class="callout-h">四种时延｜发、传、处、排</p>
+            <p><strong>发送时延</strong>在发送器产生；<strong>传播时延</strong>在链路上产生；
+              <strong>处理时延和排队时延</strong>在主机或路由器等结点中产生。</p>
+          </div>
+          <p>
+            <strong>定义：</strong>一个报文或分组从网络（或链路）的一端传送到另一端所需要的时间。
+            分组在发送和转发时要经历发送、传播、处理和排队等阶段。
+          </p>
+          <h4>1. 发送时延（传输时延）</h4>
+          <p>
+            数据块从结点进入传输介质所需的时间：从<strong>第一个比特开始发送</strong>，
+            到<strong>最后一个比特发送完毕</strong>为止。由<strong>数据块长度和发送速率</strong>决定，
+            与链路长度没有直接关系。
           </p>
           <p class="formula">发送时延 = 数据块长度（比特） / 信道带宽（比特/秒）</p>
-          <p><strong>传播时延</strong>：是电磁波在信道中需要传播一定的距离而花费的时间。
-            信号传输速率（即发送速率）和信号在信道上的传播速率是完全不同的概念。</p>
-          <p class="formula">传播时延 = 信道长度（米） / 信号在信道上的传播速率（米/秒）</p>
           <p>
-            <strong>处理时延</strong>：是交换结点为存储转发而进行一些必要的处理所花费的时间。
-            <strong>排队时延</strong>：是结点缓存队列中分组排队所经历的时延，其长短往往取决于网络中当时的通信量。
-            数据经历的总时延就是四种时延之和：
+            <strong>例：</strong>1500 B = 12 000 bit 的分组，在 10 Mbit/s 链路上发送需要
+            12 000 ÷ (10 × 10<sup>6</sup>) = <strong>1.2 ms</strong>；
+            若发送速率变为 100 Mbit/s，则只需 <strong>0.12 ms</strong>。
           </p>
-          <p class="formula">总时延 = 发送时延 + 传播时延 + 处理时延 + 排队时延</p>
-          <p>四种时延产生的地方：发送时延在发送器产生；传播时延在链路上产生；处理时延和排队时延在结点（路由器）中产生。</p>
-          <div class="callout warn">
-            <p class="callout-h">容易产生的错误概念</p>
-            <p>对于高速网络链路，我们提高的仅仅是数据的<strong>发送速率</strong>而不是比特在链路上的<strong>传播速率</strong>。
-              提高链路带宽只能减小数据的发送时延，并不能提高传播速率。</p>
-          </div>
 
-          <h3 id="sec-ch1-performance-loss">分组丢失率、时延带宽积与 RTT</h3>
-          <p>丢包率反映传输途中丢弃的分组比例；时延带宽积表示链路上正在传播的比特容量；
-            RTT 是往返时间。三者分别涉及分组丢失情况、链路在途数据量与往返响应时间，不能混为“网速”。</p>
-          <p><strong>丢包率（分组丢失率）</strong>：一定测量时间内，丢失分组数占发送分组总数的比率；
-            可按接口、结点、链路、路径或网络分别统计。网络拥塞是丢包的重要原因，
-            但物理错误、设备故障、策略性丢弃等也可能造成丢包；丢包率为零并不等于时延必然很小。</p>
-          <p class="formula">分组丢失率 = 丢失的分组数 / 发送的分组总数 × 100%</p>
-          <p><strong>时延带宽积（Bandwidth-Delay Product, BDP）</strong>：
-            其值为<strong>带宽 × 单程传播时延</strong>，单位是 bit。
-            直观理解：在发送端连续注入比特且最先发出的比特刚好到达接收端时，链路中同时“在途”的比特数。
-            它不是链路的速率，也不是单个分组的发送时延。</p>
-          <p class="formula">时延带宽积（bit）= 链路带宽（bit/s）× 单程传播时延（s）</p>
-          <p>计算示例：带宽 100 Mbit/s，单程传播时延 20 ms，则
-            BDP = 100 × 10<sup>6</sup> × 0.020 = <strong>2 × 10<sup>6</sup> bit = 250 kB</strong>。</p>
-          <p><strong>往返时间 RTT</strong>：数据从发送方发出、到相应确认或响应返回所经历的时间。
-            RTT 可能包含两个方向的传播、处理、排队与发送时延；只有在两端路径对称且忽略其他时延时，
-            才可近似写成 RTT ≈ 2 × 单程传播时延。
-            因此，BDP 中使用的单程传播时延不应在未经说明时直接换成 RTT。</p>
-          <h3 id="sec-ch1-performance-h3">利用率</h3>
-          <div class="callout tip">
-            <p class="callout-h">重点 B｜RTT 与性能</p>
-            <p>RTT 表示往返时间；分析网络性能时结合速率、时延及利用率，不能只看标称带宽。</p>
-          </div>
+          <h4>2. 传播时延</h4>
           <p>
-            <strong>信道利用率</strong>指出某个信道在测量周期内，数据占用的时间与整个测量周期时间之比，完全空闲的信道的利用率为零；
-            <strong>网络利用率</strong>则是全网络的信道利用率的加权平均值。<strong>信道利用率并非越高越好</strong>。
+            电磁波在传输介质中传播一定距离所需的时间，由<strong>链路长度与介质中的传播速度</strong>决定；
+            与信号在发送端被注入链路的快慢无关。
+          </p>
+          <p class="formula">传播时延 = 信道长度（米） / 信号在信道上的传播速率（米/秒）</p>
+          <table class="tbl">
+            <thead><tr><th>传播介质</th><th>典型传播速度</th><th>理解</th></tr></thead>
+            <tbody>
+              <tr><td>自由空间</td><td>约 3.0 × 10<sup>5</sup> km/s</td><td>近似光速</td></tr>
+              <tr><td>铜线电缆</td><td>约 2.3 × 10<sup>5</sup> km/s</td><td>受传输介质影响</td></tr>
+              <tr><td>光纤</td><td>约 2.0 × 10<sup>5</sup> km/s</td><td>通常小于真空光速</td></tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>例：</strong>1000 km 光纤链路按 2.0 × 10<sup>8</sup> m/s 计算，
+            单程传播时延为 (1000 × 1000) ÷ (2.0 × 10<sup>8</sup>) = <strong>5 ms</strong>。
+            即使提高链路带宽，这 5 ms 的传播时延也不会因此缩短。
+          </p>
+
+          <h4>3. 处理时延</h4>
+          <p>
+            主机或路由器收到分组后，为<strong>分析首部、提取数据、差错检验、查找路由或转发表</strong>
+            等操作花费的时间。主要受<strong>交换结点性能、处理任务和转发表规模</strong>等因素影响。
+            例如路由器要检查分组的目的地址，再决定从哪个输出端口转发。
+          </p>
+
+          <h4>4. 排队时延</h4>
+          <p>
+            分组在路由器<strong>输入或输出队列</strong>中等待处理、等待输出链路空闲所经历的时间，
+            主要取决于<strong>当时的网络通信量、队列长度和服务能力</strong>。
+            网络空闲时可能很小；通信量大时会明显增加。
           </p>
           <p>
-            根据排队理论，当某个信道的利用率增大时，该信道引起的时延也就迅速增加。
-            若令 D<sub>0</sub> 表示网络空闲时的时延，D 表示网络当前的时延，则在适当的假定条件下，可以用下面的简单公式表示 D 和 D<sub>0</sub> 之间的关系
-            （U 是信道利用率，数值在 0 到 1 之间）：
+            当缓存队列溢出时，分组可能被<strong>丢弃</strong>，不会再完成排队和转发。
+            不能把丢弃理解成一个正常完成、只是等待了无限长时间的分组。
+          </p>
+
+          <h4>总时延与发生位置</h4>
+          <p class="formula">总时延 = 发送时延 + 传播时延 + 处理时延 + 排队时延</p>
+          <table class="tbl">
+            <thead><tr><th>时延</th><th>产生位置</th><th>由什么决定</th><th>怎么记</th></tr></thead>
+            <tbody>
+              <tr><td>发送</td><td>发送器</td><td>分组长度、发送速率</td><td>把数据“推上路”</td></tr>
+              <tr><td>传播</td><td>链路介质</td><td>距离、传播速度</td><td>信号“走在路上”</td></tr>
+              <tr><td>处理</td><td>结点内部</td><td>报文解析、检错、查表</td><td>先“看清去哪儿”</td></tr>
+              <tr><td>排队</td><td>结点队列</td><td>业务负载、队列积压</td><td>等“轮到自己”</td></tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>例：</strong>若某次分组传输的发送时延为 1.2 ms、传播时延为 5 ms、
+            处理时延为 0.3 ms、排队时延为 2 ms，
+            则总时延 = 1.2 + 5 + 0.3 + 2 = <strong>8.5 ms</strong>。
+            多跳路径要计入沿途各链路、各结点相应的时延。
+          </p>
+          <p>
+            <strong>主导因素需要具体分析：</strong>距离远时传播时延可能占主导；
+            发送速率低、分组大时发送时延可能占主导；
+            网络拥塞时排队时延可能占主导。对交互应用而言，
+            一个<strong>低速率但小时延</strong>的网络，有时比高速率但大时延的网络体验更好。
+          </p>
+
+          <h4>为什么带宽高不代表传播得快？</h4>
+          <div class="callout tip">
+            <p class="callout-h">高速公路收费站类比</p>
+            <p><strong>链路 = 高速公路；发送速率（带宽）= 收费站的放行速度；传播速度 = 汽车的行驶速度。</strong>
+              假设收费站每 5 s 放行 1 辆车，而汽车进入高速公路后都以 60 km/h 行驶：
+              提高收费站的放行效率，就能让更多汽车在相同时间内上路，
+              <strong>却不会让已经上路的汽车跑得更快</strong>。</p>
+          </div>
+          <p>
+            按 60 km/h（约 16.67 m/s）的车速计算，每 5 s 放行一辆，理想车距约为 <strong>83.3 m</strong>；
+            改为每 1 s 放行一辆，同样车速下理想车距缩至 <strong>16.7 m</strong>。
+            <strong>放行得更密，不等于车速更快。</strong>
+          </p>
+          <div class="callout warn">
+            <p class="callout-h">易错判断</p>
+            <p>宽带线路每秒可以把<strong>更多比特注入线路</strong>，而不是让比特在同样的传输介质中跑得更快。
+              提高数据发送速率主要减少<strong>发送时延</strong>，不能直接缩短由距离和介质决定的<strong>传播时延</strong>。</p>
+          </div>
+          <h3 id="sec-ch1-performance-loss">丢包率（分组丢失率）</h3>
+          <p>
+            <strong>定义：</strong>在一定测量时间内，分组传输过程中<strong>丢失的分组数量与发送分组总数量的比率</strong>。
+            丢包率反映传输过程中有多少分组未成功到达预期位置，是网络运行质量的重要指标。
+          </p>
+          <p class="formula">分组丢失率 = 丢失的分组数 / 发送的分组总数 × 100%</p>
+          <p>
+            <strong>统计范围：</strong>可以按<strong>接口丢包率、结点丢包率、链路丢包率、
+            路径丢包率、网络丢包率</strong>等不同范围统计，比较数值时必须先明确统计口径。
+          </p>
+          <p>
+            <strong>为什么会丢包：</strong>网络拥塞是现代计算机网络中丢包的重要原因。
+            分组到达太快，路由器缓存不足时会发生队列溢出而丢包；
+            此外，传输错误、设备故障、主动丢弃策略等也可能造成丢包。
+            <strong>丢包率可反映拥塞情况，但并非所有丢包都源于拥塞。</strong>
+          </p>
+          <p>
+            <strong>例：</strong>测量期间发送 1000 个分组，其中 20 个丢失，
+            丢包率 = 20 ÷ 1000 × 100% = <strong>2%</strong>。
+            若要可靠传输，上层协议可能需要重传，进一步降低有效吞吐量并增加等待时间。
+          </p>
+          <p><strong>速记：</strong>丢包率看“丢了多少”，不是“传了多快”；<strong>零丢包也不意味着零时延。</strong></p>
+
+          <h3 id="sec-ch1-performance-bdp">时延带宽积（Bandwidth–Delay Product, BDP）</h3>
+          <p>
+            <strong>定义：</strong>一条链路的<strong>传播时延 × 链路带宽</strong>，
+            表示在连续发送且链路被充分利用时，<strong>链路中正在传播的比特数量</strong>。
+            可以把链路想成水管：<strong>带宽</strong>表示单位时间能注入多少水，
+            <strong>传播时延</strong>表示水在管道中运行多久，
+            <strong>时延带宽积</strong>表示管道中能容纳多少正在传输的数据。
+          </p>
+          <p class="formula">时延带宽积（bit）= 链路带宽（bit/s）× 单程传播时延（s）</p>
+          <p>
+            <strong>例：</strong>链路带宽为 100 Mbit/s，单程传播时延为 20 ms，
+            则 BDP = 100 × 10<sup>6</sup> × 0.020 =
+            <strong>2 × 10<sup>6</sup> bit = 250 kB ≈ 244.14 KiB</strong>。
+            这里 250 kB 按十进制字节单位计算。
+          </p>
+          <p>
+            <strong>注意：</strong>BDP 的单位是<strong>bit</strong>（数据量），而不是 bit/s（速率）或 s（时间）；
+            公式使用<strong>单程传播时延</strong>，不要直接把往返时间 RTT 代入。
+            如果研究的是一个往返传输路径的在途数据窗口，才可能使用带宽 × RTT，
+            但它与单条链路的传播时延带宽积不是同一个定义。
+          </p>
+          <p><strong>速记：</strong>带宽 × 时间 = 在途比特数；先把 ms 换成 s，再根据需要把 bit 除以 8 变成 B。</p>
+
+          <h3 id="sec-ch1-performance-rtt">往返时间 RTT（Round-Trip Time）</h3>
+          <p>
+            <strong>定义：</strong>从发送方发出请求或数据开始，到<strong>相应的响应或确认返回发送方</strong>所经历的时间。
+            可用 RTT 描述一次往返交互的快慢，如往返网络探测或应用请求—响应。
+          </p>
+          <p>
+            <strong>组成：</strong>RTT 可能包括正反两个方向的<strong>传播时延、发送时延、处理时延和排队时延</strong>；
+            两个方向可能使用不同路径、经历不同排队情况，因此 RTT 不是恒定值。
+          </p>
+          <p>
+            <strong>例：</strong>如果正反两个方向的单程传播时延各为 20 ms，
+            并暂时忽略所有其他时延，那么 RTT ≈ <strong>40 ms</strong>；
+            一旦出现排队、处理或响应生成时间，实际观测值可能更大。
+          </p>
+          <p>
+            <strong>注意：</strong>只有在路径近似对称、其他时延可以忽略时，才可以估算
+            <strong>RTT ≈ 2 × 单程传播时延</strong>。
+            一般情况下不能把 RTT 无条件除以 2 就当作真实单程时延。
+          </p>
+          <p><strong>速记：</strong>传播时延是“去一程”，RTT 是“去一趟再回来”，且还可能含沿途等待和处理时间。</p>
+          <h3 id="sec-ch1-performance-h3">利用率及其与时延的关系</h3>
+          <div class="callout key">
+            <p class="callout-h">利用率越高越好吗？</p>
+            <p><strong>不一定。</strong>高利用率意味着信道忙碌，但过度接近 100% 时，排队等待可能迅速增加。</p>
+          </div>
+          <h4>信道利用率与网络利用率</h4>
+          <ul>
+            <li><strong>信道利用率：</strong>某信道在测量时间内，有数据通过的时间占总测量时间的百分比；完全空闲时为 <strong>0</strong>。</li>
+            <li><strong>网络利用率：</strong>全网络各信道利用率的<strong>加权平均值</strong>，不是简单地把所有链路的百分比相加。</li>
+          </ul>
+          <p class="formula">信道利用率 U = 信道被利用的时间 ÷ 测量总时间</p>
+          <p>
+            <strong>例：</strong>某信道在 10 s 内有 8 s 用于传输数据，利用率
+            U = 8 ÷ 10 = <strong>80%</strong>。这只说明该信道忙碌的时间比例，
+            不能直接认定其端到端吞吐量已经达到最大。
+          </p>
+          <h4>为什么信道利用率不能无限接近 100%？</h4>
+          <p>
+            当分组到达速率逐渐接近处理和转发能力时，新的分组很容易排在已有分组后面，
+            <strong>排队时延会迅速增加</strong>。网络空闲时的时延记为 D<sub>0</sub>，
+            当前时延记为 D；在简化的排队模型中：
           </p>
           <p class="formula">D = D<sub>0</sub> / (1 &minus; U)</p>
-          <p>时延 D 随利用率 U 的增大而急剧增大——当 U 接近 1 时，时延急剧上升。</p>
+          <p>
+            其中 <strong>U 是 0 到 1 之间的小数</strong>（80% 应代入 0.8）。
+            此式用于理解排队负载接近上限时的趋势，不是所有实际网络普遍适用的精确公式。
+          </p>
+          <table class="tbl">
+            <thead><tr><th>信道利用率 U</th><th>简化模型中的时延 D</th><th>结论</th></tr></thead>
+            <tbody>
+              <tr><td>0%</td><td>D<sub>0</sub></td><td>空闲时基准时延</td></tr>
+              <tr><td>50%</td><td>2D<sub>0</sub></td><td>时延约为 2 倍</td></tr>
+              <tr><td>80%</td><td>5D<sub>0</sub></td><td>时延约为 5 倍</td></tr>
+              <tr><td>90%</td><td>10D<sub>0</sub></td><td>时延约为 10 倍</td></tr>
+              <tr><td>95%</td><td>20D<sub>0</sub></td><td>时延约为 20 倍</td></tr>
+            </tbody>
+          </table>
+          <p><strong>速记：</strong>利用率看“有多忙”；接近满载时，<strong>忙不等于快，反而可能更卡</strong>。</p>
+
+          <h4>性能指标速查：一眼区分考点</h4>
+          <table class="tbl">
+            <thead><tr><th>指标</th><th>核心问题</th><th>常用单位或公式</th></tr></thead>
+            <tbody>
+              <tr><td>速率 / 带宽</td><td>每秒理论上能发送多少数据？</td><td>bit/s，通常十进制换算</td></tr>
+              <tr><td>吞吐量</td><td>实际每秒通过多少数据？</td><td>实际数据量 ÷ 时间</td></tr>
+              <tr><td>发送时延</td><td>把整块数据推入链路需要多久？</td><td>比特数 ÷ 发送速率</td></tr>
+              <tr><td>传播时延</td><td>信号在链路上走多久？</td><td>距离 ÷ 传播速度</td></tr>
+              <tr><td>处理 / 排队时延</td><td>结点处理和等候多久？</td><td>与处理负载、队列有关</td></tr>
+              <tr><td>丢包率</td><td>有多少分组没送达？</td><td>丢失数 ÷ 发送总数 × 100%</td></tr>
+              <tr><td>时延带宽积</td><td>链路上能有多少在途比特？</td><td>带宽 × 单程传播时延，bit</td></tr>
+              <tr><td>RTT</td><td>一次往返花多久？</td><td>时间，ms / s</td></tr>
+              <tr><td>利用率</td><td>信道有多忙？</td><td>忙碌时间 ÷ 总时间</td></tr>
+            </tbody>
+          </table>
+          <div class="callout tip">
+            <p class="callout-h">考前自检</p>
+            <p>① 速率从 10 Mbit/s 提高到 100 Mbit/s，传播时延会自动缩短吗？<strong>不会。</strong>
+              ② 某网络标称 100 Mbit/s，实际吞吐量可能只有 20 Mbit/s 吗？<strong>可能。</strong>
+              ③ 时延带宽积用 RTT 直接计算吗？<strong>单条链路的定义使用单程传播时延。</strong>
+              ④ 利用率 90% 时，D = D<sub>0</sub>/(1-U) 是几倍？<strong>10 倍。</strong></p>
+          </div>
           `,
         },
       ],

@@ -11,20 +11,20 @@ import { netChapters, netPapers, netAllQuestions } from '../content/net';
 import { netHomework } from '../content/net/homework';
 import { netHighlights } from '../content/net/highlights';
 import { readProgress } from '../lib/sync/local';
-import { NET_PRACTICE_STORE_KEY } from '../pages/net/NetPracticeListPage';
+import { NET_PRACTICE_STORE_KEY } from '../pages/net/netPracticeState';
 import type { PracticeKind } from '../content/practice/types';
 
 const ENTITY_RE = /&(#x?[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/;
 
 /** 章节结构契约：8 个章，各章 section 数 */
 const EXPECT_SECTIONS: Record<string, number> = {
-  ch1: 7,
+  ch1: 9,
   ch2: 5,
-  ch3: 7,
+  ch3: 10,
   ch4: 5,
-  ch5: 4,
+  ch5: 8,
   ch6: 7,
-  ch7: 7,
+  ch7: 9,
   ch8: 5,
 };
 
@@ -567,7 +567,7 @@ describe('第七轮计网核验：HTTP/2、QUIC 的标准限定', () => {
     .filter((b) => b.type === 'html').map((b) => b.html).join('');
 
   it('不能断言 TCP/TLS 普遍需要4-5 RTT；QUIC是名称不是缩写', () => {
-    expect(html).toContain('课件“建连需 4～5 RTT”不适用于所有基于 TCP 的应用');
+    expect(html).toContain('“建连需 4～5 RTT”不适用于所有基于 TCP 的应用');
     expect(html).toContain('RFC 9000 明确指出 QUIC 是名称而非首字母缩写');
   });
 
