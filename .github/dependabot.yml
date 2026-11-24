@@ -10,6 +10,7 @@ updates:
       time: '09:00'
       timezone: Asia/Shanghai
     open-pull-requests-limit: 5
+    rebase-strategy: auto
     groups:
       npm-minor:
         patterns: ['*']
@@ -27,6 +28,7 @@ updates:
       time: '09:00'
       timezone: Asia/Shanghai
     open-pull-requests-limit: 5
+    rebase-strategy: auto
     groups:
       actions-minor:
         patterns: ['*']
