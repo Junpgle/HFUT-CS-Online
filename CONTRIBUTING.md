@@ -24,7 +24,7 @@ HFUT-CS-Online 是面向合工大计算机同学的课程资料站：把 4 个�
 - 🧪 **补测试**：内容契约、题库规则、组件渲染
 - 🌐 **校对内容**：对照课件逐节检查某门课的讲义，改错字、补遗漏、修公式
 
-内容类贡献（资料、勘误、校对）不需要你会写代码。放好文件、跑一次 `npm run catalog`，就能提 PR。
+内容类贡献（资料、勘误、校对）不需要你会写代码。放好文件、跑一次 `npm run catalog:supplement`，就能提 PR。
 
 ## 2. 🛠️ 开发环境
 
@@ -60,10 +60,12 @@ git checkout -b fix/practice-heatmap
 | `npm run build` | 类型检查 + 产线构建（输出 `dist/`） |
 | `npm test` / `npm run test:watch` | 运行全部 Vitest 测试（当前 20 个测试文件、307 项） |
 | `npm run typecheck` | 仅类型检查（`tsc -b`） |
-| `npm run catalog` | 重新生成 `src/content/catalog.ts` 与附件清单 |
+| `npm run catalog` | 全量重建 `src/content/catalog.ts` 与附件清单（需要本地 `data/`，仅维护者用） |
+| `npm run catalog:supplement` | 只合并 `补充资料/` 的增量重建（不需要 `data/`，贡献者与 CI 用这个） |
+| `npm run catalog:check` | 校验生成物是否最新，不同步时列出要改的文件（CI 会跑） |
 | `npm run migrate` | 重新从源数据生成算法课讲义模块（一般无需手动跑） |
 
-提交 PR 前，请确保 `npm run typecheck` 与 `npm test` 全部通过。CI（`.github/workflows/ci.yml`）会在 push 到 `main` 和所有 PR 上跑同样的三步：`tsc -b` → `vitest run` → `build`，任何一步失败都会挡住合并。
+提交 PR 前，请确保 `npm run typecheck`、`npm test` 与 `npm run catalog:check` 全部通过。CI（`.github/workflows/ci.yml`）会在 push 到 `main` 和所有 PR 上跑类型检查、单元测试、资料目录生成物校验与构建，任何一步失败都会挡住合并。
 
 ## 4. 📁 项目结构
 
@@ -92,7 +94,7 @@ scripts/                     # 目录构建、内容迁移脚本
 
 - `src/courses/registry.ts` 是课程注册的**唯一事实源**：`{ id, name, semester, base, ready, source }` 决定课程挂在哪个路由、属于哪个学期、是否上线。
 - 每门课自带导航与页面布局，互不继承；统一性来自 `src/styles/tokens.css` 与 `base.css` 的通用基类。课程私有样式放独立文件，不塞进全局表。
-- `src/content/catalog.ts` 由 `scripts/build-catalog.mjs` 扫描 `data/` 与 `补充资料/` 生成，**生成物随提交入库**，运行时零 IO；增删资料后记得跑 `npm run catalog`。
+- `src/content/catalog.ts` 由 `scripts/build-catalog.mjs` 扫描 `data/` 与 `补充资料/` 生成，**生成物随提交入库**，运行时零 IO；只改 `补充资料/` 时跑 `npm run catalog:supplement`（不需要 `data/`），维护者整理完 `data/` 才需要全量 `npm run catalog`。
 - 新增一门已上线课程：在 `src/courses/` 新建课程根组件 → 在 `registry.ts` 加一条记录 → 在 `src/App.tsx` 加一条懒加载 Route（目前是显式列举，尚未按 registry 自动映射）→ 跑 `npm run catalog`。步骤细节见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
 ## 5. ✍️ 内容贡献
@@ -141,7 +143,7 @@ scripts/                     # 目录构建、内容迁移脚本
 - 上游已有的资料放 `data/<学期>/<课程>/{课件,试题,附件}/`（契约见 `data/整理说明.md`）。
 - 上游没有的新资料放 `补充资料/` 的同一套目录结构（规则见 [补充资料/README.md](补充资料/README.md)）。课程名须与 `data/` 中同名课程完全一致，否则会被当成另一门课。
 - 文件名保持原样，不要为了排序加序号；与 `data/` 同名同路径冲突时，补充资料的一份加 `（本站补充）` 后缀。
-- 放好后跑 `npm run catalog`，并把重新生成的 `src/content/catalog.ts` 与 `public/attachments/*.json` 一并提交。
+- 放好后跑 `npm run catalog:supplement`，并把重新生成的 `src/content/catalog.ts` 与 `public/attachments/*.json` 一并提交。不需要 `data/`——这个模式以已入库的生成物为底，只合并 `补充资料/` 的变化；CI 会用 `npm run catalog:check` 校验生成物是否最新。
 
 ## 6. 🎨 样式与交互约定
 
@@ -179,19 +181,26 @@ scripts/                     # 目录构建、内容迁移脚本
 
 ## 8. 🚀 部署
 
-`main` 分支的每次 push 会自动部署到 GitHub Pages（`.github/workflows/deploy.yml`），无需手动操作。如果部署后页面空白，优先检查 `vite.config.ts` 的 `base` 是否与仓库名一致。
+站点按「预览先行、发版上线」运行：
 
-同一次部署还会带上分支预览：根目录永远是 `origin/main`，预览挂在 `/HFUT-CS-Online/preview/<slug>/`，索引页为 `/HFUT-CS-Online/preview/`。
+- **分支 push → 只刷新预览。** `deploy-preview.yml` 会重建主站（取最近一次 Release 的 tag）与所有符合条件的分支预览，产物在 `/HFUT-CS-Online/preview/<slug>/`，索引页为 `/HFUT-CS-Online/preview/`。
+- **发布 Release → 更新主站。** `deploy-release.yml` 构建该 tag 并发布到 `/HFUT-CS-Online/`。版本由 Conventional Commits 驱动（release-please）：合并 `chore(main): release x.y.z` PR 才会打 tag 并发 Release。
+- **手动重发 / 回滚**：Actions → `Deploy main site (release)` → Run workflow，填 tag 部署旧版本，填 `main` 部署 main 最新代码。
+- 如果部署后页面空白，优先检查 `vite.config.ts` 的 `base` 是否与仓库名一致；部署工作流最后有冒烟检查（主站与预览索引必须 200），空白会直接红灯。
 
-- 收录同仓库里开着 PR 的 head 分支，以及 14 天内推送过、且领先 main 的分支，最多 8 个（`PREVIEW_MAX` / `PREVIEW_TTL_DAYS` 在 workflow 的 `env` 里调）。
-- `slug` 由分支名生成：`/` 换成 `--`，非 ASCII 字符丢弃后补一段哈希，中文分支名请以索引页上的链接为准。
+预览收录规则：同仓库开着 PR 的 head 分支、外部 fork PR（取 `refs/pull/<n>/head`），以及 14 天内推送过且领先 main 的分支，最多 8 个（`PREVIEW_MAX` / `PREVIEW_TTL_DAYS` 在 workflow 的 `env` 里调）。
+
+- `slug` 由分支名生成：`/` 换成 `--`，非 ASCII 字符丢弃后补一段哈希，中文分支名请以索引页上的链接为准；外部 PR 固定用 `pr-<编号>`。
 - 预览构建失败只跳过该预览，主站照常发布；PR 关闭或分支超过 14 天没推送，下一次运行自动下线。
+- 外部 fork 的 PR 无法从本仓库的 push 事件触发部署，需要维护者手动跑一次 `Deploy previews (push)`（或等下一次 `main` 推送）后才会出现在索引页。
 - 实现方式：预览构建用 `vite build --base=/HFUT-CS-Online/preview/<slug>/` 把整站搬进子目录（CLI 覆盖，分支不必先合入本功能），站内资源与附件清单都走 `BASE_URL` 随之迁移。
 
 账号同步是可选能力：在仓库 Variables 配置 `VITE_SUPABASE_URL` 与 `VITE_SUPABASE_ANON_KEY` 即启用；不配置时站点自动退回纯本地游客模式。本地联调时复制 [.env.example](.env.example) 为 `.env.local`，填入 Project URL 与 Publishable Key 即可。
 
 ## 📜 License
 
-本项目以 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 发布：署名（BY）— 非商业性使用（NC）— 相同方式共享（SA）。提交即表示同意你的代码与内容以相同协议分发。
+代码（`src/`、`scripts/`、`.github/` 等）以 [Apache License 2.0](LICENSE) 发布；站点内容与资料（讲义、题库、`补充资料/` 中的整理文本等）以 [CC BY-NC-SA 4.0](LICENSE-CONTENT) 发布：署名（BY）— 非商业性使用（NC）— 相同方式共享（SA）。`补充资料/` 中第三方课件与试卷的版权归原作者。
+
+提交即表示同意你的代码以 Apache-2.0、内容以 CC BY-NC-SA 4.0 分发。
 
 感谢你让这个资料库对后来的人更有用 🌟

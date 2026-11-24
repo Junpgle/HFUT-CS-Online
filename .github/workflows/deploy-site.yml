@@ -23,16 +23,17 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     # Supabase 连接信息（Publishable Key，可公开）；未配置时站点自动退回纯本地模式
     env:
       VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
       VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -91,16 +92,34 @@ jobs:
           PREVIEW_TARGETS_FILE: ${{ steps.targets.outputs.file }}
         run: node "$RUNNER_TEMP/scripts/preview-index.mjs" "$PREVIEW_TARGETS_FILE" "${RUNNER_TEMP}/preview-built.txt" dist
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
+          retention-days: 1
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+
+      # 部署成功不等于页面可用（历史上有过 SW 缓存导致白屏）：主站与预览索引都拉一次
+      - name: 冒烟检查
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          code=""
+          for i in 1 2 3 4 5 6; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$PAGE_URL" || true)
+            [ "$code" = "200" ] && break
+            echo "第 $i 次：主站返回 $code，5 秒后重试"
+            sleep 5
+          done
+          [ "$code" = "200" ] || { echo "主站返回 $code"; exit 1; }
+          preview=$(curl -s -o /dev/null -w '%{http_code}' "${PAGE_URL}preview/" || true)
+          [ "$preview" = "200" ] || { echo "预览索引返回 $preview"; exit 1; }

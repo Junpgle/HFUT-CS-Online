@@ -12,8 +12,8 @@
     { "type": "docs", "section": "文档", "hidden": false },
     { "type": "style", "section": "样式与文案", "hidden": false },
     { "type": "refactor", "section": "重构", "hidden": false },
-    { "type": "ci", "section": "持续集成", "hidden": false },
-    { "type": "build", "section": "构建", "hidden": false },
+    { "type": "ci", "section": "持续集成", "hidden": true },
+    { "type": "build", "section": "构建", "hidden": true },
     { "type": "test", "section": "测试", "hidden": true },
     { "type": "chore", "section": "杂项", "hidden": true }
   ],

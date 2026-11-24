@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v5
         with:
           # 默认 GITHUB_TOKEN 建出的 PR 不会触发 pull_request 工作流（CI 不会跑）。
           # 需要 release PR 也过 CI 时，建一个 Fine-grained PAT

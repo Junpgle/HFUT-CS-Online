@@ -8,6 +8,16 @@ on:
   push:
     # 只跟分支：tag 的部署由 Release 事件负责
     branches: ['**']
+    # 纯文档 / 工具 / 资料整理不改变站点产物，不值得重建主站与最多 8 个预览
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '_tools/**'
+      - 'supabase/**'
+      - 'LICENSE*'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE.md'
+      - '.github/dependabot.yml'
   workflow_dispatch:
 
 permissions:
@@ -23,6 +33,7 @@ concurrency:
 
 jobs:
   site:
-    # release-please 更新发布 PR 只改版本号与 CHANGELOG，不值得跑一次完整构建
-    if: github.event_name != 'push' || !startsWith(github.ref_name, 'release-please--')
+    # 删除分支也会触发 push 事件；那只是下线预览，下一次运行自然带上
+    if: github.event_name != 'push' || (!github.event.deleted && !startsWith(github.ref_name, 'release-please--'))
     uses: ./.github/workflows/deploy-site.yml
+    timeout-minutes: 40

@@ -11,7 +11,8 @@
 [问题反馈](https://github.com/SaltGardenia/HFUT-CS-Online/issues)
 
 [![CI](https://github.com/SaltGardenia/HFUT-CS-Online/actions/workflows/ci.yml/badge.svg)](https://github.com/SaltGardenia/HFUT-CS-Online/actions/workflows/ci.yml)
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![License: Apache-2.0](https://img.shields.io/badge/code-Apache%202.0-blue)](LICENSE)
+[![Content: CC BY-NC-SA 4.0](https://img.shields.io/badge/content-CC%20BY--NC--SA%204.0-lightgrey)](LICENSE-CONTENT)
 [![在线访问](https://img.shields.io/badge/🌐_在线访问-saltgardenia.github.io-0969da)](https://saltgardenia.github.io/HFUT-CS-Online/)
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-7-3178c6?logo=typescript&logoColor=white)
@@ -79,7 +80,9 @@ npm test
 | `npm run build` | 类型检查 + 产线构建（输出 `dist/`） |
 | `npm test` / `npm run test:watch` | 运行全部 Vitest 测试（当前 20 个测试文件、307 项） |
 | `npm run typecheck` | 仅类型检查（`tsc -b`） |
-| `npm run catalog` | 重新生成 `src/content/catalog.ts` 与附件清单 |
+| `npm run catalog` | 全量重建 `src/content/catalog.ts` 与附件清单（需要本地 `data/`） |
+| `npm run catalog:supplement` | 只合并 `补充资料/` 的增量重建（不需要 `data/`，投稿用这个） |
+| `npm run catalog:check` | 校验生成物是否最新（CI 会跑） |
 | `npm run migrate` | 重新从源数据生成算法课讲义模块（一般无需手动跑） |
 
 ## 课程目录
@@ -125,7 +128,7 @@ scripts/build-catalog.mjs    # 扫描 data/ 与 补充资料/ → catalog.ts + �
 | 资料层 | 扫描两个资料根，生成课程统计与附件清单 | `scripts/build-catalog.mjs` |
 | 叠加层 | 勘误、亮暗主题、账号同步、进度合并 | `src/lib/` |
 
-`npm run catalog` 会生成 `src/content/catalog.ts` 与 `public/attachments/*.json`，生成物随提交入库，**运行时零文件系统 IO**；往资料目录增删文件后重跑即可。
+`npm run catalog` 会生成 `src/content/catalog.ts` 与 `public/attachments/*.json`，生成物随提交入库，**运行时零文件系统 IO**；往 `补充资料/` 增删文件后跑 `npm run catalog:supplement` 即可（不需要本地 `data/`），CI 会校验生成物是否最新。
 
 ## 功能一览
 
@@ -155,8 +158,10 @@ scripts/build-catalog.mjs    # 扫描 data/ 与 补充资料/ → catalog.ts + �
 
 ## 部署
 
-- **CI**（`.github/workflows/ci.yml`）：push 到 `main` 与所有 PR 跑 `tsc -b` → `vitest run` → `npm run build`，任一步失败都不能合并。
-- **发布**（`.github/workflows/deploy.yml`）：`main` 每次 push 自动发布到 GitHub Pages；同一次产物还会带上分支预览，挂在 `/HFUT-CS-Online/preview/<slug>/`，最多 8 个、保留 14 天。
+- **CI**（`.github/workflows/ci.yml`）：push 到 `main` 与所有 PR 跑类型检查、单元测试、资料目录生成物校验与 `vite build`。规则集里 CI 是必需检查，红了合不进去（管理员可旁路）。
+- **主站**（`.github/workflows/deploy-release.yml`）：只在发布 GitHub Release 时更新——构建该 tag 并部署。手动运行 `Deploy main site (release)` 可以指定 tag 回滚，或填 `main` 重新部署最新代码。
+- **预览**（`.github/workflows/deploy-preview.yml`）：任意分支 push 只刷新 `/HFUT-CS-Online/preview/<slug>/`，主站停在最近一次 Release。最多 8 个、保留 14 天，外部 fork 的 PR 也会出现在索引页（取 `refs/pull/<n>/head`）。
+- **版本**：Conventional Commits 驱动 [release-please](https://github.com/googleapis/release-please)，合并 `chore(main): release x.y.z` PR 才打 tag、发 Release 并触发主站部署。
 - **账号同步**：在仓库 Variables 配置 `VITE_SUPABASE_URL` 与 `VITE_SUPABASE_ANON_KEY` 即启用；不配就是纯游客模式。数据库脚本见 [supabase/schema.sql](supabase/schema.sql)，细节见 [docs/supabase-sync.md](docs/supabase-sync.md)。
 - **改仓库名**：同步修改 `vite.config.ts` 的 `base` 与 deploy workflow 的 `SITE_BASE`，否则 Pages 会白屏。
 
@@ -172,7 +177,7 @@ scripts/build-catalog.mjs    # 扫描 data/ 与 补充资料/ → catalog.ts + �
 不需要会写代码也能贡献：
 
 - **报错 / 提建议**：开 [issue](https://github.com/SaltGardenia/HFUT-CS-Online/issues)，附页面链接与截图。
-- **投稿资料**：把课件、试卷、实验材料放进 `补充资料/` 对应目录，跑 `npm run catalog` 后提 PR。
+- **投稿资料**：把课件、试卷、实验材料放进 `补充资料/` 对应目录，跑 `npm run catalog:supplement` 后提 PR（CI 会校验生成物是否最新）。
 - **提交勘误**：站内顶栏直接改，或按 [勘误格式](src/content/errata/README.md) 提 JSON。
 - **改代码**：环境、内容契约、题库规则、样式约定与提交规范都在 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
@@ -180,4 +185,10 @@ scripts/build-catalog.mjs    # 扫描 data/ 与 补充资料/ → catalog.ts + �
 
 ## License
 
-本项目以 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 发布：署名（BY）— 非商业性使用（NC）— 相同方式共享（SA）。提交即表示同意你的代码与内容以相同协议分发。
+代码（`src/`、`scripts/`、`.github/` 等）以 [Apache License 2.0](LICENSE) 发布；站点内容与资料（讲义、题库、`补充资料/` 中的整理文本等）以 [CC BY-NC-SA 4.0](LICENSE-CONTENT) 发布：署名（BY）— 非商业性使用（NC）— 相同方式共享（SA）。
+
+- 复用代码：保留版权与许可声明即可，允许商业使用。
+- 复用内容：注明来源、禁止商用、衍生作品沿用同一协议。
+- `补充资料/` 里的课件与试卷版权归原作者，本站仅做整理、索引与呈现；上传者需确认有权公开分享（见 [补充资料/README.md](补充资料/README.md)）。
+
+提交即表示同意你的代码以 Apache-2.0、内容以 CC BY-NC-SA 4.0 分发。
