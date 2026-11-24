@@ -3,6 +3,10 @@ name: Deploy site
 # 主站 + 全部分支预览构建成一个 Pages 产物后发布。
 # 主站构建哪个提交由 main-ref 决定：发版传刚发布的 tag，push 传空（取最近一次 Release）。
 # 调用方：deploy-release.yml（Release 发布）与 deploy-preview.yml（每次 push 刷新预览）。
+#
+# publish=false 时只构建并上传普通产物，由 publish-previews.yml 在默认分支上下文里发布：
+# github-pages 环境的部署分支策略匹配不到带斜杠的分支（fix/x、dependabot/x/y），
+# 而 workflow_run 的部署 ref 恒为 main，不依赖策略通配。
 
 on:
   workflow_call:
@@ -12,6 +16,11 @@ on:
         required: false
         type: string
         default: ''
+      publish:
+        description: 是否在本工作流内直接发布；false 时只产出 site-dist 产物
+        required: false
+        type: boolean
+        default: true
 
 # 权限由调用方的顶层 permissions 决定，这里不重复声明
 
@@ -92,12 +101,25 @@ jobs:
           PREVIEW_TARGETS_FILE: ${{ steps.targets.outputs.file }}
         run: node "$RUNNER_TEMP/scripts/preview-index.mjs" "$PREVIEW_TARGETS_FILE" "${RUNNER_TEMP}/preview-built.txt" dist
 
+      - name: 打包产物（交给 publish-previews 发布）
+        if: ${{ !inputs.publish }}
+        run: tar -C dist -cf "$RUNNER_TEMP/site-dist.tar" .
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !inputs.publish }}
+        with:
+          name: site-dist
+          path: ${{ runner.temp }}/site-dist.tar
+          retention-days: 1
+
       - uses: actions/upload-pages-artifact@v5
+        if: ${{ inputs.publish }}
         with:
           path: dist
           retention-days: 1
 
   deploy:
+    if: ${{ inputs.publish }}
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10

@@ -1,0 +1,66 @@
+name: Publish previews
+
+# 发布 deploy-preview.yml 构建好的产物。
+# 用 workflow_run 而不是在 push 里直接部署：workflow_run 在默认分支上下文运行，
+# 部署 ref 恒为 refs/heads/main，不受“分支名带斜杠匹配不到环境策略”的影响。
+
+on:
+  workflow_run:
+    workflows: ['Deploy previews (push)']
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+  pages: write
+  id-token: write
+
+# 与 deploy-release.yml 共用 pages 组，两次发布的产物不会互相覆盖
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: site-dist
+          path: ${{ runner.temp }}
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      - name: 解包产物
+        run: |
+          mkdir -p dist
+          tar -xf "$RUNNER_TEMP/site-dist.tar" -C dist
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+          retention-days: 1
+
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+      # 部署成功不等于页面可用（历史上有过 SW 缓存导致白屏）：主站与预览索引都拉一次
+      - name: 冒烟检查
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          code=""
+          for i in 1 2 3 4 5 6; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$PAGE_URL" || true)
+            [ "$code" = "200" ] && break
+            echo "第 $i 次：主站返回 $code，5 秒后重试"
+            sleep 5
+          done
+          [ "$code" = "200" ] || { echo "主站返回 $code"; exit 1; }
+          preview=$(curl -s -o /dev/null -w '%{http_code}' "${PAGE_URL}preview/" || true)
+          [ "$preview" = "200" ] || { echo "预览索引返回 $preview"; exit 1; }
