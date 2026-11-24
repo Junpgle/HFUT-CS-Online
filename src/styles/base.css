@@ -2931,6 +2931,18 @@ pre.code .cl-code:empty + .cl-com {
 .ptag[data-deck='math'],
 .pq-group-h[data-deck='math'],
 .site-nav li[data-deck='math'] { --row-accent: var(--math); }
+/* 大二上批次：整课一个主题色，练习标签 / 分组头 / 抽屉导航徽章统一回落到课程色 */
+.ptag[data-deck='py'], .pq-group-h[data-deck='py'], .site-nav li[data-deck='py'] { --row-accent: var(--py); }
+.ptag[data-deck='dm'], .pq-group-h[data-deck='dm'], .site-nav li[data-deck='dm'] { --row-accent: var(--dm); }
+.ptag[data-deck='cm'], .pq-group-h[data-deck='cm'], .site-nav li[data-deck='cm'] { --row-accent: var(--cm); }
+.ptag[data-deck='prob'], .pq-group-h[data-deck='prob'], .site-nav li[data-deck='prob'] { --row-accent: var(--prob); }
+.ptag[data-deck='asm'], .pq-group-h[data-deck='asm'], .site-nav li[data-deck='asm'] { --row-accent: var(--asm); }
+.ptag[data-deck='eda'], .pq-group-h[data-deck='eda'], .site-nav li[data-deck='eda'] { --row-accent: var(--eda); }
+.ptag[data-deck='res'], .pq-group-h[data-deck='res'], .site-nav li[data-deck='res'] { --row-accent: var(--res); }
+.ptag[data-deck='physlab'], .pq-group-h[data-deck='physlab'], .site-nav li[data-deck='physlab'] { --row-accent: var(--physlab); }
+.ptag[data-deck='java'], .pq-group-h[data-deck='java'], .site-nav li[data-deck='java'] { --row-accent: var(--java); }
+.ptag[data-deck='dl'], .pq-group-h[data-deck='dl'], .site-nav li[data-deck='dl'] { --row-accent: var(--dl); }
+.ptag[data-deck='robot'], .pq-group-h[data-deck='robot'], .site-nav li[data-deck='robot'] { --row-accent: var(--robot); }
 
 /* --------------------------------------------- 右侧进度轨（仅 ≥1200px） */
 .pq-track {

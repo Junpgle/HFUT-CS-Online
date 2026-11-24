@@ -59,6 +59,17 @@ COURSES = {
     'swt':  ('swt', None, 0, ('att',)),
     'dsd':  ('dsd', None, 0, ('att',)),
     'ip':   ('ip', None, 0, ('att',)),
+    'py':   ('py', 'py', 9, ('att',)),
+    'dm':   ('dm', 'dm', 6, ('practice', 'att')),
+    'cm':   ('cm', 'cm', 7, ('att',)),
+    'prob': ('prob', 'prob', 6, ('att',)),
+    'asm':  ('asm', 'asm', 6, ('practice', 'att')),
+    'eda':  ('eda', 'eda', 3, ('practice', 'att')),
+    'res':  ('res', 'res', 2, ('att',)),
+    'physlab': ('physlab', 'physlab', 3, ('att',)),
+    'java': ('java', 'java', 6, ('att',)),
+    'dl':   ('dl', 'dl', 6, ('att',)),
+    'robot': ('robot', 'robot', 4, ('att',)),
 }
 
 report = {}

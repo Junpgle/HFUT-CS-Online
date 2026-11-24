@@ -55,7 +55,8 @@ function highlightCode(code: HTMLElement) {
         inCom = true;
         cur.com.push({ text: p, com: true });
       } else {
-        cur.code.push(t);
+        // 跨行 token 必须按行拆分后再放入对应行，否则整段文本会在每一行重复
+        cur.code.push({ text: p, com: false });
       }
     });
   }

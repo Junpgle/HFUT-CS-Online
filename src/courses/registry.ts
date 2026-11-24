@@ -296,6 +296,94 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '十五章课件精讲（电路 6 章 + 模电 9 章）· 1 份期末试卷在线练习',
   },
+  {
+    id: 'python-programming',
+    name: 'Python程序设计',
+    semester: '大二上',
+    base: '/py',
+    ready: true,
+    source: '九章课件精讲（第 1～7 章主干 + 第 8～9 章选学）· 试题为上机练习代码，未设在线练习',
+  },
+  {
+    id: 'discrete-mathematics',
+    name: '离散数学',
+    semester: '大二上',
+    base: '/dm',
+    ready: true,
+    source: '六章课件精讲（命题逻辑 / 谓词逻辑 / 集合与关系 / 函数 / 代数系统 / 环与格）· 1 份期末试卷在线练习',
+  },
+  {
+    id: 'computational-methods',
+    name: '计算方法',
+    semester: '大二上',
+    base: '/cm',
+    ready: true,
+    source: '六章课件精讲（插值 / 数值积分 / 常微分方程差分 / 方程求根 / 线性方程组）· 试题未收录',
+  },
+  {
+    id: 'probability-statistics',
+    name: '概率论与数理统计',
+    semester: '大二上',
+    base: '/prob',
+    ready: true,
+    source: '六章课件精讲 · 期末试卷为公式图片版，未设在线练习',
+  },
+  {
+    id: 'assembly-language',
+    name: '汇编语言程序设计',
+    semester: '大二上',
+    base: '/asm',
+    ready: true,
+    source: '七章课件精讲（80x86 指令系统 / 程序设计 / 子程序 / 中断）· 1 份期末真题在线练习',
+  },
+  {
+    id: 'eda-training',
+    name: 'EDA实训',
+    semester: '大二上',
+    base: '/eda',
+    ready: true,
+    source: 'EDA 与 PCB 设计实训课件 · Verilog / FPGA 期末复习题在线练习',
+  },
+  {
+    id: 'research-training',
+    name: '科研训练',
+    semester: '大二上',
+    base: '/res',
+    ready: true,
+    source: '科研训练答辩课件 · 试题未收录',
+  },
+  {
+    id: 'physics-lab',
+    name: '大学物理实验',
+    semester: '大二上',
+    base: '/physlab',
+    ready: true,
+    source: '声速测量 / 静电场实验课件 · 期末试卷为扫描件，未设在线练习',
+  },
+  {
+    id: 'java-technology',
+    name: 'Java技术',
+    semester: '大二上',
+    base: '/java',
+    ready: true,
+    source: '实验指导书 + 五次上机作业源码 · 课件与试题未收录',
+  },
+  {
+    id: 'digital-logic',
+    name: '数字逻辑',
+    semester: '大二上',
+    base: '/dl',
+    ready: true,
+    source: '实验指导与习题答案 · 课件目录为空（PPT 在附件中），试题未收录',
+  },
+  {
+    id: 'robotics',
+    name: '机器人技术',
+    semester: '大二上',
+    base: '/robot',
+    ready: true,
+    source: 'RoboCup 2D 实验与项目资料 · 课件目录为空（PPT 在附件中），无成套试卷',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -401,6 +489,19 @@ export const DS_BASE = '/ds';
 export const DSCD_BASE = '/dscd';
 export const LA_BASE = '/la';
 export const EE_BASE = '/ee';
+
+/** 大二上批次路由前缀（同上约定） */
+export const PY_BASE = courses[35].base;
+export const DM_BASE = courses[36].base;
+export const CM_BASE = courses[37].base;
+export const PROB_BASE = courses[38].base;
+export const ASM_BASE = courses[39].base;
+export const EDA_BASE = courses[40].base;
+export const RES_BASE = courses[41].base;
+export const PHYS_LAB_BASE = courses[42].base;
+export const JAVA_BASE = courses[43].base;
+export const DL_BASE = courses[44].base;
+export const ROBOT_BASE = courses[45].base;
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);
