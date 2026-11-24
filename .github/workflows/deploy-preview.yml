@@ -30,7 +30,9 @@ permissions:
 # 与 deploy-release.yml 共用 pages 组
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # 不取消正在跑的发布：一次运行会产出完整站点，取消只会让提交挂一个假的红叉；
+  # 同一个组里最多一个运行 + 一个排队，连续 push 时排队的那个会被更新的替换。
+  cancel-in-progress: false
 
 jobs:
   site:
