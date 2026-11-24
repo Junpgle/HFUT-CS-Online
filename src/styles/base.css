@@ -368,9 +368,8 @@ button {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  background: var(--panel-strong);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  backdrop-filter: blur(28px) saturate(180%);
+  /* 下拉菜单必须有实底：半透明会让下方标题/正文透上来，形成文字重叠 */
+  background: var(--panel-solid);
   border: 1px solid var(--hairline-soft);
   border-radius: var(--r-l);
   box-shadow: var(--shadow-2);
@@ -2088,9 +2087,14 @@ pre.code .cl-code:empty + .cl-com {
 }
 .quiz-fill {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
   margin: 4px 0 8px;
 }
+/* 窄屏：输入框可收缩、按钮不压缩，避免「检查 / 显示答案」被挤成竖排 */
+.quiz-fill input { min-width: 0; }
+.quiz-fill .btn { flex: none; white-space: nowrap; }
 .quiz-fill input {
   flex: 1;
   max-width: 320px;

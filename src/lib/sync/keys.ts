@@ -23,6 +23,9 @@ export const PROGRESS_STORES: readonly ProgressStore[] = [
   { key: 'se-practice-progress-v1', course: 'se' },
   { key: 'st-practice-progress-v1', course: 'st' },
   { key: 'phys-practice-progress-v1', course: 'phys' },
+  { key: 'la-practice-progress-v1', course: 'la' },
+  { key: 'ds-practice-progress-v1', course: 'ds' },
+  { key: 'ee-practice-progress-v1', course: 'ee' },
 ];
 
 const byKey = new Map(PROGRESS_STORES.map((s) => [s.key, s]));

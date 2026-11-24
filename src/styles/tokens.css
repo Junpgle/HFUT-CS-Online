@@ -648,6 +648,82 @@
 :root[data-deck='st'][data-ch='11'] { --deck-accent: var(--st11); }
 
 
+/* ============ 大一上/下补全批次：数据结构 / 数据结构课程设计 / 线性代数 / 电路与电子技术基础 ============ */
+:root {
+  --ds: #385d9f;
+  --dscd: #7b4832;
+  --la: #773aa6;
+  --ee: #9f3849;
+  --la1: #31708e; --la2: #a05a2c; --la3: #2e7d5b;
+  --la4: #b5485e; --la5: #8f741c; --la6: #4a5aa8;
+  --ds1: #a05a2c; --ds2: #2e7d5b; --ds3: #b5485e; --ds4: #8f741c;
+  --ds5: #22767c; --ds6: #7d5ba6; --ds7: #9c4a72; --ds8: #36a136;
+  --ee1: #31708e; --ee2: #a05a2c; --ee3: #2e7d5b; --ee4: #8f741c; --ee5: #4a5aa8;
+  --ee6: #22767c; --ee7: #8a4a2f; --ee8: #7d5ba6; --ee9: #6b7a2f; --ee10: #9c4a72;
+  --ee11: #56698f; --ee12: #36a136; --ee13: #6e4a24; --ee14: #d18f6e; --ee15: #9c6b3f;
+  --la-practice: #36a136; --la-att: #b53aad;
+  --ds-practice: #bf5af2; --ds-att: #36a16b;
+  --dscd-att: #36a16b;
+  --ee-practice: #bf5af2; --ee-att: #a1369a;
+}
+[data-theme='dark'] {
+  --ds: #588be4;
+  --dscd: #dca289;
+  --la: #8b54d4;
+  --ee: #e14770;
+  --la1: #74b3d2; --la2: #e0975f; --la3: #7cc9a3;
+  --la4: #ec8ea0; --la5: #d4b95a; --la6: #8f9ce0;
+  --ds1: #e0975f; --ds2: #7cc9a3; --ds3: #ec8ea0; --ds4: #d4b95a;
+  --ds5: #6cc4c9; --ds6: #b39be0; --ds7: #d69ab8; --ds8: #68de68;
+  --ee1: #74b3d2; --ee2: #e0975f; --ee3: #7cc9a3; --ee4: #d4b95a; --ee5: #8f9ce0;
+  --ee6: #6cc4c9; --ee7: #d18f6e; --ee8: #b39be0; --ee9: #b3c26e; --ee10: #d69ab8;
+  --ee11: #9db0d6; --ee12: #68de68; --ee13: #d69c63; --ee14: #e0975f; --ee15: #b39be0;
+  --la-practice: #68de68; --la-att: #c58ae5;
+  --ds-practice: #bf5af2; --ds-att: #7cc9a3;
+  --dscd-att: #7cc9a3;
+  --ee-practice: #bf5af2; --ee-att: #a86ed8;
+}
+:root[data-deck='ds'] { --deck-accent: var(--ds); }
+:root[data-deck='dscd'] { --deck-accent: var(--dscd); }
+:root[data-deck='la'] { --deck-accent: var(--la); }
+:root[data-deck='ee'] { --deck-accent: var(--ee); }
+:root[data-deck='la'][data-ch='1'] { --deck-accent: var(--la1); }
+:root[data-deck='la'][data-ch='2'] { --deck-accent: var(--la2); }
+:root[data-deck='la'][data-ch='3'] { --deck-accent: var(--la3); }
+:root[data-deck='la'][data-ch='4'] { --deck-accent: var(--la4); }
+:root[data-deck='la'][data-ch='5'] { --deck-accent: var(--la5); }
+:root[data-deck='la'][data-ch='6'] { --deck-accent: var(--la6); }
+:root[data-deck='ds'][data-ch='1'] { --deck-accent: var(--ds1); }
+:root[data-deck='ds'][data-ch='2'] { --deck-accent: var(--ds2); }
+:root[data-deck='ds'][data-ch='3'] { --deck-accent: var(--ds3); }
+:root[data-deck='ds'][data-ch='4'] { --deck-accent: var(--ds4); }
+:root[data-deck='ds'][data-ch='5'] { --deck-accent: var(--ds5); }
+:root[data-deck='ds'][data-ch='6'] { --deck-accent: var(--ds6); }
+:root[data-deck='ds'][data-ch='7'] { --deck-accent: var(--ds7); }
+:root[data-deck='ds'][data-ch='8'] { --deck-accent: var(--ds8); }
+:root[data-deck='ee'][data-ch='1'] { --deck-accent: var(--ee1); }
+:root[data-deck='ee'][data-ch='2'] { --deck-accent: var(--ee2); }
+:root[data-deck='ee'][data-ch='3'] { --deck-accent: var(--ee3); }
+:root[data-deck='ee'][data-ch='4'] { --deck-accent: var(--ee4); }
+:root[data-deck='ee'][data-ch='5'] { --deck-accent: var(--ee5); }
+:root[data-deck='ee'][data-ch='6'] { --deck-accent: var(--ee6); }
+:root[data-deck='ee'][data-ch='7'] { --deck-accent: var(--ee7); }
+:root[data-deck='ee'][data-ch='8'] { --deck-accent: var(--ee8); }
+:root[data-deck='ee'][data-ch='9'] { --deck-accent: var(--ee9); }
+:root[data-deck='ee'][data-ch='10'] { --deck-accent: var(--ee10); }
+:root[data-deck='ee'][data-ch='11'] { --deck-accent: var(--ee11); }
+:root[data-deck='ee'][data-ch='12'] { --deck-accent: var(--ee12); }
+:root[data-deck='ee'][data-ch='13'] { --deck-accent: var(--ee13); }
+:root[data-deck='ee'][data-ch='14'] { --deck-accent: var(--ee14); }
+:root[data-deck='ee'][data-ch='15'] { --deck-accent: var(--ee15); }
+:root[data-deck='la'][data-pg='practice'] { --deck-accent: var(--la-practice); }
+:root[data-deck='la'][data-pg='att'] { --deck-accent: var(--la-att); }
+:root[data-deck='ds'][data-pg='practice'] { --deck-accent: var(--ds-practice); }
+:root[data-deck='ds'][data-pg='att'] { --deck-accent: var(--ds-att); }
+:root[data-deck='dscd'][data-pg='att'] { --deck-accent: var(--dscd-att); }
+:root[data-deck='ee'][data-pg='practice'] { --deck-accent: var(--ee-practice); }
+:root[data-deck='ee'][data-pg='att'] { --deck-accent: var(--ee-att); }
+
 /* ------------------------------------------------------- 无障碍偏好适配 */
 @media (prefers-reduced-transparency: reduce) {
   :root {

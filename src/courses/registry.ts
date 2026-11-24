@@ -264,6 +264,38 @@ export const courses: readonly CourseEntry[] = [
     ready: true,
     source: '创新实践结课报告 · 课件与试题未收录',
   },
+  {
+    id: 'data-structures',
+    name: '数据结构',
+    semester: '大一下',
+    base: '/ds',
+    ready: true,
+    source: '八章课件精讲 · 5 份模拟/期末试卷在线练习',
+  },
+  {
+    id: 'data-structures-course-design',
+    name: '数据结构课程设计',
+    semester: '大一下',
+    base: '/dscd',
+    ready: true,
+    source: '课程设计报告与代码 · 课件与试题未收录',
+  },
+  {
+    id: 'linear-algebra',
+    name: '线性代数',
+    semester: '大一上',
+    base: '/la',
+    ready: true,
+    source: '六章课件精讲 · 4 份习题/期中试卷在线练习',
+  },
+  {
+    id: 'circuits-and-electronics',
+    name: '电路与电子技术基础',
+    semester: '大一下',
+    base: '/ee',
+    ready: true,
+    source: '十五章课件精讲（电路 6 章 + 模电 9 章）· 1 份期末试卷在线练习',
+  },
 ];
 
 /** 首页/占位页用的未上线课程路由前缀 */
@@ -362,6 +394,13 @@ export const DSD_BASE = courses[29].base;
 
 /** 创新实践课路由前缀（同上约定） */
 export const IP_BASE = courses[30].base;
+
+
+/** 大一上/下补全批次路由前缀（独立字面量：不受其它批次课程条目增删影响） */
+export const DS_BASE = '/ds';
+export const DSCD_BASE = '/dscd';
+export const LA_BASE = '/la';
+export const EE_BASE = '/ee';
 
 export function findCourseByName(name: string): CourseEntry | undefined {
   return courses.find((c) => c.name === name);
