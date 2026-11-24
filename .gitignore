@@ -34,3 +34,4 @@ _tools/*_out/
 _tools/*_tmp/
 _tools/pptx/
 .kilo/
+_tools/*.log
