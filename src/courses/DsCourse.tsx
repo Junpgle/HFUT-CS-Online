@@ -1,3 +1,5 @@
+import { Route, Routes } from 'react-router-dom';
+import DataStructureSimulator from '../components/DataStructureSimulator';
 import CourseShell from '../components/course/CourseShell';
 import type { CourseConfig } from '../content/course-types';
 import { DS_BASE } from './registry';
@@ -20,6 +22,7 @@ const config: CourseConfig = {
     从<strong>概论与算法分析</strong>出发，依次讨论<strong>线性表、栈与队列、串/数组/广义表、树、图</strong>，
     最后进入<strong>查找</strong>与<strong>排序</strong>；另收录 5 份模拟/期末试卷的在线练习。</p>
     <p><strong>交互学习资源：</strong>
+      <a href="#/ds/simulator">站内交互演示</a> ·
       <a href="https://softer-16.github.io/data-structure-simulator/" target="_blank" rel="noreferrer">数据结构可视化模拟器</a>
       · Cynthia Wang · 69 个演示 ·
       <a href="${import.meta.env.BASE_URL}guides/data-structure/数据结构可视化模拟器使用指南.pdf" target="_blank" rel="noreferrer">使用指南（PDF）</a>
@@ -49,5 +52,10 @@ const config: CourseConfig = {
 };
 
 export default function DsCourse() {
-  return <CourseShell config={config} />;
+  return (
+    <Routes>
+      <Route path="simulator/:algorithmId?" element={<DataStructureSimulator />} />
+      <Route path="*" element={<CourseShell config={config} />} />
+    </Routes>
+  );
 }
