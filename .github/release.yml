@@ -3,8 +3,8 @@
 changelog:
   exclude:
     labels:
-      - autorelease: pending
-      - autorelease: tagged
+      - "autorelease: pending"
+      - "autorelease: tagged"
       - dependencies
       - skip-changelog
   categories:
