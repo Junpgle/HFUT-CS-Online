@@ -849,6 +849,7 @@ button {
   background: var(--panel-2);
   color: var(--ink);
   border: 1px solid transparent;
+  text-decoration: none;
   transition: background 140ms var(--press-ease), color 140ms, transform 100ms var(--press-ease),
     opacity 140ms;
 }
@@ -907,24 +908,24 @@ button {
 /* 数据结构 · 可视化：左栏顶部是资源按钮与算法目录，右栏整块交给模拟器 */
 .visual-actions {
   display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 .rail-actions {
-  margin-bottom: 4px;
+  margin-bottom: 10px;
 }
-.rail-actions .btn {
+.visual-actions .btn {
   width: 100%;
+  padding: 0 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 .visual-mobile-head {
   display: none;
 }
+/* 右栏不加滚动容器：模拟器内容自然铺开，跟随页面滚动 */
 .visual-canvas {
-  height: calc(100dvh - var(--topbar-h) - 76px);
-  min-height: 520px;
   min-width: 0;
-}
-.visual-canvas > div {
-  height: 100%;
 }
 
 /* 左侧算法目录：搜索 + 分组 + 条目（悬浮只变色不铺底） */
@@ -1023,11 +1024,6 @@ button {
     background: var(--panel-2);
     color: var(--ink);
     font-size: 0.875rem;
-  }
-  /* 窄屏模拟器改为自然高度（内部单列布局），由页面滚动 */
-  .visual-canvas {
-    height: auto;
-    min-height: 560px;
   }
 }
 

@@ -19,34 +19,40 @@
   overflow: hidden;
 }
 
-/* 嵌在课程页（/ds/visual）里时高度交给宿主容器，不再按整页视口扣减 */
+/* 嵌在课程页（/ds/visual）里时不按整页视口算高度：整块随页面滚动，
+   只把演示画布与步骤轨迹各自限制在一个舒适高度内（超长轨迹在面板内滚动）。 */
 :host([data-embed]) {
-  height: 100%;
+  height: auto;
 }
 :host([data-embed]) .app {
-  height: 100%;
+  height: auto;
   /* 算法目录由站点左侧栏承担，模拟器自带的侧栏在课程页里不参与布局 */
   grid-template-columns: minmax(0, 1fr);
 }
 :host([data-embed]) .sidebar {
   display: none;
 }
+:host([data-embed]) .workspace {
+  height: auto;
+  overflow: visible;
+}
+:host([data-embed]) .content {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+:host([data-embed]) .visual {
+  height: clamp(280px, 44vh, 420px);
+  max-height: none;
+}
+:host([data-embed]) .stepHistory {
+  max-height: clamp(300px, 46vh, 520px);
+}
 
-/* 课程页版心比整页窄：放宽列的最小宽度，避免右侧步骤面板被裁掉。
-   窄屏沿用下面的单列断点，改为自然高度、由页面滚动。 */
+/* 课程页版心比整页窄：放宽列的最小宽度，避免右侧步骤面板被裁掉。 */
 @media (min-width: 1001px) {
-  /* 右侧工作区在课程页里按舞台高度滚动，而不是按整页视口算高度 */
-  :host([data-embed]) .workspace {
-    height: 100%;
-  }
   :host([data-embed]) .content {
     grid-template-columns: minmax(0, 1fr) 360px;
-  }
-}
-@media (max-width: 1000px) {
-  :host([data-embed]),
-  :host([data-embed]) .app {
-    height: auto;
   }
 }
 
