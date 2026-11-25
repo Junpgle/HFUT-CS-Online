@@ -60,21 +60,33 @@ jobs:
 
       # 在 PR 里留一条会随提交更新的预览评论；PR 已关闭时不评论
       - name: 回贴预览链接
-        if: env.PR_NUMBER != ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          state=$(gh pr view "$PR_NUMBER" --json state -q .state 2>/dev/null || true)
-          [ "$state" = "OPEN" ] || { echo "PR #$PR_NUMBER 不是 OPEN（$state），跳过评论"; exit 0; }
-          url="$SITE/preview/pr-${PR_NUMBER}/"
-          body=$(printf '<!-- hfut-preview -->\n预览已更新：%s\n\n- 每次向本 PR 提交都会自动重建\n- 主站仍按 Release 发布，这里只是本 PR 的渲染结果\n- PR 关闭后不再构建；下一次任意构建会把它从预览索引里摘掉' "$url")
-          jq -n --arg body "$body" '{body:$body}' > "$RUNNER_TEMP/comment.json"
-          id=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
+          pr="$PR_NUMBER"
+          # 个别 PR（例如来自 fork 的运行）事件里没有 pull_requests，用 head SHA 反查
+          if [ -z "$pr" ]; then
+            pr=$(gh pr list --state open --json number,headRefOid \
+              --jq ".[] | select(.headRefOid == \"$PAGES_VERSION\") | .number" | head -1)
+          fi
+          [ -n "$pr" ] || { echo "无法确定 PR 编号，跳过评论"; exit 0; }
+          state=$(gh pr view "$pr" --json state -q .state 2>/dev/null || true)
+          [ "$state" = "OPEN" ] || { echo "PR #$pr 不是 OPEN（$state），跳过评论"; exit 0; }
+          cat > "$RUNNER_TEMP/comment.md" <<EOF
+          <!-- hfut-preview -->
+          预览已更新：$SITE/preview/pr-$pr/
+
+          - 每次向本 PR 提交都会自动重建
+          - 主站仍按 Release 发布，这里只是本 PR 的渲染结果
+          - PR 关闭后不再构建；下一次任意构建会把它从预览索引里摘掉
+          EOF
+          id=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${pr}/comments?per_page=100" \
             --jq '.[] | select(.body | contains("<!-- hfut-preview -->")) | .id' | head -1)
           if [ -n "$id" ]; then
-            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${id}" --input "$RUNNER_TEMP/comment.json" >/dev/null
-            echo "已更新预览评论 #$id"
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${id}" \
+              -F body=@"$RUNNER_TEMP/comment.md" >/dev/null
+            echo "已更新 PR #$pr 的预览评论（$id）"
           else
-            gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --input "$RUNNER_TEMP/comment.json" >/dev/null
-            echo "已发布预览评论"
+            gh pr comment "$pr" --body-file "$RUNNER_TEMP/comment.md"
+            echo "已发布 PR #$pr 的预览评论"
           fi
