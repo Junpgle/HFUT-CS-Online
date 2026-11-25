@@ -25,14 +25,16 @@
 }
 :host([data-embed]) .app {
   height: 100%;
+  /* 算法目录由站点左侧栏承担，模拟器自带的侧栏在课程页里不参与布局 */
+  grid-template-columns: minmax(0, 1fr);
+}
+:host([data-embed]) .sidebar {
+  display: none;
 }
 
 /* 课程页版心比整页窄：放宽列的最小宽度，避免右侧步骤面板被裁掉。
    窄屏沿用下面的单列断点，改为自然高度、由页面滚动。 */
 @media (min-width: 1001px) {
-  :host([data-embed]) .app {
-    grid-template-columns: 250px minmax(0, 1fr);
-  }
   /* 右侧工作区在课程页里按舞台高度滚动，而不是按整页视口算高度 */
   :host([data-embed]) .workspace {
     height: 100%;

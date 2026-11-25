@@ -4,7 +4,7 @@ import CourseShell, { type CourseExtraPage } from '../components/course/CourseSh
 import type { CourseConfig } from '../content/course-types';
 import { DS_BASE } from './registry';
 import { dsChapters, dsPapers, DS_KIND_LABEL, DS_SECTIONS } from '../content/ds';
-import DsVisualPage from './DsVisualPage';
+import DsVisualPage, { DsVisualRail } from './DsVisualPage';
 
 /** 数据结构课程配置：8 章课件精讲 + 5 份试卷在线练习 + 附件 */
 const config: CourseConfig = {
@@ -49,12 +49,13 @@ const config: CourseConfig = {
 const extras: CourseExtraPage[] = [
   {
     path: 'visual',
+    routePath: 'visual/:algorithmId?',
     full: '可视化',
     short: '可视化',
     tip: '可视化 · 站内算法模拟器（69 个演示）',
     navNo: '视',
     navLabel: '可视化 · 算法模拟器',
-    fullWidth: true,
+    sidebar: <DsVisualRail />,
     element: <DsVisualPage />,
   },
 ];

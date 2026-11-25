@@ -28,6 +28,10 @@ export interface CourseExtraPage {
   navLabel: string;
   /** 正文占满版心（不显示目录侧栏） */
   fullWidth?: boolean;
+  /** 路由路径；需要参数时写 visual/:algorithmId? */
+  routePath?: string;
+  /** 自定义左侧栏（不传则用本页目录） */
+  sidebar?: ReactNode;
   element: ReactNode;
 }
 
@@ -272,7 +276,7 @@ export default function CourseShell({ config, extras = [] }: { config: CourseCon
 
       {/* 练习页/附件页不上报目录（无侧栏），让正文占满整个版心 */}
       <div className={`shell-body${onPractice || onAtt || onExtra?.fullWidth ? ' no-sidebar' : ''}`}>
-        <Sidebar />
+        {onExtra?.sidebar ?? <Sidebar />}
         <AnimatePresence mode="wait" initial={false} custom={dir}>
           <motion.div
             key={location.pathname}
@@ -293,7 +297,7 @@ export default function CourseShell({ config, extras = [] }: { config: CourseCon
               <Route index element={<CourseHomeView config={config} />} />
               <Route path="chapter/:chapterId" element={<CourseChapterView config={config} />} />
               {extras.map((e) => (
-                <Route key={e.path} path={e.path} element={e.element} />
+                <Route key={e.path} path={e.routePath ?? e.path} element={e.element} />
               ))}
               {config.papers.length > 0 && (
                 <>

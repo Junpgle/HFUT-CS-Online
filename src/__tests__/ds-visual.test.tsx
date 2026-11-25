@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import DsCourse from '../courses/DsCourse';
+import { SIMULATOR_CATALOG } from '../components/data-structure/catalog';
 import { ErrataProvider } from '../lib/errata/context';
 import { TocProvider } from '../lib/toc';
 
@@ -48,6 +49,12 @@ const show = (path: string) =>
   );
 
 describe('数据结构 · 可视化页', () => {
+  it('演示目录与 runtime 一致', () => {
+    expect(SIMULATOR_CATALOG.length).toBe(69);
+    expect(new Set(SIMULATOR_CATALOG.map((a) => a.id)).size).toBe(69);
+    expect(SIMULATOR_CATALOG.some((a) => a.id === 'buildTree')).toBe(true);
+  });
+
   it('导航栏在「在线练习」左侧出现可视化，且首页不再挂学习资源链接', () => {
     const view = show('/ds');
     const tabs = [...view.container.querySelectorAll('.deck-tabs .deck-tab')].map((x) => x.textContent ?? '');
@@ -56,8 +63,8 @@ describe('数据结构 · 可视化页', () => {
     expect(view.container.textContent).not.toContain('交互学习资源');
   });
 
-  it('可视化页直接渲染模拟器，并提供原始网页与 PDF 指南按钮', () => {
-    const view = show('/ds/visual');
+  it('可视化页直接渲染模拟器，左侧目录标出当前演示', () => {
+    const view = show('/ds/visual/quick');
     expect(view.container.querySelector('.page-visual h1')?.textContent).toBe('可视化');
 
     const host = view.container.querySelector('[aria-label="数据结构算法可视化交互模拟器"]') as HTMLElement | null;
@@ -65,8 +72,20 @@ describe('数据结构 · 可视化页', () => {
     expect(host!.shadowRoot).not.toBeNull();
     expect(host!.shadowRoot!.querySelectorAll('.algoBtn').length).toBe(69);
 
+    // 左侧目录由站点侧栏承担：69 条演示、当前项高亮
+    const rail = view.container.querySelector('.visual-rail');
+    expect(rail).not.toBeNull();
+    expect(rail!.querySelectorAll('a').length).toBe(69);
+    expect(rail!.querySelector('a.active')?.textContent).toContain('快速排序');
+
     const hrefs = [...view.container.querySelectorAll('.visual-actions a')].map((a) => a.getAttribute('href') ?? '');
     expect(hrefs.some((h) => h.includes('softer-16.github.io/data-structure-simulator'))).toBe(true);
     expect(hrefs.some((h) => h.endsWith('数据结构可视化模拟器使用指南.pdf'))).toBe(true);
+  });
+
+  it('不带算法参数时默认选中目录第一条', () => {
+    const view = show('/ds/visual');
+    const rail = view.container.querySelector('.visual-rail');
+    expect(rail!.querySelector('a.active')?.textContent).toContain(SIMULATOR_CATALOG[0].title);
   });
 });
