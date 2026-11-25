@@ -904,6 +904,49 @@ button {
   }
 }
 
+/* 数据结构 · 可视化：模拟器直接嵌在课程页里（占满版心，不显示目录侧栏） */
+.page-visual {
+  padding-bottom: 24px;
+}
+.visual-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.visual-head h1 {
+  margin: 0;
+}
+.visual-sub {
+  margin: 6px 0 0;
+  color: var(--ink-3);
+  font-size: 0.875rem;
+}
+.visual-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.visual-stage {
+  height: clamp(520px, calc(100dvh - 300px), 900px);
+  border-radius: var(--r-l);
+  border: 1px solid var(--hairline-soft);
+  overflow: hidden;
+  background: var(--panel-solid);
+}
+.visual-stage > div {
+  height: 100%;
+}
+/* 窄屏模拟器改为自然高度（内部单列布局），由页面滚动 */
+@media (max-width: 1000px) {
+  .visual-stage {
+    height: auto;
+    min-height: 560px;
+  }
+}
+
 .page h1 {
   margin: 0 0 8px;
   font-size: clamp(1.625rem, 4.5vw, 2.125rem);

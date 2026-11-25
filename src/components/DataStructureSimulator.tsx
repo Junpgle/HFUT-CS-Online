@@ -5,13 +5,15 @@ import { mountSimulator } from './data-structure/runtime.js';
 import template from './data-structure/template.html?raw';
 import styles from './data-structure/simulator.css?raw';
 
-export default function DataStructureSimulator() {
+/** 模拟器本体（shadow DOM 挂载）。embedded 时去掉整页高度与自带页头，交给宿主布局。 */
+export function SimulatorCanvas({ algorithmId, embedded = false }: { algorithmId?: string; embedded?: boolean }) {
   const host = useRef<HTMLDivElement>(null);
-  const { algorithmId } = useParams();
 
   useEffect(() => {
+    const el = host.current;
+    if (!el) return;
     document.documentElement.dataset.deck = 'ds';
-    const root = host.current!.shadowRoot ?? host.current!.attachShadow({ mode: 'open' });
+    const root = el.shadowRoot ?? el.attachShadow({ mode: 'open' });
     root.innerHTML = `<style>${styles}</style>${template}`;
     const stop = mountSimulator(root, algorithmId);
     return () => {
@@ -22,16 +24,30 @@ export default function DataStructureSimulator() {
   }, [algorithmId]);
 
   return (
+    <div
+      ref={host}
+      className={embedded ? 'ds-sim-embed' : undefined}
+      data-embed={embedded ? '' : undefined}
+      aria-label="数据结构算法可视化交互模拟器"
+    />
+  );
+}
+
+/** 独立整页版本（/ds/simulator） */
+export default function DataStructureSimulator() {
+  const { algorithmId } = useParams();
+  return (
     <>
       <header className="hub-topbar">
         <nav className="hub-topbar-right" aria-label="数据结构模拟器导航">
           <Link className="hub-toplink" to="/ds">数据结构课程</Link>
+          <Link className="hub-toplink" to="/ds/visual">可视化</Link>
           <a className="hub-toplink" href={`${import.meta.env.BASE_URL}guides/data-structure/数据结构可视化模拟器使用指南.pdf`} target="_blank" rel="noreferrer">使用指南</a>
           <a className="hub-toplink" href="https://github.com/softer-16/data-structure-simulator" target="_blank" rel="noreferrer">Cynthia Wang · 来源</a>
           <ThemeToggle />
         </nav>
       </header>
-      <div ref={host} aria-label="数据结构算法可视化交互模拟器" />
+      <SimulatorCanvas algorithmId={algorithmId} />
     </>
   );
 }
