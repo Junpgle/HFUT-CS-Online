@@ -87,15 +87,26 @@ for (const line of git(
   });
 }
 
-/* 外部 PR：fetch refs/pull/<n>/head 到 origin/pr-<n>，标题与分支名同样展示 */
+/* 外部 PR：fetch 到 origin/pr-<n>，标题与分支名同样展示 */
 for (const pr of forkPrs) {
   const ref = `origin/pr-${pr.number}`;
-  try {
-    execFileSync('git', ['fetch', '--no-tags', '--quiet', 'origin', `+refs/pull/${pr.number}/head:refs/remotes/${ref}`], {
-      stdio: ['ignore', 'ignore', 'ignore'],
-    });
-  } catch (err) {
-    console.warn(`[preview-targets] 取不到 PR #${pr.number} 的 head（fork 可能已删除）：${err.message.split('\n')[0]}`);
+  // 优先 merge ref（PR + 当前 main）：主站修好的问题会直接体现在预览里；
+  // 有冲突时 GitHub 不提供 merge ref，退回 head。
+  const sources = [`refs/pull/${pr.number}/merge`, `refs/pull/${pr.number}/head`];
+  let fetched = false;
+  for (const source of sources) {
+    try {
+      execFileSync('git', ['fetch', '--no-tags', '--quiet', 'origin', `+${source}:refs/remotes/${ref}`], {
+        stdio: ['ignore', 'ignore', 'ignore'],
+      });
+      fetched = true;
+      break;
+    } catch {
+      // 试下一个来源
+    }
+  }
+  if (!fetched) {
+    console.warn(`[preview-targets] 取不到 PR #${pr.number} 的代码（fork 已删除或有冲突），跳过`);
     continue;
   }
   try {
