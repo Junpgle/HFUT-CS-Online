@@ -82,7 +82,8 @@ for (const line of git(
     pr,
     ahead,
     ref: `origin/${branch}`,
-    slugBase: slugify(branch),
+    // 有 PR 的分支统一用 pr-<编号>：PR 评论里回贴的链接才能稳定对上（fork PR 也只有这个 slug）
+    slugBase: pr ? `pr-${pr}` : slugify(branch),
   });
 }
 
