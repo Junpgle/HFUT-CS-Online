@@ -26,7 +26,21 @@ function groupCatalog(catalog: SimulatorCatalogEntry[], query: string): CatalogG
   return groups;
 }
 
-/** 桌面端左侧栏：按分组列出 69 个演示，点条目走路由；搜索框与模拟器原来的筛选等价 */
+/** 外部资源按钮：桌面在左栏顶部，窄屏在选择器上方 */
+function VisualActions({ className = '' }: { className?: string }) {
+  return (
+    <div className={`visual-actions${className ? ' ' + className : ''}`}>
+      <a className="btn" href={SOURCE} target="_blank" rel="noreferrer">
+        原始网页
+      </a>
+      <a className="btn primary" href={GUIDE} target="_blank" rel="noreferrer">
+        使用指南（PDF）
+      </a>
+    </div>
+  );
+}
+
+/** 桌面端左侧栏：顶部是外部资源按钮，下面按分组列出 69 个演示 */
 export function DsVisualRail() {
   // 侧栏渲染在路由出口之外，拿不到 useParams；从路径里取当前演示
   const { pathname } = useLocation();
@@ -37,6 +51,7 @@ export function DsVisualRail() {
 
   return (
     <nav className="sidebar material visual-rail" aria-label="算法演示目录">
+      <VisualActions className="rail-actions" />
       <p className="sidebar-h">算法演示</p>
       <input
         className="rail-search"
@@ -71,7 +86,7 @@ export function DsVisualRail() {
   );
 }
 
-/** 数据结构 · 可视化：右侧工作区直接渲染站内模拟器，左侧目录由 DsVisualRail 承担 */
+/** 数据结构 · 可视化：右栏整块交给模拟器工作区，不再套卡片/舞台容器 */
 export default function DsVisualPage() {
   const { algorithmId } = useParams();
   const navigate = useNavigate();
@@ -86,25 +101,12 @@ export default function DsVisualPage() {
   }, []);
 
   return (
-    <div className="page page-visual">
-      <div className="visual-head">
-        <div>
-          <h1>可视化</h1>
-          <p className="visual-sub">69 个交互演示 · 树 / 图 / 查找 / 排序 · Cynthia Wang</p>
-        </div>
-        <div className="visual-actions">
-          <a className="btn" href={SOURCE} target="_blank" rel="noreferrer">
-            原始网页
-          </a>
-          <a className="btn primary" href={GUIDE} target="_blank" rel="noreferrer">
-            使用指南（PDF）
-          </a>
-        </div>
-      </div>
-
-      {/* 窄屏没有左侧栏：用下拉选择演示 */}
-      <div className="visual-picker">
+    <>
+      {/* 窄屏没有左侧栏：外部资源按钮与演示选择放在正文顶部 */}
+      <div className="visual-mobile-head">
+        <VisualActions />
         <select
+          className="visual-picker"
           aria-label="选择算法演示"
           value={active.id}
           onChange={(e) => navigate(`/ds/visual/${e.target.value}`)}
@@ -121,9 +123,9 @@ export default function DsVisualPage() {
         </select>
       </div>
 
-      <div className="visual-stage">
+      <div className="visual-canvas">
         <SimulatorCanvas key={active.id} algorithmId={active.id} embedded />
       </div>
-    </div>
+    </>
   );
 }

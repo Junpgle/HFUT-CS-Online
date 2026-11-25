@@ -63,29 +63,29 @@ describe('数据结构 · 可视化页', () => {
     expect(view.container.textContent).not.toContain('交互学习资源');
   });
 
-  it('可视化页直接渲染模拟器，左侧目录标出当前演示', () => {
+  it('可视化页把模拟器铺满右栏，资源按钮与目录在左栏', () => {
     const view = show('/ds/visual/quick');
-    expect(view.container.querySelector('.page-visual h1')?.textContent).toBe('可视化');
 
-    const host = view.container.querySelector('[aria-label="数据结构算法可视化交互模拟器"]') as HTMLElement | null;
+    const canvas = view.container.querySelector('.visual-canvas');
+    expect(canvas).not.toBeNull();
+    const host = canvas!.querySelector('[aria-label="数据结构算法可视化交互模拟器"]') as HTMLElement | null;
     expect(host).not.toBeNull();
     expect(host!.shadowRoot).not.toBeNull();
     expect(host!.shadowRoot!.querySelectorAll('.algoBtn').length).toBe(69);
 
-    // 左侧目录由站点侧栏承担：69 条演示、当前项高亮
+    // 左侧栏：两个资源按钮 + 69 条演示，当前项高亮
     const rail = view.container.querySelector('.visual-rail');
     expect(rail).not.toBeNull();
-    expect(rail!.querySelectorAll('a').length).toBe(69);
-    expect(rail!.querySelector('a.active')?.textContent).toContain('快速排序');
-
-    const hrefs = [...view.container.querySelectorAll('.visual-actions a')].map((a) => a.getAttribute('href') ?? '');
-    expect(hrefs.some((h) => h.includes('softer-16.github.io/data-structure-simulator'))).toBe(true);
-    expect(hrefs.some((h) => h.endsWith('数据结构可视化模拟器使用指南.pdf'))).toBe(true);
+    expect(rail!.querySelectorAll('.rail-list a').length).toBe(69);
+    expect(rail!.querySelector('.rail-list a.active')?.textContent).toContain('快速排序');
+    const actions = [...rail!.querySelectorAll('.rail-actions a')].map((a) => a.getAttribute('href') ?? '');
+    expect(actions.some((h) => h.includes('softer-16.github.io/data-structure-simulator'))).toBe(true);
+    expect(actions.some((h) => h.endsWith('数据结构可视化模拟器使用指南.pdf'))).toBe(true);
   });
 
   it('不带算法参数时默认选中目录第一条', () => {
     const view = show('/ds/visual');
     const rail = view.container.querySelector('.visual-rail');
-    expect(rail!.querySelector('a.active')?.textContent).toContain(SIMULATOR_CATALOG[0].title);
+    expect(rail!.querySelector('.rail-list a.active')?.textContent).toContain(SIMULATOR_CATALOG[0].title);
   });
 });
