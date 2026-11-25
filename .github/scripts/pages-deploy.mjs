@@ -59,15 +59,8 @@ const oidcRes = await fetch(oidcUrl, {
 if (!oidcRes.ok) throw new Error(`获取 OIDC token 失败：${oidcRes.status} ${(await oidcRes.text()).slice(0, 300)}`);
 const { value: idToken } = await oidcRes.json();
 
-/* 3) 创建部署 */
-const created = await api(`${API}/repos/${REPO}/pages/deployments`, {
-  method: 'POST',
-  body: JSON.stringify({ artifact_id: artifact.id, pages_build_version: VERSION, oidc_token: idToken }),
-});
-const deploymentId = created.id ?? String(created.status_url ?? '').split('/').pop();
-console.log(`[pages-deploy] 已创建部署 ${deploymentId}，版本 ${VERSION}`);
-
-/* 4) 轮询状态（与 deploy-pages 相同的终态语义） */
+/* 3) 创建部署并等待结果。
+ * `deployment_failed` 偶发但可重试（Pages 后端瞬时失败）；其余终态直接报错。 */
 const FINAL_ERRORS = new Set([
   'deployment_failed',
   'deployment_content_failed',
@@ -77,10 +70,38 @@ const FINAL_ERRORS = new Set([
   'artifact_invalid',
   'deployment_permissions_failed',
 ]);
-const deadline = Date.now() + 10 * 60 * 1000;
-let status = created.status ?? 'queued';
-let failures = 0;
-while (Date.now() < deadline) {
+
+async function deployOnce() {
+  const created = await api(`${API}/repos/${REPO}/pages/deployments`, {
+    method: 'POST',
+    body: JSON.stringify({ artifact_id: artifact.id, pages_build_version: VERSION, oidc_token: idToken }),
+  });
+  const deploymentId = created.id ?? String(created.status_url ?? '').split('/').pop();
+  console.log(`[pages-deploy] 已创建部署 ${deploymentId}，版本 ${VERSION}`);
+
+  const deadline = Date.now() + 10 * 60 * 1000;
+  let status = created.status ?? 'queued';
+  let failures = 0;
+  while (Date.now() < deadline) {
+    if (status === 'succeed' || FINAL_ERRORS.has(status)) return status;
+    await sleep(5000);
+    try {
+      const current = await api(`${API}/repos/${REPO}/pages/deployments/${deploymentId}`);
+      status = current.status;
+      console.log(`[pages-deploy] 状态：${status}`);
+      failures = 0;
+    } catch (err) {
+      // 状态接口偶发 5xx 时重试几次再放弃
+      if (++failures >= 6) throw err;
+      console.warn(`[pages-deploy] 查询状态失败（第 ${failures} 次）：${err.message.split('\n')[0]}`);
+    }
+  }
+  return status;
+}
+
+let status = 'queued';
+for (let attempt = 1; attempt <= 3; attempt++) {
+  status = await deployOnce();
   if (status === 'succeed') {
     console.log('[pages-deploy] 发布成功');
     if (process.env.GITHUB_STEP_SUMMARY) {
@@ -88,17 +109,8 @@ while (Date.now() < deadline) {
     }
     process.exit(0);
   }
-  if (FINAL_ERRORS.has(status)) throw new Error(`Pages 发布失败：${status}`);
-  await sleep(5000);
-  try {
-    const current = await api(`${API}/repos/${REPO}/pages/deployments/${deploymentId}`);
-    status = current.status;
-    console.log(`[pages-deploy] 状态：${status}`);
-    failures = 0;
-  } catch (err) {
-    // 状态接口偶发 5xx 时重试几次再放弃
-    if (++failures >= 6) throw err;
-    console.warn(`[pages-deploy] 查询状态失败（第 ${failures} 次）：${err.message.split('\n')[0]}`);
-  }
+  if (status !== 'deployment_failed') break;
+  console.warn(`[pages-deploy] 部署瞬时失败（第 ${attempt} 次），15 秒后重试`);
+  await sleep(15000);
 }
-throw new Error(`Pages 发布超时，最后状态：${status}`);
+throw new Error(`Pages 发布失败：${status}`);
