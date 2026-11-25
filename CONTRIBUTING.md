@@ -186,13 +186,14 @@ scripts/                     # 目录构建、内容迁移脚本
 - **分支 push → 只刷新预览。** `deploy-preview.yml` 会重建主站（取最近一次 Release 的 tag）与所有符合条件的分支预览，产物在 `/HFUT-CS-Online/preview/<slug>/`，索引页为 `/HFUT-CS-Online/preview/`。
 - **发布 Release → 更新主站。** `deploy-release.yml` 构建该 tag 并发布到 `/HFUT-CS-Online/`。版本由 Conventional Commits 驱动（release-please）：合并 `chore(main): release x.y.z` PR 才会打 tag 并发 Release。
 - **手动重发 / 回滚**：Actions → `Deploy main site (release)` → Run workflow，填 tag 部署旧版本，填 `main` 部署 main 最新代码。
+- **打开 / 更新 PR → 自动构建该 PR 的预览。** `preview-pr-build.yml` 以只读权限构建，`preview-pr-publish.yml` 在默认分支上下文发布，并把链接回贴到 PR 评论（`/preview/pr-<编号>/`，同一条评论随提交原地更新）。
 - 如果部署后页面空白，优先检查 `vite.config.ts` 的 `base` 是否与仓库名一致；部署工作流最后有冒烟检查（主站与预览索引必须 200），空白会直接红灯。
 
 预览收录规则：同仓库开着 PR 的 head 分支、外部 fork PR（取 `refs/pull/<n>/head`），以及 14 天内推送过且领先 main 的分支，最多 8 个（`PREVIEW_MAX` / `PREVIEW_TTL_DAYS` 在 workflow 的 `env` 里调）。
 
-- `slug` 由分支名生成：`/` 换成 `--`，非 ASCII 字符丢弃后补一段哈希，中文分支名请以索引页上的链接为准；外部 PR 固定用 `pr-<编号>`。
+- `slug`：有 PR 的分支（含外部 fork）统一用 `pr-<编号>`，评论里的链接长期稳定；其余分支由分支名生成（`/` 换成 `--`，非 ASCII 字符丢弃后补 6 位哈希）。
 - 预览构建失败只跳过该预览，主站照常发布；PR 关闭或分支超过 14 天没推送，下一次运行自动下线。
-- 外部 fork 的 PR 无法从本仓库的 push 事件触发部署，需要维护者手动跑一次 `Deploy previews (push)`（或等下一次 `main` 推送）后才会出现在索引页。
+- 预览随 `main` push、PR 打开/更新、手动 dispatch 重建；PR 关闭后不再重建，它的预览会在下一次任意构建时从索引下线（分支若仍领先 main，还会以分支名出现，删掉分支即可）。
 - 实现方式：预览构建用 `vite build --base=/HFUT-CS-Online/preview/<slug>/` 把整站搬进子目录（CLI 覆盖，分支不必先合入本功能），站内资源与附件清单都走 `BASE_URL` 随之迁移。
 
 账号同步是可选能力：在仓库 Variables 配置 `VITE_SUPABASE_URL` 与 `VITE_SUPABASE_ANON_KEY` 即启用；不配置时站点自动退回纯本地游客模式。本地联调时复制 [.env.example](.env.example) 为 `.env.local`，填入 Project URL 与 Publishable Key 即可。
