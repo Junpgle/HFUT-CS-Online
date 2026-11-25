@@ -376,6 +376,13 @@ export default function HtmlContent({ html }: Props) {
     if (!a) return;
     const href = a.getAttribute('href') ?? '';
 
+    // HashRouter 路由链接（#/ds/simulator）交给路由；当成页内锚点会滚到一个不存在的元素，
+    // 表现就是「点了没反应」。
+    if (href.startsWith('#/')) {
+      e.preventDefault();
+      navigate(href.slice(1));
+      return;
+    }
     if (href.startsWith('#')) {
       e.preventDefault();
       scrollToId(href.slice(1));
