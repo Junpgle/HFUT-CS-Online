@@ -4,6 +4,7 @@
   "bootstrap-sha": "9b821f420915c9120a6685b002730e69172ad477",
   "include-component-in-tag": false,
   "include-v-in-tag": true,
+  "changelog-type": "github",
   "changelog-sections": [
     { "type": "feat", "section": "新功能", "hidden": false },
     { "type": "fix", "section": "修复", "hidden": false },
