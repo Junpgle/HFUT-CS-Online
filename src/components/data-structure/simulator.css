@@ -1,12 +1,24 @@
 /* Styles isolated in the simulator shadow root; colors inherit site tokens. */
 :host {
   display: block;
-  --muted: var(--ink-3);
-  --line: var(--hairline);
-  --good: var(--ok);
-  --bad: var(--hot);
-  --soft: var(--panel-2);
-  --paper: var(--panel-solid);
+  --bg: var(--ds-sim-bg);
+  --panel: var(--ds-sim-panel);
+  --panel-solid: var(--ds-sim-panel);
+  --panel-2: var(--ds-sim-soft);
+  --ink: var(--ds-sim-ink);
+  --ink-2: var(--ds-sim-muted);
+  --muted: var(--ds-sim-muted);
+  --line: var(--ds-sim-line);
+  --accent: var(--ds-sim-accent);
+  --accent-2: var(--ds-sim-secondary);
+  --good: var(--ds-sim-good);
+  --warn: var(--ds-sim-warn);
+  --hot: var(--ds-sim-bad);
+  --bad: var(--ds-sim-bad);
+  --soft: var(--ds-sim-soft);
+  --paper: var(--ds-sim-paper);
+  --code-bg: var(--ds-sim-code-bg);
+  --code-ink: var(--ds-sim-code-ink);
 }
 
 
@@ -63,8 +75,8 @@
   min-height: 0;}
 
 .sidebar {
-  background: var(--ink);
-  color: var(--panel-solid);
+  background: var(--ds-sim-sidebar);
+  color: var(--ds-sim-on-dark);
   padding: 18px 14px;
   overflow-y: auto;
   border-right: 1px solid var(--ink);
@@ -80,20 +92,20 @@
   width: 44px;
   height: 44px;
   border: 2px solid var(--accent-2);
-  color: var(--ink);
+  color: var(--ds-sim-on-dark);
   display: grid;
   place-items: center;
   font-weight: 800;
 }
 .brand h1 { margin: 0; font-size: 20px; }
-.brand p { margin: 3px 0 0; color: var(--accent-2); font-size: 12px; }
+.brand p { margin: 3px 0 0; color: var(--ds-sim-nav-muted); font-size: 12px; }
 
 .searchBox input {
   width: 100%;
   height: 36px;
-  border: 1px solid var(--ink);
-  background: var(--panel-2);
-  color: var(--ink);
+  border: 1px solid var(--ds-sim-nav-muted);
+  background: var(--ds-sim-sidebar-input);
+  color: var(--ds-sim-on-dark);
   padding: 0 10px;
   outline: none;
 }
@@ -105,7 +117,7 @@
   margin-top: 14px;
 }
 .groupTitle {
-  color: var(--accent-2);
+  color: var(--ds-sim-nav-muted);
   font-size: 12px;
   margin: 16px 8px 5px;
   letter-spacing: 0;
@@ -113,16 +125,16 @@
 .algoBtn {
   border: 1px solid transparent;
   background: transparent;
-  color: var(--panel-2);
+  color: var(--ds-sim-nav-muted);
   text-align: left;
   padding: 9px 10px;
   cursor: pointer;
   font-size: 14px;
 }
-.algoBtn:hover {  }
+.algoBtn:hover { border-color: var(--ds-sim-nav-muted); color: var(--ds-sim-on-dark); }
 .algoBtn.active {
-  background: var(--panel-2);
-  color: var(--ink);
+  background: var(--ds-sim-nav-active);
+  color: var(--ds-sim-on-dark);
   border-color: var(--accent-2);
 }
 .pageTag {
@@ -131,14 +143,14 @@
   margin-right: 7px;
   padding: 2px 5px;
   border: 1px solid var(--accent-2);
-  color: var(--accent-2);
+  color: var(--ds-sim-nav-muted);
   font-size: 11px;
   text-align: center;
 }
 .algoBtn.active .pageTag {
-  color: var(--accent-2);
-  border-color: var(--accent-2);
-  background: var(--panel-solid);
+  color: var(--ds-sim-nav-muted);
+  border-color: var(--ds-sim-nav-muted);
+  background: transparent;
 }
 
 .workspace {
@@ -500,16 +512,16 @@ button:hover { border-color: var(--accent); color: var(--accent); transform: tra
   height: 48px;
   padding: 0 28px;
   border: 1px solid var(--ink);
-  background: var(--panel-2);
-  color: var(--ink);
+  background: var(--ds-sim-nav-active);
+  color: var(--ds-sim-on-dark);
   font-weight: 900;
   box-shadow: var(--shadow-1);
   font-size: 15px;
   letter-spacing: 0;
 }
 .codeFab:hover {
-  border-color: var(--ink);
-  color: var(--ink);
+  border-color: var(--ds-sim-on-dark);
+  color: var(--ds-sim-on-dark);
   filter: brightness(1.03);
   box-shadow: var(--shadow-1);
 }
@@ -574,10 +586,10 @@ button:hover { border-color: var(--accent); color: var(--accent); transform: tra
   gap: 12px;
   padding: 8px 10px;
   border-left: 4px solid transparent;
-  border-bottom: 1px solid var(--panel-2);
+  border-bottom: 1px solid var(--ds-sim-code-line);
 }
 .codeLine.hot {
-  background: var(--accent-soft);
+  background: var(--ds-sim-code-highlight);
   color: var(--code-ink);
   border-left-color: var(--warn);
 }
@@ -585,7 +597,7 @@ button:hover { border-color: var(--accent); color: var(--accent); transform: tra
   grid-template-columns: 1fr;
   padding-top: 3px;
   padding-bottom: 3px;
-  color: var(--accent-2);
+  color: var(--ds-sim-code-muted);
 }
 .codeText {
   white-space: pre-wrap;
@@ -593,18 +605,18 @@ button:hover { border-color: var(--accent); color: var(--accent); transform: tra
 }
 .codeExplain {
   white-space: normal;
-  color: var(--accent-2);
-  background: var(--panel-2);
-  border: 1px solid var(--panel-2);
+  color: var(--ds-sim-code-muted);
+  background: var(--ds-sim-code-explain);
+  border: 1px solid var(--ds-sim-code-line);
   padding: 7px 9px;
   font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
   line-height: 1.65;
 }
 .codeExplain b {
-  color: var(--warn);
+  color: var(--ds-sim-code-label);
 }
 .codeExplain .role {
-  color: var(--ink);
+  color: var(--ds-sim-code-ink);
 }
 
 @media (max-width: 900px) {
@@ -666,7 +678,7 @@ svg {
 .node circle, .treeNode circle { fill: var(--panel-2); stroke: var(--accent-2); stroke-width: 2; }
 .node.active circle, .treeNode.active circle { fill: var(--panel-2); stroke: var(--accent-2); stroke-width: 4; }
 .node.done circle, .treeNode.done circle { fill: var(--panel-2); stroke: var(--good); stroke-width: 3; }
-.node text, .treeNode text { font-weight: 800; font-size: 16px; text-anchor: middle; dominant-baseline: central; }
+.node text, .treeNode text { fill: var(--ink); font-weight: 800; font-size: 16px; text-anchor: middle; dominant-baseline: central; }
 .node .heightText {
   font-size: 11px;
   fill: var(--accent-2);
@@ -894,9 +906,9 @@ svg {
   color: var(--ink);
 }
 
-.sidebar { background: var(--panel-solid); color: var(--ink); }
-.algoBtn { color: var(--ink-2); }
-.algoBtn.active { color: var(--ink); }
+.sidebar { background: var(--ds-sim-sidebar); color: var(--ds-sim-on-dark); }
+.algoBtn { color: var(--ds-sim-nav-muted); }
+.algoBtn.active { color: var(--ds-sim-on-dark); }
 button:hover {  box-shadow: var(--shadow-1); }
 .app { min-height: 640px; }
 button, input, .formula, .label, .stateItem { font-size: 1rem; }
