@@ -1027,3 +1027,46 @@
     --ink-2: #d5d5da;
   }
 }
+
+
+/* 数据结构模拟器：保留原站深青与青绿配色，仅由模拟器宿主引用。 */
+:root {
+  --ds-sim-bg: #f4f7f8;
+  --ds-sim-panel: #ffffff;
+  --ds-sim-soft: #eaf3f5;
+  --ds-sim-paper: #fffaf0;
+  --ds-sim-ink: #1f2933;
+  --ds-sim-muted: #64748b;
+  --ds-sim-line: #d7e0e4;
+  --ds-sim-accent: #2f6f73;
+  --ds-sim-secondary: #9a6418;
+  --ds-sim-good: #2f855a;
+  --ds-sim-warn: #c05621;
+  --ds-sim-bad: #c53030;
+  --ds-sim-sidebar: #17252b;
+  --ds-sim-sidebar-input: #0f1a1f;
+  --ds-sim-on-dark: #f3f7f8;
+  --ds-sim-nav-muted: #b7c9ce;
+  --ds-sim-nav-active: #2f6f73;
+  --ds-sim-code-bg: #111827;
+  --ds-sim-code-ink: #e5edf4;
+  --ds-sim-code-muted: #bdcedc;
+  --ds-sim-code-line: #293544;
+  --ds-sim-code-highlight: #203d47;
+  --ds-sim-code-explain: #1d2938;
+  --ds-sim-code-label: #f3c16a;
+}
+[data-theme='dark'] {
+  --ds-sim-bg: #101b20;
+  --ds-sim-panel: #17252b;
+  --ds-sim-soft: #20333a;
+  --ds-sim-paper: #302b20;
+  --ds-sim-ink: #e5eef1;
+  --ds-sim-muted: #a6bcc3;
+  --ds-sim-line: #3c535c;
+  --ds-sim-accent: #8bc5c7;
+  --ds-sim-secondary: #e2b568;
+  --ds-sim-good: #8acda8;
+  --ds-sim-warn: #e9ac76;
+  --ds-sim-bad: #ed9797;
+}
