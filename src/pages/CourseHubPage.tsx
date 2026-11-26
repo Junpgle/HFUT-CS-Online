@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, animate, motion, useReducedMotion } from 'motion/react';
 import { catalog } from '../content/catalog';
 import { courses, findCourseByName, STUB_BASE } from '../courses/registry';
 import SiteHeader from '../components/SiteHeader';
@@ -35,6 +35,88 @@ const HOME_SCROLL_KEY = 'home-scroll-y';
 const CONTRIB_LINKS: Record<string, string> = {
   SaltGardenia: 'https://saltgardenia.github.io/',
 };
+
+/**
+ * 账目里的数字：从 0 数到终值，和整块淡入一起「落定」，不要一上来就是死数。
+ * 整栏共用同一节奏（0.9s、同一条缓动），访问量到位时也走这里。
+ */
+function CountUp({ value, delay = 0 }: { value: number; delay?: number }) {
+  const reduced = useReducedMotion();
+  const [shown, setShown] = useState(() => (reduced ? value : 0));
+
+  useEffect(() => {
+    if (reduced) {
+      setShown(value);
+      return;
+    }
+    const controls = animate(0, value, {
+      duration: 0.9,
+      delay,
+      ease: [0.25, 0.1, 0.25, 1],
+      onUpdate: (v) => setShown(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [value, delay, reduced]);
+
+  return <>{shown}</>;
+}
+
+/**
+ * 访问量一行：数据在路上时先摆一条骨架占住数字槽；结果到达后骨架退场，
+ * 数字淡入的同时从 0 数到终值——数字是「数出来」的而不是「换上去」的，
+ * 交接才有连续感。行盒始终由 <b> 决定，所以账目栏不会因为数字晚到而上下跳。
+ */
+function VisitStat({
+  label,
+  value,
+  group,
+}: {
+  label: string;
+  /** null：请求还没回来（显示骨架）；数字：淡入并数到位 */
+  value: number | null | undefined;
+  group?: boolean;
+}) {
+  const reduced = useReducedMotion();
+
+  return (
+    <div className={group ? 'hub-stat hub-stat-group' : 'hub-stat'}>
+      <span className="hub-stat-k">{label}</span>
+      <span className="hub-stat-leader" aria-hidden="true" />
+      <span className="hub-stat-v">
+        <AnimatePresence initial={false}>
+          {value == null ? (
+            // 骨架也用 <b>：字体行盒与数字完全一致，占位期和到位后行高不变
+            <motion.b
+              key="skeleton"
+              className="hub-stat-skel"
+              aria-hidden="true"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduced ? { opacity: 0 } : { opacity: 0, scaleX: 0.9 }}
+              // 骨架退得快一点：数位要动近一秒，横条不能陪着糊在那儿
+              transition={reduced ? { duration: 0.15 } : { duration: 0.22, ease: 'easeOut' }}
+            >
+              &#8203;
+            </motion.b>
+          ) : (
+            <motion.b
+              key="value"
+              // 数位自己会动近一秒，淡入只负责把「换上去」那一下藏住
+              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={
+                reduced ? { duration: 0.2, ease: 'easeOut' } : { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }
+              }
+            >
+              <CountUp value={value} />
+            </motion.b>
+          )}
+        </AnimatePresence>
+      </span>
+    </div>
+  );
+}
+
 export default function CourseHubPage() {
   const toc = useToc();
   const reduced = useReducedMotion();
@@ -44,7 +126,7 @@ export default function CourseHubPage() {
   const recentNames = useRecentCourses();
   // 收藏的课程（收藏先后序）；卡片星标与合并展示区共用
   const favs = useFavoriteCourses();
-  // 站点访问量（Supabase 计数；数据库未就绪时不渲染）
+  // 站点访问量（Supabase 计数；请求未到时先占位，失败则不渲染）
   const visits = useSiteVisits();
 
   // 置顶按钮：滚过约一屏内容后出现（rAF 节流，与在线练习页同款）
@@ -274,40 +356,42 @@ export default function CourseHubPage() {
             <div className="hub-stat">
               <span className="hub-stat-k">学期</span>
               <span className="hub-stat-leader" aria-hidden="true" />
-              <b>{stats.semesters}</b>
+              <b>
+                <CountUp value={stats.semesters} delay={0.2} />
+              </b>
             </div>
             <div className="hub-stat">
               <span className="hub-stat-k">门课程</span>
               <span className="hub-stat-leader" aria-hidden="true" />
-              <b>{stats.courses}</b>
+              <b>
+                <CountUp value={stats.courses} delay={0.2} />
+              </b>
             </div>
             <div className="hub-stat hub-stat-group">
               <span className="hub-stat-k">份文件</span>
               <span className="hub-stat-leader" aria-hidden="true" />
-              <b>{stats.files}</b>
+              <b>
+                <CountUp value={stats.files} delay={0.2} />
+              </b>
             </div>
             <div className="hub-stat">
               <span className="hub-stat-k">份课件</span>
               <span className="hub-stat-leader" aria-hidden="true" />
-              <b>{stats.courseware}</b>
+              <b>
+                <CountUp value={stats.courseware} delay={0.2} />
+              </b>
             </div>
             <div className="hub-stat">
               <span className="hub-stat-k">份试题</span>
               <span className="hub-stat-leader" aria-hidden="true" />
-              <b>{stats.exams}</b>
+              <b>
+                <CountUp value={stats.exams} delay={0.2} />
+              </b>
             </div>
-            {visits && (
+            {visits.enabled && (visits.pending || visits.visits) && (
               <>
-                <div className="hub-stat hub-stat-group">
-                  <span className="hub-stat-k">累计访问量</span>
-                  <span className="hub-stat-leader" aria-hidden="true" />
-                  <b>{visits.total}</b>
-                </div>
-                <div className="hub-stat">
-                  <span className="hub-stat-k">今日访问量</span>
-                  <span className="hub-stat-leader" aria-hidden="true" />
-                  <b>{visits.today}</b>
-                </div>
+                <VisitStat label="累计访问量" value={visits.visits?.total} group />
+                <VisitStat label="今日访问量" value={visits.visits?.today} />
               </>
             )}
           </motion.div>
