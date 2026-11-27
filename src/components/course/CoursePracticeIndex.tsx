@@ -6,6 +6,7 @@ import { useStoredRecord } from '../../lib/sync';
 import { chapterNamesFrom } from '../../lib/exam-insights';
 import ExamInsights from '../practice/ExamInsights';
 import { IconArrowRight, IconFileText } from '../icons';
+import { BookCards } from '../practice/books';
 import PracticeReport from '../practice/report/PracticeReport';
 import { shellDeckMeta } from '../practice/report/aggregates';
 
@@ -54,6 +55,7 @@ export default function CoursePracticeIndex({ config }: { config: CourseConfig }
         chapterNames={chapterNamesFrom(config.chapters)}
         progress={progress}
       />
+      <BookCards base={config.base} course={config.base.replace(/^\/+/, '')} />
       <nav className="ext-cards" aria-label="试卷列表">
         {cards.map(({ paper: p, done, right, kinds }) => (
           <Link key={p.id} className="ext-card" to={`${config.base}/practice/${p.id}`}>

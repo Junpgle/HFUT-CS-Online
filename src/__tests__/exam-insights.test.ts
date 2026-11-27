@@ -192,6 +192,6 @@ describe('OsPracticeIndex 集成渲染', () => {
     // 4 份 OS 试卷 → 矩阵 4 行
     expect(container.querySelectorAll('.ei-matrix tbody tr')).toHaveLength(4);
     // 试卷卡片原样保留
-    expect(container.querySelectorAll('nav.ext-cards .ext-card')).toHaveLength(4);
+    expect(container.querySelectorAll('nav[aria-label="试卷列表"] .ext-card')).toHaveLength(4);
   });
 });

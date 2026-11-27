@@ -7,6 +7,7 @@ import { useStoredRecord } from '../lib/sync';
 import { chapterNamesFrom } from '../lib/exam-insights';
 import ExamInsights from '../components/practice/ExamInsights';
 import { IconArrowRight, IconFileText } from '../components/icons';
+import { BookCards } from '../components/practice/books';
 import PracticeReport from '../components/practice/report/PracticeReport';
 
 /** 作答进度（与答题页共用同一 key），列表卡上展示每卷完成度 */
@@ -45,6 +46,7 @@ export default function MathPracticeIndex() {
         chapterNames={chapterNamesFrom(mathChapters)}
         progress={progress}
       />
+      <BookCards base={MATH_BASE} course="math" />
       <nav className="ext-cards" aria-label="试卷列表">
         {cards.map(({ paper: p, done, right, kinds }) => (
           <Link key={p.id} className="ext-card" to={`${MATH_BASE}/practice/${p.id}`}>

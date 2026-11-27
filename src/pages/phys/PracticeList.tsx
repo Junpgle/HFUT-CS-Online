@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { PHYS_BASE } from '../../courses/registry';
 import { physPapers, physDecks } from '../../content/phys';
 import { IconArrowRight } from '../../components/icons';
+import { BookCards } from '../../components/practice/books';
 import ExamInsights from '../../components/practice/ExamInsights';
 import PracticeReport from '../../components/practice/report/PracticeReport';
 import { useProgressStore } from '../../lib/sync';
@@ -46,6 +47,8 @@ export default function PhysPracticeList() {
         progress={results}
         resultKey={(paperId, qid) => `${paperId}:${qid}`}
       />
+
+      <BookCards base={PHYS_BASE} course="phys" />
 
       <div className="net-paper-grid">
         {physPapers.map((p, i) => {

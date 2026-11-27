@@ -9,11 +9,13 @@ import type {
   PracticeTag,
 } from '../../content/course-types';
 import PracticeCard from '../practice/PracticeCard';
+import { BookCards } from '../practice/books';
 import PracticeReport from '../practice/report/PracticeReport';
 import { shellDeckMeta } from '../practice/report/aggregates';
 import ClearProgress from '../practice/ClearProgress';
 import { IconArrowLeft, IconChevronUp } from '../icons';
 import { clearProgress, useProgressStore } from '../../lib/sync';
+import { useQuestionBooks } from '../../lib/questionBooks';
 
 type Result = 'right' | 'wrong' | 'revealed';
 
@@ -33,13 +35,17 @@ export default function CoursePaperView({
 }) {
   const reduced = useReducedMotion();
   const [results, setResults] = useProgressStore<Result>(config.storeKey);
+  const books = useQuestionBooks(config.base.replace(/^\//, ''));
   const [kind, setKind] = useState<CourseQuizKind>(
     () => KINDS.find((k) => paper.questions.some((q) => q.kind === k)) ?? 'fill',
   );
   const firstKindRun = useRef(true);
   const pendingJump = useRef<string | null>(null);
 
-  const onResult = (qid: string, r: Result) => setResults((s) => ({ ...s, [qid]: r }));
+  const onResult = (qid: string, r: Result) => {
+    setResults((s) => ({ ...s, [qid]: r }));
+    books.trackResult(qid, r);
+  };
 
   const bankOf = (k: CourseQuizKind) => paper.questions.filter((q) => q.kind === k);
 
@@ -205,6 +211,7 @@ export default function CoursePaperView({
           )}
         <h1>{paper.title}</h1>
       </div>
+      {config.singlePaperDirect && <BookCards base={config.base} course={config.base.replace(/^\/+/, '')} />}
       <div className="lede">
         <p>
           {paper.source} · 共 {total} 题 · 参考答案：{paper.answerSource}。左侧热力图可切换题型、点击格子跳到具体题；
@@ -302,6 +309,7 @@ export default function CoursePaperView({
                     onResult={onResult}
                     tagNav={tagNav}
                     tagDeckKey={() => config.deckKey}
+                    favorite={{ on: books.favorited(q.id), onToggle: () => books.toggleFavorite(q.id) }}
                   />
                 </Fragment>
               );

@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { NET_BASE } from '../../courses/registry';
 import { netPapers, netChapters } from '../../content/net';
 import { IconArrowRight } from '../../components/icons';
+import { BookCards } from '../../components/practice/books';
 import ExamInsights from '../../components/practice/ExamInsights';
 import PracticeReport from '../../components/practice/report/PracticeReport';
 import { useProgressStore } from '../../lib/sync';
@@ -43,6 +44,8 @@ export default function NetPracticeListPage() {
         progress={results}
         resultKey={(paperId, qid) => `${paperId}:${qid}`}
       />
+
+      <BookCards base={NET_BASE} course="net" />
 
       <div className="net-paper-grid">
         {netPapers.map((p, i) => {
