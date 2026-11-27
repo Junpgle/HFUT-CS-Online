@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import { PHYS_BASE } from '../../courses/registry';
-import { physPapers } from '../../content/phys';
+import { physPapers, physDecks } from '../../content/phys';
 import { IconArrowRight } from '../../components/icons';
+import ExamInsights from '../../components/practice/ExamInsights';
 import PracticeReport from '../../components/practice/report/PracticeReport';
-import ClearProgress from '../../components/practice/ClearProgress';
-import { clearProgressStore, useProgressStore } from '../../lib/sync';
+import { useProgressStore } from '../../lib/sync';
+import { chapterNamesFrom } from '../../lib/exam-insights';
 
 /** 作答结果持久化 key（qid = `${paperId}:${questionId}`，与算法课的 practice-progress-v1 分开） */
 export const PHYS_PRACTICE_STORE_KEY = 'phys-practice-progress-v1';
@@ -20,28 +20,32 @@ export function physPaperStats(paperId: string, results: Record<string, PhysResu
   return { done, right, total: paper.questions.length };
 }
 
+/** 卡片小字只留题型信息（大学物理固定为简答/计算两类） */
+function physKindSummary(paper: { questions: { kind: string }[] }): string {
+  const label: Record<string, string> = { essay: '简答', calc: '计算' };
+  return ['essay', 'calc']
+    .filter((k) => paper.questions.some((q) => q.kind === k))
+    .map((k) => `${label[k]} ${paper.questions.filter((q) => q.kind === k).length}`)
+    .join(' · ');
+}
+
 /** 「大学物理」在线练习 · 试卷列表：多份试卷先选卷，再进入答题页 */
 export default function PhysPracticeList() {
   const reduced = useReducedMotion();
   const [results] = useProgressStore<PhysResult>(PHYS_PRACTICE_STORE_KEY);
 
-  // 清空按钮的可用性：任一卷有作答即可清
-  const totalDone = useMemo(
-    () => physPapers.reduce((n, p) => n + physPaperStats(p.id, results).done, 0),
-    [results],
-  );
-
   return (
     <div className="page phys-practice-page">
       <h1>在线练习</h1>
 
-      <div className="pq-clear-row">
-        <ClearProgress
-          done={totalDone}
-          onClear={() => clearProgressStore(PHYS_PRACTICE_STORE_KEY)}
-          tip="清空全部试卷的作答进度？"
-        />
-      </div>
+      <ExamInsights
+        papers={physPapers}
+        kindLabel={{ essay: '简答', calc: '计算' }}
+        tagHref={(deck, sec) => (deck === 0 ? PHYS_BASE : `${PHYS_BASE}/deck/deck${deck}?s=${sec}`)}
+        chapterNames={chapterNamesFrom(physDecks)}
+        progress={results}
+        resultKey={(paperId, qid) => `${paperId}:${qid}`}
+      />
 
       <div className="net-paper-grid">
         {physPapers.map((p, i) => {
@@ -55,10 +59,7 @@ export default function PhysPracticeList() {
             >
               <Link to={`${PHYS_BASE}/practice/${p.id}`} className="net-paper-card material" aria-label={`进入 ${p.title}`}>
                 <span className="net-paper-title">{p.title}</span>
-                <span className="net-paper-meta">{p.source}</span>
-                <span className="net-paper-source">
-                  {p.answerSource} · {n} 题
-                </span>
+                <span className="net-paper-source">{physKindSummary(p)}</span>
                 <span className="net-paper-progress">
                   已作答 {done} / {n} · 已展开解析 {right} 题
                   <i aria-hidden="true">

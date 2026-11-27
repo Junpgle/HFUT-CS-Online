@@ -1,9 +1,11 @@
 import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { MATH_BASE } from '../courses/registry';
-import { mathPapers, MATH_KIND_LABEL, type MathQuizKind } from '../content/math';
+import { mathPapers, mathChapters, MATH_KIND_LABEL, type MathQuizKind } from '../content/math';
 import { useToc } from '../lib/toc';
 import { useStoredRecord } from '../lib/sync';
+import { chapterNamesFrom } from '../lib/exam-insights';
+import ExamInsights from '../components/practice/ExamInsights';
 import { IconArrowRight, IconFileText } from '../components/icons';
 import PracticeReport from '../components/practice/report/PracticeReport';
 
@@ -36,12 +38,13 @@ export default function MathPracticeIndex() {
   return (
     <div className="page">
       <h1>在线练习</h1>
-      <div className="lede">
-        <p>
-          按试卷整理的试题：先选择一份试卷，进入答题页后作答——左侧为题型热力图（一格一题、绿对红错），
-          右侧为答题区；每道题附<strong>知识点标签</strong>，点击可跳转到课件中对应的章节位置。
-        </p>
-      </div>
+      <ExamInsights
+        papers={mathPapers}
+        kindLabel={MATH_KIND_LABEL}
+        tagHref={(deck, sec) => `${MATH_BASE}/chapter/ch${deck}?s=${sec}`}
+        chapterNames={chapterNamesFrom(mathChapters)}
+        progress={progress}
+      />
       <nav className="ext-cards" aria-label="试卷列表">
         {cards.map(({ paper: p, done, right, kinds }) => (
           <Link key={p.id} className="ext-card" to={`${MATH_BASE}/practice/${p.id}`}>
@@ -50,9 +53,7 @@ export default function MathPracticeIndex() {
             </span>
             <span className="ext-card-body">
               <span className="ext-card-title">{p.title}</span>
-              <span className="ext-card-desc">
-                {p.source} · {p.questions.length} 题（{kinds}） · 参考答案：{p.answerSource}
-              </span>
+              <span className="ext-card-desc">{kinds}</span>
               <span className="ext-card-progress">
                 <i aria-hidden="true">
                   <span style={{ width: `${(done / p.questions.length) * 100}%` }} />

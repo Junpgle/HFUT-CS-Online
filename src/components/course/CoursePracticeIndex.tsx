@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import type { CourseConfig, CourseQuizKind, PracticeTag } from '../../content/course-types';
 import { useToc } from '../../lib/toc';
 import { useStoredRecord } from '../../lib/sync';
+import { chapterNamesFrom } from '../../lib/exam-insights';
+import ExamInsights from '../practice/ExamInsights';
 import { IconArrowRight, IconFileText } from '../icons';
 import PracticeReport from '../practice/report/PracticeReport';
 import { shellDeckMeta } from '../practice/report/aggregates';
@@ -45,12 +47,13 @@ export default function CoursePracticeIndex({ config }: { config: CourseConfig }
   return (
     <div className="page">
       <h1>在线练习</h1>
-      <div className="lede">
-        <p>
-          按试卷整理的课程试题：先选择一份试卷，进入答题页后作答——左侧为题型热力图（一格一题、绿对红错），
-          右侧为答题区；每道题附<strong>知识点标签</strong>，点击可跳转到课件中对应的章节位置。
-        </p>
-      </div>
+      <ExamInsights
+        papers={config.papers}
+        kindLabel={config.kindLabel}
+        tagHref={(deck, sec) => `${config.base}/chapter/${config.chapters[deck - 1]?.id ?? config.chapters[0].id}?s=${sec}`}
+        chapterNames={chapterNamesFrom(config.chapters)}
+        progress={progress}
+      />
       <nav className="ext-cards" aria-label="试卷列表">
         {cards.map(({ paper: p, done, right, kinds }) => (
           <Link key={p.id} className="ext-card" to={`${config.base}/practice/${p.id}`}>
@@ -59,9 +62,7 @@ export default function CoursePracticeIndex({ config }: { config: CourseConfig }
             </span>
             <span className="ext-card-body">
               <span className="ext-card-title">{p.title}</span>
-              <span className="ext-card-desc">
-                {p.source} · {p.questions.length} 题（{kinds}） · 参考答案：{p.answerSource}
-              </span>
+              <span className="ext-card-desc">{kinds}</span>
               <span className="ext-card-progress">
                 <i aria-hidden="true">
                   <span style={{ width: `${(done / p.questions.length) * 100}%` }} />
