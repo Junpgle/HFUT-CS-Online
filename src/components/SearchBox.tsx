@@ -1,16 +1,23 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { decks, homeData } from '../content';
 import { decodeEntities } from '../lib/text';
+import { appendOutlineIndex, findSearchResults, searchSnippet, outlineResultPath, currentSearchUnit, chapterReadingStatus } from '../lib/outlineSearch';
 import { IconSearch, IconX } from './icons';
+import { READING_KEY } from '../lib/sync/keys';
+import { readReading, subscribeStore } from '../lib/sync/local';
 
 export interface SearchIndexItem {
-  kind: '章节' | '动画' | '题目' | '试卷' | '方向';
+  kind: '章节' | '动画' | '题目' | '试卷' | '方向' | '正文';
   /** 所属讲次/章节 id；null = 课程首页 */
   unit: string | null;
   unitTitle: string;
   sectionId: string;
+  /** 正文命中的知识点标题，与实际跳转锚点对应 */
+  sectionTitle?: string;
+  /** 正文所在的二级标题（H2），即使实际命中在 H3 下也保留。 */
+  parentSectionTitle?: string;
   text: string;
 }
 
@@ -18,7 +25,7 @@ const stripTags = (s: string) => s.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').
 
 /** 结果文本里的命中片段：主题色加重标出（不铺底色），扫读时直接定位 */
 function Highlight({ text, query }: { text: string; query: string }) {
-  const q = query.trim().toLowerCase();
+  const q = query.trim().replace(/\s+/g, ' ').toLowerCase();
   const i = q ? text.toLowerCase().indexOf(q) : -1;
   if (i < 0) return <>{text}</>;
   return (
@@ -34,6 +41,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 export function buildAlgoIndex(): SearchIndexItem[] {
   const items: SearchIndexItem[] = [];
   for (const deck of decks) {
+    appendOutlineIndex(items, deck);
     const demoSection = new Map<string, string>();
     const quizSectionIds = new Set<string>();
     for (const sec of deck.sections) {
@@ -64,6 +72,7 @@ export function buildAlgoIndex(): SearchIndexItem[] {
       }
     }
   }
+  appendOutlineIndex(items, homeData, '总目录', null);
   for (const t of homeData.toc) {
     items.push({ kind: '章节', unit: null, unitTitle: '总目录', sectionId: t.id, text: decodeEntities(t.text) });
   }
@@ -83,27 +92,27 @@ interface Props {
  */
 export default function SearchBox({ index, linkTo }: Props) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const reduced = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
+  const [reading, setReading] = useState(readReading);
   const boxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return [];
-    const hits: { item: SearchIndexItem; score: number }[] = [];
-    for (const item of index) {
-      const hay = item.text.toLowerCase();
-      const idx = hay.indexOf(q);
-      if (idx < 0) continue;
-      hits.push({ item, score: idx === 0 ? 0 : idx < 6 ? 1 : 2 });
-      if (hits.length > 400) break;
-    }
-    return hits.sort((a, b) => a.score - b.score).slice(0, 12).map((h) => h.item);
-  }, [query, index]);
+  const currentUnit = currentSearchUnit(pathname);
+  const results = useMemo(() => findSearchResults(index, query, 12, currentUnit), [query, index, currentUnit]);
+
+  // 仅复用既有章级阅读进度；本机、跨标签页及云端更新同步刷新。
+  useEffect(() => {
+    if (!open) return;
+    const refresh = () => setReading(readReading());
+    const unsubscribe = subscribeStore(READING_KEY, refresh);
+    refresh();
+    return unsubscribe;
+  }, [open]);
 
   // 点击容器外部收起：输入框回到圆形图标胶囊
   useEffect(() => {
@@ -119,7 +128,7 @@ export default function SearchBox({ index, linkTo }: Props) {
     return () => document.removeEventListener('mousedown', onDown);
   }, [open]);
 
-  useEffect(() => setActive(0), [query]);
+  useEffect(() => setActive(0), [query, currentUnit]);
 
   const select = (item: SearchIndexItem) => {
     setOpen(false);
@@ -131,7 +140,7 @@ export default function SearchBox({ index, linkTo }: Props) {
   const onKeyDown = (e: ReactKeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActive((a) => Math.min(a + 1, results.length - 1));
+      setActive((a) => Math.max(0, Math.min(a + 1, results.length - 1)));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setActive((a) => Math.max(a - 1, 0));
@@ -195,20 +204,47 @@ export default function SearchBox({ index, linkTo }: Props) {
           >
             <ul className="search-list">
               {results.length === 0 && query.trim() && <li className="palette-empty">没有匹配的内容</li>}
-              {results.map((item, i) => (
+              {results.map((item, i) => {
+                const path = item.kind === '正文' ? outlineResultPath(item) : null;
+                const status = chapterReadingStatus(item, linkTo(item), reading);
+                const chapterLabel = (
+                  <span className="pi-path pi-reading-path">
+                    <span>{path?.chapter ?? (item.unit ? item.unitTitle : '首页')}</span>
+                    {status && (
+                      <span className={`pi-read-state${status.read ? ' is-read' : ''}`} title={status.read ? '本章有阅读记录；百分比为上次阅读位置' : '本章暂无阅读记录'}>
+                        {status.read ? `已读 · ${status.percent}%` : '未读'}
+                      </span>
+                    )}
+                  </span>
+                );
+                return (
                 <li
                   key={`${item.unit}-${item.sectionId}-${i}`}
-                  className={`palette-item${i === active ? ' active' : ''}`}
+                  className={`palette-item${item.kind === '正文' ? ' palette-body' : ''}${i === active ? ' active' : ''}`}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => select(item)}
                 >
                   <span className="pi-kind">{item.kind}</span>
-                  <span className="pi-text">
-                    <Highlight text={item.text} query={query} />
-                  </span>
-                  <span className="pi-path">{item.unit ? item.unitTitle : '首页'}</span>
+                  {path ? (
+                    <span className="pi-body">
+                      <span className="pi-body-head">
+                        <span className="pi-section">{path.heading}</span>
+                        {chapterLabel}
+                      </span>
+                      {path.subheading && <span className="pi-subsection">{path.subheading}</span>}
+                      <span className="pi-snippet">
+                        <Highlight text={searchSnippet(item.text, query)} query={query} />
+                      </span>
+                    </span>
+                  ) : (
+                    <>
+                      <span className="pi-text"><Highlight text={item.text} query={query} /></span>
+                      {chapterLabel}
+                    </>
+                  )}
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </motion.div>
         )}

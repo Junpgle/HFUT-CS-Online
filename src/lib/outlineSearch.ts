@@ -1,0 +1,109 @@
+import type { DeckData } from '../content/types';
+import type { SearchIndexItem } from '../components/SearchBox';
+import { decodeEntities } from './text';
+import type { ReadingMap } from './sync/types';
+
+const normalize = (text: string) => text.replace(/\s+/g, ' ').trim();
+const boundary = /^(P|DIV|LI|UL|OL|TABLE|TR|TH|TD|PRE|BLOCKQUOTE|FIGCAPTION|BR|H[1-6]|HR|DL|DT|DD)$/;
+
+/** 从讲义 HTML 提取正文，沿用已存在的目录锚点；未设锚点的小标题归入所在节。 */
+export function appendOutlineIndex(
+  items: SearchIndexItem[], deck: DeckData,
+  unitTitle = decodeEntities(deck.title), unit: string | null = deck.id,
+): void {
+  const anchors = new Map(deck.toc.map(t => [t.id, decodeEntities(t.text)]));
+  const template = document.createElement('template');
+  for (const section of deck.sections) {
+    let sectionId = section.id;
+    let fragments: string[] = [];
+    const flush = () => {
+      const text = normalize(fragments.join(''));
+      if (text) items.push({ kind: '正文', unit, unitTitle, sectionId, sectionTitle: anchors.get(sectionId) || decodeEntities(section.heading), parentSectionTitle: anchors.get(section.id) || decodeEntities(section.heading), text });
+      fragments = [];
+    };
+    const walk = (node: Node) => {
+      if (node.nodeType === 3) {
+        fragments.push(node.textContent ?? '');
+        return;
+      }
+      if (node.nodeType !== 1) return;
+      const el = node as Element;
+      const tag = el.tagName.toUpperCase();
+      if (/^(SCRIPT|STYLE|TEMPLATE|NOSCRIPT|SVG)$/.test(tag) || el.hasAttribute('hidden')) return;
+      if (el.id && anchors.has(el.id) && el.id !== sectionId) {
+        flush();
+        sectionId = el.id;
+      }
+      if (boundary.test(tag)) fragments.push(' ');
+      for (const child of Array.from(el.childNodes)) walk(child);
+      if (boundary.test(tag)) fragments.push(' ');
+    };
+    for (const block of section.blocks) {
+      if (block.type !== 'html') continue;
+      template.innerHTML = block.html;
+      fragments.push(' ');
+      for (const node of Array.from(template.content.childNodes)) walk(node);
+    }
+    flush();
+  }
+}
+
+/** 两套讲义路由均支持；首页、试卷和附件页不偏向任何章节。 */
+export function currentSearchUnit(pathname: string): string | undefined {
+  return /^\/[^/]+\/(?:deck|chapter)\/([^/]+)\/?$/.exec(pathname)?.[1];
+}
+
+/** 当前章整体优先；同组内保持原有标题优先及讲义顺序。 */
+export function findSearchResults(index: SearchIndexItem[], query: string, limit = 12, currentUnit?: string): SearchIndexItem[] {
+  const q = normalize(query).toLowerCase();
+  if (!q) return [];
+  const hits: { item: SearchIndexItem; score: number }[] = [];
+  for (const item of index) {
+    const idx = item.text.toLowerCase().indexOf(q);
+    if (idx < 0) continue;
+    const score = item.kind === '正文' ? 3 : idx === 0 ? 0 : idx < 6 ? 1 : 2;
+    hits.push({ item, score });
+  }
+  const priority = (item: SearchIndexItem) => currentUnit && item.unit === currentUnit ? 0 : 1;
+  hits.sort((a, b) => priority(a.item) - priority(b.item) || a.score - b.score);
+  const seen = new Set<string>();
+  const result: SearchIndexItem[] = [];
+  for (const { item } of hits) {
+    const key = JSON.stringify([item.unit, item.sectionId]);
+    if (item.kind === '正文' && seen.has(key)) continue;
+    seen.add(key);
+    result.push(item);
+    if (result.length >= limit) break;
+  }
+  return result;
+}
+
+/** 截取命中位置附近的上下文，而非一律显示正文开头。 */
+export function searchSnippet(text: string, query: string): string {
+  const q = normalize(query).toLowerCase();
+  const i = text.toLowerCase().indexOf(q);
+  if (!q || i < 0 || text.length <= 54) return text;
+  const start = Math.max(0, i - 12);
+  const end = Math.min(text.length, i + q.length + 36);
+  return (start ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '');
+}
+
+/** H2 与章名分列显示，独立的小字号第二行显示 H3；无 H3 时省略。 */
+export function outlineResultPath(item: SearchIndexItem): { chapter: string; heading: string; subheading: string | null } {
+  const chapter = item.unit ? item.unitTitle : '首页';
+  const section = item.parentSectionTitle || item.sectionTitle;
+  const heading = section || chapter;
+  const subheading = item.parentSectionTitle && item.sectionTitle && item.sectionTitle !== section
+    ? item.sectionTitle : null;
+  return { chapter, heading, subheading };
+}
+
+/** 阅读记录按页面保存，不能据此断定单个知识点已经读完。 */
+export function chapterReadingStatus(item: SearchIndexItem, href: string, reading: ReadingMap): { read: boolean; percent: number } | null {
+  if (!item.unit || (item.kind !== '章节' && item.kind !== '正文')) return null;
+  const page = href.split(/[?#]/, 1)[0].replace(/\/$/, '');
+  if (currentSearchUnit(page) !== item.unit) return null;
+  const entry = reading[page];
+  if (!entry || !Number.isFinite(entry.p)) return { read: false, percent: 0 };
+  return { read: true, percent: Math.round(Math.min(1, Math.max(0, entry.p)) * 100) };
+}
