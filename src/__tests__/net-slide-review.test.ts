@@ -34,6 +34,22 @@ describe('2025 计网课件主线', () => {
     expect(resolve('sec-ch4-flow-h2')).toBeDefined();
     expect(html('sw')).not.toContain('本节属于拓展自学内容');
   });
+  it('第5章无效的 MAC 帧独立列出四种判定条件并可从目录定位', () => {
+    const { chapter, resolve } = buildSlideReview(netChapters[4]);
+    const section = chapter.sections.find(s => s.id === 'sec-ch5-src-mac')!;
+    const entry = chapter.toc.find(e => e.text === '无效的 MAC 帧')!;
+    expect(entry).toBeDefined();
+    expect(entry.level).toBe(3);
+    expect(resolve(entry.id)).toBe(entry.id);
+    const html = section.blocks.filter(b => b.type === 'html').map(b => b.html).join('');
+    const start = html.indexOf('<h3 id="' + entry.id + '">');
+    expect(start).toBeGreaterThan(-1);
+    const invalid = html.slice(start).split('<h3 id="')[1];
+    for (const condition of ['数据字段的长度与长度字段的值不一致', '帧的长度不是整数个字节', '用收到的帧检验序列 FCS 查出有差错', '数据字段的长度不在 46～1500 字节之间', '64～1518 字节', '以太网不负责重传丢弃的帧']) {
+      expect(invalid).toContain(condition);
+    }
+    expect(invalid.match(/<li>/g)).toHaveLength(4);
+  });
   it('新正文三级标题均有目录锚点且无重复ID', () => {
     for (const original of netChapters) {
       const {chapter,resolve}=buildSlideReview(original);
