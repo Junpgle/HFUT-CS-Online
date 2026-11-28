@@ -87,6 +87,15 @@ describe('2025 计网课件主线', () => {
       expect(html.split(value)).toHaveLength(2);
     }
   });
+  it('第5章网桥、交换机与碰撞域广播域对比有独立重点标记', () => {
+    const { chapter } = buildSlideReview(netChapters[4]);
+    const titles = chapter.toc.map(e => e.text);
+    for (const title of ['网桥与以太网交换机', '碰撞域与广播域的隔离对比', '以太网交换机的特点']) {
+      expect(titles).toContain(title + ' ★');
+    }
+    const html = chapter.sections.find(s => s.id === 'sec-ch5-src-extend')!.blocks.filter(b => b.type === 'html').map(b => b.html).join('');
+    for (const value of ['比较项目', '是否隔离碰撞域', '是否隔离广播域', '普通透明网桥', '每个 VLAN 一个广播域', '路由器（补充对照）', '4 个碰撞域、2 个广播域']) expect(html).toContain(value);
+  });
   it('新正文三级标题均有目录锚点且无重复ID', () => {
     for (const original of netChapters) {
       const {chapter,resolve}=buildSlideReview(original);
