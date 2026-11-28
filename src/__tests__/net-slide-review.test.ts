@@ -71,6 +71,22 @@ describe('2025 计网课件主线', () => {
       expect(positions.every((pos, i) => pos >= 0 && (i === 0 || pos > positions[i - 1])), key).toBe(true);
     }
   });
+  it('第5章后半去除重复汇总但保留旧目录链接与原始知识点', () => {
+    const { chapter, resolve } = buildSlideReview(netChapters[4]);
+    const ids = chapter.toc.map(e => e.id);
+    const titles = chapter.toc.map(e => e.text);
+    for (const [from, to] of [["sec-ch5-detail-vlan-egd3ib","sec-ch5-detail-vlan-r9bwet"],["sec-ch5-detail-fast-1tzb2v5","sec-ch5-detail-fast-1hxtr7"],["sec-ch5-detail-fast-azcr7a","sec-ch5-detail-fast-128gm10"]]) {
+      expect(ids).not.toContain(from);
+      expect(ids).toContain(to);
+      expect(resolve(from)).toBe(to);
+    }
+    expect(titles).not.toContain('五种 VLAN 划分方法对照');
+    expect(titles).toContain('10GE 以太网物理层标准');
+    const html = chapter.sections.find(s => s.id === 'sec-ch5-src-fast')!.blocks.filter(b => b.type === 'html').map(b => b.html).join('');
+    for (const value of ['100BASE-TX', '1000BASE-SX', '10GBASE-SR']) {
+      expect(html.split(value)).toHaveLength(2);
+    }
+  });
   it('新正文三级标题均有目录锚点且无重复ID', () => {
     for (const original of netChapters) {
       const {chapter,resolve}=buildSlideReview(original);
