@@ -14,6 +14,8 @@ interface EssayOptions {
   explanationLabel?: string;
   sourceNote?: string;
   attention?: string | null;
+  /** 题干配图，可信 HTML；答案揭晓之前即可见。 */
+  diagram?: string;
   statusLabels?: { right: string; wrong: string; revealed: string };
   /** 主观题自评可复用进度结果，不表示机器判分。 */
   review?: { onChange: (result: 'right' | 'wrong') => void };
@@ -228,6 +230,9 @@ export default function PracticeCard({
         </span>
         <span dangerouslySetInnerHTML={{ __html: questionHtml }} />
       </QuestionTag>
+      {isEssay && essayOptions?.diagram && (
+        <div className="pq-question-diagram" dangerouslySetInnerHTML={{ __html: essayOptions.diagram }} />
+      )}
       {isEssay && essayOptions?.attention && (
         <p className="quiz-note"><strong>题目核对：</strong>{essayOptions.attention}</p>
       )}
