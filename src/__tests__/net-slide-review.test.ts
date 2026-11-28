@@ -96,6 +96,21 @@ describe('2025 计网课件主线', () => {
     const html = chapter.sections.find(s => s.id === 'sec-ch5-src-extend')!.blocks.filter(b => b.type === 'html').map(b => b.html).join('');
     for (const value of ['比较项目', '是否隔离碰撞域', '是否隔离广播域', '普通透明网桥', '每个 VLAN 一个广播域', '路由器（补充对照）', '4 个碰撞域、2 个广播域']) expect(html).toContain(value);
   });
+  it('第6章保留上下两份课件的重要字段、原例与协议流程', () => {
+    const { chapter } = buildSlideReview(netChapters[5]);
+    const html = (key: string) => chapter.sections.find(s => s.id === 'sec-ch6-src-' + key)!.blocks.filter(b => b.type === 'html').map(b => b.html).join('');
+    for (const [key, values] of [
+      ['services', ['端到端差错处理和流量控制', '虚电路服务', '数据报服务']],
+      ['address', ['128.128.255.0', '222.1.6.1/.2', 'IP 地址的四项特点']],
+      ['arp', ['0030.7131.abfc', '209.0.0.1', '219.1.0.6', '0C-05-20-01-2F-0D']],
+      ['header', ['65535', '12345', '片偏移', 'ICMP-IPv6', 'ESP', 'AH']],
+      ['subnet', ['255.255.192.0', '128.30.33.138', '划分子网后的分组转发算法']],
+      ['cidr', ['255.248.0.0', '192.24.0.0/20', '206.0.71.128/25']],
+      ['icmp', ['不应发送 ICMP 差错报告的四种情况', 'TTL=1、2、3']],
+      ['rip', ['R6 收到 R4', '5/R4', '2/R4', '路由器 B 收到 A 和 C']],
+      ['ospf', ['24字节', '完全邻接', '40秒', '600年', 'RIP 与 OSPF 的重点对比']],
+    ] as const) for (const value of values) expect(html(key)).toContain(value);
+  });
   it('新正文三级标题均有目录锚点且无重复ID', () => {
     for (const original of netChapters) {
       const {chapter,resolve}=buildSlideReview(original);
