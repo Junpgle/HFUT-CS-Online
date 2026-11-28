@@ -1,0 +1,415 @@
+{
+  "algo": {
+    "name": "算法设计与分析",
+    "light": "#16a34a",
+    "dark": "#30a46c",
+    "label": "green-tw600",
+    "palette": 0
+  },
+  "os": {
+    "name": "操作系统",
+    "light": "#107d98",
+    "dark": "#23afd0",
+    "label": "cyan-r11",
+    "palette": 7
+  },
+  "net": {
+    "name": "计算机网络",
+    "light": "#65a30d",
+    "dark": "#e3f7ba",
+    "label": "lime-tw600",
+    "palette": 14
+  },
+  "pat": {
+    "name": "程序设计艺术与方法",
+    "light": "#e54666",
+    "dark": "#ec5a72",
+    "label": "ruby-r9",
+    "palette": 21
+  },
+  "ai": {
+    "name": "人工智能原理",
+    "light": "#e93d82",
+    "dark": "#e93d82",
+    "label": "crimson-r9",
+    "palette": 4
+  },
+  "sa": {
+    "name": "软件体系结构",
+    "light": "#00a2c7",
+    "dark": "#b6ecf7",
+    "label": "cyan-r9",
+    "palette": 11
+  },
+  "phys": {
+    "name": "大学物理",
+    "light": "#ad7f58",
+    "dark": "#f2e1ca",
+    "label": "brown-r9",
+    "palette": 18
+  },
+  "ca": {
+    "name": "计算机体系结构",
+    "light": "#0090ff",
+    "dark": "#0090ff",
+    "label": "blue-r9",
+    "palette": 1
+  },
+  "math": {
+    "name": "高等数学",
+    "light": "#5c7c2f",
+    "dark": "#bdee63",
+    "label": "lime-r11",
+    "palette": 8
+  },
+  "pd": {
+    "name": "程序设计基础",
+    "light": "#ea580c",
+    "dark": "#f76b15",
+    "label": "orange-tw600",
+    "palette": 15
+  },
+  "ncd": {
+    "name": "计算机网络课程设计",
+    "light": "#cc4e00",
+    "dark": "#ffa057",
+    "label": "orange-r11",
+    "palette": 22
+  },
+  "nap": {
+    "name": "网络攻防实践",
+    "light": "#d97706",
+    "dark": "#ffd60a",
+    "label": "amber-tw600",
+    "palette": 5
+  },
+  "hd": {
+    "name": "系统硬件综合设计",
+    "light": "#218358",
+    "dark": "#3dd68c",
+    "label": "green-r11",
+    "palette": 12
+  },
+  "mc": {
+    "name": "移动计算与应用开发",
+    "light": "#29a383",
+    "dark": "#27b08b",
+    "label": "jade-r9",
+    "palette": 19
+  },
+  "nlu": {
+    "name": "自然语言理解",
+    "light": "#c026d3",
+    "dark": "#f4d4f4",
+    "label": "fuchsia-tw600",
+    "palette": 2
+  },
+  "oscd": {
+    "name": "操作系统课程设计",
+    "light": "#9e6c00",
+    "dark": "#f6eeb4",
+    "label": "yellow-r11",
+    "palette": 9
+  },
+  "cpd": {
+    "name": "编译原理课程设计",
+    "light": "#0d74ce",
+    "dark": "#70b8ff",
+    "label": "blue-r11",
+    "palette": 16
+  },
+  "ntr": {
+    "name": "网络工程师综合实训",
+    "light": "#e5484d",
+    "dark": "#ff9592",
+    "label": "red-r9",
+    "palette": 23
+  },
+  "cv": {
+    "name": "计算机视觉与深度学习",
+    "light": "#0d9488",
+    "dark": "#adf0dd",
+    "label": "teal-tw600",
+    "palette": 6
+  },
+  "spm": {
+    "name": "软件项目管理",
+    "light": "#957468",
+    "dark": "#d4b3a5",
+    "label": "bronze-r10",
+    "palette": 13
+  },
+  "bd": {
+    "name": "大数据处理技术",
+    "light": "#0284c7",
+    "dark": "#75c7f0",
+    "label": "sky-tw600",
+    "palette": 20
+  },
+  "cap": {
+    "name": "计算机应用项目实训",
+    "light": "#978365",
+    "dark": "#978365",
+    "label": "gold-r9",
+    "palette": 3
+  },
+  "aie": {
+    "name": "人工智能经济学",
+    "light": "#e11d48",
+    "dark": "#ff92ad",
+    "label": "rose-tw600",
+    "palette": 10
+  },
+  "sec": {
+    "name": "信息安全技术",
+    "light": "#cf3897",
+    "dark": "#ff8dcc",
+    "label": "pink-r10",
+    "palette": 17
+  },
+  "db": {
+    "name": "数据库系统",
+    "light": "#16a34a",
+    "dark": "#30a46c",
+    "label": "green-tw600",
+    "palette": 0
+  },
+  "se": {
+    "name": "软件工程",
+    "light": "#107d98",
+    "dark": "#23afd0",
+    "label": "cyan-r11",
+    "palette": 7
+  },
+  "st": {
+    "name": "软件测试",
+    "light": "#65a30d",
+    "dark": "#e3f7ba",
+    "label": "lime-tw600",
+    "palette": 14
+  },
+  "dp": {
+    "name": "分布式程序设计",
+    "light": "#e54666",
+    "dark": "#ec5a72",
+    "label": "ruby-r9",
+    "palette": 21
+  },
+  "swt": {
+    "name": "软件工程师综合训练",
+    "light": "#e93d82",
+    "dark": "#e93d82",
+    "label": "crimson-r9",
+    "palette": 4
+  },
+  "dsd": {
+    "name": "领域方向综合设计",
+    "light": "#00a2c7",
+    "dark": "#b6ecf7",
+    "label": "cyan-r9",
+    "palette": 11
+  },
+  "ip": {
+    "name": "创新实践",
+    "light": "#ad7f58",
+    "dark": "#f2e1ca",
+    "label": "brown-r9",
+    "palette": 18
+  },
+  "py": {
+    "name": "Python程序设计",
+    "light": "#0090ff",
+    "dark": "#0090ff",
+    "label": "blue-r9",
+    "palette": 1
+  },
+  "dm": {
+    "name": "离散数学",
+    "light": "#5c7c2f",
+    "dark": "#bdee63",
+    "label": "lime-r11",
+    "palette": 8
+  },
+  "cm": {
+    "name": "计算方法",
+    "light": "#ea580c",
+    "dark": "#f76b15",
+    "label": "orange-tw600",
+    "palette": 15
+  },
+  "prob": {
+    "name": "概率论与数理统计",
+    "light": "#cc4e00",
+    "dark": "#ffa057",
+    "label": "orange-r11",
+    "palette": 22
+  },
+  "asm": {
+    "name": "汇编语言程序设计",
+    "light": "#d97706",
+    "dark": "#ffd60a",
+    "label": "amber-tw600",
+    "palette": 5
+  },
+  "eda": {
+    "name": "EDA实训",
+    "light": "#218358",
+    "dark": "#3dd68c",
+    "label": "green-r11",
+    "palette": 12
+  },
+  "res": {
+    "name": "科研训练",
+    "light": "#29a383",
+    "dark": "#27b08b",
+    "label": "jade-r9",
+    "palette": 19
+  },
+  "physlab": {
+    "name": "大学物理实验",
+    "light": "#c026d3",
+    "dark": "#f4d4f4",
+    "label": "fuchsia-tw600",
+    "palette": 2
+  },
+  "java": {
+    "name": "Java技术",
+    "light": "#9e6c00",
+    "dark": "#f6eeb4",
+    "label": "yellow-r11",
+    "palette": 9
+  },
+  "dl": {
+    "name": "数字逻辑",
+    "light": "#0d74ce",
+    "dark": "#70b8ff",
+    "label": "blue-r11",
+    "palette": 16
+  },
+  "robot": {
+    "name": "机器人技术",
+    "light": "#e5484d",
+    "dark": "#ff9592",
+    "label": "red-r9",
+    "palette": 23
+  },
+  "ds": {
+    "name": "数据结构",
+    "light": "#0d9488",
+    "dark": "#adf0dd",
+    "label": "teal-tw600",
+    "palette": 6
+  },
+  "dscd": {
+    "name": "数据结构课程设计",
+    "light": "#957468",
+    "dark": "#d4b3a5",
+    "label": "bronze-r10",
+    "palette": 13
+  },
+  "la": {
+    "name": "线性代数",
+    "light": "#0284c7",
+    "dark": "#75c7f0",
+    "label": "sky-tw600",
+    "palette": 20
+  },
+  "ee": {
+    "name": "电路与电子技术基础",
+    "light": "#978365",
+    "dark": "#978365",
+    "label": "gold-r9",
+    "palette": 3
+  },
+  "comp": {
+    "name": "编译原理",
+    "light": "#e11d48",
+    "dark": "#ff92ad",
+    "label": "rose-tw600",
+    "palette": 10
+  },
+  "co": {
+    "name": "计算机组成原理",
+    "light": "#cf3897",
+    "dark": "#ff8dcc",
+    "label": "pink-r10",
+    "palette": 17
+  },
+  "emb": {
+    "name": "嵌入式系统原理",
+    "light": "#16a34a",
+    "dark": "#30a46c",
+    "label": "green-tw600",
+    "palette": 0
+  },
+  "ml": {
+    "name": "机器学习",
+    "light": "#107d98",
+    "dark": "#23afd0",
+    "label": "cyan-r11",
+    "palette": 7
+  },
+  "ste": {
+    "name": "软件工具与环境",
+    "light": "#65a30d",
+    "dark": "#e3f7ba",
+    "label": "lime-tw600",
+    "palette": 14
+  },
+  "comb": {
+    "name": "组合数学",
+    "light": "#e54666",
+    "dark": "#ec5a72",
+    "label": "ruby-r9",
+    "palette": 21
+  },
+  "cg": {
+    "name": "计算机图形学",
+    "light": "#e93d82",
+    "dark": "#e93d82",
+    "label": "crimson-r9",
+    "palette": 4
+  },
+  "sma": {
+    "name": "软件建模与分析",
+    "light": "#00a2c7",
+    "dark": "#b6ecf7",
+    "label": "cyan-r9",
+    "palette": 11
+  },
+  "dmt": {
+    "name": "数字媒体技术",
+    "light": "#ad7f58",
+    "dark": "#f2e1ca",
+    "label": "brown-r9",
+    "palette": 18
+  },
+  "np": {
+    "name": "网络程序设计",
+    "light": "#0090ff",
+    "dark": "#0090ff",
+    "label": "blue-r9",
+    "palette": 1
+  },
+  "micro": {
+    "name": "微机原理与接口技术",
+    "light": "#5c7c2f",
+    "dark": "#bdee63",
+    "label": "lime-r11",
+    "palette": 8
+  },
+  "het": {
+    "name": "硬件工程师综合训练",
+    "light": "#ea580c",
+    "dark": "#f76b15",
+    "label": "orange-tw600",
+    "palette": 15
+  },
+  "maogai": {
+    "name": "学习通题库·毛概",
+    "light": "#de2910",
+    "dark": "#ec6f5e",
+    "label": "maogai(锚定)",
+    "palette": -1
+  }
+}
