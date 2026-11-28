@@ -3,6 +3,8 @@ import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-do
 import CourseHubPage from './pages/CourseHubPage';
 import CourseStubPage from './pages/CourseStubPage';
 import { recordSiteVisit } from './lib/visits';
+import { renameUserCourseNames } from './lib/sync/local';
+import { QUIZ_LEGACY_NAMES } from './content/quizbank';
 import { ALGO_BASE, OS_BASE, NET_BASE, PAT_BASE, AI_BASE, SA_BASE, PHYS_BASE, CA_BASE, MATH_BASE, PD_BASE, NCD_BASE, NAP_BASE, HD_BASE, MC_BASE, NLU_BASE, OSCD_BASE, CPD_BASE, NTR_BASE, CV_BASE, SPM_BASE, BD_BASE, CAP_BASE, AIE_BASE, SEC_BASE, DB_BASE, SE_BASE, ST_BASE, DP_BASE, SWT_BASE, DSD_BASE, IP_BASE, PY_BASE, DM_BASE, CM_BASE, PROB_BASE, ASM_BASE, EDA_BASE, RES_BASE, PHYS_LAB_BASE, JAVA_BASE, DL_BASE, ROBOT_BASE, DS_BASE, DSCD_BASE, LA_BASE, EE_BASE } from './courses/registry';
 import { ErrataProvider } from './lib/errata/context';
 
@@ -56,7 +58,7 @@ const EeCourse = lazy(() => import('./courses/EeCourse'));
 /** 大二下 12 门课共用入口：再按课程前缀加载各自的数据包 */
 const D2XCourse = lazy(() => import('./courses/D2XCourse'));
 /** 学习通题库（毛概背题）：不走课程外壳，首页「学习通题库」栏接入 */
-const MaoQuizCourse = lazy(() => import('./pages/maogai/MaoQuiz'));
+const QuizCourse = lazy(() => import('./pages/quiz/QuizCourse'));
 
 /** 旧版单课程链接 → /algo/*（历史收藏与外链不失效） */
 function LegacyDeckRedirect() {
@@ -76,6 +78,8 @@ export default function App() {
   // 每次打开站点上报一次访问（首页数字行展示累计/今日访问量；未配置数据库时静默跳过）
   useEffect(() => {
     void recordSiteVisit();
+    // 学习通题库课程改名：把历史收藏/最近查看里的旧名称归一到现名（幂等）
+    renameUserCourseNames((name) => QUIZ_LEGACY_NAMES[name] ?? name);
   }, []);
 
   return (
@@ -132,8 +136,11 @@ export default function App() {
         <Route path={`${DSCD_BASE}/*`} element={<DscdCourse />} />
         <Route path={`${LA_BASE}/*`} element={<LaCourse />} />
         <Route path={`${EE_BASE}/*`} element={<EeCourse />} />
-        {/* 学习通题库（毛概背题） */}
-        <Route path="/maogai/*" element={<MaoQuizCourse />} />
+        {/* 学习通题库（七门课背题，共用一套课程页） */}
+        <Route path="/quiz/:slug/*" element={<QuizCourse />} />
+        {/* 旧链接兼容：/maogai → /quiz/maogai */}
+        <Route path="/maogai" element={<Navigate to="/quiz/maogai" replace />} />
+        <Route path="/maogai/*" element={<Navigate to="/quiz/maogai" replace />} />
         {/* 大二下 12 门课：按 URL 首段分发到同一套课程外壳（数据各自按需加载） */}
         <Route path="/:courseKey/*" element={<D2XCourse />} />
         <Route path="/course/:name/*" element={<CourseStubPage />} />

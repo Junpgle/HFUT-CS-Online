@@ -1376,7 +1376,7 @@ button {
   margin: 5px 0;
 }
 /* 链接：hover 用下划线示意可点，不铺色底（块级卡片锚点不参与药丸/下划线，走各自的抬升+阴影） */
-.page a:not(.ext-card):not(.card):not(.btn):not(.net-paper-card):not(.ei-tag-row) {
+.page a:not(.ext-card):not(.card):not(.btn):not(.net-paper-card):not(.ei-tag-row):not(.mq-mode) {
   color: var(--deck-accent);
   text-decoration: none;
   padding: 1px 3px;
@@ -1384,7 +1384,7 @@ button {
   border-radius: 5px;
   transition: color 140ms var(--press-ease);
 }
-.page a:not(.ext-card):not(.card):not(.btn):not(.net-paper-card):not(.ei-tag-row):hover {
+.page a:not(.ext-card):not(.card):not(.btn):not(.net-paper-card):not(.ei-tag-row):not(.mq-mode):hover {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -2363,7 +2363,6 @@ pre.code .cl-code:empty + .cl-com {
 }
 .quiz.answered-right {
   border-color: color-mix(in srgb, var(--ok) 45%, transparent);
-  background: color-mix(in srgb, var(--tip-bg) 60%, var(--panel-2));
 }
 .quiz.answered-wrong {
   border-color: color-mix(in srgb, var(--hot) 40%, transparent);
@@ -2444,7 +2443,6 @@ pre.code .cl-code:empty + .cl-com {
 }
 .opt-btn.correct {
   border-color: var(--ok);
-  background: var(--tip-bg);
 }
 .opt-btn.correct .opt-key {
   background: var(--ok);
@@ -5084,6 +5082,15 @@ pre.code .cl-code:empty + .cl-com {
 }
 .mq-head p { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-3); }
 
+/* 书页标题行：左标题 / 右一键清空（错题本、收藏本） */
+.mq-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 /* 总览数字 */
 .mq-stats {
   display: grid;
@@ -5116,15 +5123,18 @@ pre.code .cl-code:empty + .cl-com {
   margin: 0 0 22px;
 }
 .mq-mode {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 3px;
   align-items: flex-start;
-  padding: 18px 20px;
+  padding: 18px 44px 18px 20px;
   border: 1px solid var(--hairline-soft);
   border-radius: var(--r-l);
   background: var(--panel-strong);
   box-shadow: var(--shadow-1);
+  color: var(--ink);
+  text-decoration: none;
   cursor: pointer;
   transition: transform 160ms var(--press-ease), box-shadow 160ms, border-color 160ms;
 }
@@ -5136,6 +5146,69 @@ pre.code .cl-code:empty + .cl-com {
 .mq-mode:disabled { opacity: 0.45; pointer-events: none; }
 .mq-mode b { font-size: 16px; font-weight: 650; color: var(--ink); }
 .mq-mode span { font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+/* 标题行：完成页卡片的箭头贴着文字放（返回在左、继续在右） */
+.mq-mode-head { display: inline-flex; align-items: center; gap: 8px; }
+.mq-mode-head svg { flex: none; color: var(--ink-3); transition: color 160ms, translate 160ms; }
+.mq-mode:hover .mq-mode-head svg { color: var(--ink); }
+/* 入口卡右侧箭头：学习/复习两个开篇 */
+.mq-mode-arrow {
+  position: absolute;
+  inset-inline-end: 18px;
+  top: 50%;
+  translate: 0 -50%;
+  color: var(--ink-3);
+  transition: color 160ms, translate 160ms;
+}
+.mq-mode:hover .mq-mode-arrow { color: var(--ink); translate: 2px -50%; }
+
+/* 每组题数：学习/复习各一份，预设胶囊 + 自定义输入（选中只描边，不铺色底） */
+.mq-group-card { padding: 16px 20px; }
+.mq-group-card h2 { margin: 0 0 12px; }
+.mq-group-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.mq-group-half { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.mq-group-half + .mq-group-half {
+  border-inline-start: 1px solid var(--hairline-soft);
+  padding-inline-start: 20px;
+}
+.mq-group-title { font-size: 12.5px; font-weight: 600; color: var(--ink-3); }
+.mq-group-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mq-group-btn {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: border-color 140ms, color 140ms;
+}
+.mq-group-btn:hover { border-color: var(--hairline); }
+.mq-group-btn[aria-pressed='true'] {
+  border-color: var(--deck-accent);
+  color: var(--deck-accent);
+  box-shadow: inset 0 0 0 1px var(--deck-accent);
+}
+.mq-group-custom { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-3); }
+.mq-group-custom[data-active] { color: var(--deck-accent); }
+.mq-group-input {
+  width: 58px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: 8px;
+  background: var(--panel-solid);
+  color: var(--ink);
+  font-size: 13px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.mq-group-custom[data-active] .mq-group-input { border-color: var(--deck-accent); color: var(--deck-accent); }
+.mq-group-input::-webkit-inner-spin-button,
+.mq-group-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
 /* 图表卡片 */
 .mq-card {
@@ -5170,8 +5243,15 @@ pre.code .cl-code:empty + .cl-com {
 
 /* 进度行（章节 / 题型） */
 .mq-rows { display: flex; flex-direction: column; gap: 11px; }
-.mq-row { display: grid; grid-template-columns: 64px 1fr 56px; align-items: center; gap: 12px; }
-.mq-row-name { font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+.mq-row { display: grid; grid-template-columns: fit-content(42%) 1fr 56px; align-items: center; gap: 12px; }
+.mq-row-name {
+  min-width: 0;
+  font-size: 13px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .mq-row-track {
   height: 10px;
   border-radius: 5px;
@@ -5204,7 +5284,21 @@ pre.code .cl-code:empty + .cl-com {
   box-shadow: var(--shadow-1);
 }
 /* 有角标的题卡：题干首行给右上角让位（与 .practice-q 同款） */
-.mq-qcard.pq-has-corner .quiz-q { padding-right: 60px; }
+.mq-qcard.pq-has-corner .quiz-q { padding-right: 150px; }
+/* 判对后答案块跟随语义色：课程朱红主题下红条红字容易被误读成答错 */
+.mq-qcard.answered-right .quiz-a { border-left-color: var(--ok); }
+.mq-qcard.answered-right .quiz-a b { color: var(--ok); }
+/* 判对卡里的主操作（下一题）也跟随语义绿，整块不再出现朱红 */
+.mq-qcard.answered-right .quiz-actions .btn.primary {
+  background: var(--ok);
+  border-color: var(--ok);
+  color: var(--on-accent);
+}
+.mq-qcard.answered-right .quiz-actions .btn.primary:hover {
+  background: var(--ok);
+  color: var(--on-accent);
+  filter: brightness(1.06);
+}
 .mq-chip {
   display: inline-block;
   margin: 0 0 10px;
@@ -5214,6 +5308,9 @@ pre.code .cl-code:empty + .cl-com {
   border-radius: 999px;
   padding: 2px 10px;
 }
+/* 连对计数：中性小胶囊，跟在章节标签后面；答错归零（数据来自 SRS 账） */
+.mq-chip-streak { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.mq-chip + .mq-chip-streak { margin-left: 6px; }
 
 /* 艾宾浩斯自评：建议档描边提示（静态描边，非悬浮色底） */
 .mq-grade { display: flex; gap: 12px; justify-content: center; margin-top: 18px; }
@@ -5235,8 +5332,16 @@ pre.code .cl-code:empty + .cl-com {
   .mq-main { width: calc(100% - 32px); padding: 28px 0 40px; }
   .mq-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 20px 0 14px; }
   .mq-modes { grid-template-columns: 1fr; }
+  .mq-group-split { grid-template-columns: 1fr; gap: 14px; }
+  .mq-group-half + .mq-group-half {
+    border-inline-start: 0;
+    padding-inline-start: 0;
+    border-top: 1px solid var(--hairline-soft);
+    padding-top: 14px;
+  }
   .mq-card { padding: 16px; }
-  .mq-row { grid-template-columns: 52px 1fr 48px; }
+  .mq-row { grid-template-columns: fit-content(60%) 1fr 44px; }
+  .mq-qcard.pq-has-corner .quiz-q { padding-right: 120px; }
   .mq-chart { gap: 3px; }
   .mq-col:nth-child(2n) .mq-col-x { visibility: hidden; }
 }
