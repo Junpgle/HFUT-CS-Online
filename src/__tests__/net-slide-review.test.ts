@@ -50,6 +50,27 @@ describe('2025 计网课件主线', () => {
     }
     expect(invalid.match(/<li>/g)).toHaveLength(4);
   });
+  it('第5章后半部分保留课内细节、例题及讲授顺序', () => {
+    const { chapter } = buildSlideReview(netChapters[4]);
+    const html = (key: string) => chapter.sections.find(s => s.id === 'sec-ch5-src-' + key)!.blocks.filter(b => b.type === 'html').map(b => b.html).join('');
+    const check = (key: string, values: string[]) => {
+      const content = html(key);
+      for (const value of values) expect(content).toContain(value);
+    };
+    check('mac', ['IEEE 802.3 MAC 与 Ethernet V2 帧格式的区别', '帧间最小间隔', '1501～1535']);
+    check('extend', ['使用集线器扩展局域网', '内容可寻址存储器 CAM', 'B/N', '直通（cut-through）', '交换机自学习和转发帧的完整流程', '两个网桥的转发表建立过程', 'B→1', '两台交换机互连', '生成树协议 STP']);
+    check('vlan', ['B2、B3 接收', '降低成本', '00-15-F5-CC-C8-14', 'IPX', '192.168.2.0/24', 'TELNET', '1522 字节', '4094', 'Trunk Link']);
+    check('fast', ['IEEE 802.3u', '100BASE-FX', '0.96 μs', '1000BASE-CX', '4.096 μs', '448 字节时间', '1500 字节', '10GBASE-T', '100GBASE-CR10', '端到端的以太网传输']);
+    for (const [key, titles] of [
+      ['extend', ['使用集线器扩展局域网', '数据链路层扩展', '以太网交换机的交换方式', '自学习算法', '两台交换机互连', '存在的问题：回路', '生成树协议 STP', '从共享总线到交换式星形以太网']],
+      ['vlan', ['引入VLAN的主要原因', '碰撞域、广播域与 VLAN 的定义', 'VLAN 工作组与广播隔离示例', '虚拟局域网的四项优点', '基于交换机端口的方法', 'IEEE 802.1Q 带标记的以太网帧']],
+      ['fast', ['100BASE-T 快速以太网', '吉比特以太网的四项特点', '半双工吉比特以太网：载波延伸', '半双工吉比特以太网：分组突发', '10 吉比特以太网（10GE）的主要特点', '40GE 与 100GE 物理层标准', '端到端的以太网传输', '以太网从10 Mbit/s到100 Gbit/s的演进']],
+    ] as const) {
+      const entries = chapter.toc.map(e => e.text);
+      const positions = titles.map(title => entries.findIndex(e => e.startsWith(title)));
+      expect(positions.every((pos, i) => pos >= 0 && (i === 0 || pos > positions[i - 1])), key).toBe(true);
+    }
+  });
   it('新正文三级标题均有目录锚点且无重复ID', () => {
     for (const original of netChapters) {
       const {chapter,resolve}=buildSlideReview(original);
